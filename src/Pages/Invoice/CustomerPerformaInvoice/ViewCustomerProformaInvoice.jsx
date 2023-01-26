@@ -282,14 +282,14 @@ export const ViewCustomerProformaInvoice = () => {
               </h3>
             </Box>
             <Box flexGrow={0.5} align="right">
-              <Button
+              {/* <Button
                 onClick={() => setOpenPopup(true)}
                 variant="contained"
                 color="success"
                 startIcon={<AddIcon />}
               >
                 Generate PI
-              </Button>
+              </Button> */}
             </Box>
           </Box>
           <TableContainer

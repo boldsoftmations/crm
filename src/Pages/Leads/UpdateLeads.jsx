@@ -34,6 +34,8 @@ import { ViewAllPotential } from "../Potential/ViewAllPotential";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
 import axios from "axios";
+import { Popup } from "./../../Components/Popup";
+import { CreateLeadsProformaInvoice } from "./../Invoice/LeadsPerformaInvoice/CreateLeadsProformaInvoice";
 
 function getSteps() {
   return [
@@ -46,6 +48,7 @@ function getSteps() {
 
 export const UpdateLeads = (props) => {
   const { recordForEdit, setOpenPopup, getUnassigned, getAllleadsData } = props;
+  const [openPopup2, setOpenPopup2] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const steps = getSteps();
   const [open, setOpen] = useState(false);
@@ -931,6 +934,18 @@ export const UpdateLeads = (props) => {
             >
               {activeStep === steps.length - 1 ? "Finish" : "Next"}
             </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setOpenPopup2(true)}
+              // className={classes.button}
+              style={{
+                marginTop: "1em",
+                marginRight: "1em",
+              }}
+            >
+              Generate PI
+            </Button>
           </div>
         </Paper>
       </Grid>
@@ -984,6 +999,17 @@ export const UpdateLeads = (props) => {
           <ViewAllPotential recordForEdit={recordForEdit} />
         </Grid>
       </Grid>
+      <Popup
+        maxWidth={"xl"}
+        title={"Create Leads Proforma Invoice"}
+        openPopup={openPopup2}
+        setOpenPopup={setOpenPopup2}
+      >
+        <CreateLeadsProformaInvoice
+          leads={leads}
+          setOpenPopup={setOpenPopup2}
+        />
+      </Popup>
     </div>
   );
 };
