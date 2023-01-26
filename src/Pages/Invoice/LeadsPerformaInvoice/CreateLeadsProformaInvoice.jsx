@@ -171,6 +171,7 @@ export const CreateLeadsProformaInvoice = (props) => {
         state: leadIDData.shipping_state,
         city: leadIDData.shipping_city,
         place_of_supply: inputValue.place_of_supply,
+        transporter_name: inputValue.transporter_name,
         buyer_order_no: checked === true ? "verbal" : inputValue.buyer_order_no,
         buyer_order_date: inputValue.buyer_order_date
           ? inputValue.buyer_order_date
@@ -521,6 +522,17 @@ export const CreateLeadsProformaInvoice = (props) => {
               label="Place of Supply"
               variant="outlined"
               value={inputValue.place_of_supply}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              fullWidth
+              name="transporter_name"
+              size="small"
+              label="Transporter Name"
+              variant="outlined"
+              value={inputValue.transporter_name}
               onChange={handleInputChange}
             />
           </Grid>

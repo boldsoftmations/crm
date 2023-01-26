@@ -6,6 +6,7 @@ import {
   Autocomplete,
   Box,
   Button,
+  Checkbox,
   Chip,
   FormControl,
   FormControlLabel,
@@ -62,6 +63,7 @@ export const UpdateLeads = (props) => {
   const [contacts2, setContacts2] = useState("");
   const [typeData, setTypeData] = useState("");
   const [pinCodeData, setPinCodeData] = useState([]);
+  const [checked, setChecked] = useState(false);
   const handlePhoneChange = (newPhone) => {
     setPhone(newPhone);
   };
@@ -119,7 +121,7 @@ export const UpdateLeads = (props) => {
       setOpen(false);
     }
   };
-  
+
   const getLAssignedData = async () => {
     try {
       setOpen(true);
@@ -128,22 +130,6 @@ export const UpdateLeads = (props) => {
       setOpen(false);
     } catch (error) {
       console.log("error", error);
-      setOpen(false);
-    }
-  };
-
-  const validatePinCode = async () => {
-    try {
-      setOpen(true);
-      const PINCODE = leads.shipping_pincode;
-      const response = await axios.get(
-        `https://api.postalpincode.in/pincode/${PINCODE}`
-      );
-
-      setPinCodeData(response.data[0].PostOffice[0]);
-      setOpen(false);
-    } catch (error) {
-      console.log("Creating Bank error ", error);
       setOpen(false);
     }
   };
@@ -166,10 +152,8 @@ export const UpdateLeads = (props) => {
           alternate_contact: contact2,
           description: descriptionValue ? descriptionValue : "",
           target_date: leads.target_date,
-          business_type: businesTypes ? businesTypes : '',
-          business_mismatch: businessMismatch
-            ? businessMismatch
-            : "No",
+          business_type: businesTypes ? businesTypes : "",
+          business_mismatch: businessMismatch ? businessMismatch : "No",
           interested: interests ? interests : "Yes",
           assigned_to: assign ? assign : "",
           references: leads.references,
@@ -183,15 +167,23 @@ export const UpdateLeads = (props) => {
           pincode: leads.pincode,
           website: leads.website,
           type_of_customer: typeData ? typeData : leads.type_of_customer,
-          shipping_address: leads.shipping_address,
-          shipping_city: pinCodeData.District
-            ? pinCodeData.District
-            : leads.shipping_city,
-          shipping_state: pinCodeData.State
-            ? pinCodeData.State
-            : leads.shipping_state,
-          shipping_pincode: leads.shipping_pincode,
-          lead_exists: leads.lead_exists
+          shipping_address:
+            checked === true ? leads.address : leads.shipping_address,
+          shipping_city:
+            checked === true
+              ? leads.city
+              : leads.shipping_city
+              ? leads.shipping_city
+              : "",
+          shipping_state:
+            checked === true
+              ? leads.state
+              : leads.shipping_state
+              ? leads.shipping_state
+              : "",
+          shipping_pincode:
+            checked === true ? leads.pincode : leads.shipping_pincode,
+          lead_exists: leads.lead_exists,
         };
 
         await LeadServices.updateLeads(leads.lead_id, data);
@@ -374,9 +366,7 @@ export const UpdateLeads = (props) => {
                       }}
                       size="small"
                       onChange={(event, value) => setBusinesTypes(value)}
-                      value={
-                       businesTypes ? businesTypes : ''
-                      }
+                      value={businesTypes ? businesTypes : ""}
                       name="business_type"
                       options={businessTypeOption.map((option) => option.label)}
                       getOptionLabel={(option) => `${option}`}
@@ -384,7 +374,6 @@ export const UpdateLeads = (props) => {
                         <TextField {...params} label="Business Types" />
                       )}
                     />
-                 
                   </Grid>
                   <Grid item xs={12} sm={3}>
                     <TextField
@@ -406,9 +395,7 @@ export const UpdateLeads = (props) => {
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         label="Business Mismatch"
-                        value={
-                          businessMismatch ? businessMismatch : "No"
-                        }
+                        value={businessMismatch ? businessMismatch : "No"}
                         onChange={(e, value) =>
                           setBusinessMismatch(e.target.value)
                         }
@@ -420,7 +407,6 @@ export const UpdateLeads = (props) => {
                         ))}
                       </Select>
                     </FormControl>
-             
                   </Grid>
                   <Grid item xs={12} sm={3}>
                     <FormControl fullWidth size="small">
@@ -474,16 +460,13 @@ export const UpdateLeads = (props) => {
                     />
                   </Grid>
                   <Grid item xs={12} sm={3}>
-                
-                  <Autocomplete
+                    <Autocomplete
                       style={{
                         minWidth: 220,
                       }}
                       size="small"
                       onChange={(event, value) => setAssign(value)}
-                      value={
-                       assign ? assign : ''
-                      }
+                      value={assign ? assign : ""}
                       name="assign"
                       options={assigned.map((option) => option.email)}
                       getOptionLabel={(option) => option}
@@ -491,7 +474,6 @@ export const UpdateLeads = (props) => {
                         <TextField {...params} label="Assignied To" />
                       )}
                     />
-                   
                   </Grid>
                   <Grid item xs={12} sm={3}>
                     <TextField
@@ -672,6 +654,18 @@ export const UpdateLeads = (props) => {
               >
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={checked}
+                          onChange={(event) => setChecked(event.target.checked)}
+                          inputProps={{ "aria-label": "controlled" }}
+                        />
+                      }
+                      label="Same as Billing Address"
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
                     <>
                       <FormControl>
                         <FormLabel id="demo-row-radio-buttons-group-label">
@@ -707,31 +701,30 @@ export const UpdateLeads = (props) => {
                       label="Shipping Address"
                       variant="outlined"
                       value={
-                        leads.shipping_address ? leads.shipping_address : ""
+                        checked === true
+                          ? leads.address
+                          : leads.shipping_address
                       }
                       onChange={handleInputChange}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      sx={{ minWidth: "300px" }}
+                      fullWidth
                       name="shipping_pincode"
                       size="small"
                       type={"number"}
                       label="Pin Code"
                       variant="outlined"
                       value={
-                        leads.shipping_pincode ? leads.shipping_pincode : ""
+                        checked === true
+                          ? leads.pincode
+                          : leads.shipping_pincode
+                          ? leads.shipping_pincode
+                          : ""
                       }
                       onChange={handleInputChange}
                     />
-                    <Button
-                      onClick={() => validatePinCode()}
-                      variant="contained"
-                      sx={{ marginLeft: "1rem" }}
-                    >
-                      Validate
-                    </Button>
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
@@ -741,8 +734,8 @@ export const UpdateLeads = (props) => {
                       label="Shipping City"
                       variant="outlined"
                       value={
-                        pinCodeData.District
-                          ? pinCodeData.District
+                        checked === true
+                          ? leads.city
                           : leads.shipping_city
                           ? leads.shipping_city
                           : ""
@@ -757,8 +750,8 @@ export const UpdateLeads = (props) => {
                       label="Shipping State"
                       variant="outlined"
                       value={
-                        pinCodeData.State
-                          ? pinCodeData.State
+                        checked === true
+                          ? leads.state
                           : leads.shipping_state
                           ? leads.shipping_state
                           : ""
@@ -829,7 +822,7 @@ export const UpdateLeads = (props) => {
                     Target Date {leads.target_date}
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    Assign to : {assign ? assign : ''}
+                    Assign to : {assign ? assign : ""}
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     Company Name : {leads.company}
@@ -872,7 +865,7 @@ export const UpdateLeads = (props) => {
     }
   }
 
-  console.log('assign', assign ? assign : '')
+  console.log("assign", assign ? assign : "");
 
   return (
     <div style={{ width: "100%" }}>
