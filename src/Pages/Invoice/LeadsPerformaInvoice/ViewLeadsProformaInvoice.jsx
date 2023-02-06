@@ -25,8 +25,8 @@ import {
 import { tableCellClasses } from "@mui/material/TableCell";
 import InvoiceServices from "../../../services/InvoiceService";
 import { CreateLeadsProformaInvoice } from "./CreateLeadsProformaInvoice";
-import AddIcon from "@mui/icons-material/Add";
-import SearchIcon from "@mui/icons-material/Search";
+// import AddIcon from "@mui/icons-material/Add";
+// import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Popup } from "./../../../Components/Popup";
 import { LeadsPerformaInvoice } from "./LeadsPerformaInvoice";
@@ -63,6 +63,9 @@ const StatusOptions = [
   { label: "Raised", value: "raised" },
   { label: "Pending Approval", value: "pending_approval" },
   { label: "Approved", value: "approved" },
+  { label: "Partially Paid", value: "partially_paid" },
+  { label: "Fully Paid", value: "fully_paid" },
+  { label: "Credit", value: "credit" },
 ];
 
 export const ViewLeadsProformaInvoice = () => {

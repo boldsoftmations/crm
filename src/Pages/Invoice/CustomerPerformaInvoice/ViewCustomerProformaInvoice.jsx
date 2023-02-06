@@ -25,7 +25,6 @@ import InvoiceServices from "../../../services/InvoiceService";
 import { CreateCustomerProformaInvoice } from "./CreateCustomerProformaInvoice";
 import { Popup } from "./../../../Components/Popup";
 import { CustomerProformaInvoice } from "./CustomerProformaInvoice";
-import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
 import { getSellerAccountData } from "./../../../Redux/Action/Action";
 import { useDispatch } from "react-redux";
@@ -58,6 +57,9 @@ const StatusOptions = [
   { label: "Raised", value: "raised" },
   { label: "Pending Approval", value: "pending_approval" },
   { label: "Approved", value: "approved" },
+  { label: "Partially Paid", value: "partially_paid" },
+  { label: "Fully Paid", value: "fully_paid" },
+  { label: "Credit", value: "credit" },
 ];
 
 export const ViewCustomerProformaInvoice = () => {
