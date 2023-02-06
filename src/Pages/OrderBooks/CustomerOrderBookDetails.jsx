@@ -19,6 +19,7 @@ import { ErrorMessage } from "./../../Components/ErrorMessage/ErrorMessage";
 import { CustomLoader } from "../../Components/CustomLoader";
 import { CustomSearch } from "./../../Components/CustomSearch";
 import { CustomPagination } from "./../../Components/CustomPagination";
+import { useSelector } from "react-redux";
 
 export const CustomerOrderBookDetails = () => {
   const [orderBookData, setOrderBookData] = useState([]);
@@ -29,7 +30,8 @@ export const CustomerOrderBookDetails = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [exportOrderBookData, setExportOrderBookData] = useState([]);
-
+  const dataList = useSelector((state) => state.auth);
+  const userData = dataList.profile;
   useEffect(() => {
     getAllCustomerWiseOrderBook();
   }, []);
@@ -178,17 +180,47 @@ export const CustomerOrderBookDetails = () => {
     }
   };
 
-  const data = exportOrderBookData.map((item) => ({
-    company: item.company,
-    pi_date: item.pi_date,
-    proforma_invoice: item.proforma_invoice,
-    billing_city: item.billing_city,
-    shipping_city: item.shipping_city,
-    product: item.product,
-    quantity: item.quantity,
-    amount: item.amount,
-    pending_quantity: item.pending_quantity,
-  }));
+  let data = exportOrderBookData.map((item) => {
+    if (userData.groups.toString() === "Factory") {
+      return {
+        company: item.company,
+        pi_date: item.pi_date,
+        proforma_invoice: item.proforma_invoice,
+        billing_city: item.billing_city,
+        shipping_city: item.shipping_city,
+        product: item.product,
+        quantity: item.quantity,
+        // amount: item.amount,
+        pending_quantity: item.pending_quantity,
+      };
+    } else {
+      return {
+        company: item.company,
+        pi_date: item.pi_date,
+        proforma_invoice: item.proforma_invoice,
+        billing_city: item.billing_city,
+        shipping_city: item.shipping_city,
+        product: item.product,
+        quantity: item.quantity,
+        amount: item.amount,
+        pending_quantity: item.pending_quantity,
+      };
+    }
+  });
+
+  //   const data = exportOrderBookData.map(item =>
+  //     if (userData.groups.toString() === "Factory") {
+  //     company: item.company,
+  //     pi_date: item.pi_date,
+  //     proforma_invoice: item.proforma_invoice,
+  //     billing_city: item.billing_city,
+  //     shipping_city: item.shipping_city,
+  //     product: item.product,
+  //     quantity: item.quantity,
+  //     // amount: item.amount,
+  //     pending_quantity: item.pending_quantity,
+  //   });
+  // }
 
   return (
     <div>
@@ -198,6 +230,7 @@ export const CustomerOrderBookDetails = () => {
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
           <Box display="flex">
             <Box flexGrow={2}>
+              ;
               {/* <CustomSearch
                 filterSelectedQuery={searchQuery}
                 handleInputChange={handleInputChange}
@@ -270,7 +303,9 @@ export const CustomerOrderBookDetails = () => {
                   <StyledTableCell align="center">
                     PENDING QUANTITY
                   </StyledTableCell>
-                  <StyledTableCell align="center">AMOUNT</StyledTableCell>
+                  {userData.groups.toString() !== "Factory" && (
+                    <StyledTableCell align="center">AMOUNT</StyledTableCell>
+                  )}
                 </StyledTableRow>
               </TableHead>
               <TableBody>
@@ -300,9 +335,11 @@ export const CustomerOrderBookDetails = () => {
                     <StyledTableCell align="center">
                       {row.pending_quantity}
                     </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {row.amount}
-                    </StyledTableCell>
+                    {userData.groups.toString() !== "Factory" && (
+                      <StyledTableCell align="center">
+                        {row.amount}
+                      </StyledTableCell>
+                    )}
                   </StyledTableRow>
                 ))}
               </TableBody>

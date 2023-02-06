@@ -27,7 +27,7 @@ import { Popup } from "./../../../Components/Popup";
 import { CustomerProformaInvoice } from "./CustomerProformaInvoice";
 import ClearIcon from "@mui/icons-material/Clear";
 import { getSellerAccountData } from "./../../../Redux/Action/Action";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { ErrorMessage } from "./../../../Components/ErrorMessage/ErrorMessage";
 
@@ -322,7 +322,9 @@ export const ViewCustomerProformaInvoice = () => {
                   <StyledTableCell align="center">BILLING CITY</StyledTableCell>
                   <StyledTableCell align="center">CONTACT</StyledTableCell>
                   <StyledTableCell align="center">STATUS</StyledTableCell>
+
                   <StyledTableCell align="center">PI AMOUNT</StyledTableCell>
+
                   <StyledTableCell align="center">
                     BALANCE AMOUNT
                   </StyledTableCell>
@@ -354,9 +356,11 @@ export const ViewCustomerProformaInvoice = () => {
                       <StyledTableCell align="center">
                         {row.total}
                       </StyledTableCell>
+
                       <StyledTableCell align="center">
                         {row.balance_amount}
                       </StyledTableCell>
+
                       <StyledTableCell align="center">
                         <Button
                           variant="contained"

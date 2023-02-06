@@ -5,7 +5,7 @@ import { CustomButton } from "./../../Components/CustomButton";
 import InvoiceServices from "../../services/InvoiceService";
 
 export const UpdateDispatch = (props) => {
-    const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const { idData, getAllDispatchDetails, setOpenPopup } = props;
   console.log("idData :>> ", idData);
   const [inputValue, setInputValue] = useState([]);
@@ -17,11 +17,12 @@ export const UpdateDispatch = (props) => {
   const createLeadsData = async (e) => {
     try {
       e.preventDefault();
-        setOpen(true);
+      setOpen(true);
       const data = {
         sales_invoice: idData.sales_invoice,
         transporter: inputValue.transporter,
         lr_number: inputValue.lr_number,
+        lr_date: inputValue.lr_date,
       };
       await InvoiceServices.updateDispatched(idData.id, data);
       getAllDispatchDetails();
@@ -29,7 +30,7 @@ export const UpdateDispatch = (props) => {
       setOpen(false);
     } catch (error) {
       console.log("error :>> ", error);
-        setOpen(false);
+      setOpen(false);
     }
   };
 
@@ -45,6 +46,15 @@ export const UpdateDispatch = (props) => {
               label="Sales Invoice"
               variant="outlined"
               value={idData.sales_invoice}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              size="small"
+              label="Customer"
+              variant="outlined"
+              value={idData.customer}
             />
           </Grid>
           <Grid item xs={12}>
@@ -69,8 +79,24 @@ export const UpdateDispatch = (props) => {
               onChange={handleInputChange}
             />
           </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              type={"date"}
+              name="lr_date"
+              size="small"
+              label="LR Date"
+              variant="outlined"
+              value={inputValue.lr_date}
+              onChange={handleInputChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
         </Grid>
         <CustomButton
+          sx={{ marginTop: "1rem" }}
           type="submit"
           fullWidth
           variant="contained"

@@ -19,6 +19,7 @@ import { ErrorMessage } from "./../../Components/ErrorMessage/ErrorMessage";
 import { CustomLoader } from "../../Components/CustomLoader";
 import { Popup } from "../../Components/Popup";
 import { CustomPagination } from "./../../Components/CustomPagination";
+import { useSelector } from "react-redux";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -75,6 +76,8 @@ export const ProductOrderBookDetails = () => {
   const [currentPage, setCurrentPage] = useState(0);
   // const [searchQuery, setSearchQuery] = useState("");
   const [exportOrderBookData, setExportOrderBookData] = useState([]);
+  const dataList = useSelector((state) => state.auth);
+  const userData = dataList.profile;
 
   useEffect(() => {
     getTotalPendingQuantityDetails();
@@ -207,17 +210,45 @@ export const ProductOrderBookDetails = () => {
     }
   };
 
-  const data = exportOrderBookData.map((item) => ({
-    product: item.product,
-    pi_date: item.pi_date,
-    proforma_invoice: item.proforma_invoice,
-    quantity: item.quantity,
-    amount: item.amount,
-    pending_quantity: item.pending_quantity,
-    company: item.company,
-    billing_city: item.billing_city,
-    shipping_city: item.shipping_city,
-  }));
+  let data = exportOrderBookData.map((item) => {
+    if (userData.groups.toString() === "Factory") {
+      return {
+        product: item.product,
+        pi_date: item.pi_date,
+        proforma_invoice: item.proforma_invoice,
+        quantity: item.quantity,
+        // amount: item.amount,
+        pending_quantity: item.pending_quantity,
+        company: item.company,
+        billing_city: item.billing_city,
+        shipping_city: item.shipping_city,
+      };
+    } else {
+      return {
+        product: item.product,
+        pi_date: item.pi_date,
+        proforma_invoice: item.proforma_invoice,
+        quantity: item.quantity,
+        amount: item.amount,
+        pending_quantity: item.pending_quantity,
+        company: item.company,
+        billing_city: item.billing_city,
+        shipping_city: item.shipping_city,
+      };
+    }
+  });
+
+  // const data = exportOrderBookData.map((item) => ({
+  //   product: item.product,
+  //   pi_date: item.pi_date,
+  //   proforma_invoice: item.proforma_invoice,
+  //   quantity: item.quantity,
+  //   amount: item.amount,
+  //   pending_quantity: item.pending_quantity,
+  //   company: item.company,
+  //   billing_city: item.billing_city,
+  //   shipping_city: item.shipping_city,
+  // }));
 
   return (
     <div>
@@ -292,7 +323,9 @@ export const ProductOrderBookDetails = () => {
                   <StyledTableCell align="center">
                     PENDING QUANTITY
                   </StyledTableCell>
-                  <StyledTableCell align="center">AMOUNT</StyledTableCell>
+                  {userData.groups.toString() !== "Factory" && (
+                    <StyledTableCell align="center">AMOUNT</StyledTableCell>
+                  )}
                   <StyledTableCell align="center">COMPANY</StyledTableCell>
                   <StyledTableCell align="center">BILLING CITY</StyledTableCell>
                   <StyledTableCell align="center">
@@ -321,9 +354,11 @@ export const ProductOrderBookDetails = () => {
                     <StyledTableCell align="center">
                       {row.pending_quantity}
                     </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {row.amount}
-                    </StyledTableCell>
+                    {userData.groups.toString() !== "Factory" && (
+                      <StyledTableCell align="center">
+                        {row.amount}
+                      </StyledTableCell>
+                    )}
                     <StyledTableCell align="center">
                       {row.company}
                     </StyledTableCell>
