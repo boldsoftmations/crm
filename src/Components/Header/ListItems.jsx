@@ -10,7 +10,8 @@ export const ListItems = () => {
   const [expandFollowUp, setExpandFollowUp] = useState(false);
   const [expandProduct, setExpandProduct] = useState(false);
   const [expandCustomer, setExpandCustomer] = useState(false);
-  const [expandInvoice, setExpandInvoice] = useState(false);
+  const [expandProformaInvoice, setExpandProformaInvoice] = useState(false);
+  const [expandSalesInvoice, setExpandSalesInvoice] = useState(false);
   const [expandOrderBook, setExpandOrderBook] = useState(false);
   const [sellerAccount, setSellerAccount] = useState(false);
   const [dispatchDetails, setDispatchDetails] = useState(false);
@@ -212,27 +213,19 @@ export const ListItems = () => {
               </ListItem>
             </List>
           </Collapse>
-          {/* Invoice  */}
+          {/*Proforma Invoice  */}
           <ListItem
             button
-            onClick={() => setExpandInvoice(!expandInvoice)}
+            onClick={() => setExpandProformaInvoice(!expandProformaInvoice)}
             style={{ width: 300 }}
           >
-            <ListItemText primary="Sales Invoice" />
-            {expandInvoice ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            <ListItemText primary="Proforma Invoice" />
+            {expandProformaInvoice ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItem>
-          <Collapse in={expandInvoice} timeout="auto" unmountOnExit>
+          <Collapse in={expandProformaInvoice} timeout="auto" unmountOnExit>
             <Divider />
             <List component="div" disablePadding>
-              {/* <ListItem
-          button
-          component={RouterLink}
-          to="/invoice/seller-account"
-          style={{ width: 300 }}
-        >
-          <ListItemText inset primary="Seller Account" />
-        </ListItem> */}
-              {/* <ListItem
+              <ListItem
                 button
                 component={RouterLink}
                 to="/invoice/performa-invoice"
@@ -247,7 +240,21 @@ export const ListItems = () => {
                 style={{ width: 300 }}
               >
                 <ListItemText inset primary="Leads Performa Invoice" />
-              </ListItem> */}
+              </ListItem>
+            </List>
+          </Collapse>
+          {/*Sales Invoice  */}
+          <ListItem
+            button
+            onClick={() => setExpandSalesInvoice(!expandSalesInvoice)}
+            style={{ width: 300 }}
+          >
+            <ListItemText primary="Sales Invoice" />
+            {expandSalesInvoice ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </ListItem>
+          <Collapse in={expandSalesInvoice} timeout="auto" unmountOnExit>
+            <Divider />
+            <List component="div" disablePadding>
               <ListItem
                 button
                 component={RouterLink}
@@ -575,42 +582,52 @@ export const ListItems = () => {
                   </ListItem>
                 </List>
               </Collapse>
-              {/* Invoice  */}
+              {/*Proforma Invoice  */}
               <ListItem
                 button
-                onClick={() => setExpandInvoice(!expandInvoice)}
+                onClick={() => setExpandProformaInvoice(!expandProformaInvoice)}
+                style={{ width: 300 }}
+              >
+                <ListItemText primary="Proforma Invoice" />
+                {expandProformaInvoice ? (
+                  <ExpandLessIcon />
+                ) : (
+                  <ExpandMoreIcon />
+                )}
+              </ListItem>
+              <Collapse in={expandProformaInvoice} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/performa-invoice"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText inset primary="Customer Performa Invoice" />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/leads-performa-invoice"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText inset primary="Leads Performa Invoice" />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/*Sales Invoice  */}
+              <ListItem
+                button
+                onClick={() => setExpandSalesInvoice(!expandSalesInvoice)}
                 style={{ width: 300 }}
               >
                 <ListItemText primary="Sales Invoice" />
-                {expandInvoice ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                {expandSalesInvoice ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandInvoice} timeout="auto" unmountOnExit>
+              <Collapse in={expandSalesInvoice} timeout="auto" unmountOnExit>
                 <Divider />
                 <List component="div" disablePadding>
-                  {/* <ListItem
-          button
-          component={RouterLink}
-          to="/invoice/seller-account"
-          style={{ width: 300 }}
-        >
-          <ListItemText inset primary="Seller Account" />
-        </ListItem> */}
-                  {/* <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/performa-invoice"
-                style={{ width: 300 }}
-              >
-                <ListItemText inset primary="Customer Performa Invoice" />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/leads-performa-invoice"
-                style={{ width: 300 }}
-              >
-                <ListItemText inset primary="Leads Performa Invoice" />
-              </ListItem> */}
                   <ListItem
                     button
                     component={RouterLink}
