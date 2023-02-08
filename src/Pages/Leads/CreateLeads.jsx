@@ -151,7 +151,7 @@ export const CreateLeads = (props) => {
           assigned_to: assign ? assign.email : "",
           alternate_contact_name: leads.altContactName,
           email: leads.email,
-          alternate_email: leads.altEmail ? leads.altEmail : "",
+          alternate_email: leads.alternate_email ? leads.alternate_email : "",
           contact: contact1,
           alternate_contact: contact2,
           business_type: businesTypes,
@@ -709,7 +709,7 @@ export const CreateLeads = (props) => {
                     Email : {leads.email}
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    Alt. Email : {leads.altEmail}
+                    Alt. Email : {leads.alternate_email}
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     Contact : {phone}
