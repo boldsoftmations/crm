@@ -147,7 +147,7 @@ export const PriceList = () => {
     }
   };
 
-  const handlePageClick = async (value) => {
+  const handlePageClick = async (event, value) => {
     try {
       const page = value;
       setCurrentPage(page);
