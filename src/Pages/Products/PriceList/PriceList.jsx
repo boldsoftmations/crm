@@ -72,11 +72,17 @@ export const PriceList = () => {
   const getPriceList = async () => {
     try {
       setOpen(true);
-
-      const response = await ProductService.getAllPriceList();
-      setPriceListData(response.data.results);
-      const total = response.data.count;
-      setpageCount(Math.ceil(total / 25));
+      if (currentPage) {
+        const response = await ProductService.getPriceListPaginate(currentPage);
+        setPriceListData(response.data.results);
+        const total = response.data.count;
+        setpageCount(Math.ceil(total / 25));
+      } else {
+        const response = await ProductService.getAllPriceList();
+        setPriceListData(response.data.results);
+        const total = response.data.count;
+        setpageCount(Math.ceil(total / 25));
+      }
       setOpen(false);
     } catch (err) {
       setOpen(false);
