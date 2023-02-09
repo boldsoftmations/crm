@@ -68,7 +68,7 @@ export const SalesInvoiceCreate = (props) => {
       errRef.current.focus();
     }
   };
-  console.log("customerorderBookOption", customerorderBookOption);
+
   const handleProductValue = (value) => {
     console.log("value", value);
     const Data = value;
@@ -77,6 +77,7 @@ export const SalesInvoiceCreate = (props) => {
     var arr = productData.map((fruit) => ({
       product: fruit.product,
       pending_quantity: fruit.pending_quantity,
+      requested_date: fruit.requested_date,
     }));
     setProducts(arr);
     setCustomerOrderBookData(value);
@@ -198,6 +199,20 @@ export const SalesInvoiceCreate = (props) => {
                         label="Pending Quantity"
                         variant="outlined"
                         value={input.pending_quantity}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                      <TextField
+                        fullWidth
+                        type={"date"}
+                        name="requested_date"
+                        size="small"
+                        label="Requested Date"
+                        variant="outlined"
+                        value={input.requested_date}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
                       />
                     </Grid>
                     <Grid item xs={12} sm={3}>

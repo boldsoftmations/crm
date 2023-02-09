@@ -177,8 +177,16 @@ export const SalesInvoiceView = () => {
               <TableHead>
                 <TableRow>
                   <StyledTableCell></StyledTableCell>
-                  <StyledTableCell align="center">PI NUMBER</StyledTableCell>
+                  <StyledTableCell align="center">DATE</StyledTableCell>
+                  {/* <StyledTableCell align="center">company</StyledTableCell> */}
+                  <StyledTableCell align="center">
+                    SALES INVOICE NUMBER
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    TAXABLE AMOUNT
+                  </StyledTableCell>
                   <StyledTableCell align="center">IGST</StyledTableCell>
+                  <StyledTableCell align="center">TOTAL</StyledTableCell>
                   <StyledTableCell align="center">BILING CITY</StyledTableCell>
                   <StyledTableCell align="center">
                     SHIPPING CITY
@@ -240,7 +248,7 @@ export const SalesInvoiceView = () => {
         />
       </Popup>
       <Popup
-        maxWidth={"xl"}
+        fullScreen={true}
         title={"View Sales Invoice"}
         openPopup={openPopup2}
         setOpenPopup={setOpenPopup2}
@@ -291,8 +299,11 @@ function Row(props) {
             {tableExpand ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </StyledTableCell>
+        <StyledTableCell align="center">{row.generation_date}</StyledTableCell>
         <StyledTableCell align="center">{row.invoice_no}</StyledTableCell>
+        <StyledTableCell align="center">{row.amount}</StyledTableCell>
         <StyledTableCell align="center">{row.igst}</StyledTableCell>
+        <StyledTableCell align="center">{row.total}</StyledTableCell>
         <StyledTableCell align="center">{row.billing_city}</StyledTableCell>
         <StyledTableCell align="center">{row.shipping_city}</StyledTableCell>
         <StyledTableCell align="center">
