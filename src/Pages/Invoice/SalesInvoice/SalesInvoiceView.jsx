@@ -187,10 +187,8 @@ export const SalesInvoiceView = () => {
                   </StyledTableCell>
                   <StyledTableCell align="center">IGST</StyledTableCell>
                   <StyledTableCell align="center">TOTAL</StyledTableCell>
-                  <StyledTableCell align="center">BILING CITY</StyledTableCell>
-                  <StyledTableCell align="center">
-                    SHIPPING CITY
-                  </StyledTableCell>
+                  <StyledTableCell align="center">COMPANY</StyledTableCell>
+
                   <StyledTableCell align="center">Action</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -304,8 +302,7 @@ function Row(props) {
         <StyledTableCell align="center">{row.amount}</StyledTableCell>
         <StyledTableCell align="center">{row.igst}</StyledTableCell>
         <StyledTableCell align="center">{row.total}</StyledTableCell>
-        <StyledTableCell align="center">{row.billing_city}</StyledTableCell>
-        <StyledTableCell align="center">{row.shipping_city}</StyledTableCell>
+        <StyledTableCell align="center">{row.company}</StyledTableCell>
         <StyledTableCell align="center">
           <Button
             variant="contained"

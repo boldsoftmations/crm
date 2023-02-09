@@ -68,7 +68,6 @@ export const SalesInvoiceCreate = (props) => {
       errRef.current.focus();
     }
   };
-
   const handleProductValue = (value) => {
     console.log("value", value);
     const Data = value;
@@ -106,6 +105,7 @@ export const SalesInvoiceCreate = (props) => {
       }
     }
   };
+
   return (
     <div>
       <CustomLoader open={open} />
@@ -151,6 +151,105 @@ export const SalesInvoiceCreate = (props) => {
               value={
                 customerorderBookData
                   ? customerorderBookData.shipping_address
+                  : ""
+              }
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              fullWidth
+              multiline
+              name="shipping_state"
+              size="small"
+              label="Shipping State"
+              variant="outlined"
+              value={
+                customerorderBookData
+                  ? customerorderBookData.shipping_state
+                  : ""
+              }
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              fullWidth
+              multiline
+              name="shipping_city"
+              size="small"
+              label="Shipping City"
+              variant="outlined"
+              value={
+                customerorderBookData ? customerorderBookData.shipping_city : ""
+              }
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              fullWidth
+              multiline
+              name="shipping_pincode"
+              size="small"
+              label="Shipping Pincode"
+              variant="outlined"
+              value={
+                customerorderBookData
+                  ? customerorderBookData.shipping_pincode
+                  : ""
+              }
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              fullWidth
+              multiline
+              name="billing_address"
+              size="small"
+              label="Billing Address"
+              variant="outlined"
+              value={
+                customerorderBookData
+                  ? customerorderBookData.billing_address
+                  : ""
+              }
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              fullWidth
+              multiline
+              name="billing_state"
+              size="small"
+              label="Billing State"
+              variant="outlined"
+              value={
+                customerorderBookData ? customerorderBookData.billing_state : ""
+              }
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              fullWidth
+              multiline
+              name="billing_city"
+              size="small"
+              label="Billing City"
+              variant="outlined"
+              value={
+                customerorderBookData ? customerorderBookData.billing_city : ""
+              }
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              fullWidth
+              multiline
+              name="billing_pincode"
+              size="small"
+              label="Billing Pincode"
+              variant="outlined"
+              value={
+                customerorderBookData
+                  ? customerorderBookData.billing_pincode
                   : ""
               }
             />
