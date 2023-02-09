@@ -18,12 +18,18 @@ export const UpdateDispatch = (props) => {
     try {
       e.preventDefault();
       setOpen(true);
-      const data = {
-        sales_invoice: idData.sales_invoice,
-        transporter: inputValue.transporter,
-        lr_number: inputValue.lr_number,
-        lr_date: inputValue.lr_date,
-      };
+      const data = new FormData();
+      data.append("sales_invoice", idData.sales_invoice);
+      data.append("transporter", inputValue.transporter);
+      data.append("lr_number", inputValue.lr_number);
+      data.append("lr_date", inputValue.lr_date);
+
+      // const data = {
+      //   sales_invoice: idData.sales_invoice,
+      //   transporter: inputValue.transporter,
+      //   lr_number: inputValue.lr_number,
+      //   lr_date: inputValue.lr_date,
+      // };
       await InvoiceServices.updateDispatched(idData.id, data);
       getAllDispatchDetails();
       setOpenPopup(false);

@@ -187,9 +187,10 @@ function Row(props) {
       //   sales_invoice: id,
       //   dispatched: checked,
       // };
-      const fd = new FormData();
-      fd.append("dispatched", checked);
-      await InvoiceServices.updateDispatched(row.id, fd);
+      const data = new FormData();
+      data.append("dispatched", checked);
+
+      await InvoiceServices.updateDispatched(row.id, data);
       getAllDispatchDetails();
       setOpen(false);
       setOpenModal(false);
