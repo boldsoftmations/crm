@@ -7,8 +7,18 @@ import InvoiceServices from "../../services/InvoiceService";
 export const UpdateDispatch = (props) => {
   const [open, setOpen] = useState(false);
   const { idData, getAllDispatchDetails, setOpenPopup } = props;
-  console.log("idData :>> ", idData);
+  const [lrCopy, setLrCopy] = useState("");
+  const [podCopy, setPodCopy] = useState("");
   const [inputValue, setInputValue] = useState([]);
+
+  const handleImageLRCopy = (event) => {
+    setLrCopy(event.target.files[0]);
+  };
+
+  const handleImagePODCopy = (event) => {
+    setPodCopy(event.target.files[0]);
+  };
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setInputValue({ ...inputValue, [name]: value });
@@ -23,7 +33,9 @@ export const UpdateDispatch = (props) => {
       data.append("transporter", inputValue.transporter);
       data.append("lr_number", inputValue.lr_number);
       data.append("lr_date", inputValue.lr_date);
-
+      data.append("lr_copy", lrCopy);
+      data.append("pod_copy", podCopy);
+      data.append("dispatched", true);
       // const data = {
       //   sales_invoice: idData.sales_invoice,
       //   transporter: inputValue.transporter,
@@ -32,8 +44,8 @@ export const UpdateDispatch = (props) => {
       // };
       await InvoiceServices.updateDispatched(idData.id, data);
       getAllDispatchDetails();
-      setOpenPopup(false);
       setOpen(false);
+      setOpenPopup(false);
     } catch (error) {
       console.log("error :>> ", error);
       setOpen(false);
@@ -99,6 +111,12 @@ export const UpdateDispatch = (props) => {
                 shrink: true,
               }}
             />
+          </Grid>
+          <Grid item xs={12}>
+            <input type={"file"} name="file" onChange={handleImageLRCopy} />
+          </Grid>
+          <Grid item xs={12}>
+            <input type={"file"} name="file" onChange={handleImagePODCopy} />
           </Grid>
         </Grid>
         <CustomButton
