@@ -12,7 +12,13 @@ import {
   Box,
   Paper,
   Grid,
+  InputLabel,
+  FormControl,
+  Select,
+  IconButton,
+  MenuItem,
 } from "@mui/material";
+import ClearIcon from "@mui/icons-material/Clear";
 import { tableCellClasses } from "@mui/material/TableCell";
 import { CSVLink } from "react-csv";
 import { ErrorMessage } from "./../../Components/ErrorMessage/ErrorMessage";
@@ -80,6 +86,7 @@ export const CustomerOrderBookDetails = () => {
       setOpen(true);
       const filterSearch = value;
       const response = await InvoiceServices.getAllOrderBookDatawithSearch(
+        "customer",
         filterSearch
       );
       if (response) {
@@ -106,6 +113,7 @@ export const CustomerOrderBookDetails = () => {
       if (searchQuery) {
         const response =
           await InvoiceServices.getAllOrderBookDatawithSearchWithPagination(
+            "customer",
             page,
             searchQuery
           );
@@ -230,12 +238,43 @@ export const CustomerOrderBookDetails = () => {
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
           <Box display="flex">
             <Box flexGrow={2}>
-              ;
-              {/* <CustomSearch
-                filterSelectedQuery={searchQuery}
-                handleInputChange={handleInputChange}
-                getResetData={getResetData}
-              /> */}
+              <FormControl
+                sx={{ minWidth: "200px", marginLeft: "1em" }}
+                size="small"
+              >
+                <InputLabel id="demo-simple-select-label">
+                  Filter By State
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  name="values"
+                  label="Filter By State"
+                  value={searchQuery}
+                  onChange={(event) => handleInputChange(event)}
+                  sx={{
+                    "& .MuiSelect-iconOutlined": {
+                      display: searchQuery ? "none" : "",
+                    },
+                    "&.Mui-focused .MuiIconButton-root": {
+                      color: "primary.main",
+                    },
+                  }}
+                  endAdornment={
+                    <IconButton
+                      sx={{
+                        visibility: searchQuery ? "visible" : "hidden",
+                      }}
+                      onClick={getResetData}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  }
+                >
+                  <MenuItem value={"Delhi"}>Delhi</MenuItem>
+                  <MenuItem value={"Maharashtra"}>Maharashtra</MenuItem>
+                </Select>
+              </FormControl>
             </Box>
             <Box flexGrow={2}>
               <h3
