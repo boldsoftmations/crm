@@ -126,7 +126,7 @@ export const CreateDescription = (props) => {
                 onChange={handleInputChange}
               >
                 <MenuItem value={"Yes"}>Yes </MenuItem>
-                <MenuItem value={"Nxo"}>No </MenuItem>
+                <MenuItem value={"No"}>No </MenuItem>
               </Select>
             </FormControl>
           </Grid>
