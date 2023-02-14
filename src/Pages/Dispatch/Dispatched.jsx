@@ -6,19 +6,17 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Grid,
-  Button,
   Paper,
   styled,
   Box,
   TableContainer,
   IconButton,
   Collapse,
-  Checkbox,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-
+// import { saveAs } from "file-saver";
+import FileSaver from "file-saver";
 import { tableCellClasses } from "@mui/material/TableCell";
 import InvoiceServices from "../../services/InvoiceService";
 import { CustomLoader } from "./../../Components/CustomLoader";
@@ -140,6 +138,8 @@ export const Dispatched = () => {
                 <StyledTableCell align="center">
                   Dispatch Location
                 </StyledTableCell>
+                <StyledTableCell align="center">LR COPY</StyledTableCell>
+                <StyledTableCell align="center">POD COPY</StyledTableCell>
                 <StyledTableCell align="center">ACTION</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -174,6 +174,15 @@ function Row(props) {
     setOpenModal(true);
   };
 
+  const handleClickLRCOPY = async (data) => {
+    let url = data.lr_copy ? data.lr_copy : "";
+    FileSaver.saveAs(url, "image");
+  };
+
+  const handleClickPODCOPY = async (data) => {
+    let url = data.pod_copy ? data.pod_copy : "";
+    FileSaver.saveAs(url, "image");
+  };
   return (
     <>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
@@ -191,6 +200,24 @@ function Row(props) {
         <TableCell align="center">{row.customer}</TableCell>
         <TableCell align="center">{row.date}</TableCell>
         <TableCell align="center">{row.dispatch_location}</TableCell>
+        <TableCell align="center">
+          <button
+            type="button"
+            class="btn btn-primary"
+            onClick={() => handleClickLRCOPY(row)}
+          >
+            Download
+          </button>
+        </TableCell>
+        <TableCell align="center">
+          <button
+            type="button"
+            class="btn btn-primary"
+            onClick={() => handleClickPODCOPY(row)}
+          >
+            Download
+          </button>
+        </TableCell>
         <TableCell align="center">
           <button
             type="button"
