@@ -10,13 +10,13 @@ export const UpdateDispatch = (props) => {
   const [lrCopy, setLrCopy] = useState("");
   const [podCopy, setPodCopy] = useState("");
   const [inputValue, setInputValue] = useState([]);
-
+  console.log("idData", idData);
   const handleImageLRCopy = (event) => {
-    setLrCopy(event.target.files[0]);
+    setLrCopy(URL.createObjectURL(event.target.files[0]));
   };
 
   const handleImagePODCopy = (event) => {
-    setPodCopy(event.target.files[0]);
+    setPodCopy(URL.createObjectURL(event.target.files[0]));
   };
 
   const handleInputChange = (event) => {
@@ -30,11 +30,20 @@ export const UpdateDispatch = (props) => {
       setOpen(true);
       const data = new FormData();
       data.append("sales_invoice", idData.sales_invoice);
-      data.append("transporter", inputValue.transporter);
-      data.append("lr_number", inputValue.lr_number);
-      data.append("lr_date", inputValue.lr_date);
-      data.append("lr_copy", lrCopy);
-      data.append("pod_copy", podCopy);
+      data.append(
+        "transporter",
+        inputValue.transporter ? inputValue.transporter : idData.transporter
+      );
+      data.append(
+        "lr_number",
+        inputValue.lr_number ? inputValue.lr_number : idData.lr_number
+      );
+      data.append(
+        "lr_date",
+        inputValue.lr_date ? inputValue.lr_date : idData.lr_date
+      );
+      data.append("lr_copy", lrCopy ? lrCopy : idData.lr_copy);
+      data.append("pod_copy", podCopy ? podCopy : idData.pod_copy);
       data.append("dispatched", true);
       // const data = {
       //   sales_invoice: idData.sales_invoice,
@@ -82,7 +91,11 @@ export const UpdateDispatch = (props) => {
               size="small"
               label="Transporter"
               variant="outlined"
-              value={inputValue.transporter}
+              value={
+                inputValue.transporter
+                  ? inputValue.transporter
+                  : idData.transporter
+              }
               onChange={handleInputChange}
             />
           </Grid>
@@ -93,7 +106,9 @@ export const UpdateDispatch = (props) => {
               size="small"
               label="LR Number"
               variant="outlined"
-              value={inputValue.lr_number}
+              value={
+                inputValue.lr_number ? inputValue.lr_number : idData.lr_number
+              }
               onChange={handleInputChange}
             />
           </Grid>
@@ -105,7 +120,7 @@ export const UpdateDispatch = (props) => {
               size="small"
               label="LR Date"
               variant="outlined"
-              value={inputValue.lr_date}
+              value={inputValue.lr_date ? inputValue.lr_date : idData.lr_date}
               onChange={handleInputChange}
               InputLabelProps={{
                 shrink: true,
@@ -113,10 +128,32 @@ export const UpdateDispatch = (props) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <input type={"file"} name="file" onChange={handleImageLRCopy} />
+            <input
+              type={"file"}
+              name="file"
+              // value={lrCopy ? lrCopy : idData.lr_copy}
+              onChange={handleImageLRCopy}
+            />
+            <img
+              src={lrCopy ? lrCopy : idData.lr_copy}
+              alt="image"
+              height="50px"
+              width="50px"
+            />
           </Grid>
           <Grid item xs={12}>
-            <input type={"file"} name="file" onChange={handleImagePODCopy} />
+            <input
+              type={"file"}
+              name="file"
+              // value={podCopy ? podCopy : idData.pod_copy}
+              onChange={handleImagePODCopy}
+            />
+            <img
+              src={podCopy ? podCopy : idData.pod_copy}
+              alt="image"
+              height="50px"
+              width="50px"
+            />
           </Grid>
         </Grid>
         <CustomButton
