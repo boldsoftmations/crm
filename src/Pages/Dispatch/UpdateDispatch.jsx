@@ -6,11 +6,11 @@ import InvoiceServices from "../../services/InvoiceService";
 
 export const UpdateDispatch = (props) => {
   const [open, setOpen] = useState(false);
-  const { idData, getAllDispatchDetails, setOpenPopup } = props;
+  const { idData, getAllDispatchDetails, setOpenPopup, userData } = props;
   const [lrCopy, setLrCopy] = useState("");
   const [podCopy, setPodCopy] = useState("");
   const [inputValue, setInputValue] = useState([]);
-  console.log("idData", idData);
+
   const handleImageLRCopy = (event) => {
     setLrCopy(URL.createObjectURL(event.target.files[0]));
   };
@@ -141,20 +141,22 @@ export const UpdateDispatch = (props) => {
               width="50px"
             />
           </Grid>
-          <Grid item xs={12}>
-            <input
-              type={"file"}
-              name="file"
-              // value={podCopy ? podCopy : idData.pod_copy}
-              onChange={handleImagePODCopy}
-            />
-            <img
-              src={podCopy ? podCopy : idData.pod_copy}
-              alt="image"
-              height="50px"
-              width="50px"
-            />
-          </Grid>
+          {userData.groups.toString() === "Customer Service" && (
+            <Grid item xs={12}>
+              <input
+                type={"file"}
+                name="file"
+                // value={podCopy ? podCopy : idData.pod_copy}
+                onChange={handleImagePODCopy}
+              />
+              <img
+                src={podCopy ? podCopy : idData.pod_copy}
+                alt="image"
+                height="50px"
+                width="50px"
+              />
+            </Grid>
+          )}
         </Grid>
         <CustomButton
           sx={{ marginTop: "1rem" }}

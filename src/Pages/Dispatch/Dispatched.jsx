@@ -23,6 +23,7 @@ import { CustomLoader } from "./../../Components/CustomLoader";
 import { Popup } from "./../../Components/Popup";
 import { UpdateDispatch } from "./UpdateDispatch";
 import { CustomPagination } from "./../../Components/CustomPagination";
+import { useSelector } from "react-redux";
 export const Dispatched = () => {
   const [dispatchData, setDispatchData] = useState([]);
   const [open, setOpen] = useState(false);
@@ -30,7 +31,8 @@ export const Dispatched = () => {
   const [errMsg, setErrMsg] = useState("");
   const [pageCount, setpageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-
+  const data = useSelector((state) => state.auth);
+  const userData = data.profile;
   useEffect(() => {
     getAllDispatchDetails();
   }, []);
@@ -138,8 +140,12 @@ export const Dispatched = () => {
                 <StyledTableCell align="center">
                   Dispatch Location
                 </StyledTableCell>
-                <StyledTableCell align="center">LR COPY</StyledTableCell>
-                <StyledTableCell align="center">POD COPY</StyledTableCell>
+                {userData.groups.toString() === "Customer Service" && (
+                  <StyledTableCell align="center">LR COPY</StyledTableCell>
+                )}
+                {userData.groups.toString() === "Customer Service" && (
+                  <StyledTableCell align="center">POD COPY</StyledTableCell>
+                )}
                 <StyledTableCell align="center">ACTION</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -149,6 +155,7 @@ export const Dispatched = () => {
                   key={row.id}
                   row={row}
                   getAllDispatchDetails={getAllDispatchDetails}
+                  userData={userData}
                 />
               ))}
             </TableBody>
@@ -164,7 +171,7 @@ export const Dispatched = () => {
 };
 
 function Row(props) {
-  const { row, getAllDispatchDetails } = props;
+  const { row, getAllDispatchDetails, userData } = props;
   const [open, setOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [idData, setIdData] = useState("");
@@ -200,24 +207,28 @@ function Row(props) {
         <TableCell align="center">{row.customer}</TableCell>
         <TableCell align="center">{row.date}</TableCell>
         <TableCell align="center">{row.dispatch_location}</TableCell>
-        <TableCell align="center">
-          <button
-            type="button"
-            class="btn btn-primary"
-            onClick={() => handleClickLRCOPY(row)}
-          >
-            Download
-          </button>
-        </TableCell>
-        <TableCell align="center">
-          <button
-            type="button"
-            class="btn btn-primary"
-            onClick={() => handleClickPODCOPY(row)}
-          >
-            Download
-          </button>
-        </TableCell>
+        {userData.groups.toString() === "Customer Service" && (
+          <TableCell align="center">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onClick={() => handleClickLRCOPY(row)}
+            >
+              Download
+            </button>
+          </TableCell>
+        )}
+        {userData.groups.toString() === "Customer Service" && (
+          <TableCell align="center">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onClick={() => handleClickPODCOPY(row)}
+            >
+              Download
+            </button>
+          </TableCell>
+        )}
         <TableCell align="center">
           <button
             type="button"
@@ -271,6 +282,7 @@ function Row(props) {
           idData={idData}
           getAllDispatchDetails={getAllDispatchDetails}
           setOpenPopup={setOpenModal}
+          userData={userData}
         />
       </Popup>
     </>
