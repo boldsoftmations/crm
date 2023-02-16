@@ -8,53 +8,79 @@ export const UpdateDispatch = (props) => {
   const [open, setOpen] = useState(false);
   const { idData, getAllDispatchDetails, setOpenPopup, userData } = props;
   const [lrCopy, setLrCopy] = useState("");
+  const [lrCopyImage, setLrCopyImage] = useState("");
   const [podCopy, setPodCopy] = useState("");
+  const [podCopyImage, setPodCopyImage] = useState("");
   const [inputValue, setInputValue] = useState([]);
 
   const handleImageLRCopy = (event) => {
-    setLrCopy(URL.createObjectURL(event.target.files[0]));
+    setLrCopy(event.target.files[0]);
+    setLrCopyImage(URL.createObjectURL(event.target.files[0]));
   };
 
   const handleImagePODCopy = (event) => {
-    setPodCopy(URL.createObjectURL(event.target.files[0]));
+    setPodCopy(event.target.files[0]);
+    setPodCopyImage(URL.createObjectURL(event.target.files[0]));
   };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setInputValue({ ...inputValue, [name]: value });
   };
+  console.log("lrCopy ", lrCopy ? lrCopy : idData.lr_copy);
 
   const createLeadsData = async (e) => {
     try {
       e.preventDefault();
       setOpen(true);
       const data = new FormData();
-      data.append("sales_invoice", idData.sales_invoice);
-      data.append(
-        "transporter",
-        inputValue.transporter ? inputValue.transporter : idData.transporter
-      );
-      data.append(
-        "lr_number",
-        inputValue.lr_number ? inputValue.lr_number : idData.lr_number
-      );
-      data.append(
-        "lr_date",
-        inputValue.lr_date ? inputValue.lr_date : idData.lr_date
-      );
-      data.append("lr_copy", lrCopy ? lrCopy : idData.lr_copy);
-      data.append("pod_copy", podCopy ? podCopy : idData.pod_copy);
-      data.append("dispatched", true);
+      if (userData.groups.toString() === "Customer Service") {
+        data.append("sales_invoice", idData.sales_invoice);
+        data.append(
+          "transporter",
+          inputValue.transporter ? inputValue.transporter : idData.transporter
+        );
+        data.append(
+          "lr_number",
+          inputValue.lr_number ? inputValue.lr_number : idData.lr_number
+        );
+        data.append(
+          "lr_date",
+          inputValue.lr_date ? inputValue.lr_date : idData.lr_date
+        );
+        data.append("lr_copy", lrCopy.name ? lrCopy.name : "");
+        data.append("pod_copy", podCopy.name ? podCopy.name : "");
+        data.append("dispatched", true);
+      } else {
+        data.append("sales_invoice", idData.sales_invoice);
+        data.append(
+          "transporter",
+          inputValue.transporter ? inputValue.transporter : idData.transporter
+        );
+        data.append(
+          "lr_number",
+          inputValue.lr_number ? inputValue.lr_number : idData.lr_number
+        );
+        data.append(
+          "lr_date",
+          inputValue.lr_date ? inputValue.lr_date : idData.lr_date
+        );
+        data.append("lr_copy", lrCopy.name ? lrCopy.name : "");
+        data.append("dispatched", true);
+      }
+      console.log("data", data);
       // const data = {
       //   sales_invoice: idData.sales_invoice,
       //   transporter: inputValue.transporter,
       //   lr_number: inputValue.lr_number,
       //   lr_date: inputValue.lr_date,
       // };
-      await InvoiceServices.updateDispatched(idData.id, data);
+      if (lrCopy !== "" && podCopy !== "") {
+        await InvoiceServices.updateDispatched(idData.id, data);
+      }
       getAllDispatchDetails();
-      setOpen(false);
       setOpenPopup(false);
+      setOpen(false);
     } catch (error) {
       console.log("error :>> ", error);
       setOpen(false);
@@ -135,7 +161,7 @@ export const UpdateDispatch = (props) => {
               onChange={handleImageLRCopy}
             />
             <img
-              src={lrCopy ? lrCopy : idData.lr_copy}
+              src={lrCopyImage ? lrCopyImage : idData.pod_copy}
               alt="image"
               height="50px"
               width="50px"
@@ -150,7 +176,7 @@ export const UpdateDispatch = (props) => {
                 onChange={handleImagePODCopy}
               />
               <img
-                src={podCopy ? podCopy : idData.pod_copy}
+                src={podCopyImage ? podCopyImage : idData.pod_copy}
                 alt="image"
                 height="50px"
                 width="50px"

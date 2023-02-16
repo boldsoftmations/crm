@@ -290,7 +290,7 @@ export const SalesInvoiceCreate = (props) => {
                         value={input.product}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={3}>
+                    <Grid item xs={12} sm={2}>
                       <TextField
                         fullWidth
                         name="pending_quantity"
@@ -300,7 +300,7 @@ export const SalesInvoiceCreate = (props) => {
                         value={input.pending_quantity}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={3}>
+                    <Grid item xs={12} sm={2}>
                       <TextField
                         fullWidth
                         type={"date"}
@@ -314,7 +314,7 @@ export const SalesInvoiceCreate = (props) => {
                         }}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={3}>
+                    <Grid item xs={12} sm={2}>
                       <TextField
                         fullWidth
                         name="quantity"
