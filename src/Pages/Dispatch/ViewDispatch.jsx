@@ -29,6 +29,7 @@ import { tableCellClasses } from "@mui/material/TableCell";
 import InvoiceServices from "../../services/InvoiceService";
 import { CustomLoader } from "./../../Components/CustomLoader";
 import { CustomPagination } from "./../../Components/CustomPagination";
+import { CustomSearch } from "./../../Components/CustomSearch";
 export const ViewDispatch = () => {
   const [dispatchData, setDispatchData] = useState([]);
   const [open, setOpen] = useState(false);
@@ -36,7 +37,7 @@ export const ViewDispatch = () => {
   const [errMsg, setErrMsg] = useState("");
   const [pageCount, setpageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-
+  const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => {
     getAllDispatchDetails();
   }, []);
@@ -79,18 +80,67 @@ export const ViewDispatch = () => {
     }
   };
 
+  const handleInputChange = (event) => {
+    setSearchQuery(event.target.value);
+    getSearchData(event.target.value);
+  };
+
+  const getSearchData = async (value) => {
+    try {
+      setOpen(true);
+      const filterSearch = value;
+      const response = await InvoiceServices.getDispatchDataWithSearch(
+        "false",
+        filterSearch
+      );
+      if (response) {
+        setDispatchData(response.data.results);
+        const total = response.data.count;
+        setpageCount(Math.ceil(total / 25));
+      } else {
+        getAllDispatchDetails();
+        setSearchQuery("");
+      }
+      setOpen(false);
+    } catch (error) {
+      console.log("error Search leads", error);
+      setOpen(false);
+    }
+  };
+
+  const getResetData = () => {
+    setSearchQuery("");
+    getAllDispatchDetails();
+  };
+
   const handlePageClick = async (event, value) => {
     try {
       const page = value;
       setCurrentPage(page);
       setOpen(true);
-      const response = await InvoiceServices.getDispatchDataWithPagination(
-        "false",
-        page
-      );
-      setDispatchData(response.data.results);
-      const total = response.data.count;
-      setpageCount(Math.ceil(total / 25));
+      if (searchQuery) {
+        const response = await InvoiceServices.getDispatchSearchWithPagination(
+          "false",
+          page,
+          searchQuery
+        );
+        if (response) {
+          setDispatchData(response.data.results);
+          const total = response.data.count;
+          setpageCount(Math.ceil(total / 25));
+        } else {
+          getAllDispatchDetails();
+          setSearchQuery("");
+        }
+      } else {
+        const response = await InvoiceServices.getDispatchDataWithPagination(
+          "false",
+          page
+        );
+        setDispatchData(response.data.results);
+        const total = response.data.count;
+        setpageCount(Math.ceil(total / 25));
+      }
       setOpen(false);
     } catch (error) {
       console.log("error", error);
@@ -104,7 +154,14 @@ export const ViewDispatch = () => {
       <CustomLoader open={open} />
       <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
         <Box display="flex">
-          <Box flexGrow={2}></Box>
+          <Box flexGrow={2}>
+            {" "}
+            <CustomSearch
+              filterSelectedQuery={searchQuery}
+              handleInputChange={handleInputChange}
+              getResetData={getResetData}
+            />
+          </Box>
           <Box flexGrow={2}>
             <h3
               style={{
@@ -202,6 +259,7 @@ function Row(props) {
   };
   return (
     <React.Fragment>
+      <CustomLoader opn={open} />
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell>
           <IconButton
@@ -226,7 +284,7 @@ function Row(props) {
             variant="contained"
             color="success"
           >
-            View
+            Confirm Dispatch
           </Button>
         </TableCell>
       </TableRow>

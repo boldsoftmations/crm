@@ -16,7 +16,7 @@ const SetupInterceptor = (store) => {
         config.headers = {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
-          "content-type": "multipart/form-data",
+          // "Content-Type": "multipart/form-data",
         };
       }
       return config;

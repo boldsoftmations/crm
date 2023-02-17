@@ -24,6 +24,7 @@ import { Popup } from "./../../Components/Popup";
 import { UpdateDispatch } from "./UpdateDispatch";
 import { CustomPagination } from "./../../Components/CustomPagination";
 import { useSelector } from "react-redux";
+import { CustomSearch } from "./../../Components/CustomSearch";
 export const Dispatched = () => {
   const [dispatchData, setDispatchData] = useState([]);
   const [open, setOpen] = useState(false);
@@ -31,6 +32,7 @@ export const Dispatched = () => {
   const [errMsg, setErrMsg] = useState("");
   const [pageCount, setpageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
   useEffect(() => {
@@ -75,18 +77,67 @@ export const Dispatched = () => {
     }
   };
 
+  const handleInputChange = (event) => {
+    setSearchQuery(event.target.value);
+    getSearchData(event.target.value);
+  };
+
+  const getSearchData = async (value) => {
+    try {
+      setOpen(true);
+      const filterSearch = value;
+      const response = await InvoiceServices.getDispatchDataWithSearch(
+        "true",
+        filterSearch
+      );
+      if (response) {
+        setDispatchData(response.data.results);
+        const total = response.data.count;
+        setpageCount(Math.ceil(total / 25));
+      } else {
+        getAllDispatchDetails();
+        setSearchQuery("");
+      }
+      setOpen(false);
+    } catch (error) {
+      console.log("error Search leads", error);
+      setOpen(false);
+    }
+  };
+
+  const getResetData = () => {
+    setSearchQuery("");
+    getAllDispatchDetails();
+  };
+
   const handlePageClick = async (event, value) => {
     try {
       const page = value;
       setCurrentPage(page);
       setOpen(true);
-      const response = await InvoiceServices.getDispatchDataWithPagination(
-        "true",
-        page
-      );
-      setDispatchData(response.data.results);
-      const total = response.data.count;
-      setpageCount(Math.ceil(total / 25));
+      if (searchQuery) {
+        const response = await InvoiceServices.getDispatchSearchWithPagination(
+          "true",
+          page,
+          searchQuery
+        );
+        if (response) {
+          setDispatchData(response.data.results);
+          const total = response.data.count;
+          setpageCount(Math.ceil(total / 25));
+        } else {
+          getAllDispatchDetails();
+          setSearchQuery("");
+        }
+      } else {
+        const response = await InvoiceServices.getDispatchDataWithPagination(
+          "true",
+          page
+        );
+        setDispatchData(response.data.results);
+        const total = response.data.count;
+        setpageCount(Math.ceil(total / 25));
+      }
       setOpen(false);
     } catch (error) {
       console.log("error", error);
@@ -99,7 +150,14 @@ export const Dispatched = () => {
       <CustomLoader open={open} />
       <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
         <Box display="flex">
-          <Box flexGrow={2}></Box>
+          <Box flexGrow={2}>
+            {" "}
+            <CustomSearch
+              filterSelectedQuery={searchQuery}
+              handleInputChange={handleInputChange}
+              getResetData={getResetData}
+            />
+          </Box>
           <Box flexGrow={2}>
             <h3
               style={{

@@ -303,15 +303,11 @@ export const SalesInvoiceCreate = (props) => {
                     <Grid item xs={12} sm={2}>
                       <TextField
                         fullWidth
-                        type={"date"}
                         name="requested_date"
                         size="small"
                         label="Requested Date"
                         variant="outlined"
                         value={input.requested_date}
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
                       />
                     </Grid>
                     <Grid item xs={12} sm={2}>

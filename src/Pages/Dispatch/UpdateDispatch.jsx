@@ -3,6 +3,7 @@ import { Box, Grid, TextField } from "@mui/material";
 import { useState } from "react";
 import { CustomButton } from "./../../Components/CustomButton";
 import InvoiceServices from "../../services/InvoiceService";
+import { CustomLoader } from "./../../Components/CustomLoader";
 
 export const UpdateDispatch = (props) => {
   const [open, setOpen] = useState(false);
@@ -14,6 +15,7 @@ export const UpdateDispatch = (props) => {
   const [inputValue, setInputValue] = useState([]);
 
   const handleImageLRCopy = (event) => {
+    console.log("event", event);
     setLrCopy(event.target.files[0]);
     setLrCopyImage(URL.createObjectURL(event.target.files[0]));
   };
@@ -32,8 +34,9 @@ export const UpdateDispatch = (props) => {
   const createLeadsData = async (e) => {
     try {
       e.preventDefault();
-      setOpen(true);
+
       const data = new FormData();
+      const dataFactory = new FormData();
       if (userData.groups.toString() === "Customer Service") {
         data.append("sales_invoice", idData.sales_invoice);
         data.append(
@@ -48,39 +51,70 @@ export const UpdateDispatch = (props) => {
           "lr_date",
           inputValue.lr_date ? inputValue.lr_date : idData.lr_date
         );
-        data.append("lr_copy", lrCopy.name ? lrCopy.name : "");
-        data.append("pod_copy", podCopy.name ? podCopy.name : "");
+        if (lrCopy !== "") {
+          data.append("lr_copy", lrCopy ? lrCopy : "");
+        }
+        if (podCopy !== "") {
+          data.append("pod_copy", podCopy ? podCopy : "");
+        }
         data.append("dispatched", true);
       } else {
-        data.append("sales_invoice", idData.sales_invoice);
-        data.append(
+        dataFactory.append("sales_invoice", idData.sales_invoice);
+        dataFactory.append(
           "transporter",
           inputValue.transporter ? inputValue.transporter : idData.transporter
         );
-        data.append(
+        dataFactory.append(
           "lr_number",
           inputValue.lr_number ? inputValue.lr_number : idData.lr_number
         );
-        data.append(
+        dataFactory.append(
           "lr_date",
           inputValue.lr_date ? inputValue.lr_date : idData.lr_date
         );
-        data.append("lr_copy", lrCopy.name ? lrCopy.name : "");
-        data.append("dispatched", true);
+        if (lrCopy !== "") {
+          dataFactory.append("lr_copy", lrCopy ? lrCopy : "");
+        }
+        dataFactory.append("dispatched", true);
       }
-      console.log("data", data);
-      // const data = {
-      //   sales_invoice: idData.sales_invoice,
-      //   transporter: inputValue.transporter,
-      //   lr_number: inputValue.lr_number,
-      //   lr_date: inputValue.lr_date,
-      // };
-      if (lrCopy !== "" && podCopy !== "") {
+      const LRDATE = inputValue.lr_date ? inputValue.lr_date : idData.lr_date;
+      const LRNUMBER = inputValue.lr_number
+        ? inputValue.lr_number
+        : idData.lr_number;
+      const TRANSPORTER = inputValue.transporter
+        ? inputValue.transporter
+        : idData.transporter;
+      console.log("LRDATE", LRDATE);
+
+      if (
+        lrCopy !== "" ||
+        podCopy !== "" ||
+        (LRDATE !== null &&
+          LRNUMBER !== null &&
+          TRANSPORTER !== null &&
+          userData.groups.toString() === "Customer Service")
+      ) {
+        setOpen(true);
         await InvoiceServices.updateDispatched(idData.id, data);
+
+        setOpenPopup(false);
+
+        getAllDispatchDetails();
+        setOpen(false);
+      } else {
+        if (
+          lrCopy !== "" ||
+          (LRDATE !== null && LRNUMBER !== null && TRANSPORTER !== null)
+        ) {
+          setOpen(true);
+          await InvoiceServices.updateDispatched(idData.id, dataFactory);
+
+          setOpenPopup(false);
+
+          getAllDispatchDetails();
+          setOpen(false);
+        }
       }
-      getAllDispatchDetails();
-      setOpenPopup(false);
-      setOpen(false);
     } catch (error) {
       console.log("error :>> ", error);
       setOpen(false);
@@ -89,7 +123,7 @@ export const UpdateDispatch = (props) => {
 
   return (
     <div>
-      {" "}
+      <CustomLoader open={open} />
       <Box component="form" noValidate onSubmit={(e) => createLeadsData(e)}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -161,7 +195,7 @@ export const UpdateDispatch = (props) => {
               onChange={handleImageLRCopy}
             />
             <img
-              src={lrCopyImage ? lrCopyImage : idData.pod_copy}
+              src={lrCopyImage ? lrCopyImage : idData.lr_copy}
               alt="image"
               height="50px"
               width="50px"

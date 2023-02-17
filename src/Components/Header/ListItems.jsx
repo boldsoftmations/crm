@@ -335,7 +335,7 @@ export const ListItems = () => {
                 to="/dispatch/view-dispatch"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Peding Dispatch" />
+                <ListItemText inset primary="Pending Dispatch" />
               </ListItem>
               <ListItem
                 button
@@ -771,7 +771,7 @@ export const ListItems = () => {
                         to="/dispatch/view-dispatch"
                         style={{ width: 300 }}
                       >
-                        <ListItemText inset primary="Peding Dispatch" />
+                        <ListItemText inset primary="Pending Dispatch" />
                       </ListItem>
                       <ListItem
                         button
