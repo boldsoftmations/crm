@@ -20,6 +20,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  FormControlLabel,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -271,18 +272,36 @@ function Row(props) {
         <DialogTitle id="alert-dialog-title">{"Dispatch"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            <Checkbox
+            <FormControlLabel
+              label={`Are you sure you want to dispatch the item with sales invoice
+             inumber : ${id}?`}
+              control={
+                <Checkbox
+                  checked={checked}
+                  onChange={(e) => handleChange(e, row)}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              }
+            />
+            {/* <Checkbox
               checked={checked}
               onChange={(e) => handleChange(e, row)}
               inputProps={{ "aria-label": "controlled" }}
-            />{" "}
-            Are you sure you want to dispatch the item with sales invoice
-            inumber : {id}?
+            />{" "} */}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={(e) => createLeadsData(e)}>Submit</Button>
-          <Button onClick={() => setOpenModal(false)}>Cancel</Button>
+          <Button
+            disabled={checked === false}
+            variant="contained"
+            color="success"
+            onClick={(e) => createLeadsData(e)}
+          >
+            Submit
+          </Button>
+          <Button variant="contained" onClick={() => setOpenModal(false)}>
+            Cancel
+          </Button>
         </DialogActions>
       </Dialog>
     </React.Fragment>
