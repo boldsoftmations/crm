@@ -15,6 +15,7 @@ import {
   Collapse,
   Typography,
 } from "@mui/material";
+import FileSaver from "file-saver";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { tableCellClasses } from "@mui/material/TableCell";
@@ -94,7 +95,7 @@ export const SalesRegisterView = () => {
       }
       setOpen(false);
     } catch (error) {
-      console.log("error Search leads", error);
+      console.log("error Search sale register", error);
       setOpen(false);
     }
   };
@@ -191,6 +192,9 @@ export const SalesRegisterView = () => {
                 <StyledTableCell align="center">
                   Dispatch Location
                 </StyledTableCell>
+                <StyledTableCell align="center">LR COPY</StyledTableCell>
+
+                <StyledTableCell align="center">POD COPY</StyledTableCell>
               </StyledTableRow>
             </TableHead>
             <TableBody>
@@ -225,6 +229,17 @@ function Row(props) {
   const handleChange = (event) => {
     setChecked(event.target.checked);
   };
+
+  const handleClickLRCOPY = async (data) => {
+    let url = data.lr_copy ? data.lr_copy : "";
+    FileSaver.saveAs(url, "image");
+  };
+
+  const handleClickPODCOPY = async (data) => {
+    let url = data.pod_copy ? data.pod_copy : "";
+    FileSaver.saveAs(url, "image");
+  };
+
   console.log("checked", checked);
   const createLeadsData = async (e) => {
     try {
@@ -264,6 +279,25 @@ function Row(props) {
         <TableCell align="center">{row.customer}</TableCell>
         <TableCell align="center">{row.date}</TableCell>
         <TableCell align="center">{row.dispatch_location}</TableCell>
+        <TableCell align="center">
+          <button
+            type="button"
+            class="btn btn-primary"
+            onClick={() => handleClickLRCOPY(row)}
+          >
+            Download
+          </button>
+        </TableCell>
+
+        <TableCell align="center">
+          <button
+            type="button"
+            class="btn btn-primary"
+            onClick={() => handleClickPODCOPY(row)}
+          >
+            Download
+          </button>
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>

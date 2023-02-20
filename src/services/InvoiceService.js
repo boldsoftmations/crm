@@ -152,9 +152,19 @@ const getSalesInvoiceData = () => {
   return CustomAxios.get(`/api/invoice/list-sales-invoice`);
 };
 
+const getSalesInvoiceDataWithSearch = (search) => {
+  return CustomAxios.get(`/api/invoice/list-sales-invoice/?search=${search}`);
+};
+
 const getSalesInvoiceDataWithPagination = (currentPage) => {
   return CustomAxios.get(
     `/api/invoice/list-sales-invoice/?page=${currentPage}`
+  );
+};
+
+const getSalesInvoiceDataWithPaginationAndSearch = (currentPage, search) => {
+  return CustomAxios.get(
+    `/api/invoice/list-sales-invoice/?page=${currentPage}&search=${search}`
   );
 };
 
@@ -248,7 +258,9 @@ const InvoiceServices = {
   getAllcustomerOrderBookData,
   getOTotalPendingQuantity,
   getSalesInvoiceData,
+  getSalesInvoiceDataWithSearch,
   getSalesInvoiceDataWithPagination,
+  getSalesInvoiceDataWithPaginationAndSearch,
   createSalesnvoiceData,
   getSalesnvoiceDataById,
   getAllSaleRegisterData,
