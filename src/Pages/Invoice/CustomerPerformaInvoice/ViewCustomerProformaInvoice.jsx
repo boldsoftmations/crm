@@ -30,6 +30,7 @@ import { getSellerAccountData } from "./../../../Redux/Action/Action";
 import { useDispatch, useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { ErrorMessage } from "./../../../Components/ErrorMessage/ErrorMessage";
+import { CustomSearch } from "./../../../Components/CustomSearch";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -51,7 +52,10 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const FilterOptions = [{ label: "Status", value: "status" }];
+const FilterOptions = [
+  { label: "Status", value: "status" },
+  { label: "Search", value: "search" },
+];
 
 const StatusOptions = [
   { label: "Raised", value: "raised" },
@@ -268,6 +272,13 @@ export const ViewCustomerProformaInvoice = () => {
                     ))}
                   </Select>
                 </FormControl>
+              )}
+              {filterQuery === "search" && (
+                <CustomSearch
+                  filterSelectedQuery={filterSelectedQuery}
+                  handleInputChange={handleInputChange}
+                  getResetData={getResetData}
+                />
               )}
             </Box>
             <Box flexGrow={2}>
