@@ -716,6 +716,14 @@ export const ListItems = () => {
                       >
                         <ListItemText inset primary="Dispatched" />
                       </ListItem>
+                      <ListItem
+                        button
+                        component={RouterLink}
+                        to="/dispatch/view-sales-register"
+                        style={{ width: 300 }}
+                      >
+                        <ListItemText inset primary="Sales Register" />
+                      </ListItem>
                     </List>
                   </Collapse>
                 </>
@@ -1093,6 +1101,29 @@ export const ListItems = () => {
                     style={{ width: 300 }}
                   >
                     <ListItemText inset primary="Product Wise Order Book" />
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              {/* Dispatch */}
+              <ListItem
+                button
+                onClick={() => setDispatchDetails(!dispatchDetails)}
+                style={{ width: 300 }}
+              >
+                <ListItemText primary="Dispatch" />
+                {dispatchDetails ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={dispatchDetails} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/dispatch/view-sales-register"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText inset primary="Sales Register" />
                   </ListItem>
                 </List>
               </Collapse>
