@@ -1,11 +1,19 @@
-import { Collapse, Divider, List, ListItem, ListItemText } from "@mui/material";
+import {
+  Button,
+  Collapse,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
-export const ListItems = () => {
+export const ListItems = (props) => {
+  const { setOpen } = props;
   const [expand, setExpand] = useState(false);
   const [expandDashboard, setExpandDashboard] = useState(false);
   const [expandFollowUp, setExpandFollowUp] = useState(false);
@@ -40,7 +48,12 @@ export const ListItems = () => {
                 to="/user/dashoard"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Dasboard" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Dasboard"
+                />
               </ListItem>
             </List>
           </Collapse>
@@ -63,7 +76,12 @@ export const ListItems = () => {
                 to="/products/view-colors"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Colors" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Colors"
+                />
               </ListItem>
               <ListItem
                 button
@@ -71,7 +89,12 @@ export const ListItems = () => {
                 to="/products/view-brand"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Brand" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Brand"
+                />
               </ListItem>
               <ListItem
                 button
@@ -79,7 +102,12 @@ export const ListItems = () => {
                 to="/products/view-basic-unit"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Basic Unit" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Basic Unit"
+                />
               </ListItem>
               <ListItem
                 button
@@ -95,7 +123,12 @@ export const ListItems = () => {
                 to="/products/view-packing-unit"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Packing Unit" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Packing Unit"
+                />
               </ListItem>
               <ListItem
                 button
@@ -103,7 +136,12 @@ export const ListItems = () => {
                 to="/products/view-description"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Description" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Description"
+                />
               </ListItem>
               <ListItem
                 button
@@ -111,7 +149,12 @@ export const ListItems = () => {
                 to="/products/view-product-code"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Product Code" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Product Code"
+                />
               </ListItem>
               <ListItem
                 button
@@ -119,7 +162,12 @@ export const ListItems = () => {
                 to="/products/view-consumable"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Consumable" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Consumable"
+                />
               </ListItem>
               <ListItem
                 button
@@ -127,7 +175,12 @@ export const ListItems = () => {
                 to="/products/view-finish-goods"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Finish Goods" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Finish Goods"
+                />
               </ListItem>
               <ListItem
                 button
@@ -135,7 +188,12 @@ export const ListItems = () => {
                 to="/products/view-raw-materials"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Raw Materials" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Raw Materials"
+                />
               </ListItem>
               <ListItem
                 button
@@ -143,7 +201,12 @@ export const ListItems = () => {
                 to="/products/view-price-list"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Price List" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Price List"
+                />
               </ListItem>
             </List>
           </Collapse>
@@ -165,7 +228,12 @@ export const ListItems = () => {
                 to="/leads/view-lead"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Lead" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Lead"
+                />
               </ListItem>
               <ListItem
                 button
@@ -173,14 +241,24 @@ export const ListItems = () => {
                 to="/leads/view-assignedto"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Assigned To" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Assigned To"
+                />
               </ListItem>
               <ListItem
                 button
                 onClick={() => setExpandFollowUp(!expandFollowUp)}
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="FollowUp" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="FollowUp"
+                />
                 {expandFollowUp ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
               <Collapse in={expandFollowUp} timeout="auto" unmountOnExit>
@@ -192,7 +270,12 @@ export const ListItems = () => {
                     to="/leads/view-today-followup"
                     style={{ width: 300 }}
                   >
-                    <ListItemText inset primary="Today FollowUp" />
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Today FollowUp"
+                    />
                   </ListItem>
                   <ListItem
                     button
@@ -200,7 +283,12 @@ export const ListItems = () => {
                     to="/leads/view-pending-followup"
                     style={{ width: 300 }}
                   >
-                    <ListItemText inset primary="Pending FollowUp" />
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Pending FollowUp"
+                    />
                   </ListItem>
                   <ListItem
                     button
@@ -208,7 +296,12 @@ export const ListItems = () => {
                     to="/leads/view-upcoming-followup"
                     style={{ width: 300 }}
                   >
-                    <ListItemText inset primary="Upcoming FollowUp" />
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Upcoming FollowUp"
+                    />
                   </ListItem>
                 </List>
               </Collapse>
@@ -232,7 +325,12 @@ export const ListItems = () => {
                 to="/customers/company-details"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Company Details" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Company Details"
+                />
               </ListItem>
             </List>
           </Collapse>
@@ -254,7 +352,12 @@ export const ListItems = () => {
                 to="/invoice/performa-invoice"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Customer Performa Invoice" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Customer Performa Invoice"
+                />
               </ListItem>
               <ListItem
                 button
@@ -262,7 +365,12 @@ export const ListItems = () => {
                 to="/invoice/leads-performa-invoice"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Leads Performa Invoice" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Leads Performa Invoice"
+                />
               </ListItem>
             </List>
           </Collapse>
@@ -284,7 +392,12 @@ export const ListItems = () => {
                 to="/invoice/sales-invoice"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Sales Invoice" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Sales Invoice"
+                />
               </ListItem>
             </List>
           </Collapse>
@@ -306,7 +419,12 @@ export const ListItems = () => {
                 to="/invoice/seller-account"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Seller Account" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Seller Account"
+                />
               </ListItem>
             </List>
           </Collapse>
@@ -328,7 +446,12 @@ export const ListItems = () => {
                 to="/invoice/customer-order-book"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Customer Wise Order Book" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Customer Wise Order Book"
+                />
               </ListItem>
               <ListItem
                 button
@@ -336,7 +459,12 @@ export const ListItems = () => {
                 to="/invoice/product-order-book"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Product Wise Order Book" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Product Wise Order Book"
+                />
               </ListItem>
               <ListItem
                 button
@@ -344,7 +472,12 @@ export const ListItems = () => {
                 to="/invoice/pi-order-book"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="PI Wise Order Book" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="PI Wise Order Book"
+                />
               </ListItem>
             </List>
           </Collapse>
@@ -366,7 +499,12 @@ export const ListItems = () => {
                 to="/dispatch/view-dispatch"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Pending Dispatch" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Pending Dispatch"
+                />
               </ListItem>
               <ListItem
                 button
@@ -374,7 +512,12 @@ export const ListItems = () => {
                 to="/dispatch/view-dispatched"
                 style={{ width: 300 }}
               >
-                <ListItemText inset primary="Dispatched" />
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Dispatched"
+                />
               </ListItem>
             </List>
           </Collapse>
