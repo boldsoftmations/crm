@@ -22,6 +22,7 @@ import { tableCellClasses } from "@mui/material/TableCell";
 import { CustomPagination } from "./../../Components/CustomPagination";
 import { CustomLoader } from "./../../Components/CustomLoader";
 import { CustomSearch } from "./../../Components/CustomSearch";
+import moment from "moment";
 export const SalesRegisterView = () => {
   const errRef = useRef();
   const [open, setOpen] = useState(false);
@@ -249,7 +250,6 @@ function Row(props) {
       //   dispatched: checked,
       // };
       const data = new FormData();
-      data.append("dispatched", checked);
 
       await InvoiceServices.updateDispatched(row.id, data);
       getAllDispatchDetails();
@@ -276,7 +276,9 @@ function Row(props) {
         </TableCell>
         <TableCell align="center">{row.sales_invoice}</TableCell>
         <TableCell align="center">{row.customer}</TableCell>
-        <TableCell align="center">{row.date}</TableCell>
+        <TableCell align="center">
+          {moment(row.date).format("DD-MM-YYYY")}
+        </TableCell>
         <TableCell align="center">{row.dispatch_location}</TableCell>
         <TableCell align="center">
           <Button
