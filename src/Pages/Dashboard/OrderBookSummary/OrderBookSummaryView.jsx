@@ -15,6 +15,13 @@ import React from "react";
 
 export const OrderBookSummaryView = (props) => {
   const { orderBookSummary } = props;
+
+  const numberFormat = (value) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+    }).format(value);
+    
   return (
     <>
       {" "}
@@ -72,7 +79,7 @@ export const OrderBookSummaryView = (props) => {
                         {row.orderbook__proforma_invoice__seller_account__state}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {row.total_amount}
+                        {numberFormat(row.total_amount)}
                       </StyledTableCell>
                     </StyledTableRow>
                   );

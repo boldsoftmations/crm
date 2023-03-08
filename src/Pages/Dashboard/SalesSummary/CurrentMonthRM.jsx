@@ -15,6 +15,13 @@ import { tableCellClasses } from "@mui/material/TableCell";
 
 export const CurrentMonthRM = (props) => {
   const { currentSalesSummaryRM } = props;
+
+  const numberFormat = (value) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+    }).format(value);
+
   return (
     <>
       {" "}
@@ -82,7 +89,7 @@ export const CurrentMonthRM = (props) => {
                         {row.product__unit__name}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {row.total_amount}
+                        {numberFormat(row.total_amount)}
                       </StyledTableCell>
                     </StyledTableRow>
                   );
