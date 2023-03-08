@@ -10,16 +10,10 @@ import {
   TableRow,
   TableCell,
   Button,
-  Collapse,
-  IconButton,
-  Typography,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { ForecastCreate } from "./ForecastCreate";
 import { ForecastUpdate } from "./ForecastUpdate";
-import { CustomLoader } from "../../../Components/CustomLoader";
 import { Popup } from "../../../Components/Popup";
 import CustomerServices from "../../../services/CustomerService";
 
@@ -164,51 +158,51 @@ export const ForecastView = (props) => {
             },
           }}
         >
-          <Table sx={{ minWidth: 1200 }} stickyHeader aria-label="sticky table">
+          <Table sx={{ minWidth: 700 }} stickyHeader aria-label="sticky table">
             <TableHead>
-              <TableRow>
-                <TableCell align="center">SALES PERSON</TableCell>
-                <TableCell align="center">PRODUCT</TableCell>
-                <TableCell align="center">
+              <StyledTableRow>
+                <StyledTableCell align="center">SALES PERSON</StyledTableCell>
+                <StyledTableCell align="center">PRODUCT</StyledTableCell>
+                <StyledTableCell align="center">
                   {` ${months[lastMonth1]} - ${
                     lastMonth1 < currentMonth ? currentYear : currentYear - 1
                   }`}
                   <br />
                   ACTUAL - FORECAST
-                </TableCell>
-                <TableCell align="center">
+                </StyledTableCell>
+                <StyledTableCell align="center">
                   {`${months[currentMonth]} - ${currentYear}`} <br /> ACTUAL -
                   FORECAST
-                </TableCell>
-                <TableCell align="center">
+                </StyledTableCell>
+                <StyledTableCell align="center">
                   {` ${months[lastMonth2]} - ${
                     lastMonth2 < currentMonth ? currentYear : currentYear - 1
                   }`}{" "}
                   <br />
                   ACTUAL - FORECAST
-                </TableCell>
-                <TableCell align="center">
+                </StyledTableCell>
+                <StyledTableCell align="center">
                   {` ${months[nextMonth1]} - ${
                     nextMonth1 > currentMonth ? currentYear : currentYear + 1
                   }`}{" "}
                   <br />
                   ACTUAL - FORECAST
-                </TableCell>
-                <TableCell align="center">
+                </StyledTableCell>
+                <StyledTableCell align="center">
                   {` ${months[nextMonth2]} - ${
                     nextMonth2 > currentMonth ? currentYear : currentYear + 1
                   }`}{" "}
                   <br />
                   ACTUAL - FORECAST
-                </TableCell>
+                </StyledTableCell>
                 {/* {forecastdata.map((row) => (
                   <>
                     {row.product_forecast.map((column, i) => {
                       return (
                         i <= 1 && (
-                          <TableCell align="center">
+                          <StyledTableCell align="center">
                             {column.month} - {column.year}
-                          </TableCell>
+                          </StyledTableCell>
                           // ) : (
                           //   ""
                         )
@@ -216,8 +210,8 @@ export const ForecastView = (props) => {
                     })}
                   </>
                 ))} */}
-                <TableCell align="center">Action</TableCell>
-              </TableRow>
+                <StyledTableCell align="center">Action</StyledTableCell>
+              </StyledTableRow>
               {/* <TableRow>
                 <TableCell align="center"></TableCell>
                 <TableCell align="center"></TableCell>
@@ -231,21 +225,25 @@ export const ForecastView = (props) => {
             </TableHead>
             <TableBody>
               {forecastdata.map((row) => (
-                <TableRow>
-                  <TableCell align="center">{row.sales_person}</TableCell>
-                  <TableCell align="center">{row.product}</TableCell>
+                <StyledTableRow>
+                  <StyledTableCell align="center">
+                    {row.sales_person}
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    {row.product}
+                  </StyledTableCell>
                   {row.product_forecast.map((rowData) => {
                     return rowData.actual !== null ? (
-                      <TableCell align="center">
+                      <StyledTableCell align="center">
                         {rowData.actual} - {rowData.forecast}
-                      </TableCell>
+                      </StyledTableCell>
                     ) : (
-                      <TableCell align="center">
+                      <StyledTableCell align="center">
                         0 - {rowData.forecast}
-                      </TableCell>
+                      </StyledTableCell>
                     );
                   })}
-                  <TableCell align="center">
+                  <StyledTableCell align="center">
                     <Button
                       variant="contained"
                       onClick={() => {
@@ -255,8 +253,8 @@ export const ForecastView = (props) => {
                     >
                       View
                     </Button>
-                  </TableCell>
-                </TableRow>
+                  </StyledTableCell>
+                </StyledTableRow>
               ))}
             </TableBody>
           </Table>
@@ -287,84 +285,3 @@ export const ForecastView = (props) => {
     </>
   );
 };
-
-function Row(props) {
-  const { row, setOpenPopup, setIDForEdit } = props;
-  const [open, setOpen] = useState(false);
-
-  const openInPopup = (item) => {
-    setIDForEdit(item);
-    setOpenPopup(true);
-  };
-
-  return (
-    <>
-      {/* <CustomLoader open={open} /> */}
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            align="center"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-
-        <TableCell align="center">{row.sales_person}</TableCell>
-        <TableCell align="center">{row.product}</TableCell>
-        <TableCell align="center">
-          <Button
-            onClick={() => openInPopup(row.id)}
-            variant="contained"
-            color="success"
-          >
-            View
-          </Button>
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                Product Forecast
-              </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="center">PRODUCT</TableCell>
-                    {row.product_forecast.map((historyRow) => (
-                      <>
-                        <TableCell align="center">
-                          {historyRow.month} - {historyRow.year}
-                        </TableCell>
-                      </>
-                    ))}
-                  </TableRow>
-                  <TableRow>
-                    <TableCell align="center"></TableCell>
-                    {row.product_forecast.map((historyRow) => (
-                      <TableCell align="center">ACTUAL / FORECAST</TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell align="center">{row.product}</TableCell>
-                    {row.product_forecast.map((historyRow) => (
-                      <TableCell align="center">
-                        {historyRow.actual} / {historyRow.forecast}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </>
-  );
-}
