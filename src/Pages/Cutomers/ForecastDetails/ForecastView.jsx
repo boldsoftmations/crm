@@ -58,7 +58,7 @@ export const ForecastView = (props) => {
   // Get the next 2 months
   const nextMonth1 = (currentMonth + 1) % 12;
   const nextMonth2 = (currentMonth + 2) % 12;
-
+  const nextMonth3 = (currentMonth + 3) % 12;
   // Convert month number to month name
   const months = [
     "January",
@@ -74,29 +74,6 @@ export const ForecastView = (props) => {
     "November",
     "December",
   ];
-
-  // Output the results
-  console.log(
-    `Last month 1: ${months[lastMonth1]} ${
-      lastMonth1 < currentMonth ? currentYear : currentYear - 1
-    }`
-  );
-  console.log(
-    `Last month 2: ${months[lastMonth2]} ${
-      lastMonth2 < currentMonth ? currentYear : currentYear - 1
-    }`
-  );
-  console.log(`Current month: ${months[currentMonth]} ${currentYear}`);
-  console.log(
-    `Next month 1: ${months[nextMonth1]} ${
-      nextMonth1 > currentMonth ? currentYear : currentYear + 1
-    }`
-  );
-  console.log(
-    `Next month 2: ${months[nextMonth2]} ${
-      nextMonth2 > currentMonth ? currentYear : currentYear + 1
-    }`
-  );
 
   useEffect(() => {
     if (IDForEdit) getAllForecastDetailsByID();
@@ -171,10 +148,6 @@ export const ForecastView = (props) => {
                   ACTUAL - FORECAST
                 </StyledTableCell>
                 <StyledTableCell align="center">
-                  {`${months[currentMonth]} - ${currentYear}`} <br /> ACTUAL -
-                  FORECAST
-                </StyledTableCell>
-                <StyledTableCell align="center">
                   {` ${months[lastMonth2]} - ${
                     lastMonth2 < currentMonth ? currentYear : currentYear - 1
                   }`}{" "}
@@ -182,46 +155,32 @@ export const ForecastView = (props) => {
                   ACTUAL - FORECAST
                 </StyledTableCell>
                 <StyledTableCell align="center">
+                  {`${months[currentMonth]} - ${currentYear}`} <br /> ACTUAL -
+                  FORECAST
+                </StyledTableCell>
+                <StyledTableCell align="center">
                   {` ${months[nextMonth1]} - ${
                     nextMonth1 > currentMonth ? currentYear : currentYear + 1
                   }`}{" "}
                   <br />
-                  ACTUAL - FORECAST
+                  FORECAST
                 </StyledTableCell>
                 <StyledTableCell align="center">
                   {` ${months[nextMonth2]} - ${
                     nextMonth2 > currentMonth ? currentYear : currentYear + 1
                   }`}{" "}
                   <br />
-                  ACTUAL - FORECAST
+                  FORECAST
                 </StyledTableCell>
-                {/* {forecastdata.map((row) => (
-                  <>
-                    {row.product_forecast.map((column, i) => {
-                      return (
-                        i <= 1 && (
-                          <StyledTableCell align="center">
-                            {column.month} - {column.year}
-                          </StyledTableCell>
-                          // ) : (
-                          //   ""
-                        )
-                      );
-                    })}
-                  </>
-                ))} */}
+                <StyledTableCell align="center">
+                  {` ${months[nextMonth3]} - ${
+                    nextMonth3 > currentMonth ? currentYear : currentYear + 1
+                  }`}{" "}
+                  <br />
+                  FORECAST
+                </StyledTableCell>
                 <StyledTableCell align="center">Action</StyledTableCell>
               </StyledTableRow>
-              {/* <TableRow>
-                <TableCell align="center"></TableCell>
-                <TableCell align="center"></TableCell>
-                <TableCell align="center">ACTUAL / FORECAST</TableCell>
-                <TableCell align="center">ACTUAL / FORECAST</TableCell>
-                <TableCell align="center">ACTUAL / FORECAST</TableCell>
-                <TableCell align="center">ACTUAL / FORECAST</TableCell>
-                <TableCell align="center">ACTUAL / FORECAST</TableCell>
-                <TableCell align="center"></TableCell>
-              </TableRow> */}
             </TableHead>
             <TableBody>
               {forecastdata.map((row) => (
@@ -239,10 +198,11 @@ export const ForecastView = (props) => {
                       </StyledTableCell>
                     ) : (
                       <StyledTableCell align="center">
-                        0 - {rowData.forecast}
+                        - {rowData.forecast}
                       </StyledTableCell>
                     );
                   })}
+                  {/* <StyledTableCell align="center"></StyledTableCell> */}
                   <StyledTableCell align="center">
                     <Button
                       variant="contained"
