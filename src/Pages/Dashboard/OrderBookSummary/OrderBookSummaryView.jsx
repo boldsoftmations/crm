@@ -11,17 +11,30 @@ import {
   TableRow,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 export const OrderBookSummaryView = (props) => {
   const { orderBookSummary } = props;
+  const [sum, setSum] = useState(0);
 
   const numberFormat = (value) =>
     new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
     }).format(value);
-    
+
+  function calculateSum(data) {
+    let sum = 0;
+    data.forEach((row) => {
+      sum += row.total_amount;
+    });
+    setSum(sum);
+  }
+
+  useEffect(() => {
+    calculateSum(orderBookSummary);
+  }, [orderBookSummary]);
+  console.log("sum", sum);
   return (
     <>
       {" "}
@@ -84,6 +97,12 @@ export const OrderBookSummaryView = (props) => {
                     </StyledTableRow>
                   );
                 })}
+                <StyledTableRow>
+                  <StyledTableCell align="center">Total</StyledTableCell>
+                  <StyledTableCell align="center">
+                    {numberFormat(sum)}
+                  </StyledTableCell>
+                </StyledTableRow>
               </TableBody>
             </Table>
           </TableContainer>
