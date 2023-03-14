@@ -398,19 +398,6 @@ export const SalesInvoiceCreate = (props) => {
                         }
                       />
                     </Grid>
-                    {/* <Grid item xs={12} sm={4}>
-                      <TextField
-                        fullWidth
-                        name="requested_date"
-                        size="small"
-                        label="Requested Date"
-                        variant="outlined"
-                        value={input.requested_date}
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                      />
-                    </Grid> */}
 
                     <Grid item xs={12} sm={2}>
                       <TextField
@@ -425,11 +412,12 @@ export const SalesInvoiceCreate = (props) => {
                     <Grid item xs={12} sm={2}>
                       <TextField
                         fullWidth
-                        name="total"
+                        type={"number"}
+                        name="amount"
                         size="small"
-                        label="Total"
+                        label="Amount"
                         variant="outlined"
-                        value={input.total}
+                        value={(input.quantity * input.rate).toFixed(2)}
                       />
                     </Grid>
                     <Grid item xs={12} sm={1}>
