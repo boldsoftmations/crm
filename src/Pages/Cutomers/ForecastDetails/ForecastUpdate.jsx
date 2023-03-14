@@ -11,7 +11,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomerServices from "../../../services/CustomerService";
-import { month, year } from "./DateAndYear";
+// import { month, year } from "./DateAndYear";
 
 export const ForecastUpdate = (props) => {
   const { getAllCompanyDetailsByID, forecastDataByID, setOpenPopup } = props;
