@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import InvoiceServices from "../../services/InvoiceService";
 import {
   styled,
@@ -21,6 +21,14 @@ import {
 import ClearIcon from "@mui/icons-material/Clear";
 import { tableCellClasses } from "@mui/material/TableCell";
 import { CSVLink } from "react-csv";
+// import { DataGrid } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  gridClasses,
+  GridToolbarContainer,
+  GridToolbarExport,
+} from "@mui/x-data-grid";
+import { grey } from "@mui/material/colors";
 import { ErrorMessage } from "./../../Components/ErrorMessage/ErrorMessage";
 import { CustomLoader } from "../../Components/CustomLoader";
 import { CustomSearch } from "./../../Components/CustomSearch";
@@ -35,6 +43,20 @@ const filterOption = [
   { label: "Search", value: "search" },
 ];
 
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport
+        csvOptions={{
+          fileName: "OrderBook-File",
+          // delimiter: ";",
+          utf8WithBom: true,
+        }}
+      />
+    </GridToolbarContainer>
+  );
+}
+
 export const CustomerOrderBookDetails = () => {
   const [orderBookData, setOrderBookData] = useState([]);
   const errRef = useRef();
@@ -48,6 +70,83 @@ export const CustomerOrderBookDetails = () => {
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
   const dataList = useSelector((state) => state.auth);
   const userData = dataList.profile;
+  const [pageSize, setPageSize] = useState(5);
+  const columns = useMemo(
+    () => [
+      {
+        field: "company",
+        headerName: "COMPANY",
+        width: 250,
+        sortable: true,
+        filterable: true,
+      },
+      {
+        field: "pi_date",
+        headerName: "PI DATE",
+        width: 100,
+        sortable: true,
+        filterable: true,
+      },
+      {
+        field: "proforma_invoice",
+        headerName: "PI",
+        width: 100,
+        sortable: true,
+        filterable: true,
+      },
+      {
+        field: "billing_city",
+        headerName: "BILLING CITY",
+        width: 100,
+        sortable: true,
+        filterable: true,
+      },
+      {
+        field: "shipping_city",
+        headerName: "SHIPPING CITY",
+        width: 100,
+        sortable: true,
+        filterable: true,
+      },
+      {
+        field: "product",
+        headerName: "PRODUCT",
+        width: 200,
+        sortable: true,
+        filterable: true,
+      },
+      {
+        field: "quantity",
+        headerName: "QUANTITY",
+        width: 100,
+        sortable: true,
+        filterable: true,
+      },
+      {
+        field: "pending_quantity",
+        headerName: "PENDING QUANTITY",
+        width: 100,
+        sortable: true,
+        filterable: true,
+      },
+      {
+        field: "amount",
+        headerName: "AMOUNT",
+        width: 100,
+        sortable: true,
+        filterable: true,
+      },
+      {
+        field: "special_instructions",
+        headerName: "SPECIAL INSTRUCTIONS",
+        width: 200,
+        sortable: true,
+        filterable: true,
+      },
+    ],
+    []
+  );
+
   useEffect(() => {
     getAllCustomerWiseOrderBook();
   }, []);
@@ -209,6 +308,7 @@ export const CustomerOrderBookDetails = () => {
           "all",
           "customer"
         );
+        console.log("reponse", response.data);
         setExportOrderBookData(response.data);
       }
       setOpen(false);
@@ -233,38 +333,38 @@ export const CustomerOrderBookDetails = () => {
     }
   };
 
-  let data = exportOrderBookData.map((item) => {
-    if (
-      userData.groups.toString() === "Factory-Mumbai-OrderBook" ||
-      userData.groups.toString() === "Factory-Delhi-OrderBook"
-    ) {
-      return {
-        company: item.company,
-        pi_date: item.pi_date,
-        proforma_invoice: item.proforma_invoice,
-        billing_city: item.billing_city,
-        shipping_city: item.shipping_city,
-        product: item.product,
-        quantity: item.quantity,
-        // amount: item.amount,
-        pending_quantity: item.pending_quantity,
-        seller_state: item.seller_state,
-      };
-    } else {
-      return {
-        company: item.company,
-        pi_date: item.pi_date,
-        proforma_invoice: item.proforma_invoice,
-        billing_city: item.billing_city,
-        shipping_city: item.shipping_city,
-        product: item.product,
-        quantity: item.quantity,
-        amount: item.amount,
-        pending_quantity: item.pending_quantity,
-        seller_state: item.seller_state,
-      };
-    }
-  });
+  // let data = exportOrderBookData.map((item) => {
+  //   if (
+  //     userData.groups.toString() === "Factory-Mumbai-OrderBook" ||
+  //     userData.groups.toString() === "Factory-Delhi-OrderBook"
+  //   ) {
+  //     return {
+  //       company: item.company,
+  //       pi_date: item.pi_date,
+  //       proforma_invoice: item.proforma_invoice,
+  //       billing_city: item.billing_city,
+  //       shipping_city: item.shipping_city,
+  //       product: item.product,
+  //       quantity: item.quantity,
+  //       // amount: item.amount,
+  //       pending_quantity: item.pending_quantity,
+  //       seller_state: item.seller_state,
+  //     };
+  //   } else {
+  //     return {
+  //       company: item.company,
+  //       pi_date: item.pi_date,
+  //       proforma_invoice: item.proforma_invoice,
+  //       billing_city: item.billing_city,
+  //       shipping_city: item.shipping_city,
+  //       product: item.product,
+  //       quantity: item.quantity,
+  //       amount: item.amount,
+  //       pending_quantity: item.pending_quantity,
+  //       seller_state: item.seller_state,
+  //     };
+  //   }
+  // });
 
   //   const data = exportOrderBookData.map(item =>
   //     if (userData.groups.toString() === "Factory") {
@@ -288,7 +388,7 @@ export const CustomerOrderBookDetails = () => {
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
           <Box display="flex">
             <Box flexGrow={1}>
-              <FormControl fullWidth size="small">
+              {/* <FormControl fullWidth size="small">
                 <InputLabel id="demo-simple-select-label">Fliter By</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
@@ -304,10 +404,10 @@ export const CustomerOrderBookDetails = () => {
                     </MenuItem>
                   ))}
                 </Select>
-              </FormControl>
+              </FormControl> */}
             </Box>
             <Box flexGrow={1}>
-              {filterQuery ===
+              {/* {filterQuery ===
                 "orderbook__proforma_invoice__seller_account__state" && (
                 <FormControl
                   sx={{ minWidth: "200px", marginLeft: "1em" }}
@@ -355,7 +455,7 @@ export const CustomerOrderBookDetails = () => {
                   handleInputChange={handleInputChange}
                   getResetData={getResetData}
                 />
-              )}
+              )} */}
             </Box>
             <Box flexGrow={2}>
               <h3
@@ -371,7 +471,7 @@ export const CustomerOrderBookDetails = () => {
               </h3>
             </Box>
             <Box flexGrow={0.5}>
-              <CSVLink
+              {/* <CSVLink
                 data={data}
                 headers={headers}
                 filename={"my-file.csv"}
@@ -385,21 +485,58 @@ export const CustomerOrderBookDetails = () => {
                 <Button variant="contained" color="success">
                   Export to Excel
                 </Button>
-              </CSVLink>
+              </CSVLink> */}
             </Box>
+          </Box>{" "}
+          <Box sx={{ height: 450, width: "100%" }}>
+            <DataGrid
+              rows={exportOrderBookData}
+              columns={columns}
+              pageSize={pageSize}
+              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+              rowsPerPageOptions={[5, 10, 20]}
+              getRowId={(row) => row.id}
+              components={{
+                Toolbar: CustomToolbar,
+              }}
+              sx={{
+                [`& .${gridClasses.row}`]: {
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "light" ? grey[200] : grey[900],
+                },
+              }}
+            />
           </Box>
-          <TableContainer
+          {/* <DataGrid
+            columns={columns}
+            rows={exportOrderBookData}
+            getRowId={(row) => row.id}
+            rowsPerPageOptions={[5, 10, 20]}
+            pageSize={pageSize}
+            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+            getRowSpacing={(params) => ({
+              top: params.isFirstVisible ? 0 : 5,
+              bottom: params.isLastVisible ? 0 : 5,
+            })}
+            sx={{
+              [`& .${gridClasses.row}`]: {
+                bgcolor: (theme) =>
+                  theme.palette.mode === "light" ? grey[200] : grey[900],
+              },
+            }}
+            onCellEditCommit={(params) => setRowId(params.id)}
+          /> */}
+          {/* <TableContainer
             sx={{
               maxHeight: 440,
               "&::-webkit-scrollbar": {
                 width: 15,
               },
               "&::-webkit-scrollbar-track": {
-                backgroundColor: "#aaa9ac",
+                backgroundColor: "#f2f2f2",
               },
               "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "#000000",
-                borderRadius: 2,
+                backgroundColor: "#aaa9ac",
               },
             }}
             component={Paper}
@@ -479,11 +616,11 @@ export const CustomerOrderBookDetails = () => {
                 ))}
               </TableBody>
             </Table>
-          </TableContainer>
-          <CustomPagination
+          </TableContainer> */}
+          {/* <CustomPagination
             pageCount={pageCount}
             handlePageClick={handlePageClick}
-          />
+          /> */}
         </Paper>
       </Grid>
     </div>

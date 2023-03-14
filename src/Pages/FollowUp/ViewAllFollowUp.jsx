@@ -30,7 +30,7 @@ import moment from "moment";
 import { styled } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import LeadServices from "../../services/LeadService";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -239,29 +239,26 @@ export const ViewAllFollowUp = (props) => {
                   return (
                     <div key={data.id}>
                       <Timeline
-                         sx={{
+                        sx={{
                           [`& .${timelineOppositeContentClasses.root}`]: {
                             flex: 0.2,
                           },
                         }}
                       >
                         <TimelineItem>
-                          <TimelineOppositeContent sx={{  px: 2 }}>
-                          <Typography variant="h6" component="span">
-                          {moment(data.current_date).format(
-                                "DD/MM/YYYY h:mm:ss"
+                          <TimelineOppositeContent sx={{ px: 2 }}>
+                            <Typography variant="h6">
+                              {moment(data.current_date).format(
+                                "DD/MM/YYYY h:mm"
                               )}
-                              </Typography>
+                            </Typography>
                           </TimelineOppositeContent>
                           <TimelineSeparator>
                             <TimelineDot />
                             <TimelineConnector />
                           </TimelineSeparator>
-                          <TimelineContent sx={{ py: "12px", px: 2 }}>
-                            <Typography
-                              sx={{ fontSize: "20px" }}
-                              component="span"
-                            >
+                          <TimelineContent>
+                            <Typography variant="h6">
                               {moment(data.current_date).format(
                                 "DD/MM/YYYY h:mm:ss"
                               )}
@@ -270,7 +267,7 @@ export const ViewAllFollowUp = (props) => {
                                 "DD/MM/YYYY"
                               )}
                             </Typography>
-                            <Typography sx={{ fontSize: "24px" }}>
+                            <Typography variant="body1" sx={{}}>
                               {data.notes}
                             </Typography>
                           </TimelineContent>
