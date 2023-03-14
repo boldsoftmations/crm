@@ -11,8 +11,8 @@ import {
 import React, { useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomerServices from "../../../services/CustomerService";
-import { year } from "./DateAndYear";
-import { month } from "./DateAndYear";
+// import { year } from "./DateAndYear";
+// import { month } from "./DateAndYear";
 export const ForecastProductCreate = (props) => {
   const { setOpenModal, getAllCompanyDetailsByID, setOpenPopup, IDForEdit } =
     props;
