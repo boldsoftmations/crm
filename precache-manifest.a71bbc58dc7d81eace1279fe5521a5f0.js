@@ -36,7 +36,7 @@ self.__precacheManifest = [
     "url": "/crm/static/media/MSME.185e3428.jpeg"
   },
   {
-    "revision": "94fbdc301455d901b58656d8932a5c98",
+    "revision": "c49161f1c5afc6e86a1c943bb114232d",
     "url": "/crm/index.html"
   }
 ];
