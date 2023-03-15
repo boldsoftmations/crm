@@ -27,7 +27,7 @@ import { Popup } from "./../../../Components/Popup";
 import { CustomerProformaInvoice } from "./CustomerProformaInvoice";
 import ClearIcon from "@mui/icons-material/Clear";
 import { getSellerAccountData } from "./../../../Redux/Action/Action";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { ErrorMessage } from "./../../../Components/ErrorMessage/ErrorMessage";
 import { CustomSearch } from "./../../../Components/CustomSearch";

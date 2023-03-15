@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 
 import { useRef, useState } from "react";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import React, { useEffect } from "react";
 
 import ProductService from "../../../services/ProductService";
@@ -21,10 +21,10 @@ export const UpdateProductCode = (props) => {
 
   const [open, setOpen] = useState(false);
 
-  const desc = useSelector((state) => state.auth);
+  // const desc = useSelector((state) => state.auth);
   const [description, setDescription] = useState([]);
   const [selectedDescription, setSelectedDescription] = useState([]);
-  const [error, setError] = useState("");
+  // const [error, setError] = useState("");
   const [productCode, setProductCode] = useState([]);
   const errRef = useRef();
   const [errMsg, setErrMsg] = useState("");
@@ -82,10 +82,7 @@ export const UpdateProductCode = (props) => {
       };
 
       if (recordForEdit) {
-        const res = await ProductService.updateProductCode(
-          productCode.id,
-          data
-        );
+        await ProductService.updateProductCode(productCode.id, data);
         setOpenPopup(false);
         setOpen(false);
         getproductCodes();
@@ -109,7 +106,6 @@ export const UpdateProductCode = (props) => {
       errRef.current.focus();
     }
   };
-  console.log("error", error);
   useEffect(() => {
     if (recordForEdit) getproductCode(recordForEdit);
   }, [recordForEdit]);

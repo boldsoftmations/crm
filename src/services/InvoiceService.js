@@ -269,7 +269,7 @@ const InvoiceServices = {
   getAllOrderBookDatawithSearch,
   getAllOrderBookDatawithSearchWithPagination,
   getAllOrderBookDatawithPage,
-  getAllcustomerOrderBookData,
+  // getAllcustomerOrderBookData,
   getOTotalPendingQuantity,
   getSalesInvoiceData,
   getSalesInvoiceDataWithSearch,

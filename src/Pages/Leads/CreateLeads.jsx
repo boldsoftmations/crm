@@ -18,7 +18,6 @@ import {
   StepLabel,
   Stepper,
   TextField,
-  Typography,
   Select,
   Checkbox,
 } from "@mui/material";
@@ -29,7 +28,6 @@ import LeadServices from "./../../services/LeadService";
 import ProductService from "../../services/ProductService";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
-import axios from "axios";
 function getSteps() {
   return [
     <b style={{ color: "purple" }}>'Enter Basic Details'</b>,
@@ -74,7 +72,6 @@ export const CreateLeads = (props) => {
   const [phone, setPhone] = useState();
   const [phone2, setPhone2] = useState();
   const [typeData, setTypeData] = useState("");
-  const [pinCodeData, setPinCodeData] = useState([]);
   const [personName, setPersonName] = useState([]);
   const [checked, setChecked] = useState(false);
   const handleChange = (event) => {
@@ -764,10 +761,10 @@ export const CreateLeads = (props) => {
                     Shipping Address : {leads.shipping_address}
                   </Grid>
                   <Grid item xs={12} sm={4}>
-                    Shipping City : {pinCodeData.District}
+                    Shipping City : {leads.city}
                   </Grid>
                   <Grid item xs={12} sm={4}>
-                    Shipping State : {pinCodeData.State}
+                    Shipping State : {leads.State}
                   </Grid>
                   <Grid item xs={12} sm={4}>
                     Shipping Pincode : {leads.shipping_pincode}

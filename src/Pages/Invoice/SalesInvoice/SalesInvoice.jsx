@@ -7,8 +7,9 @@ import logo from "../../../Images/LOGOS3.png";
 import ISO from "../../../Images/ISOLogo.ico";
 import AllLogo from "../../../Images/allLogo.jpg";
 import MSME from "../../../Images/MSME.jpeg";
+import { CustomLoader } from "../../../Components/CustomLoader";
 export const SalesInvoice = (props) => {
-  const { idForEdit, getSalesInvoiceDetails, setOpenPopup } = props;
+  const { idForEdit } = props;
   const [salesInvoiceData, setSalesInvoiceData] = useState([]);
   const [productData, setProductData] = useState([]);
   const [hsnData, setHsnData] = useState([]);
@@ -50,7 +51,7 @@ export const SalesInvoice = (props) => {
 
   return (
     <>
-      {" "}
+      <CustomLoader open={open} />
       <div
         className="container-fluid mb-4"
         style={{ border: "1px Solid #000000" }}

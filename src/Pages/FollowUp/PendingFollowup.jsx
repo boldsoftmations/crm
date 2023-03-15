@@ -95,11 +95,19 @@ export const PendingFollowup = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openPopup, setOpenPopup] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(null);
-  const pendingData = pendingFollowUp.filter((item) => {
-    if (item.id == followupId) {
-      return item;
+
+  function PENDING_DATA(ID, pendingFollowUpData) {
+    console.log("pendingFollowUpData", pendingFollowUpData);
+    for (var i = 0; i < pendingFollowUpData.length; i++) {
+      if (pendingFollowUpData[i].id === ID) {
+        return pendingFollowUpData[i];
+      }
     }
-  });
+  }
+
+  const pendingData = PENDING_DATA(followupId, pendingFollowUp);
+  console.log("followupId", followupId);
+  console.log("pendingData", pendingData);
 
   const handleClose = () => {
     setOpenModal(false);
@@ -192,40 +200,32 @@ export const PendingFollowup = () => {
           Assigned To
         </BootstrapDialogTitle>
         <DialogContent dividers>
-          {pendingData ? (
-            <>
-              {pendingData.map((row, i) => {
-                return (
-                  <Grid container spacing={2} key={i}>
-                    <Grid item xs={12} sm={6}>
-                      ID : {row.id}
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      LEADS : {row.leads}
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      NOTES : {row.notes}
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      CUURENT DATE :{" "}
-                      {moment(row.current_date ? row.current_date : "-").format(
-                        "DD/MM/YYYY h:mm:ss"
-                      )}
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      NEXT FOLLOWUP DATE :{" "}
-                      {moment(
-                        row.next_followup_date ? row.next_followup_date : "-"
-                      ).format("DD/MM/YYYY")}
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      USER : {row.user}
-                    </Grid>
-                  </Grid>
-                );
-              })}
-            </>
-          ) : null}
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              ID : {pendingData ? pendingData.id : ""}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              LEADS : {pendingData ? pendingData.leads : ""}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              NOTES : {pendingData ? pendingData.notes : ""}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              CUURENT DATE :{" "}
+              {moment(pendingData ? pendingData.current_date : "-").format(
+                "DD/MM/YYYY h:mm:ss"
+              )}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              NEXT FOLLOWUP DATE :{" "}
+              {moment(
+                pendingData ? pendingData.next_followup_date : "-"
+              ).format("DD/MM/YYYY")}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              USER : {pendingData ? pendingData.user : ""}
+            </Grid>
+          </Grid>
         </DialogContent>
         <DialogActions>
           <Button

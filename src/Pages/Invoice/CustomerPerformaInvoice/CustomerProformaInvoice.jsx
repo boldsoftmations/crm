@@ -20,7 +20,7 @@ export const CustomerProformaInvoice = (props) => {
   const [hsnData, setHsnData] = useState([]);
   const [open, setOpen] = useState(false);
   const [errMsg, setErrMsg] = useState("");
-  const [totalGst, setTotalGst] = useState("");
+  // const [totalGst, setTotalGst] = useState("");
   const data = useSelector((state) => state.auth);
   const users = data.profile;
   useEffect(() => {

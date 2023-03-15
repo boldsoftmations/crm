@@ -8,7 +8,7 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomerServices from "../../../services/CustomerService";
 // import { month, year } from "./DateAndYear";
@@ -19,7 +19,7 @@ export const ForecastUpdate = (props) => {
   const [open, setOpen] = useState(false);
   const [productForecast, setProductForecast] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState();
-  const [selectedYear, setSelectedYear] = useState();
+  // const [selectedYear, setSelectedYear] = useState();
   const handleFormChange = (event) => {
     const { name, value } = event.target;
     setProductForecast({ ...productForecast, [name]: value });

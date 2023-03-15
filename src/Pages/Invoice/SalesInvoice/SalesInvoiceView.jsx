@@ -13,7 +13,6 @@ import {
   TableCell,
   Button,
   Paper,
-  TableFooter,
   IconButton,
   Collapse,
   Typography,

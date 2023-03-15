@@ -7,8 +7,8 @@ import { BankDetails } from "./../BankDetails/BankDetails";
 import { ContactDetails } from "./../ContactDetails/ContactDetails";
 import { WareHouseDetails } from "./../WareHouseDetails/WareHouseDetails";
 import { SecurityChequesDetails } from "./../SecurityCheckDetails/SecurityChequesDetails";
-import { useDispatch } from "react-redux";
-import { getCompanyName } from "../../../Redux/Action/Action";
+// import { useDispatch } from "react-redux";
+// import { getCompanyName } from "../../../Redux/Action/Action";
 import { CustomLoader } from "../../../Components/CustomLoader";
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -40,7 +40,7 @@ function a11yProps(index) {
 }
 
 export const CreateAllCompanyDetails = (props) => {
-  const { setOpenPopup, getAllCompanyDetails, recordForEdit } = props;
+  const { recordForEdit } = props;
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(0);
@@ -48,7 +48,7 @@ export const CreateAllCompanyDetails = (props) => {
   const [contactData, setContactData] = useState([]);
   const [wareHousedata, setWareHouseData] = useState([]);
   const [securityChequedata, setSecurityChequeData] = useState([]);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   // All Company Details Api
   useEffect(() => {
     if (recordForEdit) getAllCompanyDetailsByID();

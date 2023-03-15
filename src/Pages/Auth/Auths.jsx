@@ -1,21 +1,11 @@
-import {
-  Container,
-  Paper,
-  Box,
-  Grid,
-  Button,
-  Tab,
-  Typography,
-  Tabs,
-} from "@mui/material";
+import { Paper, Box, Tab, Tabs } from "@mui/material";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React from "react";
 import { Login } from "./Login";
 import { SignUp } from "./SignUp";
 
 const paperStyle = { width: 340, margin: "20px auto" };
 export const Auths = () => {
-  const [showLogin, setShowLogin] = useState(true);
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {

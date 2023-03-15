@@ -1,8 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import {
-  Button,
   AppBar,
   Toolbar,
   Typography,

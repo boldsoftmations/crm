@@ -38,7 +38,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export const ForecastView = (props) => {
-  const { forecastdata, getAllCompanyDetailsByID, open } = props;
+  const { forecastdata, getAllCompanyDetailsByID } = props;
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [IDForEdit, setIDForEdit] = useState();

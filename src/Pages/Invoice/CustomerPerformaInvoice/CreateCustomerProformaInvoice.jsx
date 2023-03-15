@@ -59,7 +59,7 @@ export const CreateCustomerProformaInvoice = (props) => {
   const [product, setProduct] = useState([]);
   const [paymentTermData, setPaymentTermData] = useState([]);
   const [deliveryTermData, setDeliveryTermData] = useState([]);
-  const [companyOptions, setCompanyOptions] = useState([]);
+  // const [companyOptions, setCompanyOptions] = useState([]);
   const [contactOptions, setContactOptions] = useState([]);
   const [warehouseOptions, setWarehouseOptions] = useState([]);
   const [companyData, setCompanyData] = useState([]);
@@ -136,7 +136,7 @@ export const CreateCustomerProformaInvoice = (props) => {
     try {
       setOpen(true);
       let response = await CustomerServices.getAllPaginateCompanyData("all");
-      setCompanyOptions(response.data);
+      // setCompanyOptions(response.data);
       setOpen(false);
     } catch (err) {
       setOpen(false);
@@ -251,7 +251,6 @@ export const CreateCustomerProformaInvoice = (props) => {
       // setOpenPopup2(true);
     }
   };
-  console.log("companyData :>> ", companyData);
 
   const openInPopup = () => {
     setOpenPopup3(true);

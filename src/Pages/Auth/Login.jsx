@@ -39,7 +39,7 @@ const paperStyle = {
   margin: "0 auto",
 };
 const avatarStyle = { backgroundColor: "#1bbd7e" };
-const btnstyle = { margin: "8px 0" };
+// const btnstyle = { margin: "8px 0" };
 
 export const Login = () => {
   const [open, setOpen] = useState(false);
@@ -54,7 +54,6 @@ export const Login = () => {
     password: "",
     showPassword: false,
   });
-  const [pwd, setPwd] = useState("");
   const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
@@ -97,7 +96,6 @@ export const Login = () => {
       }
       navigate("/user/home");
       setUser("");
-      setPwd("");
 
       setOpen(false);
     } catch (err) {

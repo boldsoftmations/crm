@@ -197,7 +197,7 @@ export const UpdateDispatch = (props) => {
               />
               <img
                 src={lrCopyImage ? lrCopyImage : idData.lr_copy}
-                alt="image"
+                alt="lrcopy"
                 height="50px"
                 width="50px"
               />
@@ -214,7 +214,7 @@ export const UpdateDispatch = (props) => {
               />
               <img
                 src={podCopyImage ? podCopyImage : idData.pod_copy}
-                alt="image"
+                alt="podcopy"
                 height="50px"
                 width="50px"
               />

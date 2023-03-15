@@ -1,5 +1,5 @@
-import { Autocomplete, Box, Button, Grid, TextField } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import { Box, Button, Grid, TextField } from "@mui/material";
+import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
 import Divider from "@mui/material/Divider";
 import Chip from "@mui/material/Chip";
@@ -19,7 +19,7 @@ export const SalesInvoiceCreate = (props) => {
   const [open, setOpen] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [customerorderBookData, setCustomerOrderBookData] = useState();
-  const [customerorderBookOption, setCustomerOrderBookOption] = useState([]);
+  // const [customerorderBookOption, setCustomerOrderBookOption] = useState([]);
   const [inputValue, setInputValue] = useState([]);
   const [products, setProducts] = useState([
     {
@@ -446,9 +446,9 @@ export const SalesInvoiceCreate = (props) => {
   );
 };
 
-const tfStyle = {
-  "& .MuiButtonBase-root.MuiAutocomplete-clearIndicator": {
-    color: "blue",
-    visibility: "visible",
-  },
-};
+// const tfStyle = {
+//   "& .MuiButtonBase-root.MuiAutocomplete-clearIndicator": {
+//     color: "blue",
+//     visibility: "visible",
+//   },
+// };

@@ -32,11 +32,7 @@ import { Popup } from "./../../../Components/Popup";
 import { LeadsPerformaInvoice } from "./LeadsPerformaInvoice";
 import { useDispatch } from "react-redux";
 import { ErrorMessage } from "./../../../Components/ErrorMessage/ErrorMessage";
-import {
-  getAllLeadData,
-  getSellerAccountData,
-} from "./../../../Redux/Action/Action";
-import LeadServices from "../../../services/LeadService";
+import { getSellerAccountData } from "./../../../Redux/Action/Action";
 import { CustomSearch } from "./../../../Components/CustomSearch";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {

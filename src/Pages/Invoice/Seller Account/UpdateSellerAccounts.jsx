@@ -8,8 +8,8 @@ import {
   TextField,
 } from "@mui/material";
 import axios from "axios";
-import CustomerServices from "../../../services/CustomerService";
-import { useSelector } from "react-redux";
+// import CustomerServices from "../../../services/CustomerService";
+// import { useSelector } from "react-redux";
 import InvoiceServices from "./../../../services/InvoiceService";
 
 export const UpdateSellerAccounts = (props) => {
@@ -18,7 +18,7 @@ export const UpdateSellerAccounts = (props) => {
   const [inputValue, setInputValue] = useState([]);
   const [bankData, setBankData] = useState([]);
   const [errMsg, setErrMsg] = useState("");
-  const data = useSelector((state) => state.auth);
+  // const data = useSelector((state) => state.auth);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;

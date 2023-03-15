@@ -94,12 +94,16 @@ export const TodayFollowup = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openPopup, setOpenPopup] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(null);
-  const todayData = todayFollowUp.filter((item) => {
-    if (item.id == followupId) {
-      return item;
-    }
-  });
 
+  function TODAY_DATA(ID, todayFollowUpData) {
+    for (var i = 0; i < todayFollowUpData.length; i++) {
+      if (todayFollowUpData[i].id === ID) {
+        return todayFollowUpData[i];
+      }
+    }
+  }
+
+  const todayData = TODAY_DATA(followupId, todayFollowUp);
   const handleClose = () => {
     setOpenModal(false);
   };
@@ -194,40 +198,32 @@ export const TodayFollowup = () => {
           Assigned To
         </BootstrapDialogTitle>
         <DialogContent dividers>
-          {todayData ? (
-            <>
-              {todayData.map((row, i) => {
-                return (
-                  <Grid container spacing={2} key={i}>
-                    <Grid item xs={12} sm={6}>
-                      ID : {row.id}
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      LEADS : {row.leads}
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      NOTES : {row.notes}
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      CUURENT DATE :{" "}
-                      {moment(row.current_date ? row.current_date : "-").format(
-                        "DD/MM/YYYY h:mm:ss"
-                      )}
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      NEXT FOLLOWUP DATE :{" "}
-                      {moment(
-                        row.next_followup_date ? row.next_followup_date : "-"
-                      ).format("DD/MM/YYYY")}
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      USER : {row.user}
-                    </Grid>
-                  </Grid>
-                );
-              })}
-            </>
-          ) : null}
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              ID : {todayData ? todayData.id : ""}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              LEADS : {todayData ? todayData.leads : ""}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              NOTES : {todayData ? todayData.notes : ""}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              CUURENT DATE :{" "}
+              {moment(todayData ? todayData.current_date : "-").format(
+                "DD/MM/YYYY h:mm:ss"
+              )}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              NEXT FOLLOWUP DATE :{" "}
+              {moment(todayData ? todayData.next_followup_date : "-").format(
+                "DD/MM/YYYY"
+              )}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              USER : {todayData ? todayData.user : ""}
+            </Grid>
+          </Grid>
         </DialogContent>
         <DialogActions>
           <Button

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import {
   Box,
@@ -9,7 +9,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   TableCell,
   Button,
 } from "@mui/material";
@@ -17,7 +16,7 @@ import { tableCellClasses } from "@mui/material/TableCell";
 import { Popup } from "./../../../Components/Popup";
 import { CreateBankDetails } from "./CreateBankDetails";
 import { UpdateBankDetails } from "./UpdateBankDetails";
-import CustomerServices from "../../../services/CustomerService";
+// import CustomerServices from "../../../services/CustomerService";
 import { CustomLoader } from "../../../Components/CustomLoader";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
