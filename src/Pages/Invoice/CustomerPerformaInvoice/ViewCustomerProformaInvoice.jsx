@@ -370,7 +370,7 @@ export const ViewCustomerProformaInvoice = () => {
                         {row.generation_date}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {row.company}
+                        {row.company_name}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {row.billing_city}
