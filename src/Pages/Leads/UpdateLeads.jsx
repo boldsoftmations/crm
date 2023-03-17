@@ -1017,7 +1017,7 @@ export const UpdateLeads = (props) => {
         </Grid>
       </Grid>
       <Popup
-        maxWidth={"xl"}
+        fullScreen={true}
         title={"Create Leads Proforma Invoice"}
         openPopup={openPopup2}
         setOpenPopup={setOpenPopup2}

@@ -14,6 +14,7 @@ import { ErrorMessage } from "./../../../Components/ErrorMessage/ErrorMessage";
 
 export const LeadsPerformaInvoice = (props) => {
   const { idForEdit, setOpenPopup, getAllLeadsPIDetails } = props;
+  console.log("idForEdit", idForEdit);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [invoiceData, setInvoiceData] = useState([]);
   const [hsnData, setHsnData] = useState([]);
@@ -33,6 +34,7 @@ export const LeadsPerformaInvoice = (props) => {
         idForEdit
       );
       setInvoiceData(response.data);
+
       setProductData(response.data.products);
       setHsnData(response.data.hsn_table);
       setOpen(false);
@@ -40,15 +42,49 @@ export const LeadsPerformaInvoice = (props) => {
       setOpen(false);
     }
   };
-
+  console.log("invoicedata", invoiceData);
   const str = invoiceData.amount_in_words ? invoiceData.amount_in_words : "";
   const arr = str.split(" ");
   for (var i = 0; i < arr.length; i++) {
     arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
   }
   const AMOUNT_IN_WORDS = arr.join(" ");
-
+  // from Raised to Pending Approval Status
   const SendForApprovalPI = async (e) => {
+    try {
+      e.preventDefault();
+      const req = {
+        proformainvoice: idForEdit,
+        status: "Pending Approval",
+        address: invoiceData.address,
+        buyer_order_no: invoiceData.buyer_order_no,
+        city: invoiceData.city,
+        contact: invoiceData.contact,
+        delivery_terms: invoiceData.delivery_terms,
+        lead: invoiceData.lead,
+        payment_terms: invoiceData.payment_terms,
+        pincode: invoiceData.pincode,
+        place_of_supply: invoiceData.place_of_supply,
+        raised_by: invoiceData.raised_by,
+        seller_account: invoiceData.seller_account,
+        state: invoiceData.state,
+        type: invoiceData.type,
+      };
+      await InvoiceServices.updateLeadsProformaInvoiceData(idForEdit, req);
+      setOpenPopup(false);
+      setOpen(false);
+      getAllLeadsPIDetails();
+    } catch (err) {
+      setOpen(false);
+      setErrMsg(
+        err.response.data.errors.non_field_errors
+          ? err.response.data.errors.non_field_errors
+          : err.response.data.errors
+      );
+    }
+  };
+  // from Pending Approval to Approved Status
+  const SendForApprovedPI = async (e) => {
     try {
       e.preventDefault();
       const req = {
@@ -89,15 +125,30 @@ export const LeadsPerformaInvoice = (props) => {
       >
         <div className="row p-4">
           <div className="col-xs-6 ">
-            {invoiceData.status !== "Pending Approval" && (
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handlePrint}
-              >
-                Export
-              </button>
-            )}
+            {invoiceData.status !== "Pending Approval" &&
+              invoiceData.status !== "Raised" && (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handlePrint}
+                >
+                  Export
+                </button>
+              )}
+          </div>
+          <div className="col-xs-6 ">
+            {users.groups.toString() === "Sales" &&
+              invoiceData.status === "Raised" && (
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={(e) => {
+                    SendForApprovalPI(e);
+                  }}
+                >
+                  Send For Approval
+                </button>
+              )}
           </div>
           <div className="col-xs-6">
             {users.is_staff === true &&
@@ -106,7 +157,7 @@ export const LeadsPerformaInvoice = (props) => {
                   type="button"
                   className="btn btn-primary"
                   onClick={(e) => {
-                    SendForApprovalPI(e);
+                    SendForApprovedPI(e);
                     // SendForApprovalStatus(e);
                   }}
                 >
@@ -200,12 +251,7 @@ export const LeadsPerformaInvoice = (props) => {
                         {invoiceData.raised_by_first_name}&nbsp;&nbsp;
                         {invoiceData.raised_by_last_name}
                       </div>
-                      <div>
-                        <strong style={{ ...typographyStyling }}>
-                          Customer Name :{" "}
-                        </strong>{" "}
-                        {invoiceData.company}
-                      </div>
+
                       <div>
                         <strong style={{ ...typographyStyling }}>
                           Valid Until :{" "}
@@ -278,7 +324,7 @@ export const LeadsPerformaInvoice = (props) => {
                         <strong style={{ ...typographyStyling }}>
                           Company :{" "}
                         </strong>
-                        {invoiceData.company},
+                        {invoiceData.company_name},
                       </div>
                       <div>
                         <strong style={{ ...typographyStyling }}>
@@ -317,6 +363,12 @@ export const LeadsPerformaInvoice = (props) => {
                         </strong>
                         {invoiceData.contact}
                       </div>
+                      <div>
+                        <strong style={{ ...typographyStyling }}>
+                          Contact Person Name:{" "}
+                        </strong>
+                        {invoiceData.contact_person_name}
+                      </div>
                     </address>
                   </div>
                   <div
@@ -332,7 +384,7 @@ export const LeadsPerformaInvoice = (props) => {
                         <strong style={{ ...typographyStyling }}>
                           Company :{" "}
                         </strong>
-                        {invoiceData.company},
+                        {invoiceData.company_name},
                       </div>
                       <div>
                         <strong style={{ ...typographyStyling }}>
@@ -369,6 +421,12 @@ export const LeadsPerformaInvoice = (props) => {
                           Contact :{" "}
                         </strong>
                         {invoiceData.contact}
+                      </div>
+                      <div>
+                        <strong style={{ ...typographyStyling }}>
+                          Contact Person Name:{" "}
+                        </strong>
+                        {invoiceData.contact_person_name}
                       </div>
                     </address>
                   </div>

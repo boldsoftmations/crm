@@ -30,10 +30,11 @@ import { CreateLeadsProformaInvoice } from "./CreateLeadsProformaInvoice";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Popup } from "./../../../Components/Popup";
 import { LeadsPerformaInvoice } from "./LeadsPerformaInvoice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ErrorMessage } from "./../../../Components/ErrorMessage/ErrorMessage";
 import { getSellerAccountData } from "./../../../Redux/Action/Action";
 import { CustomSearch } from "./../../../Components/CustomSearch";
+import { UpdateLeadsProformaInvoice } from "./UpdateLeadsProformaInvoice";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
@@ -81,6 +82,8 @@ export const ViewLeadsProformaInvoice = () => {
   const [filterQuery, setFilterQuery] = useState("status");
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
+  const data = useSelector((state) => state.auth);
+  const users = data.profile;
   const handleInputChange = (event) => {
     setFilterSelectedQuery(event.target.value);
     getSearchData(event.target.value);
@@ -207,6 +210,11 @@ export const ViewLeadsProformaInvoice = () => {
   const openInPopup = (item) => {
     setIDForEdit(item);
     setOpenPopup2(true);
+  };
+
+  const openInPopup2 = (item) => {
+    setIDForEdit(item);
+    setOpenPopup(true);
   };
 
   const getResetData = () => {
@@ -394,6 +402,16 @@ export const ViewLeadsProformaInvoice = () => {
                         >
                           View
                         </Button>
+                        {users.groups.toString() === "Sales" &&
+                          row.status === "Raised" && (
+                            <Button
+                              variant="contained"
+                              color="success"
+                              onClick={() => openInPopup2(row.pi_number)}
+                            >
+                              Edit
+                            </Button>
+                          )}
                       </StyledTableCell>
                     </StyledTableRow>
                   );
@@ -415,14 +433,15 @@ export const ViewLeadsProformaInvoice = () => {
         </Paper>
       </Grid>
       <Popup
-        maxWidth={"xl"}
-        title={"Create Lead Proforma Invoice"}
+        fullScreen={true}
+        title={"Update Lead Proforma Invoice"}
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
       >
-        <CreateLeadsProformaInvoice
+        <UpdateLeadsProformaInvoice
           getAllLeadsPIDetails={getAllLeadsPIDetails}
           setOpenPopup={setOpenPopup}
+          idForEdit={idForEdit}
         />
       </Popup>
       <Popup
