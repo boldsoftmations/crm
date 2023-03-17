@@ -416,6 +416,12 @@ export const CustomerProformaInvoice = (props) => {
                         </strong>
                         {invoiceData.contact}
                       </div>
+                      <div>
+                        <strong style={{ ...typographyStyling }}>
+                          Contact Person Name:{" "}
+                        </strong>
+                        {invoiceData.contact_person_name}
+                      </div>
                     </address>
                   </div>
                 </div>
