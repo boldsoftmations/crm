@@ -2,25 +2,25 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import InvoiceServices from "../../services/InvoiceService";
 import {
   styled,
-  Table,
-  TableBody,
-  TableContainer,
-  TableHead,
+  // Table,
+  // TableBody,
+  // TableContainer,
+  // TableHead,
   TableRow,
   TableCell,
-  Button,
+  // Button,
   Box,
   Paper,
   Grid,
-  InputLabel,
-  FormControl,
-  Select,
-  IconButton,
-  MenuItem,
+  // InputLabel,
+  // FormControl,
+  // Select,
+  // IconButton,
+  // MenuItem,
 } from "@mui/material";
-import ClearIcon from "@mui/icons-material/Clear";
+// import ClearIcon from "@mui/icons-material/Clear";
 import { tableCellClasses } from "@mui/material/TableCell";
-import { CSVLink } from "react-csv";
+// import { CSVLink } from "react-csv";
 // import { DataGrid } from "@mui/x-data-grid";
 import {
   DataGrid,
@@ -31,8 +31,8 @@ import {
 import { grey } from "@mui/material/colors";
 import { ErrorMessage } from "./../../Components/ErrorMessage/ErrorMessage";
 import { CustomLoader } from "../../Components/CustomLoader";
-import { CustomSearch } from "./../../Components/CustomSearch";
-import { CustomPagination } from "./../../Components/CustomPagination";
+// import { CustomSearch } from "./../../Components/CustomSearch";
+// import { CustomPagination } from "./../../Components/CustomPagination";
 import { useSelector } from "react-redux";
 
 const filterOption = [

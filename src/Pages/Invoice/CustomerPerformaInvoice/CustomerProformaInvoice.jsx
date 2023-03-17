@@ -47,6 +47,40 @@ export const CustomerProformaInvoice = (props) => {
     arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
   }
   const AMOUNT_IN_WORDS = arr.join(" ");
+  // from Pending Approval or Approved to Raised Status
+  const SendForRaisedlPI = async (e) => {
+    try {
+      e.preventDefault();
+      const req = {
+        proformainvoice: idForEdit,
+        status: "Raised",
+        address: invoiceData.address,
+        buyer_order_no: invoiceData.buyer_order_no,
+        city: invoiceData.city,
+        contact: invoiceData.contact,
+        delivery_terms: invoiceData.delivery_terms,
+        company: invoiceData.company,
+        payment_terms: invoiceData.payment_terms,
+        pincode: invoiceData.pincode,
+        place_of_supply: invoiceData.place_of_supply,
+        raised_by: invoiceData.raised_by,
+        seller_account: invoiceData.seller_account,
+        state: invoiceData.state,
+        type: invoiceData.type,
+      };
+      await InvoiceServices.updateCustomerProformaInvoiceData(idForEdit, req);
+      setOpenPopup(false);
+      setOpen(false);
+      getCustomerPIDetails();
+    } catch (err) {
+      setOpen(false);
+      setErrMsg(
+        err.response.data.errors.non_field_errors
+          ? err.response.data.errors.non_field_errors
+          : err.response.data.errors
+      );
+    }
+  };
   // from Raised to Pending Approval Status
   const SendForApprovalPI = async (e) => {
     try {
@@ -146,12 +180,27 @@ export const CustomerProformaInvoice = (props) => {
                 </button>
               )}
           </div>
+          <div className="col-xs-6 ">
+            {(invoiceData.status === "Pending Approval" ||
+              invoiceData.status === "Approved") &&
+              (users.is_staff === true || users.groups[0] === "Accounts") && (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={(e) => {
+                    SendForRaisedlPI(e);
+                  }}
+                >
+                  Back To Raised
+                </button>
+              )}
+          </div>
           <div className="col-xs-6">
             {users.is_staff === true &&
               invoiceData.status === "Pending Approval" && (
                 <button
                   type="button"
-                  className="btn btn-primary"
+                  className="btn btn-success"
                   onClick={(e) => {
                     SendForApprovedPI(e);
                     // SendForApprovalStatus(e);
@@ -160,11 +209,13 @@ export const CustomerProformaInvoice = (props) => {
                   Approve
                 </button>
               )}
+          </div>
+          <div className="col-xs-6">
             {invoiceData.status === "Approved" &&
               users.groups[0] === "Accounts" && (
                 <button
                   type="button"
-                  className="btn btn-primary"
+                  className="btn btn-success"
                   onClick={() => setOpenPopup2(true)}
                 >
                   Confirmation Payment
