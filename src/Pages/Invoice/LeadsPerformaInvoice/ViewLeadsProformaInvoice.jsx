@@ -339,11 +339,10 @@ export const ViewLeadsProformaInvoice = () => {
                 width: 15,
               },
               "&::-webkit-scrollbar-track": {
-                backgroundColor: "#aaa9ac",
+                backgroundColor: "#f2f2f2",
               },
               "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "#000000",
-                borderRadius: 2,
+                backgroundColor: "#aaa9ac",
               },
             }}
           >
