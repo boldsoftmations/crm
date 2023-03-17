@@ -241,7 +241,9 @@ export const UpdateCustomerProformaInvoice = (props) => {
           ? selectedSellerData.branch
           : customerPIdataByID.seller_branch,
         company: customerData.id,
-        company_name: customerData.company_name,
+        company_name: customerPIdataByID.company_name
+          ? customerPIdataByID.company_name
+          : customerData.name,
         contact: contactData.contact,
         contact_person_name: contactData.name,
         alternate_contact: contactData.alternate_contact,
