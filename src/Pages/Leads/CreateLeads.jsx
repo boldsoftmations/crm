@@ -28,34 +28,6 @@ import LeadServices from "./../../services/LeadService";
 import ProductService from "../../services/ProductService";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
-function getSteps() {
-  return [
-    <b style={{ color: "purple" }}>'Enter Basic Details'</b>,
-    <b style={{ color: "purple" }}>'Enter Company Details'</b>,
-    <b style={{ color: "purple" }}>'Enter Shipping Details'</b>,
-    <b style={{ color: "purple" }}>'Review'</b>,
-  ];
-}
-
-const BusinessTypeData = [
-  {
-    value: "trader",
-    label: "Trader",
-  },
-
-  {
-    value: "distributor",
-    label: "Distributor",
-  },
-  {
-    value: "retailer",
-    label: "Retailer",
-  },
-  {
-    value: "end_user",
-    label: "End User",
-  },
-];
 
 export const CreateLeads = (props) => {
   const { setOpenPopup, getleads } = props;
@@ -67,6 +39,8 @@ export const CreateLeads = (props) => {
   const [reference, setReference] = useState();
   const [assigned, setAssigned] = useState([]);
   const [assign, setAssign] = useState([]);
+  const [stateSelected, setStateSelected] = useState("");
+  const [shippingStateSelected, setShippingStateSelected] = useState("");
   const [businesTypes, setBusinesTypes] = useState();
   const [descriptionMenuData, setDescriptionMenuData] = useState([]);
   const [phone, setPhone] = useState();
@@ -76,6 +50,10 @@ export const CreateLeads = (props) => {
   const [checked, setChecked] = useState(false);
   const handleChange = (event) => {
     setTypeData(event.target.value);
+  };
+
+  const handleSameAsAddress = (event) => {
+    setChecked(event.target.checked);
   };
 
   const handlePhoneChange = (newPhone) => {
@@ -130,6 +108,12 @@ export const CreateLeads = (props) => {
       console.error(err);
     }
   };
+  console.log(
+    "checked",
+    checked == true && shippingStateSelected === ""
+      ? stateSelected
+      : leads.shipping_state
+  );
 
   useEffect(() => {
     getDescriptionNoData();
@@ -142,7 +126,7 @@ export const CreateLeads = (props) => {
         let REFERENCE = reference;
         let contact1 = phone ? `+${phone}` : phone;
         let contact2 = phone2 ? `+${phone2}` : phone2;
-        console.log("assign :>> ", assign ? assign.emp_id : "");
+
         const data = {
           name: leads.name,
           assigned_to: assign ? assign.email : "",
@@ -157,7 +141,7 @@ export const CreateLeads = (props) => {
           pan_number: leads.pan_number,
           address: leads.address,
           city: leads.city,
-          state: leads.state,
+          state: stateSelected,
           country: leads.country,
           pincode: leads.pinCode,
           website: leads.website,
@@ -173,11 +157,7 @@ export const CreateLeads = (props) => {
               ? leads.shipping_city
               : "",
           shipping_state:
-            checked === true
-              ? leads.state
-              : leads.shipping_state
-              ? leads.shipping_state
-              : "",
+            checked === true ? stateSelected : shippingStateSelected,
           shipping_pincode:
             checked === true ? leads.pinCode : leads.shipping_pincode,
         };
@@ -478,14 +458,19 @@ export const CreateLeads = (props) => {
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      name="state"
+                    <Autocomplete
+                      style={{
+                        minWidth: 220,
+                      }}
                       size="small"
-                      label="State"
-                      variant="outlined"
-                      value={leads.state ? leads.state : ""}
-                      onChange={handleInputChange}
+                      onChange={(event, value) => setStateSelected(value)}
+                      name="state"
+                      value={stateSelected}
+                      options={StateOption.map((option) => option.label)}
+                      getOptionLabel={(option) => option}
+                      renderInput={(params) => (
+                        <TextField {...params} label="State" />
+                      )}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -567,7 +552,7 @@ export const CreateLeads = (props) => {
                       control={
                         <Checkbox
                           checked={checked}
-                          onChange={(event) => setChecked(event.target.checked)}
+                          onChange={handleSameAsAddress}
                           inputProps={{ "aria-label": "controlled" }}
                         />
                       }
@@ -649,21 +634,35 @@ export const CreateLeads = (props) => {
                       onChange={handleInputChange}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={3}>
                     <TextField
-                      fullWidth
+                      fulWidth
                       name="shipping_state"
                       size="small"
-                      label="Shipping State"
+                      label="Same as State"
                       variant="outlined"
                       value={
-                        checked === true
-                          ? leads.state
-                          : leads.shipping_state
-                          ? leads.shipping_state
-                          : ""
+                        checked === true ? stateSelected : shippingStateSelected
                       }
                       onChange={handleInputChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={3}>
+                    <Autocomplete
+                      style={{
+                        minWidth: 220,
+                      }}
+                      size="small"
+                      onChange={(event, value) =>
+                        setShippingStateSelected(value)
+                      }
+                      name="shipping_state"
+                      value={shippingStateSelected}
+                      options={StateOption.map((option) => option.value)}
+                      getOptionLabel={(option) => option}
+                      renderInput={(params) => (
+                        <TextField {...params} label="Shipping State" />
+                      )}
                     />
                   </Grid>
                 </Grid>
@@ -842,3 +841,176 @@ export const CreateLeads = (props) => {
     </div>
   );
 };
+
+function getSteps() {
+  return [
+    <b style={{ color: "purple" }}>'Enter Basic Details'</b>,
+    <b style={{ color: "purple" }}>'Enter Company Details'</b>,
+    <b style={{ color: "purple" }}>'Enter Shipping Details'</b>,
+    <b style={{ color: "purple" }}>'Review'</b>,
+  ];
+}
+
+const BusinessTypeData = [
+  {
+    value: "trader",
+    label: "Trader",
+  },
+
+  {
+    value: "distributor",
+    label: "Distributor",
+  },
+  {
+    value: "retailer",
+    label: "Retailer",
+  },
+  {
+    value: "end_user",
+    label: "End User",
+  },
+];
+
+const StateOption = [
+  {
+    id: 1,
+    value: "Andhra Pradesh",
+    label: "Andhra Pradesh",
+  },
+
+  {
+    id: 2,
+    value: "Arunachal Pradesh",
+    label: "Arunachal Pradesh",
+  },
+  {
+    id: 3,
+    value: "Assam",
+    label: "Assam",
+  },
+  {
+    id: 4,
+    value: "Bihar",
+    label: "Bihar",
+  },
+  {
+    id: 5,
+    value: "Chhattisgarh",
+    label: "Chhattisgarh",
+  },
+  {
+    id: 6,
+    value: "Goa",
+    label: "Goa",
+  },
+  {
+    id: 7,
+    value: "Gujarat",
+    label: "Gujarat",
+  },
+  {
+    id: 8,
+    value: "Haryana",
+    label: "Haryana",
+  },
+  {
+    id: 9,
+    value: "Himachal Pradesh",
+    label: "Himachal Pradesh",
+  },
+  {
+    id: 10,
+    value: "Jharkhand",
+    label: "Jharkhand",
+  },
+  {
+    id: 11,
+    value: "Karnataka",
+    label: "Karnataka",
+  },
+  {
+    id: 12,
+    value: "Kerala",
+    label: "Kerala",
+  },
+  {
+    id: 13,
+    value: "Madhya Pradesh",
+    label: "Madhya Pradesh",
+  },
+  {
+    id: 14,
+    value: "Maharashtra",
+    label: "Maharashtra",
+  },
+  {
+    id: 15,
+    value: "Manipur",
+    label: "Manipur",
+  },
+  {
+    id: 16,
+    value: "Meghalaya",
+    label: "Meghalaya",
+  },
+  {
+    id: 17,
+    value: "Mizoram",
+    label: "Mizoram",
+  },
+  {
+    id: 18,
+    value: "Nagaland",
+    label: "Nagaland",
+  },
+  {
+    id: 19,
+    value: "Odisha",
+    label: "Odisha",
+  },
+  {
+    id: 20,
+    value: "Punjab",
+    label: "Punjab",
+  },
+  {
+    id: 21,
+    value: "Rajasthan",
+    label: "Rajasthan",
+  },
+  {
+    id: 22,
+    value: "Sikkim",
+    label: "Sikkim",
+  },
+  {
+    id: 23,
+    value: "Tamil Nadu",
+    label: "Tamil Nadu",
+  },
+  {
+    id: 24,
+    value: "Telangana",
+    label: "Telangana",
+  },
+  {
+    id: 25,
+    value: "Tripura",
+    label: "Tripura",
+  },
+  {
+    id: 26,
+    value: "Uttar Pradesh",
+    label: "Uttar Pradesh",
+  },
+  {
+    id: 27,
+    value: "Uttarakhand",
+    label: "Uttarakhand",
+  },
+  {
+    id: 28,
+    value: "West Bengal",
+    label: "West Bengal",
+  },
+];
