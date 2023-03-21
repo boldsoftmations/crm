@@ -359,6 +359,9 @@ export const ViewCustomerProformaInvoice = () => {
                   <StyledTableCell align="center">
                     BALANCE AMOUNT
                   </StyledTableCell>
+                  <StyledTableCell align="center">
+                    PAYMENT TERMS
+                  </StyledTableCell>
                   <StyledTableCell align="center">Action</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -394,7 +397,9 @@ export const ViewCustomerProformaInvoice = () => {
                       <StyledTableCell align="center">
                         {row.balance_amount}
                       </StyledTableCell>
-
+                      <StyledTableCell align="center">
+                        {row.payment_terms}
+                      </StyledTableCell>
                       <StyledTableCell align="center">
                         <Button
                           variant="contained"

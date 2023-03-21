@@ -23,14 +23,14 @@ export const SalesInvoice = (props) => {
       setOpen(true);
       const response = await InvoiceServices.getSalesnvoiceDataById(idForEdit);
       setSalesInvoiceData(response.data);
-      setProductData(response.data.products);
+      setProductData(response.data.products_si);
       setHsnData(response.data.hsn_table);
       setOpen(false);
     } catch (err) {
       setOpen(false);
     }
   };
-
+  console.log("salesInvoiceData", salesInvoiceData);
   const str = salesInvoiceData.amount_in_words
     ? salesInvoiceData.amount_in_words
     : "";
