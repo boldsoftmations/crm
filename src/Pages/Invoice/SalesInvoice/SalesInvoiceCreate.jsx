@@ -1,4 +1,12 @@
-import { Autocomplete, Box, Button, Grid, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Grid,
+  Snackbar,
+  TextField,
+} from "@mui/material";
+import { Alert, AlertTitle } from "@mui/material";
 import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
 import Divider from "@mui/material/Divider";
@@ -19,6 +27,7 @@ export const SalesInvoiceCreate = (props) => {
   const { setOpenPopup, getSalesInvoiceDetails, getAllCustomerWiseOrderBook } =
     props;
   const [open, setOpen] = useState(false);
+  const [errorOpen, setErrorOpen] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [customerorderBookData, setCustomerOrderBookData] = useState();
   // const [customerorderBookOption, setCustomerOrderBookOption] = useState([]);
@@ -77,7 +86,6 @@ export const SalesInvoiceCreate = (props) => {
           });
         }
       });
-
       var arr = [];
       arr = productData.map((fruit) => ({
         product: fruit.product,
@@ -133,11 +141,20 @@ export const SalesInvoiceCreate = (props) => {
       setOpen(false);
     } catch (err) {
       setOpen(false);
-      alert(err.response.data.errors.non_field_errors);
-      if (err.response.status === 400) {
-        setErrMsg(err.response.data.errors.non_field_errors);
+      setErrorOpen(true);
+      if (err.response && err.response.data) {
+        if (err.response.status === 400) {
+          setErrMsg(err.response.data.errors.non_field_errors);
+        }
+      } else {
+        setErrMsg(err.response.data);
       }
     }
+  };
+
+  const handleClose = () => {
+    setErrorOpen(false); // set errorOpen to false to close the Alert component
+    setErrMsg("");
   };
 
   return (
@@ -148,6 +165,17 @@ export const SalesInvoiceCreate = (props) => {
         noValidate
         onSubmit={(e) => createSalesInvoiceDetails(e)}
       >
+        <Snackbar
+          open={errorOpen}
+          autoHideDuration={10000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }} // set the position to top center
+        >
+          <Alert severity="error" onClose={handleClose} sx={{ width: "100%" }}>
+            <AlertTitle>Error</AlertTitle>
+            {errMsg}
+          </Alert>
+        </Snackbar>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <Autocomplete
@@ -404,7 +432,6 @@ export const SalesInvoiceCreate = (props) => {
                     <Grid item xs={12} sm={2}>
                       <TextField
                         fullWidth
-                        type={"number"}
                         name="quantity"
                         size="small"
                         label="Quantity"

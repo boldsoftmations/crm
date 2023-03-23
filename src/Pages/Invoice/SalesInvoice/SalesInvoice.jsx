@@ -23,14 +23,43 @@ export const SalesInvoice = (props) => {
       setOpen(true);
       const response = await InvoiceServices.getSalesnvoiceDataById(idForEdit);
       setSalesInvoiceData(response.data);
-      setProductData(response.data.products_si);
+      getCombieProductData(response.data.products_si);
       setHsnData(response.data.hsn_table);
       setOpen(false);
     } catch (err) {
       setOpen(false);
     }
   };
-  console.log("salesInvoiceData", salesInvoiceData);
+
+  const getCombieProductData = (products) => {
+    let product_json = [];
+
+    for (let i = 0; i < products.length; i++) {
+      let found = false;
+      for (let j = 0; j < product_json.length; j++) {
+        if (
+          product_json[j].product === products[i].product &&
+          parseInt(product_json[j].rate) === parseInt(products[i].rate)
+        ) {
+          product_json[j].quantity =
+            parseInt(product_json[j].quantity) + parseInt(products[i].quantity);
+          product_json[j].amount =
+            parseFloat(product_json[j].amount) + parseFloat(products[i].amount);
+          product_json[j].total =
+            parseFloat(product_json[j].amount) + parseFloat(products[i].total);
+          product_json[j].gst =
+            parseFloat(product_json[j].amount) + parseFloat(products[i].gst);
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        product_json.push(products[i]);
+      }
+    }
+    setProductData(product_json);
+  };
+
   const str = salesInvoiceData.amount_in_words
     ? salesInvoiceData.amount_in_words
     : "";

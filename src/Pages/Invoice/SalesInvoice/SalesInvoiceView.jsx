@@ -163,7 +163,6 @@ export const SalesInvoiceView = () => {
     try {
       const page = value;
       setCurrentPage(page);
-      setOpen(true);
       if (searchQuery) {
         const response =
           await InvoiceServices.getSalesInvoiceDataWithPaginationAndSearch(
@@ -406,7 +405,7 @@ export const SalesInvoiceView = () => {
         </Paper>
       </Grid>
       <Popup
-        maxWidth={"xl"}
+        fullScreen={true}
         title={"Create Sales Invoice"}
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
@@ -476,11 +475,9 @@ function Row(props) {
         <StyledTableCell align="center">{row.total}</StyledTableCell>
         <StyledTableCell align="center">{row.company}</StyledTableCell>
         {row.proforma_invoice_list !== null ? (
-          <>
-            {row.proforma_invoice_list.map((data) => (
-              <StyledTableCell align="center">{data}</StyledTableCell>
-            ))}
-          </>
+          <StyledTableCell align="center">
+            {`${row.proforma_invoice_list},`}
+          </StyledTableCell>
         ) : (
           <StyledTableCell align="center"></StyledTableCell>
         )}
