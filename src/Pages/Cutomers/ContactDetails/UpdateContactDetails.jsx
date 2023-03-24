@@ -71,15 +71,15 @@ export const UpdateContactDetails = (props) => {
           : phone2;
 
       let aadhaarNumber =
-        designation === "director" ||
-        designation === "owner" ||
-        designation === "partner"
+        designation === "Director" ||
+        designation === "Owner" ||
+        designation === "Partner"
           ? inputValue.aadhaar
           : "";
       let panNumber =
-        designation === "director" ||
-        designation === "owner" ||
-        designation === "partner"
+        designation === "Director" ||
+        designation === "Owner" ||
+        designation === "Partner"
           ? inputValue.pan_number
           : "";
       console.log("contact1 :>> ", contact1);
@@ -230,15 +230,15 @@ export const UpdateContactDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            {designation === "director" ||
-            designation === "owner" ||
-            designation === "partner" ? (
+            {designation === "Director" ||
+            designation === "Owner" ||
+            designation === "Partner" ? (
               <TextField
                 fullWidth
                 disabled={
-                  designation !== "director" &&
-                  designation !== "owner" &&
-                  designation !== "partner"
+                  designation !== "Director" &&
+                  designation !== "Owner" &&
+                  designation !== "Partner"
                 }
                 onChange={handleInputChange}
                 size="small"
@@ -253,15 +253,15 @@ export const UpdateContactDetails = (props) => {
             ) : null}
           </Grid>
           <Grid item xs={12} sm={6}>
-            {designation === "director" ||
-            designation === "owner" ||
-            designation === "partner" ? (
+            {designation === "Director" ||
+            designation === "Owner" ||
+            designation === "Partner" ? (
               <TextField
                 fullWidth
                 disabled={
-                  designation !== "director" &&
-                  designation !== "owner" &&
-                  designation !== "partner"
+                  designation !== "Director" &&
+                  designation !== "Owner" &&
+                  designation !== "Partner"
                 }
                 onChange={handleInputChange}
                 size="small"

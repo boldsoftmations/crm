@@ -18,6 +18,7 @@ import { CreateBankDetails } from "./CreateBankDetails";
 import { UpdateBankDetails } from "./UpdateBankDetails";
 // import CustomerServices from "../../../services/CustomerService";
 import { CustomLoader } from "../../../Components/CustomLoader";
+import { useSelector } from "react-redux";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -44,7 +45,8 @@ export const BankDetails = (props) => {
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [idForEdit, setIDForEdit] = useState();
-
+  const data = useSelector((state) => state.auth);
+  const userData = data.profile;
   // const getResetData = () => {
   //   setSearchQuery("");
   //   // getUnits();
@@ -123,14 +125,16 @@ export const BankDetails = (props) => {
             </h3>
           </Box>
           <Box flexGrow={0.5} align="right">
-            <Button
-              onClick={() => setOpenPopup2(true)}
-              variant="contained"
-              color="success"
-              // startIcon={<AddIcon />}
-            >
-              Add
-            </Button>
+            {userData.groups.toString() !== "Sales" && (
+              <Button
+                onClick={() => setOpenPopup2(true)}
+                variant="contained"
+                color="success"
+                // startIcon={<AddIcon />}
+              >
+                Add
+              </Button>
+            )}
           </Box>
         </Box>
         <TableContainer
@@ -176,12 +180,14 @@ export const BankDetails = (props) => {
                       {row.branch}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      <Button
-                        variant="contained"
-                        onClick={() => openInPopup(row.id)}
-                      >
-                        View
-                      </Button>
+                      {userData.groups.toString() !== "Sales" && (
+                        <Button
+                          variant="contained"
+                          onClick={() => openInPopup(row.id)}
+                        >
+                          View
+                        </Button>
+                      )}
                     </StyledTableCell>
                   </StyledTableRow>
                 );

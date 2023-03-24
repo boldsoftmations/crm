@@ -194,9 +194,9 @@ export const CreateContactDetails = (props) => {
             <TextField
               fullWidth
               disabled={
-                designation !== "director" &&
-                designation !== "owner" &&
-                designation !== "partner"
+                designation !== "Director" &&
+                designation !== "Owner" &&
+                designation !== "Partner"
               }
               size="small"
               name="pan_no"
@@ -214,9 +214,9 @@ export const CreateContactDetails = (props) => {
             <TextField
               fullWidth
               disabled={
-                designation !== "director" &&
-                designation !== "owner" &&
-                designation !== "partner"
+                designation !== "Director" &&
+                designation !== "Owner" &&
+                designation !== "Partner"
               }
               size="small"
               type={"number"}
