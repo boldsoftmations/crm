@@ -9,14 +9,14 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  TableFooter,
-  Pagination,
+  TextField,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
+import ClearIcon from "@mui/icons-material/Clear";
 import React, { useEffect, useRef, useState } from "react";
-
 import { CustomLoader } from "../../../Components/CustomLoader";
-import { CustomSearch } from "../../../Components/CustomSearch";
 import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 import InventoryServices from "../../../services/InventoryService";
 import { useSelector } from "react-redux";
@@ -46,15 +46,8 @@ export const ProductionInventoryConsView = () => {
   const errRef = useRef();
   const [errMsg, setErrMsg] = useState("");
   const [productionInventoryData, setProductionInventoryData] = useState([]);
-  const [pageCount, setpageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const data = useSelector((state) => state.auth);
-  const users = data.profile;
-  const handleInputChange = (event) => {
-    setFilterSelectedQuery(event.target.value);
-    getSearchData(event.target.value);
-  };
 
   useEffect(() => {
     getAllProductionInventoryDetails();
@@ -63,11 +56,8 @@ export const ProductionInventoryConsView = () => {
   const getAllProductionInventoryDetails = async () => {
     try {
       setOpen(true);
-      const response = currentPage
-        ? await InventoryServices.getConsProductionInventoryPaginateData(
-            currentPage
-          )
-        : await InventoryServices.getAllConsProductionInventoryData();
+      const response =
+        await InventoryServices.getAllConsProductionInventoryData();
 
       setProductionInventoryData(response.data);
     } catch (err) {
@@ -96,56 +86,18 @@ export const ProductionInventoryConsView = () => {
     }
   };
 
-  const getSearchData = async (value) => {
-    try {
-      setOpen(true);
-      const filterSearch = value;
-      if (filterSearch !== "") {
-        const response =
-          await InventoryServices.getAllSearchConsProductionInventoryData(
-            filterSearch
-          );
-        setProductionInventoryData(response.data);
-      } else {
-        await getAllProductionInventoryDetails();
-        setFilterSelectedQuery("");
-      }
-    } catch (error) {
-      console.log("error Search leads", error);
-    } finally {
-      setOpen(false);
-    }
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
   };
 
-  const handlePageClick = async (event, value) => {
-    try {
-      const page = value;
-      setCurrentPage(page);
-      setOpen(true);
-
-      const response = filterSelectedQuery
-        ? await InventoryServices.getConsProductionInventoryPaginateData(
-            page,
-            filterSelectedQuery
-          )
-        : await InventoryServices.getConsProductionInventoryPaginateData(page);
-      if (response) {
-        setProductionInventoryData(response.data);
-      } else {
-        await getAllProductionInventoryDetails();
-        setFilterSelectedQuery("");
-      }
-    } catch (error) {
-      console.log("error", error);
-    } finally {
-      setOpen(false);
-    }
+  const handleResetClick = () => {
+    setSearchQuery("");
   };
 
-  const getResetData = () => {
-    setFilterSelectedQuery("");
-    getAllProductionInventoryDetails();
-  };
+  // Filter the productionInventoryData based on the search query
+  const filteredData = productionInventoryData.filter((row) =>
+    row.product__name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <>
@@ -156,10 +108,24 @@ export const ProductionInventoryConsView = () => {
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
           <Box display="flex">
             <Box flexGrow={0.9}>
-              <CustomSearch
-                filterSelectedQuery={filterSelectedQuery}
-                handleInputChange={handleInputChange}
-                getResetData={getResetData}
+              <TextField
+                label="Search"
+                variant="outlined"
+                size="small"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {searchQuery && (
+                        <IconButton onClick={handleResetClick}>
+                          <ClearIcon />
+                        </IconButton>
+                      )}
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ mb: 2 }}
               />
             </Box>
             <Box flexGrow={2}>
@@ -203,7 +169,7 @@ export const ProductionInventoryConsView = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {productionInventoryData.map((row, i) => (
+                {filteredData.map((row, i) => (
                   <StyledTableRow key={i}>
                     <StyledTableCell align="center">
                       {row.product__name}
@@ -217,17 +183,6 @@ export const ProductionInventoryConsView = () => {
               </TableBody>{" "}
             </Table>
           </TableContainer>
-          <TableFooter
-            sx={{ display: "flex", justifyContent: "center", marginTop: "2em" }}
-          >
-            <Pagination
-              count={pageCount}
-              onChange={handlePageClick}
-              color={"primary"}
-              variant="outlined"
-              shape="circular"
-            />
-          </TableFooter>
         </Paper>
       </Grid>
     </>

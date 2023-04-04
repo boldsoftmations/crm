@@ -244,7 +244,7 @@ export const PackingListView = () => {
                   <StyledTableCell align="center"></StyledTableCell>
                   <StyledTableCell align="center">VENDOR</StyledTableCell>
                   <StyledTableCell align="center">PACKING LIST</StyledTableCell>
-
+                  <StyledTableCell align="center">SELLER STATE</StyledTableCell>
                   <StyledTableCell align="center">Action</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -315,7 +315,7 @@ function Row(props) {
         </TableCell>
         <TableCell align="center">{row.vendor}</TableCell>
         <TableCell align="center">{row.packing_list_no}</TableCell>
-
+        <TableCell align="center">{row.seller_account}</TableCell>
         <TableCell align="center">
           <Button
             onClick={() => openInPopup(row.id)}

@@ -41,16 +41,6 @@ export const ProductionEntryCreate = (props) => {
     },
   ]);
 
-  useEffect(() => {
-    const updatedProducts = products.map((product) => {
-      return {
-        ...product,
-        total: product.quantity * parseInt(quantity),
-      };
-    });
-    setProducts(updatedProducts);
-  }, [quantity, products]);
-
   const handleFormChange = (index, event) => {
     const { name, value } = event.target;
     const updatedProducts = [...products];
@@ -102,8 +92,11 @@ export const ProductionEntryCreate = (props) => {
       setOpen(true);
       const productData = products.map((product) => ({
         product: product.product,
-        quantity: (product.quantity * parseInt(quantity)).toFixed(2),
+        quantity: (parseFloat(product.quantity) * parseFloat(quantity)).toFixed(
+          2
+        ),
       }));
+      console.log("productData", productData);
       const req = {
         user: users.email,
         bom: selectedBOM.bom_id,
@@ -129,6 +122,9 @@ export const ProductionEntryCreate = (props) => {
     setError(null);
   };
 
+  console.log(
+    parseInt(products.quantity).toFixed(2) * parseInt(quantity).toFixed(2)
+  );
   return (
     <div>
       <CustomLoader open={open} />
@@ -224,13 +220,14 @@ export const ProductionEntryCreate = (props) => {
                     variant="outlined"
                     value={
                       quantity && input.quantity
-                        ? parseInt(input.quantity) * parseInt(quantity)
+                        ? (
+                            parseFloat(input.quantity) * parseFloat(quantity)
+                          ).toFixed(2)
                         : input.quantity || ""
                     }
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    onChange={(event) => handleFormChange(index, event)}
                   />
                 </Grid>
 
