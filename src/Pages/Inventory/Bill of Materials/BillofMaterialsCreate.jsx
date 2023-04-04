@@ -34,7 +34,7 @@ export const BillofMaterialsCreate = (props) => {
   const ConsumableProduct = data.consumableProduct;
   const RawMaterialProduct = data.rawMaterialProduct;
   const RawAndConsumableProduct = [...ConsumableProduct, ...RawMaterialProduct];
-  console.log("RawAndConsumableProduct", RawAndConsumableProduct);
+
   const [products, setProducts] = useState([
     {
       product: null,

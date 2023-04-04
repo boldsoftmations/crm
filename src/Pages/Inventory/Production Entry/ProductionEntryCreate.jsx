@@ -162,7 +162,7 @@ export const ProductionEntryCreate = (props) => {
               disablePortal
               id="combo-box-demo"
               onChange={(event, value) => fetchProductOptions(value)}
-              options={FinishGoodsProduct.map((option) => option.product__name)}
+              options={FinishGoodsProduct.map((option) => option.product)}
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (

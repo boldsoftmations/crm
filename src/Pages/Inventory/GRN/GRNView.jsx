@@ -227,9 +227,7 @@ export const GRNView = () => {
                     PACKINGLIST NO.
                   </StyledTableCell>
                   <StyledTableCell align="center">DATE</StyledTableCell>
-                  <StyledTableCell align="center">
-                    SELLER ACCOUNT
-                  </StyledTableCell>
+
                   <StyledTableCell align="center">PACKING LIST</StyledTableCell>
 
                   <StyledTableCell align="center">Action</StyledTableCell>
@@ -303,7 +301,7 @@ function Row(props) {
         <TableCell align="center">{row.vendor}</TableCell>
         <TableCell align="center">{row.packing_list_no}</TableCell>
         <TableCell align="center">{row.created_on}</TableCell>
-        <TableCell align="center">{row.seller_account}</TableCell>
+
         <TableCell align="center">{row.packing_list}</TableCell>
         <TableCell align="center">
           <Button

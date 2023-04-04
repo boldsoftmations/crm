@@ -72,9 +72,11 @@ export const ProductionEntryView = () => {
   const getFinishGoods = async () => {
     try {
       setOpen(true);
-      const response =
-        await InventoryServices.getAllConsProductionInventoryData();
-      dispatch(getFinishGoodProduct(response.data));
+      const response = await ProductService.getFinishGoodsPaginate("all");
+      var arr = response.data.map((ProductData) => ({
+        product: ProductData.name,
+      }));
+      dispatch(getFinishGoodProduct(arr));
       setOpen(false);
     } catch (err) {
       setOpen(false);
