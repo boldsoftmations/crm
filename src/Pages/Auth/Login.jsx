@@ -5,6 +5,7 @@ import {
   loginstart,
   loginsucces,
   loginfail,
+  getProfileUser,
 } from "./../../Redux/Action/Action";
 import "../CommonStyle.css";
 
@@ -31,6 +32,7 @@ import { CustomButton } from "../../Components/CustomButton";
 import { ErrorMessage } from "./../../Components/ErrorMessage/ErrorMessage";
 import { CustomLoader } from "./../../Components/CustomLoader";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import LeadServices from "../../services/LeadService";
 
 const paperStyle = {
   padding: 20,
@@ -43,6 +45,7 @@ const avatarStyle = { backgroundColor: "#1bbd7e" };
 
 export const Login = () => {
   const [open, setOpen] = useState(false);
+  const [token, setToken] = useState([]);
   const theme = createTheme();
   let navigate = useNavigate();
   const dispatch = useDispatch();
@@ -93,7 +96,9 @@ export const Login = () => {
       if (response.data.token.access) {
         setUserData(response.data.token);
         dispatch(loginsucces(response.data));
+        setToken(response.data.token);
       }
+      getUsers();
       navigate("/user/home");
       setUser("");
 
@@ -114,6 +119,22 @@ export const Login = () => {
       }
       dispatch(loginfail(errMsg));
       errRef.current.focus();
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      getUsers();
+    }
+  }, [token]);
+
+  const getUsers = async () => {
+    try {
+      const res = await LeadServices.getProfile();
+      dispatch(getProfileUser(res.data));
+      // setUserData(res.data);
+    } catch (err) {
+      console.error(err);
     }
   };
 
