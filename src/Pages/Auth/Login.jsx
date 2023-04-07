@@ -130,11 +130,15 @@ export const Login = () => {
 
   const getUsers = async () => {
     try {
+      setOpen(true);
       const res = await LeadServices.getProfile();
       dispatch(getProfileUser(res.data));
       // setUserData(res.data);
+      setOpen(false);
     } catch (err) {
       console.error(err);
+    } finally {
+      setOpen(false);
     }
   };
 

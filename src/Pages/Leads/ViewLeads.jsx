@@ -648,7 +648,7 @@ export const Viewleads = () => {
         <UpdateLeads
           recordForEdit={recordForEdit}
           setOpenPopup={setOpenPopup}
-          getleads={getleads}
+          getAllleadsData={getleads}
         />
       </Popup>
     </>

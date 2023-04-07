@@ -25,7 +25,7 @@ import { CustomSearch } from "../../../Components/CustomSearch";
 import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 import { Popup } from "../../../Components/Popup";
 import InventoryServices from "../../../services/InventoryService";
-import { PackijngListUpdate } from "./PackijngListUpdate";
+import { PackingListUpdate } from "./PackingListUpdate";
 import { PackingListCreate } from "./PackingListCreate";
 import InvoiceServices from "../../../services/InvoiceService";
 import { useDispatch } from "react-redux";
@@ -245,6 +245,7 @@ export const PackingListView = () => {
                   <StyledTableCell align="center">VENDOR</StyledTableCell>
                   <StyledTableCell align="center">PACKING LIST</StyledTableCell>
                   <StyledTableCell align="center">SELLER STATE</StyledTableCell>
+                  <StyledTableCell align="center">INVOICE DATE</StyledTableCell>
                   <StyledTableCell align="center">Action</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -285,7 +286,7 @@ export const PackingListView = () => {
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
       >
-        <PackijngListUpdate
+        <PackingListUpdate
           setOpenPopup={setOpenPopup}
           getAllPackingListDetails={getAllPackingListDetails}
           idForEdit={idForEdit}
@@ -316,6 +317,7 @@ function Row(props) {
         <TableCell align="center">{row.vendor}</TableCell>
         <TableCell align="center">{row.packing_list_no}</TableCell>
         <TableCell align="center">{row.seller_account}</TableCell>
+        <TableCell align="center">{row.invoice_date}</TableCell>
         <TableCell align="center">
           <Button
             onClick={() => openInPopup(row.id)}

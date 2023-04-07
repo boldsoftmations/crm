@@ -24,7 +24,7 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const PackijngListUpdate = (props) => {
+export const PackingListUpdate = (props) => {
   const { setOpenPopup, getAllPackingListDetails, idForEdit } = props;
   const [PackingListDataByID, setPackingListDataByID] = useState([]);
   const [open, setOpen] = useState(false);
@@ -40,8 +40,19 @@ export const PackijngListUpdate = (props) => {
     {
       product: "",
       quantity: "",
+      unit: "",
     },
   ]);
+
+  const handleAutocompleteChange = (index, event, value) => {
+    let data = [...products];
+    const productObj = productOption.find((item) => item.name === value);
+    console.log("productObj", productObj);
+    data[index]["product"] = value;
+    data[index]["unit"] = productObj ? productObj.unit : "";
+    setProducts(data);
+  };
+
   const handleFormChange = (index, event) => {
     const selectedValue = event.target.value
       ? event.target.value
@@ -68,6 +79,7 @@ export const PackijngListUpdate = (props) => {
     let newfield = {
       product: "",
       quantity: "",
+      unit: "",
     };
     setProducts([...products, newfield]);
   };
@@ -132,6 +144,7 @@ export const PackijngListUpdate = (props) => {
       var arr = response.data.products.map((fruit) => ({
         product: fruit.product,
         quantity: fruit.quantity,
+        unit: fruit.unit,
       }));
       setProducts(arr);
 
@@ -246,7 +259,7 @@ export const PackijngListUpdate = (props) => {
               fullWidth
               size="small"
               name="packing_list_no"
-              label="Packing List No."
+              label="Invoice No."
               variant="outlined"
               value={
                 PackingListDataByID.packing_list_no
@@ -286,6 +299,7 @@ export const PackijngListUpdate = (props) => {
                   : today
               }
               onChange={handleInputChange}
+              inputProps={{ max: today }}
             />
           </Grid>
           <Grid item xs={12}>
@@ -305,7 +319,9 @@ export const PackijngListUpdate = (props) => {
                     disablePortal
                     id="combo-box-demo"
                     value={input.product ? input.product : ""}
-                    onChange={(event, value) => handleFormChange(index, event)}
+                    onChange={(event, value) =>
+                      handleAutocompleteChange(index, event, value)
+                    }
                     options={productOption.map((option) => option.name)}
                     getOptionLabel={(option) => option}
                     sx={{ minWidth: 300 }}
@@ -314,7 +330,17 @@ export const PackijngListUpdate = (props) => {
                     )}
                   />
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
+                  <TextField
+                    fullWidth
+                    name="unit"
+                    size="small"
+                    label="Unit"
+                    variant="outlined"
+                    value={input.unit ? input.unit : ""}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={3}>
                   <TextField
                     fullWidth
                     name="quantity"
@@ -326,14 +352,7 @@ export const PackijngListUpdate = (props) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={4} alignContent="right">
-                  <Button
-                    onClick={addFields}
-                    variant="contained"
-                    sx={{ marginRight: "1em" }}
-                  >
-                    Add More...
-                  </Button>
+                <Grid item xs={12} sm={2} alignContent="right">
                   {index !== 0 && (
                     <Button
                       disabled={index === 0}
@@ -347,6 +366,16 @@ export const PackijngListUpdate = (props) => {
               </>
             );
           })}
+
+          <Grid item xs={12} sm={2} alignContent="right">
+            <Button
+              onClick={addFields}
+              variant="contained"
+              sx={{ marginRight: "1em" }}
+            >
+              Add More...
+            </Button>
+          </Grid>
         </Grid>
         <Button
           type="submit"

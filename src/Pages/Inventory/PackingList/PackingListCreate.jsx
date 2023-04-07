@@ -40,13 +40,23 @@ export const PackingListCreate = (props) => {
   const [error, setError] = useState(null);
   const [products, setProducts] = useState([
     {
-      product: null,
-      quantity: null,
+      product: "",
+      quantity: "",
+      unit: "",
     },
   ]);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setInputValue({ ...inputValue, [name]: value });
+  };
+
+  const handleAutocompleteChange = (index, event, value) => {
+    let data = [...products];
+    const productObj = productOption.find((item) => item.name === value);
+    console.log("productObj", productObj);
+    data[index]["product"] = value;
+    data[index]["unit"] = productObj ? productObj.unit : "";
+    setProducts(data);
   };
 
   const handleFormChange = (index, event) => {
@@ -75,6 +85,7 @@ export const PackingListCreate = (props) => {
     let newfield = {
       product: "",
       quantity: "",
+      unit: "",
     };
     setProducts([...products, newfield]);
   };
@@ -254,7 +265,10 @@ export const PackingListCreate = (props) => {
                     size="small"
                     disablePortal
                     id="combo-box-demo"
-                    onChange={(event, value) => handleFormChange(index, event)}
+                    value={input.product ? input.product : ""}
+                    onChange={(event, value) =>
+                      handleAutocompleteChange(index, event, value)
+                    }
                     options={productOption.map((option) => option.name)}
                     getOptionLabel={(option) => option}
                     sx={{ minWidth: 300 }}
@@ -263,7 +277,17 @@ export const PackingListCreate = (props) => {
                     )}
                   />
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
+                  <TextField
+                    fullWidth
+                    name="unit"
+                    size="small"
+                    label="Unit"
+                    variant="outlined"
+                    value={input.unit ? input.unit : ""}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={3}>
                   <TextField
                     fullWidth
                     name="quantity"
@@ -275,14 +299,7 @@ export const PackingListCreate = (props) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={4} alignContent="right">
-                  <Button
-                    onClick={addFields}
-                    variant="contained"
-                    sx={{ marginRight: "1em" }}
-                  >
-                    Add More...
-                  </Button>
+                <Grid item xs={12} sm={2} alignContent="right">
                   {index !== 0 && (
                     <Button
                       disabled={index === 0}
@@ -296,6 +313,16 @@ export const PackingListCreate = (props) => {
               </>
             );
           })}
+
+          <Grid item xs={12} sm={2} alignContent="right">
+            <Button
+              onClick={addFields}
+              variant="contained"
+              sx={{ marginRight: "1em" }}
+            >
+              Add More...
+            </Button>
+          </Grid>
         </Grid>
         <Button
           type="submit"

@@ -122,7 +122,7 @@ export const PurchaseInvoiceCreate = (props) => {
               sx={{ minWidth: "12rem" }}
               name="vendor_name"
               size="small"
-              label="search By vendor_name Name"
+              label="search By vendor Name"
               variant="outlined"
               onChange={handleInputChange}
               value={inputValue.vendor_name}
