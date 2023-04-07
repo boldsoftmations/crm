@@ -146,13 +146,11 @@ export const BillofMaterialsView = () => {
   }, []);
 
   const handleInputChange = (event) => {
-    console.log("event", event);
     setFilterSelectedQuery(event.target.value);
     getSearchData(event.target.value, filterApproved);
   };
 
   const handleApprovedFilterChange = (event) => {
-    console.log("event filter", event);
     setFilterApproved(event.target.value);
     getSearchData(filterSelectedQuery, event.target.value);
   };
