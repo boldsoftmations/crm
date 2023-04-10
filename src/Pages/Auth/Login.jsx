@@ -97,8 +97,9 @@ export const Login = () => {
         setUserData(response.data.token);
         dispatch(loginsucces(response.data));
         setToken(response.data.token);
+        getUsers();
       }
-      getUsers();
+
       navigate("/user/home");
       setUser("");
 
