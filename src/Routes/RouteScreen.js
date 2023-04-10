@@ -50,6 +50,7 @@ import { MaterialTransferNoteView } from "../Pages/Inventory/Material Transfer N
 import { ProductionInventoryView } from "../Pages/Inventory/Production Inventory/ProductionInventoryView";
 import { ProductionInventoryConsView } from "../Pages/Inventory/Production Inventory/ProductionInventoryConsView";
 import { StoresInventoryConsView } from "../Pages/Inventory/Stores Inventory/StoresInventoryConsView";
+import { ProductionInventoryGAndLView } from "../Pages/Inventory/Production Entry/ProductionInventoryGAndLView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -203,6 +204,10 @@ export const RouteScreen = () => {
             <Route
               path="/inventory/view-production-inventory-cons"
               element={<ProductionInventoryConsView />}
+            />
+            <Route
+              path="/inventory/view-production-inventory-g&l"
+              element={<ProductionInventoryGAndLView />}
             />
             <Route path="*" element={<Home />} />
           </>
