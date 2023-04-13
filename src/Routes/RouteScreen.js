@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { useSelector } from "react-redux";
-import React, { useEffect } from "react";
+import React from "react";
 
 import { AssignTo } from "../Pages/Leads/AssignTo";
 import { ChangePassword } from "./../Pages/Auth/ChangePassword";

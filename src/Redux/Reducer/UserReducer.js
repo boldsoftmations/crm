@@ -1,5 +1,4 @@
 import * as types from "../Action/actiontypes";
-import { CUSTOMER_ORDERBOOK_DATA } from "./../Action/actiontypes";
 
 const initialState = {
   user: null,
@@ -136,7 +135,6 @@ const userReducer = (state = initialState, action) => {
         loading: false,
         consumableProduct: action.payload,
       };
-
     default:
       return state;
   }

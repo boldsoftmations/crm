@@ -108,12 +108,6 @@ export const CreateLeads = (props) => {
       console.error(err);
     }
   };
-  console.log(
-    "checked",
-    checked == true && shippingStateSelected === ""
-      ? stateSelected
-      : leads.shipping_state
-  );
 
   useEffect(() => {
     getDescriptionNoData();

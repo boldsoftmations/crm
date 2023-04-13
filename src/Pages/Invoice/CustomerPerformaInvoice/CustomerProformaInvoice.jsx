@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import DownloadIcon from "@mui/icons-material/Download";
 import jsPDF from "jspdf";
@@ -137,7 +137,7 @@ export const CustomerProformaInvoice = (props) => {
       );
     }
   };
-  const componentRef = useRef();
+
   // const handlePrint = useReactToPrint({
   //   content: () => componentRef.current,
   //   documentTitle: `PI Number ${invoiceData.pi_number}`,

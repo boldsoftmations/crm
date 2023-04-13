@@ -62,10 +62,8 @@ export const CreateCustomerProformaInvoice = (props) => {
   const [customerData, setCustomerData] = useState([]);
   const [contactOptions, setContactOptions] = useState([]);
   const [warehouseOptions, setWarehouseOptions] = useState([]);
-  const [companyData, setCompanyData] = useState([]);
   const [contactData, setContactData] = useState([]);
   const [warehouseData, setWarehouseData] = useState([]);
-  const [idForEdit, setIDForEdit] = useState();
   const [errorMessage, setErrorMessage] = useState();
   const [validationPrice, setValidationPrice] = useState("");
   const [checked, setChecked] = useState(true);
@@ -117,21 +115,6 @@ export const CreateCustomerProformaInvoice = (props) => {
     let data = [...products];
     data.splice(index, 1);
     setProducts(data);
-  };
-
-  useEffect(() => {
-    getAllCompanyDetails();
-  }, [openPopup3]);
-
-  const getAllCompanyDetails = async () => {
-    try {
-      setOpen(true);
-      let response = await CustomerServices.getAllPaginateCompanyData("all");
-      // setCompanyOptions(response.data);
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-    }
   };
 
   useEffect(() => {
@@ -234,7 +217,6 @@ export const CreateCustomerProformaInvoice = (props) => {
         setOpenPopup(false);
         navigate("/invoice/performa-invoice");
       } else {
-        setIDForEdit(companyData.id);
         setOpenPopup2(true);
       }
       setOpen(false);
@@ -256,7 +238,6 @@ export const CreateCustomerProformaInvoice = (props) => {
   const openInPopup = () => {
     setOpenPopup3(true);
     setOpenPopup2(false);
-    getAllCompanyDetails();
   };
 
   return (
@@ -752,8 +733,7 @@ export const CreateCustomerProformaInvoice = (props) => {
         setOpenPopup={setOpenPopup3}
       >
         <UpdateCompanyDetails
-          getAllCompanyDetails={getAllCompanyDetails}
-          recordForEdit={idForEdit}
+          recordForEdit={recordForEdit}
           setOpenPopup={setOpenPopup3}
         />
       </Popup>

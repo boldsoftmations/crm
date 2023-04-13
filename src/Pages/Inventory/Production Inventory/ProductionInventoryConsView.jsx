@@ -19,7 +19,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 import InventoryServices from "../../../services/InventoryService";
-import { useSelector } from "react-redux";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -47,7 +46,6 @@ export const ProductionInventoryConsView = () => {
   const [errMsg, setErrMsg] = useState("");
   const [productionInventoryData, setProductionInventoryData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const data = useSelector((state) => state.auth);
 
   useEffect(() => {
     getAllProductionInventoryDetails();

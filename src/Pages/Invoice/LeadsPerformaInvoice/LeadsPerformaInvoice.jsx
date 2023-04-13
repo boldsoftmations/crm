@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import DownloadIcon from "@mui/icons-material/Download";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";

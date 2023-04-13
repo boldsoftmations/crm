@@ -7,7 +7,6 @@ import {
   Divider,
   FormControlLabel,
   Grid,
-  Typography,
   TextField,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -15,7 +14,6 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
-import { Popup } from "../../../Components/Popup";
 import InvoiceServices from "../../../services/InvoiceService";
 import LeadServices from "../../../services/LeadService";
 import ProductService from "../../../services/ProductService";
@@ -117,7 +115,7 @@ export const UpdateLeadsProformaInvoice = (props) => {
       setDeliveryTermData(response.data.delivery_terms);
       getLeadsData(response.data.lead);
       var arr = [];
-      var arr = response.data.products.map((fruit) => ({
+      arr = response.data.products.map((fruit) => ({
         product: fruit.product,
         pending_quantity: fruit.pending_quantity,
         requested_date: fruit.requested_date,

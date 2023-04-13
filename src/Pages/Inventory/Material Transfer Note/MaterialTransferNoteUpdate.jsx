@@ -2,8 +2,6 @@ import {
   Autocomplete,
   Box,
   Button,
-  Chip,
-  Divider,
   Grid,
   IconButton,
   Snackbar,
@@ -13,16 +11,6 @@ import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
-import ProductService from "../../../services/ProductService";
-import { styled } from "@mui/material/styles";
-
-const Root = styled("div")(({ theme }) => ({
-  width: "100%",
-  ...theme.typography.body2,
-  "& > :not(style) + :not(style)": {
-    marginTop: theme.spacing(2),
-  },
-}));
 
 export const MaterialTransferNoteUpdate = (props) => {
   const { setOpenPopup, getAllMaterialTransferNoteDetails, idForEdit } = props;

@@ -24,7 +24,7 @@ import {
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import InvoiceServices from "../../../services/InvoiceService";
-import { CreateLeadsProformaInvoice } from "./CreateLeadsProformaInvoice";
+
 // import AddIcon from "@mui/icons-material/Add";
 // import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";

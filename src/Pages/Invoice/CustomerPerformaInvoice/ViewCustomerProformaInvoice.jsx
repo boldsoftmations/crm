@@ -22,7 +22,6 @@ import {
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import InvoiceServices from "../../../services/InvoiceService";
-import { CreateCustomerProformaInvoice } from "./CreateCustomerProformaInvoice";
 import { Popup } from "./../../../Components/Popup";
 import { CustomerProformaInvoice } from "./CustomerProformaInvoice";
 import ClearIcon from "@mui/icons-material/Clear";

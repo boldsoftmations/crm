@@ -602,7 +602,3 @@ export const MaterialTransferNoteView = () => {
     </>
   );
 };
-
-const typographyStyling = {
-  fontSize: "0.80rem",
-};
