@@ -2084,6 +2084,32 @@ export const ListItems = (props) => {
                       <ListItem
                         button
                         component={RouterLink}
+                        to="/dispatch/view-dispatch"
+                        style={{ width: 300 }}
+                      >
+                        <ListItemText
+                          component={Button}
+                          onClick={() => setOpen(false)}
+                          inset
+                          primary="Pending Dispatch"
+                        />
+                      </ListItem>
+                      <ListItem
+                        button
+                        component={RouterLink}
+                        to="/dispatch/view-dispatched"
+                        style={{ width: 300 }}
+                      >
+                        <ListItemText
+                          component={Button}
+                          onClick={() => setOpen(false)}
+                          inset
+                          primary="Dispatched"
+                        />
+                      </ListItem>
+                      <ListItem
+                        button
+                        component={RouterLink}
                         to="/dispatch/view-sales-register"
                         style={{ width: 300 }}
                       >
