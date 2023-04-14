@@ -11,6 +11,7 @@ import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
+import { useSelector } from "react-redux";
 
 export const MaterialTransferNoteUpdate = (props) => {
   const { setOpenPopup, getAllMaterialTransferNoteDetails, idForEdit } = props;
@@ -20,9 +21,11 @@ export const MaterialTransferNoteUpdate = (props) => {
   const [error, setError] = useState(null);
   const [product, setProduct] = useState();
   const [unit, setUnit] = useState();
+  const data = useSelector((state) => state.auth);
+  const users = data.profile;
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    console.log("name", name, value);
+
     setInputValue({ ...inputValue, [name]: value });
   };
 
@@ -80,6 +83,9 @@ export const MaterialTransferNoteUpdate = (props) => {
       e.preventDefault();
       setOpen(true);
       const req = {
+        seller_account: users.groups.includes("Production Delhi")
+          ? "Delhi"
+          : "Maharashtra",
         user: inputValue.user,
         product: product ? product : "",
         quantity: inputValue.quantity,
