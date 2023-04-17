@@ -40,6 +40,31 @@ export const CustomerProformaInvoice = (props) => {
       // create a new jsPDF instance
       const pdfDoc = new jsPDF();
 
+      // calculate the maximum scale based on the page dimensions
+      const pageWidth = pdfDoc.internal.pageSize.getWidth();
+      const pageHeight = pdfDoc.internal.pageSize.getHeight();
+      const contentWidth = (
+        <MyDocument
+          productData={productData}
+          invoiceData={invoiceData}
+          hsnData={hsnData}
+          AMOUNT_IN_WORDS={AMOUNT_IN_WORDS}
+          TOTAL_GST={TOTAL_GST}
+        />
+      ).props.width;
+      const contentHeight = (
+        <MyDocument
+          productData={productData}
+          invoiceData={invoiceData}
+          hsnData={hsnData}
+          AMOUNT_IN_WORDS={AMOUNT_IN_WORDS}
+          TOTAL_GST={TOTAL_GST}
+        />
+      ).props.height;
+      const maxWidthScale = pageWidth / contentWidth;
+      const maxHeightScale = pageHeight / contentHeight;
+      const maxScale = Math.min(maxWidthScale, maxHeightScale, 1.5);
+
       // generate the PDF document
       const pdfData = await pdf(
         <MyDocument
@@ -51,7 +76,7 @@ export const CustomerProformaInvoice = (props) => {
         />,
         pdfDoc,
         {
-          // set options here if needed
+          scale: maxScale, // set the scale option to fit the content onto one page
         }
       ).toBlob();
 
