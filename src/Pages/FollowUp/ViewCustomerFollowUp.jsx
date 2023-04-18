@@ -165,7 +165,7 @@ export const ViewCustomerFollowUp = (props) => {
           <Box display="flex">
             <Box flexGrow={0.9} align="left"></Box>
             <Box flexGrow={2.5} align="center">
-              <h3 className="Auth-form-title">View FollowUp</h3>
+              <h3 className="Auth-form-title">View Activity</h3>
             </Box>
             <Box flexGrow={0.3} align="right">
               <Button
@@ -173,7 +173,7 @@ export const ViewCustomerFollowUp = (props) => {
                 color="success"
                 onClick={handleClickOpen}
               >
-                Create Followup
+                Create Activity
               </Button>
             </Box>
           </Box>
@@ -217,9 +217,10 @@ export const ViewCustomerFollowUp = (props) => {
                               sx={{ fontFamily: "Arial", fontWeight: "bold" }}
                             >
                               {data.activity} - {data.user} -{" "}
-                              {moment(data.next_followup_date).format(
-                                "DD/MM/YYYY"
-                              )}
+                              {data.next_followup_date &&
+                                moment(data.next_followup_date).format(
+                                  "DD/MM/YYYY"
+                                )}
                             </Typography>
                             <Typography
                               variant="body1"
