@@ -15,6 +15,7 @@ import {
   Collapse,
   Typography,
   Grid,
+  TextField,
 } from "@mui/material";
 import FileSaver from "file-saver";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -33,21 +34,45 @@ export const SalesRegisterView = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [salesRegisterData, setsalesRegisterData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const [endDate, setEndDate] = useState(new Date()); // set endDate as one week ahead of startDate
+  const [startDate, setStartDate] = useState(
+    new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000)
+  ); // set default value as current date
+  const minDate = new Date().toISOString().split("T")[0];
+  const maxDate = new Date("2030-12-31").toISOString().split("T")[0];
+
+  const handleStartDateChange = (event) => {
+    const date = new Date(event.target.value);
+    setStartDate(date);
+    setEndDate(new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000));
+  };
+  console.log("startDate", startDate);
+  console.log("endDate", endDate);
   useEffect(() => {
     getSalesRegisterData();
-  }, []);
+  }, [startDate]);
 
   const getSalesRegisterData = async () => {
     try {
       setOpen(true);
+      const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
+      const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
       if (currentPage) {
         const response =
-          await InvoiceServices.getSaleRegisterDataWithPagination(currentPage);
+          await InvoiceServices.getSaleRegisterDataWithPagination(
+            StartDate,
+            EndDate,
+            currentPage
+          );
         setsalesRegisterData(response.data.results);
         const total = response.data.count;
         setpageCount(Math.ceil(total / 25));
       } else {
-        let response = await InvoiceServices.getAllSaleRegisterData();
+        let response = await InvoiceServices.getAllSaleRegisterData(
+          StartDate,
+          EndDate
+        );
         if (response) {
           setsalesRegisterData(response.data.results);
           const total = response.data.count;
@@ -85,7 +110,13 @@ export const SalesRegisterView = () => {
     try {
       setOpen(true);
       const filterSearch = value;
+      const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
+      const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
+      console.log("StartDate", StartDate);
+      console.log("EndDate", EndDate);
       const response = await InvoiceServices.getSaleRegisterDataWithSearch(
+        StartDate,
+        EndDate,
         filterSearch
       );
       if (response) {
@@ -111,11 +142,15 @@ export const SalesRegisterView = () => {
   const handlePageClick = async (event, value) => {
     try {
       const page = value;
+      const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
+      const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
       setCurrentPage(page);
       setOpen(true);
       if (searchQuery) {
         const response =
           await InvoiceServices.getSaleRegisterDataWithPaginationAndSearch(
+            StartDate,
+            EndDate,
             page,
             searchQuery
           );
@@ -129,7 +164,11 @@ export const SalesRegisterView = () => {
         }
       } else {
         const response =
-          await InvoiceServices.getSaleRegisterDataWithPagination(page);
+          await InvoiceServices.getSaleRegisterDataWithPagination(
+            StartDate,
+            EndDate,
+            page
+          );
         setsalesRegisterData(response.data.results);
         const total = response.data.count;
         setpageCount(Math.ceil(total / 25));
@@ -150,12 +189,49 @@ export const SalesRegisterView = () => {
         <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
           <Box display="flex">
             <Box flexGrow={2}>
-              {" "}
-              <CustomSearch
-                filterSelectedQuery={searchQuery}
-                handleInputChange={handleInputChange}
-                getResetData={getResetData}
-              />
+              <Box flexGrow={2}>
+                <TextField
+                  label="Start Date"
+                  variant="outlined"
+                  size="small"
+                  type="date"
+                  id="start-date"
+                  value={startDate ? startDate.toISOString().split("T")[0] : ""}
+                  min={minDate}
+                  max={
+                    endDate
+                      ? new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000)
+                          .toISOString()
+                          .split("T")[0]
+                      : maxDate
+                  }
+                  onChange={handleStartDateChange}
+                />
+                <TextField
+                  label="End Date"
+                  variant="outlined"
+                  size="small"
+                  // type="date"
+                  id="end-date"
+                  value={endDate ? endDate.toISOString().split("T")[0] : ""}
+                  min={
+                    startDate ? startDate.toISOString().split("T")[0] : minDate
+                  }
+                  max={
+                    startDate
+                      ? new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000)
+                          .toISOString()
+                          .split("T")[0]
+                      : maxDate
+                  }
+                  disabled={!startDate}
+                />
+                <CustomSearch
+                  filterSelectedQuery={searchQuery}
+                  handleInputChange={handleInputChange}
+                  getResetData={getResetData}
+                />
+              </Box>
             </Box>
             <Box flexGrow={2}>
               <h3
