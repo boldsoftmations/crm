@@ -32,6 +32,7 @@ import { CustomPagination } from "./../../Components/CustomPagination";
 import { CustomSearch } from "./../../Components/CustomSearch";
 import moment from "moment";
 import { ErrorMessage } from "../../Components/ErrorMessage/ErrorMessage";
+import { useSelector } from "react-redux";
 export const ViewDispatch = () => {
   const [dispatchData, setDispatchData] = useState([]);
   const [open, setOpen] = useState(false);
@@ -40,6 +41,8 @@ export const ViewDispatch = () => {
   const [pageCount, setpageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const data = useSelector((state) => state.auth);
+  const users = data.profile;
   useEffect(() => {
     getAllDispatchDetails();
   }, []);
@@ -211,7 +214,10 @@ export const ViewDispatch = () => {
                   <StyledTableCell align="center">
                     Dispatch Location
                   </StyledTableCell>
-                  <StyledTableCell align="center">Dispatched</StyledTableCell>
+                  {(users.groups.includes("Factory-Mumbai-Dispatch") ||
+                    users.groups.includes("Factory-Delhi-Dispatch")) && (
+                    <StyledTableCell align="center">Dispatched</StyledTableCell>
+                  )}
                 </StyledTableRow>
               </TableHead>
               <TableBody>
@@ -221,6 +227,7 @@ export const ViewDispatch = () => {
                     key={row.id}
                     row={row}
                     getAllDispatchDetails={getAllDispatchDetails}
+                    users={users}
                   />
                 ))}
               </TableBody>
@@ -237,7 +244,7 @@ export const ViewDispatch = () => {
 };
 
 function Row(props) {
-  const { row, getAllDispatchDetails } = props;
+  const { row, getAllDispatchDetails, users } = props;
   const [open, setOpen] = useState(false);
   const [checked, setChecked] = useState(row.dispatched);
   const [openModal, setOpenModal] = useState(false);
@@ -288,19 +295,22 @@ function Row(props) {
           {moment(row.date).format("DD-MM-YYYY")}
         </TableCell>
         <TableCell align="center">{row.dispatch_location}</TableCell>
-        <TableCell align="center">
-          <Button
-            onClick={() => {
-              setOpenModal(true);
-              setId(row.sales_invoice);
-              setCustomer(row.customer);
-            }}
-            variant="contained"
-            color="success"
-          >
-            Confirm Dispatch
-          </Button>
-        </TableCell>
+        {(users.groups.includes("Factory-Mumbai-Dispatch") ||
+          users.groups.includes("Factory-Delhi-Dispatch")) && (
+          <TableCell align="center">
+            <Button
+              onClick={() => {
+                setOpenModal(true);
+                setId(row.sales_invoice);
+                setCustomer(row.customer);
+              }}
+              variant="contained"
+              color="success"
+            >
+              Confirm Dispatch
+            </Button>
+          </TableCell>
+        )}
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
