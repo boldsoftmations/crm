@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import DownloadIcon from "@mui/icons-material/Download";
 import jsPDF from "jspdf";
@@ -17,7 +17,7 @@ import { CustomerConfirmationPayment } from "./CustomerConfirmationPayment";
 import { Popup } from "./../../../Components/Popup";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import logo from "../../../Images/LOGOS3.png";
-import ISO from "../../../Images/ISO.png";
+import ISO from "../../../Images/ISOLogo.ico";
 import AllLogo from "../../../Images/allLogo.jpg";
 import MSME from "../../../Images/MSME.jpeg";
 import { ErrorMessage } from "./../../../Components/ErrorMessage/ErrorMessage";
@@ -40,31 +40,6 @@ export const CustomerProformaInvoice = (props) => {
       // create a new jsPDF instance
       const pdfDoc = new jsPDF();
 
-      // calculate the maximum scale based on the page dimensions
-      const pageWidth = pdfDoc.internal.pageSize.getWidth();
-      const pageHeight = pdfDoc.internal.pageSize.getHeight();
-      const contentWidth = (
-        <MyDocument
-          productData={productData}
-          invoiceData={invoiceData}
-          hsnData={hsnData}
-          AMOUNT_IN_WORDS={AMOUNT_IN_WORDS}
-          TOTAL_GST={TOTAL_GST}
-        />
-      ).props.width;
-      const contentHeight = (
-        <MyDocument
-          productData={productData}
-          invoiceData={invoiceData}
-          hsnData={hsnData}
-          AMOUNT_IN_WORDS={AMOUNT_IN_WORDS}
-          TOTAL_GST={TOTAL_GST}
-        />
-      ).props.height;
-      const maxWidthScale = pageWidth / contentWidth;
-      const maxHeightScale = pageHeight / contentHeight;
-      const maxScale = Math.min(maxWidthScale, maxHeightScale, 1.5);
-
       // generate the PDF document
       const pdfData = await pdf(
         <MyDocument
@@ -76,7 +51,7 @@ export const CustomerProformaInvoice = (props) => {
         />,
         pdfDoc,
         {
-          scale: maxScale, // set the scale option to fit the content onto one page
+          // set options here if needed
         }
       ).toBlob();
 
@@ -214,6 +189,11 @@ export const CustomerProformaInvoice = (props) => {
       );
     }
   };
+  const componentRef = useRef();
+  // const handlePrint = useReactToPrint({
+  //   content: () => componentRef.current,
+  //   documentTitle: `PI Number ${invoiceData.pi_number}`,
+  // });
 
   const TOTAL_GST_DATA = invoiceData.total - invoiceData.amount;
   const TOTAL_GST = TOTAL_GST_DATA.toFixed(2);
@@ -232,7 +212,7 @@ export const CustomerProformaInvoice = (props) => {
                 <button
                   type="button"
                   className="btn btn-primary"
-                  onClick={handlePrint}
+                  onClick={(e) => handlePrint(e)}
                 >
                   Download
                   <DownloadIcon />
@@ -298,9 +278,8 @@ export const CustomerProformaInvoice = (props) => {
               )}
           </div>
           <div className="col-xs-6">
-            {(users.groups.includes("Accounts") ||
-              users.groups.includes("Accounts Billing Department")) &&
-              invoiceData.status === "Approved" && (
+            {invoiceData.status === "Approved" &&
+              users.groups[0] === "Accounts" && (
                 <button
                   type="button"
                   className="btn btn-success"
@@ -377,14 +356,14 @@ export const CustomerProformaInvoice = (props) => {
                       >
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Proforma Invoice No & Date :-
+                            Proforma Invoice No & Date :{" "}
                           </strong>{" "}
                           {invoiceData.pi_number} &{" "}
                           {invoiceData.generation_date}
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Sales Person :-
+                            Sales Person :{" "}
                           </strong>{" "}
                           {invoiceData.raised_by_first_name}&nbsp;&nbsp;
                           {invoiceData.raised_by_last_name}
@@ -392,7 +371,7 @@ export const CustomerProformaInvoice = (props) => {
 
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Valid Until :-
+                            Valid Until :{" "}
                           </strong>{" "}
                           {invoiceData.validity}
                         </div>
@@ -407,38 +386,38 @@ export const CustomerProformaInvoice = (props) => {
                       >
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Place of Supply :-
+                            Place of Supply :{" "}
                           </strong>
                           {invoiceData.place_of_supply}
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Transporter Name :-
+                            Transporter Name :{" "}
                           </strong>
                           {invoiceData.transporter_name}
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Buyer Order No & Date :-
+                            Buyer Order No & Date :{" "}
                           </strong>
                           {invoiceData.buyer_order_no} &{" "}
                           {invoiceData.buyer_order_date}
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Amount Receive :-
+                            Amount Receive :{" "}
                           </strong>
                           {invoiceData.amount_recieved}
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Payment Terms :-
+                            Payment Terms :{" "}
                           </strong>{" "}
                           {invoiceData.payment_terms}
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Delivery Terms :-
+                            Delivery Terms :{" "}
                           </strong>{" "}
                           {invoiceData.delivery_terms}
                         </div>
@@ -455,55 +434,55 @@ export const CustomerProformaInvoice = (props) => {
                     <div className="col-md-6">
                       <address>
                         <strong style={{ ...typographyStyling }}>
-                          Billed To :-
+                          Billed To:
                         </strong>
                         <br />
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Company :-
+                            Company :{" "}
                           </strong>
                           {invoiceData.company_name},
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Address :-
+                            Address :{" "}
                           </strong>
                           {invoiceData.billing_address},
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            City & State:-
+                            City & State:{" "}
                           </strong>
                           {invoiceData.billing_city} &{" "}
                           {invoiceData.billing_state},
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Pin Code :-
+                            Pin Code :{" "}
                           </strong>
                           {invoiceData.billing_pincode}
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Gst Number :-
+                            Gst Number :{" "}
                           </strong>
                           {invoiceData.gst_number}
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Pan Number :-
+                            Pan Number :{" "}
                           </strong>
                           {invoiceData.pan_number}
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Contact :-
+                            Contact :{" "}
                           </strong>
                           {invoiceData.contact}
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Contact Person Name:-
+                            Contact Person Name:{" "}
                           </strong>
                           {invoiceData.contact_person_name}
                         </div>
@@ -515,54 +494,54 @@ export const CustomerProformaInvoice = (props) => {
                     >
                       <address className="justify-content-end">
                         <strong style={{ ...typographyStyling }}>
-                          Shipped To :-
+                          Shipped To:
                         </strong>
                         <br />
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Company :-
+                            Company :{" "}
                           </strong>
                           {invoiceData.company_name},
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Address :-
+                            Address :{" "}
                           </strong>
                           {invoiceData.address}
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            City & State:-
+                            City & State:{" "}
                           </strong>
                           {invoiceData.city} & {invoiceData.state},
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Pin Code :-
+                            Pin Code :{" "}
                           </strong>
                           {invoiceData.pincode}
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Gst Number :-
+                            Gst Number :{" "}
                           </strong>
                           {invoiceData.gst_number}
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Pan Number :-
+                            Pan Number :{" "}
                           </strong>
                           {invoiceData.pan_number}
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Contact :-
+                            Contact :{" "}
                           </strong>
                           {invoiceData.contact}
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
-                            Contact Person Name:-
+                            Contact Person Name:{" "}
                           </strong>
                           {invoiceData.contact_person_name}
                         </div>
@@ -861,7 +840,7 @@ export const CustomerProformaInvoice = (props) => {
                         {invoiceData.approval
                           ? invoiceData.approval.approver_first_name
                           : ""}
-                        &nbsp;
+                        &nbsp;&nbsp;
                         {invoiceData.approval
                           ? invoiceData.approval.approver_last_name
                           : ""}
@@ -917,25 +896,24 @@ export const CustomerProformaInvoice = (props) => {
 
 const style = StyleSheet.create({
   container: {
-    // margin: "50pt",
-    // padding: "10pt",
-    border: "1pt solid #ccc",
+    border: "1pt solid #000000",
+    overflow: "hidden",
   },
   row: {
     display: "flex",
     flexDirection: "row",
     borderBottom: "1pt solid #ccc",
-    padding: "5pt",
   },
   header: {
     backgroundColor: "#eee",
     fontWeight: "bold",
+    fontFamily: "Helvetica",
   },
   cell: {
     flex: 1,
     flexGrow: 1,
-    textAlign: "center",
-    padding: "5pt",
+    fontSize: 10,
+    fontFamily: "Helvetica",
   },
   logo: {
     height: "auto",
@@ -952,15 +930,25 @@ const style = StyleSheet.create({
   lightText: {
     color: "#777", // set the color to a light gray color
     fontSize: 8,
+    fontFamily: "Helvetica",
   },
   outerText: {
     fontWeight: "bold",
     fontSize: 10,
     textAlign: "left",
+    fontFamily: "Helvetica",
+    marginLeft: "5pt",
   },
   innerText: {
+    fontSize: 8,
     color: "#777777",
     fontSize: 10,
+    fontFamily: "Helvetica",
+    marginLeft: "5pt",
+  },
+  borderRight: {
+    borderRightWidth: 1,
+    borderRightColor: "#ccc",
   },
 });
 
@@ -975,6 +963,7 @@ const MyDocument = ({
     <Page style={{ fontFamily: "Helvetica", fontSize: "12pt" }}>
       <View style={{ padding: "20pt" }}>
         <View style={style.container}>
+          {/* HEADERS */}
           <View style={style.row}>
             <View style={{ marginRight: "20pt" }}>
               <Image source={logo} style={style.logo} />
@@ -983,6 +972,7 @@ const MyDocument = ({
               style={{
                 ...style.cell,
                 alignItems: "center",
+                textAlign: "center",
                 padding: 0,
               }}
             >
@@ -1018,387 +1008,556 @@ const MyDocument = ({
               </Text>
             </View>
           </View>
-          <View style={{ ...style.row, padding: 0 }}>
-            <View
-              style={{
-                ...style.cell,
-                padding: "5pt",
-
-                borderRight: "1pt solid #ccc",
-              }}
-            >
-              <Text style={style.outerText}>
-                Proforma Invoice No & Date :-
-                <Text style={style.innerText}>
-                  &nbsp;
-                  {invoiceData.pi_number} & {invoiceData.generation_date}
-                </Text>
-              </Text>
-              <Text style={style.outerText}>
-                Sales Person :-
-                <Text style={style.innerText}>
-                  &nbsp; {invoiceData.raised_by_first_name}
-                  {invoiceData.raised_by_last_name}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Valid Until :-
-                <Text style={style.innerText}>
-                  &nbsp; {moment(invoiceData.validity).format("DD-MM-YYYY")}
-                </Text>
-              </Text>
-            </View>
-            <View
-              style={{
-                ...style.cell,
-                padding: "5pt",
-                alignItems: "left",
-              }}
-            >
-              <Text style={style.outerText}>
+          {/* PI DETAILS */}
+          {/* PI AND DATE & PLACE OF SUPPLY */}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>
                 Proforma Invoice No & Date :
-                <Text style={style.innerText}>
-                  &nbsp; {invoiceData.pi_number} &{" "}
-                  {moment(invoiceData.generation_date).format("DD-MM-YYYY")}
-                </Text>
               </Text>
-              <Text style={style.outerText}>
-                Place of Supply :-
-                <Text style={style.innerText}>
-                  &nbsp;{invoiceData.place_of_supply}
-                </Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.pi_number} &{" "}
+                {moment(invoiceData.generation_date).format("DD-MM-YYYY")}
               </Text>
-              <Text style={style.outerText}>
-                Transporter Name :-
-                <Text style={style.innerText}>
-                  &nbsp; {invoiceData.transporter_name}
-                </Text>
-              </Text>
-              <Text style={style.outerText}>
-                Buyer Order No & Date :-
-                <Text style={style.innerText}>
-                  &nbsp; {invoiceData.buyer_order_no} &{" "}
-                  {invoiceData.buyer_order_date}
-                </Text>
-              </Text>
-              <Text style={style.outerText}>
-                Amount Receive :-
-                <Text style={style.innerText}>
-                  &nbsp;{invoiceData.amount_recieved}
-                </Text>
-              </Text>
-              <Text style={style.outerText}>
-                Payment Terms :-
-                <Text style={style.innerText}>
-                  {" "}
-                  &nbsp; {invoiceData.payment_terms}
-                </Text>
-              </Text>
-              <Text style={style.outerText}>
-                Delivery Terms :-
-                <Text style={style.innerText}>
-                  &nbsp;{invoiceData.delivery_terms}
-                </Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Place of Supply :</Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.place_of_supply}
               </Text>
             </View>
           </View>
-          <View style={{ ...style.row, padding: 0 }}>
-            <View
-              style={{
-                ...style.cell,
-                padding: "5pt",
-                borderRight: "1pt solid #ccc",
-              }}
-            >
-              <Text style={style.outerText}>Billed To:</Text>
-              <Text style={style.outerText}>
-                Company :
-                <Text style={style.innerText}>
-                  {" "}
-                  &nbsp;{invoiceData.company_name},
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Address :
-                <Text style={style.innerText}>
-                  &nbsp; {invoiceData.billing_address},
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                City & State:
-                <Text style={style.innerText}>
-                  &nbsp; {invoiceData.billing_city} &{invoiceData.billing_state}
-                  ,
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Pin Code :
-                <Text style={style.innerText}>
-                  &nbsp; {invoiceData.billing_pincode}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Gst Number :
-                <Text style={style.innerText}>
-                  {" "}
-                  &nbsp;{invoiceData.gst_number}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Pan Number :
-                <Text style={style.innerText}>
-                  {" "}
-                  &nbsp;{invoiceData.pan_number}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Contact :
-                <Text style={style.innerText}>
-                  {" "}
-                  &nbsp;{invoiceData.contact}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Contact Person Name:
-                <Text style={style.innerText}>
-                  &nbsp;{invoiceData.contact_person_name}
-                </Text>
+          {/* SALES PERSON AND TRASNPORTER NAME */}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Sales Person :</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.raised_by_first_name}
+                {invoiceData.raised_by_last_name}
               </Text>
             </View>
-
-            <View
-              style={{
-                ...style.cell,
-                padding: "5pt",
-              }}
-            >
-              <Text style={style.outerText}>Shipped To:</Text>
-              <Text style={style.outerText}>
-                Company :
-                <Text style={style.innerText}>
-                  {" "}
-                  &nbsp;{invoiceData.company_name},
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Address :
-                <Text style={style.innerText}>
-                  {" "}
-                  &nbsp;{invoiceData.address},
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                City & State:
-                <Text style={style.innerText}>
-                  &nbsp; {invoiceData.city} &{invoiceData.state},
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Pin Code :
-                <Text style={style.innerText}>
-                  {" "}
-                  &nbsp;{invoiceData.pincode}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Gst Number :
-                <Text style={style.innerText}>
-                  {" "}
-                  &nbsp;{invoiceData.gst_number}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Pan Number :
-                <Text style={style.innerText}>
-                  {" "}
-                  &nbsp;{invoiceData.pan_number}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Contact :
-                <Text style={style.innerText}>
-                  {" "}
-                  &nbsp;{invoiceData.contact}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Contact Person Name:
-                <Text style={style.innerText}>
-                  &nbsp;{invoiceData.contact_person_name}
-                </Text>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Transporter Name :</Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.transporter_name}
               </Text>
             </View>
           </View>
-          <View style={{ ...style.row, ...style.header, padding: 0 }}>
-            <View style={{ ...style.cell, textAlign: "left" }}>
+          {/* VALID UNTIL & BUYER ORDER NO */}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Valid Until :</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>
+                {moment(invoiceData.validity).format("DD-MM-YYYY")}
+              </Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>
+                Buyer Order No & Date :
+              </Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.buyer_order_no} & {invoiceData.buyer_order_date}
+              </Text>
+            </View>
+          </View>
+          {/* AMOUN T RECEIVED */}
+          <View style={style.row}>
+            <View z></View>
+            <View style={{ ...style.cell }}></View>
+            <View style={{ ...style.cell, ...style.borderRight }}></View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Amount Receive :</Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.amount_recieved}
+              </Text>
+            </View>
+          </View>
+          {/* PAYMENT TERMS*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell }}></View>
+            <View style={{ ...style.cell, ...style.borderRight }}></View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Payment Terms :</Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.payment_terms}
+              </Text>
+            </View>
+          </View>
+          {/* DELIVERY TERMS */}
+          <View style={style.row}>
+            <View style={{ ...style.cell }}></View>
+            <View style={{ ...style.cell, ...style.borderRight }}></View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Delivery Terms :</Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.delivery_terms}
+              </Text>
+            </View>
+          </View>
+
+          {/* BILLED  AND SHIPPED TO*/}
+          {/* BILLED TO */}
+          <View style={{ ...style.row, ...style.header }}>
+            <View style={style.cell}>
+              <Text
+                style={{
+                  ...style.outerText,
+                  ...style.borderRight,
+                  textAlign: "center",
+                }}
+              >
+                Billed To
+              </Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.outerText, textAlign: "center" }}>
+                Shipped To{" "}
+              </Text>
+            </View>
+          </View>
+          {/* BILLED TO COMPANY*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Company :</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.company_name}
+              </Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Company :</Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.company_name}
+              </Text>
+            </View>
+          </View>
+          {/* BILLED TO ADDRESS*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Address :</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.billing_address}
+              </Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Address :</Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText }}>{invoiceData.address}</Text>
+            </View>
+          </View>
+          {/* BILLED TO CITY & STATE*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>City & State:</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.billing_city} &{invoiceData.billing_state}
+              </Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>City & State:</Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.city} &{invoiceData.state}
+              </Text>
+            </View>
+          </View>
+          {/* BILLED TO PINCODE*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Pin Code :</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.billing_pincode}
+              </Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}> Pin Code :</Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText }}>{invoiceData.pincode}</Text>
+            </View>
+          </View>
+          {/* BILLED TO GST NUMBER*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Gst Number :</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.gst_number}
+              </Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Gst Number :</Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.gst_number}
+              </Text>
+            </View>
+          </View>
+          {/* BILLED TO PAN NUMBER*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Pan Number :</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.pan_number}
+              </Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Pan Number :</Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.pan_number}
+              </Text>
+            </View>
+          </View>
+          {/* BILLED TO CONTACT*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Contact :</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>{invoiceData.contact}</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Contact :</Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText }}>{invoiceData.contact}</Text>
+            </View>
+          </View>
+          {/* BILLED TO CONTACT PERSON*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Contact Person :</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.contact_person_name}
+              </Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Contact Person :</Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.contact_person_name}
+              </Text>
+            </View>
+          </View>
+          {/* PRODUCT  */}
+          <View style={{ ...style.row, ...style.header }}>
+            <View
+              style={{
+                ...style.cell,
+                marginLeft: "4pt",
+                textAlign: "left",
+              }}
+            >
               <Text>Product</Text>
             </View>
-            <View style={{ ...style.cell, textAlign: "center" }}>
-              <Text>Unit</Text>
+            <View
+              style={{
+                ...style.cell,
+                flex: 0.5,
+                flexGrow: 0.5,
+                textAlign: "center",
+              }}
+            >
+              <Text>HSN Code</Text>
             </View>
-            <View style={{ ...style.cell, textAlign: "center" }}>
+            <View
+              style={{
+                ...style.cell,
+                flex: 0.5,
+                flexGrow: 0.5,
+                textAlign: "center",
+              }}
+            >
               <Text>Quantity</Text>
             </View>
-            <View style={{ ...style.cell, textAlign: "center" }}>
+            <View
+              style={{
+                ...style.cell,
+                flex: 0.5,
+                flexGrow: 0.5,
+                textAlign: "center",
+              }}
+            >
+              <Text>Unit</Text>
+            </View>
+            <View
+              style={{
+                ...style.cell,
+                flex: 0.5,
+                flexGrow: 0.5,
+                textAlign: "center",
+              }}
+            >
               <Text>Rate</Text>
             </View>
-            <View style={{ ...style.cell, textAlign: "center" }}>
+            <View
+              style={{
+                ...style.cell,
+                flex: 0.5,
+                flexGrow: 0.5,
+                textAlign: "center",
+              }}
+            >
               <Text>Amount</Text>
             </View>
           </View>
 
           {productData.map((historyRow, i) => (
             <View style={{ ...style.row, paddingVertical: 5 }} key={i}>
-              <View style={{ ...style.cell, textAlign: "left" }}>
-                <Text style={{ ...style.lightText, fontSize: 7 }}>
+              <View
+                style={{
+                  ...style.cell,
+                  textAlign: "left",
+                  marginLeft: "4pt",
+                  width: 80,
+                }}
+              >
+                <Text style={{ ...style.lightText }}>
                   {historyRow.description}
                   {"\n"}
                   {historyRow.product}
                 </Text>
               </View>
-              <View style={{ ...style.cell, textAlign: "center" }}>
-                <Text style={style.lightText}>{historyRow.unit}</Text>
+              <View
+                style={{
+                  ...style.cell,
+                  flex: 0.5,
+                  flexGrow: 0.5,
+                  textAlign: "center",
+                }}
+              >
+                <Text style={style.lightText}>{historyRow.hsn_code}</Text>
               </View>
-              <View style={{ ...style.cell, textAlign: "center" }}>
+              <View
+                style={{
+                  ...style.cell,
+                  flex: 0.5,
+                  flexGrow: 0.5,
+                  textAlign: "center",
+                }}
+              >
                 <Text style={style.lightText}>{historyRow.quantity}</Text>
               </View>
-              <View style={{ ...style.cell, textAlign: "center" }}>
+              <View
+                style={{
+                  ...style.cell,
+                  flex: 0.5,
+                  flexGrow: 0.5,
+                  textAlign: "center",
+                }}
+              >
+                <Text style={style.lightText}>{historyRow.unit}</Text>
+              </View>
+              <View
+                style={{
+                  ...style.cell,
+                  flex: 0.5,
+                  flexGrow: 0.5,
+                  textAlign: "center",
+                }}
+              >
                 <Text style={style.lightText}>{historyRow.rate}</Text>
               </View>
-              <View style={{ ...style.cell, textAlign: "center" }}>
+              <View
+                style={{
+                  ...style.cell,
+                  flex: 0.5,
+                  flexGrow: 0.5,
+                  textAlign: "center",
+                }}
+              >
                 <Text style={style.lightText}>{historyRow.amount}</Text>
               </View>
             </View>
           ))}
+          {/* COMPANY DETAIL AND TOTAL GST AMOUNT */}
+          <View style={{ ...style.row }}>
+            <View style={{ ...style.cell, ...style.header }}>
+              <Text
+                style={{
+                  ...style.outerText,
 
-          <View style={{ ...style.row, padding: 0 }}>
-            <View
-              style={{
-                ...style.cell,
-                padding: "5pt",
-                borderRight: "1pt solid #ccc",
-              }}
-            >
-              <Text style={style.outerText}>Company Bank Details :-</Text>
-
-              <Text style={style.outerText}>
-                Company Name :-
-                <Text style={style.innerText}>Glutape India Pvt Ltd</Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Bank :-
-                <Text style={style.innerText}>
-                  &nbsp;{invoiceData.seller_bank_name}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Account No :-
-                <Text style={style.innerText}>
-                  &nbsp;{invoiceData.seller_account_no}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Branch & IFSC Code :-
-                <Text style={style.innerText}>
-                  &nbsp; {invoiceData.seller_branch} &
-                  {invoiceData.seller_ifsc_code}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Gst Number :-
-                <Text style={style.innerText}>
-                  {" "}
-                  &nbsp;{invoiceData.seller_gst}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Pan Number :-
-                <Text style={style.innerText}>
-                  {" "}
-                  &nbsp;{invoiceData.seller_pan}
-                </Text>
+                  textAlign: "center",
+                }}
+              >
+                Company Bank Details
               </Text>
             </View>
-
             <View
-              style={{
-                ...style.cell,
-                padding: "5pt",
-              }}
-            >
-              <Text style={style.outerText}>
-                Taxable Amount :-
-                <Text style={style.innerText}> &nbsp;{invoiceData.amount}</Text>
+              style={{ ...style.cell, ...style.header, ...style.borderRight }}
+            ></View>
+            <View style={{ ...style.cell }}>
+              <Text style={{ ...style.outerText, textAlign: "right" }}>
+                Taxable Amount :
               </Text>
-
-              <Text style={style.outerText}>
-                CGST Amount :-
-                <Text style={style.innerText}>
-                  &nbsp;
-                  {invoiceData.cgst ? invoiceData.cgst : "-"}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                SGST Amount :-
-                <Text style={style.innerText}>
-                  &nbsp;
-                  {invoiceData.sgst ? invoiceData.sgst : "-"}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                IGST Amount :-
-                <Text style={style.innerText}>
-                  &nbsp;
-                  {invoiceData.igst ? invoiceData.igst : "-"}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Round Off :-
-                <Text style={style.innerText}>
-                  {" "}
-                  &nbsp;{invoiceData.round_off}
-                </Text>
-              </Text>
-
-              <Text style={style.outerText}>
-                Total Amount :-
-                <Text style={style.innerText}>
-                  &nbsp;{invoiceData.round_off_total}
-                </Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText, textAlign: "center" }}>
+                {invoiceData.amount}
               </Text>
             </View>
           </View>
+          {/*  COMPANY & Taxable Amount*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Company :</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>Glutape India Pvt Ltd</Text>
+            </View>
+            <View style={{ ...style.cell }}>
+              <Text style={{ ...style.outerText, textAlign: "right" }}>
+                CGST Amount :
+              </Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText, textAlign: "center" }}>
+                {invoiceData.cgst ? invoiceData.cgst : "-"}
+              </Text>
+            </View>
+          </View>
+          {/* Bank & CGST Amount*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Bank :</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.seller_bank_name}
+              </Text>
+            </View>
+            <View style={{ ...style.cell }}>
+              <Text style={{ ...style.outerText, textAlign: "right" }}>
+                SGST Amount :
+              </Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText, textAlign: "center" }}>
+                {invoiceData.sgst ? invoiceData.sgst : "-"}
+              </Text>
+            </View>
+          </View>
+          {/* >Account No & CITY & SGST Amount*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Account No :</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.seller_account_no}
+              </Text>
+            </View>
+            <View style={{ ...style.cell }}>
+              <Text style={{ ...style.outerText, textAlign: "right" }}>
+                IGST Amount :
+              </Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText, textAlign: "center" }}>
+                {invoiceData.igst ? invoiceData.igst : "-"}
+              </Text>
+            </View>
+          </View>
+          {/* Branch and IFSC Code & IGST Amount*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Branch & IFSC Code :</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.seller_branch} &{invoiceData.seller_ifsc_code}
+              </Text>
+            </View>
+            <View style={{ ...style.cell }}>
+              <Text style={{ ...style.outerText, textAlign: "right" }}>
+                Round Off :
+              </Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText, textAlign: "center" }}>
+                {invoiceData.round_off}
+              </Text>
+            </View>
+          </View>
+          {/* Round Off & GST NUMBER*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Gst Number :</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.seller_gst}
+              </Text>
+            </View>
+            <View style={{ ...style.cell }}>
+              <Text style={{ ...style.outerText, textAlign: "right" }}>
+                Total Amount :
+              </Text>
+            </View>
+            <View style={style.cell}>
+              <Text style={{ ...style.innerText, textAlign: "center" }}>
+                {invoiceData.round_off_total}
+              </Text>
+            </View>
+          </View>
+          {/* Total Amount & PAN NUMBER*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Pan Number :</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.innerText }}>
+                {invoiceData.seller_pan}
+              </Text>
+            </View>
+            <View style={{ ...style.cell }}></View>
+            <View style={style.cell}></View>
+          </View>
 
-          <View style={{ ...style.row, padding: 0 }}>
+          {/* AMOUNTS IN WORDS */}
+          <View style={{ ...style.row }}>
             <View
               style={{
                 ...style.cell,
                 padding: "5pt",
-
-                borderRight: "1pt solid #ccc",
               }}
             >
               <Text style={style.outerText}>
@@ -1407,96 +1566,120 @@ const MyDocument = ({
               </Text>
             </View>
           </View>
-          <View style={{ ...style.row, ...style.header, padding: 0 }}>
-            <View style={style.cell}>
-              <Text>HSN </Text>
+          <View>
+            <Text>{"\n"}</Text>
+          </View>
+          {/* HSN TABLE */}
+          <View style={{ ...style.row, ...style.header }}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>HSN</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>TAXABLE AMOUNT</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>CGST</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>SGST</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>IGST</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>GST</Text>
             </View>
             <View style={style.cell}>
-              <Text>TAXABLE AMOUNT </Text>
-            </View>
-            <View style={style.cell}>
-              <Text>CGST </Text>
-            </View>
-            <View style={style.cell}>
-              <Text>SGST </Text>
-            </View>
-            <View style={style.cell}>
-              <Text>IGST </Text>
-            </View>
-            <View style={style.cell}>
-              <Text>GST </Text>
-            </View>
-            <View style={style.cell}>
-              <Text>TOTAL GST </Text>
+              <Text style={{ ...style.outerText }}>TOTAL GST</Text>
             </View>
           </View>
+          {/* HSN TABLE DATA*/}
           {hsnData.map((historyRow, i) => (
-            <View style={{ ...style.row, padding: 0 }} key={i}>
-              <View style={style.cell}>
-                <Text style={style.lightText}>{historyRow.hsn_code}</Text>
+            <View style={style.row} key={i}>
+              <View style={{ ...style.cell, ...style.borderRight }}>
+                <Text style={{ ...style.innerText }}>
+                  {historyRow.hsn_code}
+                </Text>
               </View>
-              <View style={style.cell}>
-                <Text style={style.lightText}>{historyRow.amount}</Text>
+
+              <View style={{ ...style.cell, ...style.borderRight }}>
+                <Text style={{ ...style.innerText }}>{historyRow.amount}</Text>
               </View>
-              <View style={style.cell}>
-                <Text style={style.lightText}>{historyRow.cgst}</Text>
+
+              <View style={{ ...style.cell, ...style.borderRight }}>
+                <Text style={{ ...style.innerText }}>{historyRow.cgst}</Text>
               </View>
-              <View style={style.cell}>
-                <Text style={style.lightText}>{historyRow.sgst}</Text>
+
+              <View style={{ ...style.cell, ...style.borderRight }}>
+                <Text style={{ ...style.innerText }}>{historyRow.sgst}</Text>
               </View>
-              <View style={style.cell}>
-                <Text style={style.lightText}>{historyRow.igst}</Text>
+
+              <View style={{ ...style.cell, ...style.borderRight }}>
+                <Text style={{ ...style.innerText }}>{historyRow.igst}</Text>
               </View>
-              <View style={style.cell}>
-                <Text style={style.lightText}>{historyRow.gst_percentage}</Text>
+
+              <View style={{ ...style.cell, ...style.borderRight }}>
+                <Text style={{ ...style.innerText }}>
+                  {historyRow.gst_percentage}
+                </Text>
               </View>
+
               <View style={style.cell}>
-                <Text style={style.lightText}>{historyRow.total_gst}</Text>
+                <Text style={{ ...style.innerText }}>
+                  {historyRow.total_gst}
+                </Text>
               </View>
             </View>
           ))}
-          <View style={{ ...style.row }}>
-            <View style={style.cell}>
-              <Text>Total</Text>
+
+          {/* HSN TABLE DATA TOTAL AND TAX*/}
+          <View style={style.row}>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>Total</Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>
+                {invoiceData.amount || "-"}
+              </Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>
+                {invoiceData.cgst || "-"}
+              </Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>
+                {invoiceData.sgst || "-"}
+              </Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>
+                {invoiceData.igst | "-"}
+              </Text>
+            </View>
+            <View style={{ ...style.cell, ...style.borderRight }}>
+              <Text style={{ ...style.outerText }}>-</Text>
             </View>
             <View style={style.cell}>
-              <Text>{invoiceData.amount || "-"} </Text>
-            </View>
-            <View style={style.cell}>
-              <Text>{invoiceData.cgst || "-"}</Text>
-            </View>
-            <View style={style.cell}>
-              <Text>{invoiceData.sgst || "-"}</Text>
-            </View>
-            <View style={style.cell}>
-              <Text>{invoiceData.igst | "-"}</Text>
-            </View>
-            <View style={style.cell}>
-              <Text></Text>
-            </View>
-            <View style={style.cell}>
-              <Text>{TOTAL_GST | "-"}</Text>
+              <Text style={{ ...style.outerText }}>{TOTAL_GST | "-"}</Text>
             </View>
           </View>
-
+          <View>
+            <Text>{"\n"}</Text>
+          </View>
+          {/* TERMS AND CONDITION */}
           <View style={style.row}>
             <View
               style={{
                 ...style.cell,
-                alignItems: "left",
-                padding: 0,
+                marginLeft: "4pt",
               }}
             >
-              <Text
-                style={{ fontWeight: "bold", fontSize: 8, textAlign: "left" }}
-              >
+              <Text style={{ fontWeight: "bold", fontSize: 8 }}>
                 Terms and Condition :-
               </Text>
               {Information.map((data, i) => (
-                <Text
-                  key={i}
-                  style={{ color: "#777777", fontSize: 5, textAlign: "left" }}
-                >
+                <Text key={i} style={{ color: "#777777", fontSize: 5 }}>
                   {data.id} {data.text}
                 </Text>
               ))}
@@ -1504,7 +1687,8 @@ const MyDocument = ({
             <View
               style={{
                 ...style.cell,
-                padding: 0,
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
               <Text style={style.innerText}>
@@ -1521,21 +1705,11 @@ const MyDocument = ({
                 {" "}
                 {invoiceData.approval ? invoiceData.approval.approval_date : ""}
               </Text>
-              <Text
-                style={{ ...style.innerText, fontWeight: "bold", fontSize: 10 }}
-              >
-                {" "}
-                Authorising Signatory
-              </Text>
-              <Text
-                style={{ ...style.innerText, fontWeight: "bold", fontSize: 10 }}
-              >
-                {" "}
-                [Digitally Signed]
-              </Text>
+              <Text style={{ ...style.outerText }}> Authorising Signatory</Text>
+              <Text style={{ ...style.outerText }}> [Digitally Signed]</Text>
             </View>
           </View>
-
+          {/* FOOTERS */}
           <View style={style.row}>
             <View
               style={{
