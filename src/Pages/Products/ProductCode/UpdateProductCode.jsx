@@ -1,12 +1,4 @@
-import {
-  Autocomplete,
-  Backdrop,
-  Box,
-  Button,
-  CircularProgress,
-  Grid,
-  TextField,
-} from "@mui/material";
+import { Autocomplete, Box, Button, Grid, TextField } from "@mui/material";
 
 import { useRef, useState } from "react";
 // import { useSelector } from "react-redux";
@@ -15,6 +7,7 @@ import React, { useEffect } from "react";
 import ProductService from "../../../services/ProductService";
 
 import "../../CommonStyle.css";
+import { CustomLoader } from "../../../Components/CustomLoader";
 
 export const UpdateProductCode = (props) => {
   const { recordForEdit, setOpenPopup, getproductCodes } = props;
@@ -113,15 +106,7 @@ export const UpdateProductCode = (props) => {
   return (
     <>
       <div>
-        <Backdrop
-          sx={{
-            color: "#fff",
-            zIndex: (theme) => theme.zIndex.drawer + 1,
-          }}
-          open={open}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
+        <CustomLoader open={open} />
       </div>
       <Box component="form" noValidate onSubmit={(e) => updatesproductCode(e)}>
         <Grid container spacing={2}>
