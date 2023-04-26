@@ -163,8 +163,8 @@ export const UpdateLeadsProformaInvoice = (props) => {
         raised_by: users.email,
         raised_by_first_name: leadPIdataByID.raised_by_first_name,
         raised_by_last_name: leadPIdataByID.raised_by_last_name,
-        seller_account: selectedSellerData.gst_number
-          ? selectedSellerData.gst_number
+        seller_account: selectedSellerData.unit
+          ? selectedSellerData.unit
           : leadPIdataByID.seller_account,
         seller_address: selectedSellerData.address
           ? selectedSellerData.address
