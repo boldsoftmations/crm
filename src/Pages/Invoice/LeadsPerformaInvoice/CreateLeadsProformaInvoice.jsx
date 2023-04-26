@@ -160,7 +160,7 @@ export const CreateLeadsProformaInvoice = (props) => {
         contact: leads.contact,
         alternate_contact: leads.alternate_contact,
         company_name: leads.company,
-        gst_number: leads.gst_number,
+        gst_number: leads.gst_number || null,
         pan_number: leads.pan_number,
         billing_address: leads.address,
         billing_state: leads.state,
@@ -243,7 +243,7 @@ export const CreateLeadsProformaInvoice = (props) => {
               id="combo-box-demo"
               onChange={(event, value) => setSelectedSellerData(value)}
               options={sellerData}
-              getOptionLabel={(option) => option.state}
+              getOptionLabel={(option) => option.unit}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
                 <TextField {...params} label="Seller Account" sx={tfStyle} />

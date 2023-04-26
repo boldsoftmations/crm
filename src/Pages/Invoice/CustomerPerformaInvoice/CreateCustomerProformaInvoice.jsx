@@ -257,8 +257,8 @@ export const CreateCustomerProformaInvoice = (props) => {
               disablePortal
               id="combo-box-demo"
               onChange={(event, value) => setSelectedSellerData(value)}
-              options={sellerData}
-              getOptionLabel={(option) => option.state}
+              options={sellerData.map((option) => option)}
+              getOptionLabel={(option) => option.unit}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
                 <TextField {...params} label="Seller Account" sx={tfStyle} />
