@@ -236,7 +236,7 @@ export const CustomerOrderBookDetails = () => {
       errRef.current.focus();
     }
   };
-  console.log("exportOrderBookData", exportOrderBookData);
+
   let data = exportOrderBookData
     .map((item) => {
       if (
