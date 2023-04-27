@@ -35,6 +35,7 @@ const SetupInterceptor = (store) => {
       console.log("err respoanse :>> ", err);
       if (err.response.data.code === "token_not_valid") {
         removeUser();
+        window.location.reload(); // refresh page to redirect user to login screen
       }
       const originalConfig = err.config;
 
