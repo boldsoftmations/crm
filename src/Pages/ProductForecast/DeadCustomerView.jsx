@@ -405,7 +405,9 @@ export const DeadCustomerView = () => {
                             color: "#4caf50",
                           }}
                         >
-                          {row.assigned_to}
+                          {row.assigned_to
+                            .map((assignedTo) => assignedTo)
+                            .join(", ")}
                         </div>
                       )}
                     </StyledTableCell>
