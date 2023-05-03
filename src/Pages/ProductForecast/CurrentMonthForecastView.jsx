@@ -31,16 +31,16 @@ import ProductForecastService from "../../services/ProductForecastService";
 
 const filterOption = [
   {
-    label: "Sales Person",
-    value: "sales_person__email",
+    label: "Company",
+    value: "product_forecast__company__name",
   },
   {
     label: "Product",
-    value: "product__name",
+    value: "product_forecast__product__name",
   },
   {
-    label: "Company",
-    value: "company__name",
+    label: "Sales Person",
+    value: "product_forecast__sales_person__email",
   },
   { label: "Search", value: "search" },
 ];
@@ -153,12 +153,12 @@ export const CurrentMonthForecastView = () => {
       setCurrentPage(page);
       setOpen(true);
 
-      if (searchQuery) {
+      if (searchQuery || filterSelectedQuery) {
         const response =
           await ProductForecastService.getAllCurrentMonthForecastPaginate(
             page,
             filterQuery,
-            searchQuery
+            searchQuery || filterSelectedQuery
           );
         if (response) {
           setCurrentMonthForecast(response.data.results);
@@ -202,19 +202,15 @@ export const CurrentMonthForecastView = () => {
     getSearchData(event.target.value);
   };
 
-  useEffect(() => {
-    getAllExportData();
-  }, [searchQuery]);
-
   const getAllExportData = async () => {
     try {
       setOpen(true);
-      if (searchQuery) {
+      if (searchQuery || filterSelectedQuery) {
         const response =
           await ProductForecastService.getAllPaginateCurrentMonthForecastWithSearch(
             "all",
             filterQuery,
-            searchQuery
+            searchQuery || filterSelectedQuery
           );
         setExportCurrentMonthForecast(response.data);
         //   const total = response.data.count;
@@ -303,7 +299,7 @@ export const CurrentMonthForecastView = () => {
               </FormControl>
             </Box>
             <Box flexGrow={1}>
-              {filterQuery === "sales_person__email" ? (
+              {filterQuery === "product_forecast__sales_person__email" ? (
                 <FormControl
                   sx={{ minWidth: "200px", marginLeft: "1em" }}
                   size="small"
@@ -379,7 +375,11 @@ export const CurrentMonthForecastView = () => {
                   height: "5vh",
                 }}
               >
-                <Button variant="contained" color="success">
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={getAllExportData}
+                >
                   Export to Excel
                 </Button>
               </CSVLink>

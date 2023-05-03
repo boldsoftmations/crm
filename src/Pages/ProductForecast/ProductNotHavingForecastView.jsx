@@ -181,12 +181,12 @@ export const ProductNotHavingForecastView = () => {
       setCurrentPage(page);
       setOpen(true);
 
-      if (searchQuery) {
+      if (searchQuery || filterSelectedQuery) {
         const response =
           await ProductForecastService.getAllProductNotHavingForecastPaginate(
             page,
             filterQuery,
-            searchQuery
+            searchQuery || filterSelectedQuery
           );
         if (response) {
           setProductNotHavingForecast(response.data.results);
@@ -230,19 +230,15 @@ export const ProductNotHavingForecastView = () => {
     getSearchData(event.target.value);
   };
 
-  useEffect(() => {
-    getAllCustomerWiseOrderBookExport();
-  }, [searchQuery]);
-
   const getAllCustomerWiseOrderBookExport = async () => {
     try {
       setOpen(true);
-      if (searchQuery) {
+      if (searchQuery || filterSelectedQuery) {
         const response =
           await ProductForecastService.getAllPaginateProductNotHavingForecastWithSearch(
             "all",
             filterQuery,
-            searchQuery
+            searchQuery || filterSelectedQuery
           );
         setExportProductNotHavingForecast(response.data);
         //   const total = response.data.count;
@@ -434,7 +430,11 @@ export const ProductNotHavingForecastView = () => {
                   height: "5vh",
                 }}
               >
-                <Button variant="contained" color="success">
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={getAllCustomerWiseOrderBookExport}
+                >
                   Export to Excel
                 </Button>
               </CSVLink>
