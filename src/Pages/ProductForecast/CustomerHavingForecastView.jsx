@@ -21,6 +21,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { CSVDownload } from "react-csv";
 import { tableCellClasses } from "@mui/material/TableCell";
 import { CustomPagination } from "../../Components/CustomPagination";
+
 import { ErrorMessage } from "../../Components/ErrorMessage/ErrorMessage";
 import { CustomLoader } from "../../Components/CustomLoader";
 import LeadServices from "../../services/LeadService";
@@ -29,21 +30,21 @@ import { CustomSearchWithButton } from "../../Components/CustomSearchWithButton"
 
 const filterOption = [
   {
-    label: "Company",
-    value: "product_forecast__company__name",
+    label: "Sales Person",
+    value: "sales_person__email",
   },
   {
     label: "Product",
-    value: "product_forecast__product__name",
+    value: "product__name",
   },
   {
-    label: "Sales Person",
-    value: "product_forecast__sales_person__email",
+    label: "Company",
+    value: "company__name",
   },
   { label: "Search", value: "search" },
 ];
 
-export const CurrentMonthForecastView = () => {
+export const CustomerHavingForecastView = () => {
   const [open, setOpen] = useState(false);
   const errRef = useRef();
   const [errMsg, setErrMsg] = useState("");
@@ -53,7 +54,7 @@ export const CurrentMonthForecastView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
   const [assigned, setAssigned] = useState([]);
-  const [currentMonthForecast, setCurrentMonthForecast] = useState([]);
+  const [productHavingForecast, setProductHavingForecast] = useState([]);
   const [exportData, setExportData] = useState([]);
 
   const handleDownload = async () => {
@@ -61,50 +62,53 @@ export const CurrentMonthForecastView = () => {
     setExportData(data);
   };
 
-  const headers = [
-    { label: "Company", key: "company" },
-    { label: "Sales Person", key: "sales_person" },
-    { label: "Product", key: "product" },
-    { label: "Forecast", key: "forecast" },
-    { label: "Actual", key: "actual" },
-  ];
+  const getResetData = () => {
+    setSearchQuery("");
+    setFilterSelectedQuery("");
 
-  const handleExport = async () => {
-    try {
-      setOpen(true);
-      let response;
-      if (searchQuery || filterSelectedQuery) {
-        response =
-          await ProductForecastService.getAllPaginateCurrentMonthForecastWithSearch(
-            "all",
-            filterQuery,
-            searchQuery || filterSelectedQuery
-          );
-      } else {
-        response =
-          await ProductForecastService.getAllPaginateCurrentMonthForecast(
-            "all"
-          );
-      }
-      const data = response.data
-        .filter((row) => row.forecast > 0)
-        .map((row) => {
-          return {
-            company: row.company,
-            sales_person: row.sales_person,
-            product: row.product,
-            forecast: row.forecast,
-            actual: row.actual,
-          };
-        });
-      setOpen(false);
-      return data;
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setOpen(false);
-    }
+    getAllProductionForecastDetails();
   };
+
+  const handleInputChange = () => {
+    setSearchQuery(searchQuery);
+    getSearchData(searchQuery);
+  };
+
+  const handleInputChanges = (event) => {
+    setFilterSelectedQuery(event.target.value);
+    getSearchData(event.target.value);
+  };
+
+  // Get the current date
+  const currentDate = new Date();
+
+  // Get the current month and year
+  const currentMonth = currentDate.getMonth();
+  const currentYear = currentDate.getFullYear();
+
+  // Get the last 2 months
+  const lastMonth1 = (currentMonth - 2 + 12) % 12;
+  const lastMonth2 = (currentMonth - 1 + 12) % 12;
+
+  // Get the next 2 months
+  const nextMonth1 = (currentMonth + 1) % 12;
+  const nextMonth2 = (currentMonth + 2) % 12;
+  const nextMonth3 = (currentMonth + 3) % 12;
+  // Convert month number to month name
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
   useEffect(() => {
     getLAssignedData();
@@ -132,15 +136,16 @@ export const CurrentMonthForecastView = () => {
       setOpen(true);
       if (currentPage) {
         const response =
-          await ProductForecastService.getCurrentMonthForecastaginateData(
+          await ProductForecastService.getProductHavingForecastPaginateData(
             currentPage
           );
-        setCurrentMonthForecast(response.data.results);
+        setProductHavingForecast(response.data.results);
         const total = response.data.count;
         setpageCount(Math.ceil(total / 25));
       } else {
-        const response = await ProductForecastService.getCurrentMonthForecast();
-        setCurrentMonthForecast(response.data.results);
+        const response =
+          await ProductForecastService.getProductHavingForecast();
+        setProductHavingForecast(response.data.results);
         const total = response.data.count;
         setpageCount(Math.ceil(total / 25));
       }
@@ -174,12 +179,12 @@ export const CurrentMonthForecastView = () => {
       setOpen(true);
       const filterSearch = value;
       const response =
-        await ProductForecastService.getAllSearchCurrentMonthForecast(
+        await ProductForecastService.getAllSearchProductHavingForecast(
           filterQuery,
           filterSearch
         );
       if (response) {
-        setCurrentMonthForecast(response.data.results);
+        setProductHavingForecast(response.data.results);
         const total = response.data.count;
         setpageCount(Math.ceil(total / 25));
       } else {
@@ -198,16 +203,16 @@ export const CurrentMonthForecastView = () => {
       const page = value;
       setCurrentPage(page);
       setOpen(true);
-
+      console.log("first", searchQuery || filterSelectedQuery);
       if (searchQuery || filterSelectedQuery) {
         const response =
-          await ProductForecastService.getAllCurrentMonthForecastPaginate(
+          await ProductForecastService.getAllProductHavingForecastPaginate(
             page,
             filterQuery,
             searchQuery || filterSelectedQuery
           );
         if (response) {
-          setCurrentMonthForecast(response.data.results);
+          setProductHavingForecast(response.data.results);
           const total = response.data.count;
           setpageCount(Math.ceil(total / 25));
         } else {
@@ -216,10 +221,10 @@ export const CurrentMonthForecastView = () => {
         }
       } else {
         const response =
-          await ProductForecastService.getCurrentMonthForecastPaginateData(
+          await ProductForecastService.getProductHavingForecastPaginateData(
             page
           );
-        setCurrentMonthForecast(response.data.results);
+        setProductHavingForecast(response.data.results);
         const total = response.data.count;
         setpageCount(Math.ceil(total / 25));
       }
@@ -231,21 +236,84 @@ export const CurrentMonthForecastView = () => {
     }
   };
 
-  const getResetData = () => {
-    setSearchQuery("");
-    setFilterSelectedQuery("");
+  const headers = [
+    { label: "Company", key: "company" },
+    { label: "Sales Person", key: "sales_person" },
+    { label: "Product", key: "product" },
+    {
+      label: `${months[lastMonth1]} - ${
+        lastMonth1 < currentMonth ? currentYear : currentYear - 1
+      } Actual-Forecast`,
+      key: "product_forecast_0",
+    },
+    {
+      label: `${months[lastMonth2]} - ${
+        lastMonth2 < currentMonth ? currentYear : currentYear - 1
+      } Actual-Forecast`,
+      key: "product_forecast_1",
+    },
+    {
+      label: `${months[currentMonth]} - ${currentYear} Actual-Forecast`,
+      key: "product_forecast_2",
+    },
+    {
+      label: `${months[nextMonth1]} - ${
+        nextMonth1 > currentMonth ? currentYear : currentYear + 1
+      } Forecast`,
+      key: "product_forecast_3",
+    },
+    {
+      label: `${months[nextMonth2]} - ${
+        nextMonth2 > currentMonth ? currentYear : currentYear + 1
+      } Forecast`,
+      key: "product_forecast_4",
+    },
+    {
+      label: `${months[nextMonth3]} - ${
+        nextMonth3 > currentMonth ? currentYear : currentYear + 1
+      } Forecast`,
+      key: "product_forecast_5",
+    },
+  ];
 
-    getAllProductionForecastDetails();
-  };
-
-  const handleInputChange = () => {
-    setSearchQuery(searchQuery);
-    getSearchData(searchQuery);
-  };
-
-  const handleInputChanges = (event) => {
-    setFilterSelectedQuery(event.target.value);
-    getSearchData(event.target.value);
+  const handleExport = async () => {
+    try {
+      setOpen(true);
+      let response;
+      if (searchQuery || filterSelectedQuery) {
+        response =
+          await ProductForecastService.getAllPaginateProductHavingForecastWithSearch(
+            "all",
+            filterQuery,
+            searchQuery || filterSelectedQuery
+          );
+      } else {
+        response =
+          await ProductForecastService.getAllPaginateProductHavingForecast(
+            "all"
+          );
+      }
+      const data = response.data.map((row) => {
+        const obj = {
+          company: row.company,
+          sales_person: row.sales_person,
+          product: row.product,
+        };
+        row.product_forecast.forEach((rowData, index) => {
+          obj[`product_forecast_${index}`] =
+            rowData.actual !== null
+              ? `${rowData.actual}-${rowData.forecast}`
+              : `-${rowData.forecast}`;
+        });
+        return obj;
+      });
+      setOpen(false);
+      return data;
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setOpen(false);
+    }
   };
 
   return (
@@ -275,7 +343,7 @@ export const CurrentMonthForecastView = () => {
               </FormControl>
             </Box>
             <Box flexGrow={1}>
-              {filterQuery === "product_forecast__sales_person__email" ? (
+              {filterQuery === "sales_person__email" ? (
                 <FormControl
                   sx={{ minWidth: "200px", marginLeft: "1em" }}
                   size="small"
@@ -337,7 +405,7 @@ export const CurrentMonthForecastView = () => {
                   fontWeight: 800,
                 }}
               >
-                Current Month Forecast
+                Customer Having Forecast
               </h3>
             </Box>
             <Box flexGrow={0.5}>
@@ -346,10 +414,10 @@ export const CurrentMonthForecastView = () => {
               </Button>
               {exportData.length > 0 && (
                 <CSVDownload
-                  data={[...exportData]}
+                  data={exportData}
                   headers={headers}
                   target="_blank"
-                  filename="Current Month forecast.csv"
+                  filename={"Customer Having forecast.csv"}
                 />
               )}
             </Box>
@@ -379,42 +447,81 @@ export const CurrentMonthForecastView = () => {
                   <StyledTableCell align="center">COMPANY</StyledTableCell>
                   <StyledTableCell align="center">SALES PERSON</StyledTableCell>
                   <StyledTableCell align="center">PRODUCT</StyledTableCell>
-
-                  <StyledTableCell align="center">FORECAST</StyledTableCell>
-                  <StyledTableCell align="center">ACTUAL</StyledTableCell>
+                  <StyledTableCell align="center">
+                    {` ${months[lastMonth1]} - ${
+                      lastMonth1 < currentMonth ? currentYear : currentYear - 1
+                    }`}
+                    <br />
+                    FORECAST - ACTUAL
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    {` ${months[lastMonth2]} - ${
+                      lastMonth2 < currentMonth ? currentYear : currentYear - 1
+                    }`}{" "}
+                    <br />
+                    FORECAST - ACTUAL
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    {`${months[currentMonth]} - ${currentYear}`} <br />
+                    FORECAST - ACTUAL
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    {` ${months[nextMonth1]} - ${
+                      nextMonth1 > currentMonth ? currentYear : currentYear + 1
+                    }`}{" "}
+                    <br />
+                    FORECAST
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    {` ${months[nextMonth2]} - ${
+                      nextMonth2 > currentMonth ? currentYear : currentYear + 1
+                    }`}{" "}
+                    <br />
+                    FORECAST
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    {` ${months[nextMonth3]} - ${
+                      nextMonth3 > currentMonth ? currentYear : currentYear + 1
+                    }`}{" "}
+                    <br />
+                    FORECAST
+                  </StyledTableCell>
                 </StyledTableRow>
               </TableHead>
               <TableBody>
-                {currentMonthForecast.map((row) =>
-                  row.forecast > 0 ? (
-                    <StyledTableRow>
-                      <StyledTableCell align="center">
-                        {row.company}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        <div
-                          style={{
-                            border: "1px solid #4caf50",
-                            borderRadius: "20px",
-                            padding: "4px 8px",
-                            color: "#4caf50",
-                          }}
-                        >
-                          {row.sales_person}
-                        </div>
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {row.product}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {row.forecast}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {row.actual}
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  ) : null
-                )}
+                {productHavingForecast.map((row) => (
+                  <StyledTableRow>
+                    <StyledTableCell align="center">
+                      {row.company}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <div
+                        style={{
+                          border: "1px solid #4caf50",
+                          borderRadius: "20px",
+                          padding: "4px 8px",
+                          color: "#4caf50",
+                        }}
+                      >
+                        {row.sales_person}
+                      </div>
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.product}
+                    </StyledTableCell>
+                    {row.product_forecast.map((rowData) => {
+                      return rowData.actual !== null ? (
+                        <StyledTableCell align="center">
+                          {rowData.actual} - {rowData.forecast}
+                        </StyledTableCell>
+                      ) : (
+                        <StyledTableCell align="center">
+                          {rowData.forecast} -
+                        </StyledTableCell>
+                      );
+                    })}
+                  </StyledTableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
