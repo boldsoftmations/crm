@@ -89,6 +89,11 @@ export const Viewleads = () => {
     getSearchData(filterSelectedQuery);
   };
 
+  const handleInputChanges = (event) => {
+    setFilterSelectedQuery(event.target.value);
+    getSearchData(event.target.value);
+  };
+
   useEffect(() => {
     getAllSellerAccountsDetails();
   }, []);
@@ -393,7 +398,7 @@ export const Viewleads = () => {
                     name="values"
                     label="Assigned To"
                     value={filterSelectedQuery}
-                    onChange={(event) => handleInputChange(event)}
+                    onChange={(event) => handleInputChanges(event)}
                     sx={{
                       "& .MuiSelect-iconOutlined": {
                         display: filterSelectedQuery ? "none" : "",
@@ -437,7 +442,7 @@ export const Viewleads = () => {
                     name="values"
                     label="Reference"
                     value={filterSelectedQuery}
-                    onChange={(event) => handleInputChange(event)}
+                    onChange={(event) => handleInputChanges(event)}
                     sx={{
                       "& .MuiSelect-iconOutlined": {
                         display: filterSelectedQuery ? "none" : "",
@@ -479,7 +484,7 @@ export const Viewleads = () => {
                     name="values"
                     label="Stage"
                     value={filterSelectedQuery}
-                    onChange={(event) => handleInputChange(event)}
+                    onChange={(event) => handleInputChanges(event)}
                     sx={{
                       "& .MuiSelect-iconOutlined": {
                         display: filterSelectedQuery ? "none" : "",
@@ -523,7 +528,7 @@ export const Viewleads = () => {
                     name="values"
                     label="Description"
                     value={filterSelectedQuery}
-                    onChange={(event) => handleInputChange(event)}
+                    onChange={(event) => handleInputChanges(event)}
                     sx={{
                       "& .MuiSelect-iconOutlined": {
                         display: filterSelectedQuery ? "none" : "",
@@ -576,6 +581,15 @@ export const Viewleads = () => {
               </h3>
             </Box>
             <Box flexGrow={0.5} align="right">
+              {users.is_staff === true && (
+                <button
+                  onClick={() => setOpenModal(true)}
+                  className="btn btn-primary me-2"
+                  size="small"
+                >
+                  Assign Bulk Lead
+                </button>
+              )}
               <Button
                 onClick={() => setOpenPopup2(true)}
                 variant="contained"
@@ -632,6 +646,7 @@ export const Viewleads = () => {
           product={product}
         />
       </Popup>
+
       <Popup
         maxWidth={"xl"}
         title={"Create Activity"}
