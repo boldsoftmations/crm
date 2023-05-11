@@ -75,6 +75,7 @@ export const Viewleads = () => {
   const [openModalFollowup, setOpenModalFollowup] = useState(false);
   const [openModalPotential, setOpenModalPotential] = useState(false);
   const [leadsByID, setLeadsByID] = useState(null);
+  const [followup, setFollowup] = useState(null);
   const [assigned, setAssigned] = useState([]);
   const [referenceData, setReferenceData] = useState([]);
   const [descriptionMenuData, setDescriptionMenuData] = useState([]);
@@ -252,7 +253,7 @@ export const Viewleads = () => {
 
   const openInPopup2 = (item) => {
     const matchedLead = leads.find((lead) => lead.lead_id === item.id);
-    setLeadsByID(matchedLead);
+    setFollowup(matchedLead.follow_up);
     setOpenModalFollowup(true);
   };
 
@@ -638,12 +639,13 @@ export const Viewleads = () => {
         setOpenPopup={setOpenPopup}
       >
         <UpdateLeads
+          followup={followup}
           assigned={assigned}
           descriptionMenuData={descriptionMenuData}
           leadsByID={leadsByID}
+          product={product}
           setOpenPopup={setOpenPopup}
           getAllleadsData={getleads}
-          product={product}
         />
       </Popup>
 
