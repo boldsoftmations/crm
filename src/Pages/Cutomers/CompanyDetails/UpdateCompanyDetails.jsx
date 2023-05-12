@@ -25,7 +25,7 @@ import { styled } from "@mui/material/styles";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { ViewCustomerFollowUp } from "../../FollowUp/ViewCustomerFollowUp";
 export const UpdateCompanyDetails = (props) => {
-  const { setOpenPopup, getAllContactDetailsByID, recordForEdit } = props;
+  const { setOpenPopup, getAllCompanyDetails, recordForEdit } = props;
   const [open, setOpen] = useState(false);
   const [typeData, setTypeData] = useState("");
   const [category, setCategory] = useState("");
@@ -126,7 +126,7 @@ export const UpdateCompanyDetails = (props) => {
       await CustomerServices.updateCompanyData(recordForEdit, req);
       setOpenPopup(false);
       setOpen(false);
-      getAllContactDetailsByID();
+      getAllCompanyDetails();
     } catch (error) {
       console.log("createing company detail error", error);
       setErrorMessage(
