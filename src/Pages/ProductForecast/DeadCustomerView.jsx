@@ -73,11 +73,13 @@ export const DeadCustomerView = () => {
     setRecordForEdit(item.id);
     setOpenPopup(true);
   };
+
   useEffect(() => {
-    getLAssignedData();
+    getAssignedData();
+    getAllProductionForecastDetails();
   }, []);
 
-  const getLAssignedData = async () => {
+  const getAssignedData = async () => {
     try {
       setOpen(true);
       const res = await LeadServices.getAllAssignedUser();
@@ -89,10 +91,6 @@ export const DeadCustomerView = () => {
       setOpen(false);
     }
   };
-
-  useEffect(() => {
-    getAllProductionForecastDetails();
-  }, []);
 
   const getAllProductionForecastDetails = async () => {
     try {
