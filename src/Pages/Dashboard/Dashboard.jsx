@@ -120,11 +120,10 @@ export function Dashboard() {
             backgroundColor: "white",
             borderRadius: "8px",
             boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-            margin: "30px",
+            margin: "10px",
             padding: "20px",
           }}
         >
-          {" "}
           <Grid container spacing={2}>
             <Grid item xs={5} sm={5} md={5} lg={5}>
               <TextField
