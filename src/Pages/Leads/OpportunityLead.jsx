@@ -245,7 +245,10 @@ export const OpportunityLead = () => {
           setFilterSelectedQuery("");
         }
       } else {
-        const response = await LeadServices.getAllPaginateLeads("opportunity", page);
+        const response = await LeadServices.getAllPaginateLeads(
+          "opportunity",
+          page
+        );
         setLeads(response.data.results);
         const total = response.data.count;
         setpageCount(Math.ceil(total / 25));
@@ -622,9 +625,8 @@ export const OpportunityLead = () => {
       >
         <FollowUpCreate
           followupData={leadsByID}
-          getAllleadsData={getleads}
           setOpenModal={setOpenModalFollowup}
-        />{" "}
+        />
       </Popup>
       <Popup
         maxWidth={"lg"}

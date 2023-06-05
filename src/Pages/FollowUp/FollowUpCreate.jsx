@@ -37,7 +37,6 @@ export const FollowUpCreate = (props) => {
       };
 
       await LeadServices.createFollowUpLeads(data);
-
       setOpenModal(false);
       getAllleadsData();
 
