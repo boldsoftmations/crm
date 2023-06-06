@@ -418,7 +418,7 @@ export const ListItems = (props) => {
                   component={Button}
                   onClick={() => setOpen(false)}
                   inset
-                  primary="Unassigned Company"
+                  primary="Unassigned Customer"
                 />
               </ListItem>
               <ListItem
@@ -4183,18 +4183,18 @@ export const ListItems = (props) => {
                     />
                   </ListItem>
                   <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-bill-of-materials"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Bill of Materials"
-                />
-              </ListItem>
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-bill-of-materials"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Bill of Materials"
+                    />
+                  </ListItem>
                   <ListItem
                     button
                     component={RouterLink}
