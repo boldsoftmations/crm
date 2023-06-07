@@ -462,20 +462,20 @@ export const ListItems = (props) => {
                   component={Button}
                   onClick={() => setOpen(false)}
                   inset
-                  primary="Customer Performa Invoice"
+                  primary="Performa Invoice"
                 />
               </ListItem>
               <ListItem
                 button
                 component={RouterLink}
-                to="/invoice/leads-performa-invoice"
+                to="/invoice/all-performa-invoice"
                 style={{ width: 300 }}
               >
                 <ListItemText
                   component={Button}
                   onClick={() => setOpen(false)}
                   inset
-                  primary="Leads Performa Invoice"
+                  primary="All Performa Invoice"
                 />
               </ListItem>
             </List>
@@ -1467,20 +1467,20 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Customer Performa Invoice"
+                      primary="Performa Invoice"
                     />
                   </ListItem>
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/invoice/leads-performa-invoice"
+                    to="/invoice/all-performa-invoice"
                     style={{ width: 300 }}
                   >
                     <ListItemText
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Leads Performa Invoice"
+                      primary="All Performa Invoice"
                     />
                   </ListItem>
                 </List>
@@ -2568,20 +2568,20 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Customer Performa Invoice"
+                      primary="Performa Invoice"
                     />
                   </ListItem>
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/invoice/leads-performa-invoice"
+                    to="/invoice/all-performa-invoice"
                     style={{ width: 300 }}
                   >
                     <ListItemText
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Leads Performa Invoice"
+                      primary="All Performa Invoice"
                     />
                   </ListItem>
                 </List>
@@ -3061,20 +3061,20 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Customer Performa Invoice"
+                      primary="Performa Invoice"
                     />
                   </ListItem>
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/invoice/leads-performa-invoice"
+                    to="/invoice/all-performa-invoice"
                     style={{ width: 300 }}
                   >
                     <ListItemText
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Leads Performa Invoice"
+                      primary="All Performa Invoice"
                     />
                   </ListItem>
                 </List>
@@ -3785,20 +3785,20 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Customer Performa Invoice"
+                      primary="Performa Invoice"
                     />
                   </ListItem>
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/invoice/leads-performa-invoice"
+                    to="/invoice/all-performa-invoice"
                     style={{ width: 300 }}
                   >
                     <ListItemText
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Leads Performa Invoice"
+                      primary="All Performa Invoice"
                     />
                   </ListItem>
                 </List>

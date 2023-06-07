@@ -21,8 +21,6 @@ import "../App.css";
 import { CompanyDetails } from "../Pages/Cutomers/CompanyDetails/CompanyDetails";
 import { PriceList } from "./../Pages/Products/PriceList/PriceList";
 import { SellerAccount } from "./../Pages/Invoice/Seller Account/SellerAccount";
-import { ViewCustomerProformaInvoice } from "../Pages/Invoice/CustomerPerformaInvoice/ViewCustomerProformaInvoice";
-import { ViewLeadsProformaInvoice } from "./../Pages/Invoice/LeadsPerformaInvoice/ViewLeadsProformaInvoice";
 import { CustomerOrderBookDetails } from "../Pages/OrderBooks/CustomerOrderBookDetails";
 import { ProductOrderBookDetails } from "./../Pages/OrderBooks/ProductOrderBookDetails";
 import { SalesInvoiceView } from "./../Pages/Invoice/SalesInvoice/SalesInvoiceView";
@@ -62,6 +60,8 @@ import { ConvertedLeads } from "../Pages/Leads/ConvertedLeads";
 import { NotInterestedLead } from "../Pages/Leads/NotInterestedLead";
 import { ClosedLead } from "../Pages/Leads/ClosedLead";
 import { CustomerFollowup } from "../Pages/Cutomers/CustomerFollowup/CustomerFollowup";
+import { ProformaInvoice } from "../Pages/Invoice/CustomerPerformaInvoice/ProformaInvoice";
+import { AllProformaInvoice } from "../Pages/Invoice/CustomerPerformaInvoice/AllProformaInvoice";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -157,11 +157,11 @@ export const RouteScreen = () => {
             <Route path="/invoice/seller-account" element={<SellerAccount />} />
             <Route
               path="/invoice/performa-invoice"
-              element={<ViewCustomerProformaInvoice />}
+              element={<ProformaInvoice />}
             />
             <Route
-              path="/invoice/leads-performa-invoice"
-              element={<ViewLeadsProformaInvoice />}
+              path="/invoice/all-performa-invoice"
+              element={<AllProformaInvoice />}
             />
             <Route
               path="/invoice/sales-invoice"
