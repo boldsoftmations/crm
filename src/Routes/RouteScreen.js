@@ -60,8 +60,8 @@ import { ConvertedLeads } from "../Pages/Leads/ConvertedLeads";
 import { NotInterestedLead } from "../Pages/Leads/NotInterestedLead";
 import { ClosedLead } from "../Pages/Leads/ClosedLead";
 import { CustomerFollowup } from "../Pages/Cutomers/CustomerFollowup/CustomerFollowup";
-import { ProformaInvoice } from "../Pages/Invoice/CustomerPerformaInvoice/ProformaInvoice";
-import { AllProformaInvoice } from "../Pages/Invoice/CustomerPerformaInvoice/AllProformaInvoice";
+import { AllProformaInvoice } from "./../Pages/Invoice/ProformaInvoice/AllProformaInvoice";
+import { ProformaInvoice } from "./../Pages/Invoice/ProformaInvoice/ProformaInvoice";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);

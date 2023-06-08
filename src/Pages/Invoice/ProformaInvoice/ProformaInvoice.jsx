@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import InvoiceServices from "../../../services/InvoiceService";
 import { Popup } from "../../../Components/Popup";
-import { CustomerProformaInvoice } from "./CustomerProformaInvoice";
+import { ProformaInvoiceView } from "./ProformaInvoiceView";
 import ClearIcon from "@mui/icons-material/Clear";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,10 +23,12 @@ import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 import { UpdateCustomerProformaInvoice } from "./UpdateCustomerProformaInvoice";
 import { CustomTable } from "../../../Components/CustomTable";
 import { CustomPagination } from "../../../Components/CustomPagination";
+import { UpdateLeadsProformaInvoice } from "./UpdateLeadsProformaInvoice";
 
-export const AllProformaInvoice = () => {
+export const ProformaInvoice = () => {
   const dispatch = useDispatch();
   const [openPopup, setOpenPopup] = useState(false);
+  const [openPopup1, setOpenPopup1] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [idForEdit, setIDForEdit] = useState();
   const errRef = useRef();
@@ -57,12 +59,12 @@ export const AllProformaInvoice = () => {
     getSearchData(event.target.value);
   };
 
-  const getResetSearchValue = async () => {
-    let SEARCH_VALUE = searchValue;
-    setSearchValue(SEARCH_VALUE);
-    if (SEARCH_VALUE === "") {
-      await getCustomerPIDetails();
-    }
+  const getResetData = () => {
+    setSearchValue("");
+    setStatusValue("");
+    setTypeValue("");
+    setFilterType("");
+    getProformaInvoiceData();
   };
 
   const openInPopup = (item) => {
@@ -72,12 +74,16 @@ export const AllProformaInvoice = () => {
 
   const openInPopup2 = (item) => {
     setIDForEdit(item);
-    setOpenPopup(true);
+    if (item.type === "Customer") {
+      setOpenPopup(true);
+    } else {
+      setOpenPopup1(true);
+    }
   };
 
   useEffect(() => {
     getAllSellerAccountsDetails();
-    getCustomerPIDetails();
+    getProformaInvoiceData();
   }, []);
 
   const getAllSellerAccountsDetails = async () => {
@@ -93,18 +99,12 @@ export const AllProformaInvoice = () => {
     }
   };
 
-  const getCustomerPIDetails = async () => {
+  const getProformaInvoiceData = async () => {
     try {
       setOpen(true);
-      let FILTER_TYPE = filterType;
-      let FILTER_VALUE = statusValue || typeValue;
-      let SEARCH_VALUE = searchValue;
-      const response = await InvoiceServices.getAllPIData(
-        currentPage,
-        FILTER_TYPE,
-        FILTER_VALUE,
-        SEARCH_VALUE
-      );
+      const response = currentPage
+        ? await InvoiceServices.getPIData(currentPage)
+        : await InvoiceServices.getPIData();
       setInvoiceData(response.data.results);
       const total = response.data.count;
       setpageCount(Math.ceil(total / 25));
@@ -136,7 +136,7 @@ export const AllProformaInvoice = () => {
     try {
       setOpen(true);
       if (filterValue || searchValue) {
-        const response = await InvoiceServices.getAllPIData(
+        const response = await InvoiceServices.getPIData(
           null,
           filterType,
           filterValue,
@@ -147,7 +147,7 @@ export const AllProformaInvoice = () => {
           const total = response.data.count;
           setpageCount(Math.ceil(total / 25));
         } else {
-          getCustomerPIDetails();
+          getProformaInvoiceData();
           setSearchValue(null);
           setStatusValue(null);
           setTypeValue(null);
@@ -167,7 +167,7 @@ export const AllProformaInvoice = () => {
       setOpen(true);
 
       if (statusValue || typeValue || searchValue) {
-        const response = await InvoiceServices.getAllPIData(
+        const response = await InvoiceServices.getPIData(
           "page",
           page,
           filterType,
@@ -179,13 +179,13 @@ export const AllProformaInvoice = () => {
           const total = response.data.count;
           setpageCount(Math.ceil(total / 25));
         } else {
-          getCustomerPIDetails();
+          getProformaInvoiceData();
           setSearchValue(null);
           setStatusValue(null);
           setTypeValue(null);
         }
       } else {
-        const response = await InvoiceServices.getAllPIData("page ", page);
+        const response = await InvoiceServices.getPIData("page ", page);
         setInvoiceData(response.data.results);
       }
 
@@ -197,9 +197,10 @@ export const AllProformaInvoice = () => {
   };
 
   const Tabledata = invoiceData.map((row, i) => ({
+    type: row.type,
     pi_number: row.pi_number,
     generation_date: row.generation_date,
-    customer: row.name_of_party,
+    customer: row.company_name,
     billing_city: row.billing_city,
     contact: row.contact,
     status: row.status,
@@ -209,6 +210,7 @@ export const AllProformaInvoice = () => {
   }));
 
   const Tableheaders = [
+    "Type",
     "PI Numer",
     "PI Date",
     "Customer",
@@ -218,7 +220,7 @@ export const AllProformaInvoice = () => {
     "PI Amount",
     "Balance",
     "Payment Terms",
-    // "ACTION",
+    "ACTION",
   ];
   return (
     <>
@@ -261,28 +263,6 @@ export const AllProformaInvoice = () => {
                     label="Status"
                     value={statusValue}
                     onChange={(event) => handleStatusValue(event)}
-                    sx={{
-                      "& .MuiSelect-iconOutlined": {
-                        display: statusValue ? "none" : "",
-                      },
-                      "&.Mui-focused .MuiIconButton-root": {
-                        color: "primary.main",
-                      },
-                    }}
-                    endAdornment={
-                      <IconButton
-                        sx={{
-                          visibility: statusValue ? "visible" : "hidden",
-                        }}
-                        onClick={() => {
-                          setStatusValue("");
-                          setFilterType("");
-                          getCustomerPIDetails();
-                        }}
-                      >
-                        <ClearIcon />
-                      </IconButton>
-                    }
                   >
                     {StatusOptions.map((option, i) => (
                       <MenuItem key={i} value={option.value}>
@@ -305,28 +285,6 @@ export const AllProformaInvoice = () => {
                     label="Status"
                     value={typeValue}
                     onChange={(event) => handleTypeValue(event)}
-                    sx={{
-                      "& .MuiSelect-iconOutlined": {
-                        display: typeValue ? "none" : "",
-                      },
-                      "&.Mui-focused .MuiIconButton-root": {
-                        color: "primary.main",
-                      },
-                    }}
-                    endAdornment={
-                      <IconButton
-                        sx={{
-                          visibility: typeValue ? "visible" : "hidden",
-                        }}
-                        onClick={() => {
-                          setTypeValue("");
-                          setFilterType("");
-                          getCustomerPIDetails();
-                        }}
-                      >
-                        <ClearIcon />
-                      </IconButton>
-                    }
                   >
                     {TypeOptions.map((option, i) => (
                       <MenuItem key={i} value={option.value}>
@@ -344,42 +302,23 @@ export const AllProformaInvoice = () => {
                 placeholder="search"
                 label="Search"
                 variant="outlined"
-                sx={{
-                  backgroundColor: "#ffffff",
-                  marginLeft: "1em",
-                  "& .MuiSelect-iconOutlined": {
-                    display: searchValue ? "none" : "",
-                  },
-                  "&.Mui-focused .MuiIconButton-root": {
-                    color: "primary.main",
-                  },
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <>
-                      <IconButton
-                        sx={{
-                          visibility: searchValue ? "visible" : "hidden",
-                        }}
-                        onClick={async () => {
-                          setSearchValue("");
-                          if (searchValue === "") {
-                            await getResetSearchValue();
-                          }
-                        }}
-                      >
-                        <ClearIcon />
-                      </IconButton>
-                    </>
-                  ),
-                }}
+                sx={{ marginLeft: "1em" }}
               />
               <Button
                 variant="contained"
-                color="primary"
+                color="success"
+                sx={{ marginLeft: "1em" }}
                 onClick={handleSearchValue}
               >
                 Search
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ marginLeft: "1em" }}
+                onClick={getResetData}
+              >
+                Reset All
               </Button>
             </Box>
             <Box flexGrow={1}>
@@ -392,7 +331,7 @@ export const AllProformaInvoice = () => {
                   fontWeight: 800,
                 }}
               >
-                All Proforma Invoice
+                Proforma Invoice
               </h3>
             </Box>
             <Box flexGrow={0.5} align="right">
@@ -409,10 +348,17 @@ export const AllProformaInvoice = () => {
           <CustomTable
             headers={Tableheaders}
             data={Tabledata}
-            openInPopup={null}
-            openInPopup2={null}
+            openInPopup={openInPopup}
+            openInPopup2={
+              invoiceData.find((row) => row.status === "Raised") &&
+              (users.groups.includes("Sales") ||
+                users.groups.includes("Customer Service"))
+                ? openInPopup2
+                : null
+            }
             openInPopup3={null}
             openInPopup4={null}
+            ButtonText={"PI Edit"}
             Styles={{ paddingLeft: "10px", paddingRight: "10px" }}
           />
 
@@ -429,8 +375,20 @@ export const AllProformaInvoice = () => {
         setOpenPopup={setOpenPopup}
       >
         <UpdateCustomerProformaInvoice
-          getCustomerPIDetails={getCustomerPIDetails}
+          getProformaInvoiceData={getProformaInvoiceData}
           setOpenPopup={setOpenPopup}
+          idForEdit={idForEdit}
+        />
+      </Popup>
+      <Popup
+        maxWidth={"xl"}
+        title={"Update Lead Proforma Invoice"}
+        openPopup={openPopup1}
+        setOpenPopup={setOpenPopup1}
+      >
+        <UpdateLeadsProformaInvoice
+          getAllLeadsPIDetails={getProformaInvoiceData}
+          setOpenPopup={setOpenPopup1}
           idForEdit={idForEdit}
         />
       </Popup>
@@ -440,9 +398,9 @@ export const AllProformaInvoice = () => {
         openPopup={openPopup2}
         setOpenPopup={setOpenPopup2}
       >
-        <CustomerProformaInvoice
+        <ProformaInvoiceView
           idForEdit={idForEdit}
-          getCustomerPIDetails={getCustomerPIDetails}
+          getProformaInvoiceData={getProformaInvoiceData}
           setOpenPopup={setOpenPopup2}
         />
       </Popup>

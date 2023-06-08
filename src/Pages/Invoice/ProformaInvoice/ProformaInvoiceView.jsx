@@ -13,17 +13,17 @@ import {
 } from "@react-pdf/renderer";
 import moment from "moment";
 import InvoiceServices from "../../../services/InvoiceService";
-import { CustomerConfirmationPayment } from "./CustomerConfirmationPayment";
-import { Popup } from "./../../../Components/Popup";
+import { PaymentConfirmationPi } from "./PaymentConfirmationPi";
+import { Popup } from "../../../Components/Popup";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import logo from "../../../Images/LOGOS3.png";
 import ISO from "../../../Images/ISOLogo.ico";
 import AllLogo from "../../../Images/allLogo.jpg";
 import MSME from "../../../Images/MSME.jpeg";
-import { ErrorMessage } from "./../../../Components/ErrorMessage/ErrorMessage";
+import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 
-export const CustomerProformaInvoice = (props) => {
-  const { idForEdit, setOpenPopup, getCustomerPIDetails } = props;
+export const ProformaInvoiceView = (props) => {
+  const { idForEdit, setOpenPopup, getProformaInvoiceData } = props;
   const [openPopup2, setOpenPopup2] = useState(false);
   const [invoiceData, setInvoiceData] = useState([]);
   const [productData, setProductData] = useState([]);
@@ -82,9 +82,14 @@ export const CustomerProformaInvoice = (props) => {
   const getAllProformaInvoiceDetails = async () => {
     try {
       setOpen(true);
-      const response = await InvoiceServices.getCompanyPerformaInvoiceByIDData(
-        idForEdit
-      );
+      const response =
+        idForEdit.type === "Customer"
+          ? await InvoiceServices.getCompanyPerformaInvoiceByIDData(
+              idForEdit.pi_number
+            )
+          : await InvoiceServices.getLeadsPerformaInvoiceByIDData(
+              idForEdit.pi_number
+            );
       setInvoiceData(response.data);
       setProductData(response.data.products);
       setHsnData(response.data.hsn_table);
@@ -100,11 +105,12 @@ export const CustomerProformaInvoice = (props) => {
   }
   const AMOUNT_IN_WORDS = arr.join(" ");
   // from Pending Approval or Approved to Raised Status
-  const SendForRaisedlPI = async (e) => {
+  const SendRaisedPIConvertToPendingApproval = async (e) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
+      setOpen(true);
       const req = {
-        proformainvoice: idForEdit,
+        proformainvoice: idForEdit.pi_number,
         status: "Raised",
         address: invoiceData.address,
         buyer_order_no: invoiceData.buyer_order_no,
@@ -112,6 +118,7 @@ export const CustomerProformaInvoice = (props) => {
         contact: invoiceData.contact,
         delivery_terms: invoiceData.delivery_terms,
         company: invoiceData.company,
+        lead: invoiceData.lead,
         payment_terms: invoiceData.payment_terms,
         pincode: invoiceData.pincode,
         place_of_supply: invoiceData.place_of_supply,
@@ -120,10 +127,18 @@ export const CustomerProformaInvoice = (props) => {
         state: invoiceData.state,
         type: invoiceData.type,
       };
-      await InvoiceServices.updateCustomerProformaInvoiceData(idForEdit, req);
+      invoiceData.type === "Customer"
+        ? await InvoiceServices.updateCustomerProformaInvoiceData(
+            idForEdit.pi_number,
+            req
+          )
+        : await InvoiceServices.updateLeadsProformaInvoiceData(
+            idForEdit.pi_number,
+            req
+          );
       setOpenPopup(false);
+      getProformaInvoiceData();
       setOpen(false);
-      getCustomerPIDetails();
     } catch (err) {
       setOpen(false);
       setErrMsg(
@@ -134,11 +149,12 @@ export const CustomerProformaInvoice = (props) => {
     }
   };
   // from Raised to Pending Approval Status
-  const SendForApprovalPI = async (e) => {
+  const SendPendingApprovalPIConvertToApproved = async (e) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
+      setOpen(true);
       const req = {
-        proformainvoice: idForEdit,
+        proformainvoice: idForEdit.pi_number,
         status: "Pending Approval",
         address: invoiceData.address,
         buyer_order_no: invoiceData.buyer_order_no,
@@ -146,6 +162,7 @@ export const CustomerProformaInvoice = (props) => {
         contact: invoiceData.contact,
         delivery_terms: invoiceData.delivery_terms,
         company: invoiceData.company,
+        lead: invoiceData.lead,
         payment_terms: invoiceData.payment_terms,
         pincode: invoiceData.pincode,
         place_of_supply: invoiceData.place_of_supply,
@@ -154,10 +171,19 @@ export const CustomerProformaInvoice = (props) => {
         state: invoiceData.state,
         type: invoiceData.type,
       };
-      await InvoiceServices.updateCustomerProformaInvoiceData(idForEdit, req);
+      invoiceData.type === "Customer"
+        ? await InvoiceServices.updateCustomerProformaInvoiceData(
+            idForEdit.pi_number,
+            req
+          )
+        : await InvoiceServices.updateLeadsProformaInvoiceData(
+            idForEdit.pi_number,
+            req
+          );
       setOpenPopup(false);
+
+      getProformaInvoiceData();
       setOpen(false);
-      getCustomerPIDetails();
     } catch (err) {
       setOpen(false);
       setErrMsg(
@@ -169,8 +195,9 @@ export const CustomerProformaInvoice = (props) => {
   };
   // from Pending Approval to Approved Status
   const SendForApprovedPI = async (e) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
+      setOpen(true);
       const req = {
         proformainvoice: invoiceData.pi_number,
         approved_by: users.email,
@@ -178,8 +205,8 @@ export const CustomerProformaInvoice = (props) => {
       };
       await InvoiceServices.sendForApprovalData(req);
       setOpenPopup(false);
+      getProformaInvoiceData();
       setOpen(false);
-      getCustomerPIDetails();
     } catch (err) {
       setOpen(false);
       setErrMsg(
@@ -190,10 +217,6 @@ export const CustomerProformaInvoice = (props) => {
     }
   };
   const componentRef = useRef();
-  // const handlePrint = useReactToPrint({
-  //   content: () => componentRef.current,
-  //   documentTitle: `PI Number ${invoiceData.pi_number}`,
-  // });
 
   const TOTAL_GST_DATA = invoiceData.total - invoiceData.amount;
   const TOTAL_GST = TOTAL_GST_DATA.toFixed(2);
@@ -227,7 +250,7 @@ export const CustomerProformaInvoice = (props) => {
                   type="button"
                   className="btn btn-success"
                   onClick={(e) => {
-                    SendForApprovalPI(e);
+                    SendPendingApprovalPIConvertToApproved(e);
                   }}
                 >
                   Send For Approval
@@ -241,7 +264,7 @@ export const CustomerProformaInvoice = (props) => {
                   type="button"
                   className="btn btn-primary"
                   onClick={(e) => {
-                    SendForRaisedlPI(e);
+                    SendRaisedPIConvertToPendingApproval(e);
                   }}
                 >
                   Back To Raised
@@ -255,7 +278,7 @@ export const CustomerProformaInvoice = (props) => {
                   type="button"
                   className="btn btn-primary"
                   onClick={(e) => {
-                    SendForRaisedlPI(e);
+                    SendRaisedPIConvertToPendingApproval(e);
                   }}
                 >
                   Back To Raised
@@ -883,11 +906,12 @@ export const CustomerProformaInvoice = (props) => {
         openPopup={openPopup2}
         setOpenPopup={setOpenPopup2}
       >
-        <CustomerConfirmationPayment
+        <PaymentConfirmationPi
           users={users}
           invoiceData={invoiceData}
           setOpenPopup={setOpenPopup2}
-          getAllProformaInvoiceDetails={getAllProformaInvoiceDetails}
+          setOpenPopup2={setOpenPopup}
+          getProformaInvoiceData={getProformaInvoiceData}
         />
       </Popup>
     </>
