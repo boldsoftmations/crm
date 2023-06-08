@@ -354,6 +354,19 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
+                to="/leads/duplicate-lead"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Duplicate Lead"
+                />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
                 to="/leads/view-unassigned-lead"
                 style={{ width: 300 }}
               >

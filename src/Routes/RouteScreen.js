@@ -62,6 +62,7 @@ import { ClosedLead } from "../Pages/Leads/ClosedLead";
 import { CustomerFollowup } from "../Pages/Cutomers/CustomerFollowup/CustomerFollowup";
 import { AllProformaInvoice } from "./../Pages/Invoice/ProformaInvoice/AllProformaInvoice";
 import { ProformaInvoice } from "./../Pages/Invoice/ProformaInvoice/ProformaInvoice";
+import { DuplicateLead } from "../Pages/Leads/DuplicateLead";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -101,6 +102,7 @@ export const RouteScreen = () => {
               element={<NotInterestedLead />}
             />
             <Route path="/leads/closed-lead" element={<ClosedLead />} />
+            <Route path="/leads/duplicate-lead" element={<DuplicateLead />} />
             <Route path="/leads/view-followup" element={<LeadFollowup />} />
 
             <Route
