@@ -9,9 +9,16 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  IconButton,
+  styled,
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableCell,
   TextField,
 } from "@mui/material";
+import { tableCellClasses } from "@mui/material/TableCell";
 import InvoiceServices from "../../../services/InvoiceService";
 import { Popup } from "../../../Components/Popup";
 import { ProformaInvoiceView } from "./ProformaInvoiceView";
@@ -196,36 +203,9 @@ export const ProformaInvoice = () => {
     }
   };
 
-  const Tabledata = invoiceData.map((row, i) => ({
-    type: row.type,
-    pi_number: row.pi_number,
-    generation_date: row.generation_date,
-    customer: row.company_name,
-    billing_city: row.billing_city,
-    contact: row.contact,
-    status: row.status,
-    total: row.total,
-    balance_amount: row.balance_amount,
-    payment_terms: row.payment_terms,
-  }));
-
-  const Tableheaders = [
-    "Type",
-    "PI Numer",
-    "PI Date",
-    "Customer",
-    "Billing City",
-    "Contact",
-    "Status",
-    "PI Amount",
-    "Balance",
-    "Payment Terms",
-    "ACTION",
-  ];
   return (
     <>
       <CustomLoader open={open} />
-
       <Grid item xs={12}>
         <ErrorMessage errRef={errRef} errMsg={errMsg} />
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
@@ -345,22 +325,103 @@ export const ProformaInvoice = () => {
               </Button> */}
             </Box>
           </Box>
-          <CustomTable
-            headers={Tableheaders}
-            data={Tabledata}
-            openInPopup={openInPopup}
-            openInPopup2={
-              invoiceData.find((row) => row.status === "Raised") &&
-              (users.groups.includes("Sales") ||
-                users.groups.includes("Customer Service"))
-                ? openInPopup2
-                : null
-            }
-            openInPopup3={null}
-            openInPopup4={null}
-            ButtonText={"PI Edit"}
-            Styles={{ paddingLeft: "10px", paddingRight: "10px" }}
-          />
+          <TableContainer
+            sx={{
+              maxHeight: 440,
+              "&::-webkit-scrollbar": {
+                width: 15,
+              },
+              "&::-webkit-scrollbar-track": {
+                backgroundColor: "#f2f2f2",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "#aaa9ac",
+              },
+            }}
+          >
+            <Table
+              sx={{ minWidth: 1200 }}
+              stickyHeader
+              aria-label="sticky table"
+            >
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell align="center">PI NUMBER</StyledTableCell>
+                  <StyledTableCell align="center">PI DATE</StyledTableCell>
+                  {/* <StyledTableCell align="center">
+                    COMPANY NAME OLD
+                  </StyledTableCell> */}
+                  <StyledTableCell align="center">COMPANY</StyledTableCell>
+                  <StyledTableCell align="center">BILLING CITY</StyledTableCell>
+                  <StyledTableCell align="center">CONTACT</StyledTableCell>
+                  <StyledTableCell align="center">STATUS</StyledTableCell>
+
+                  <StyledTableCell align="center">PI AMOUNT</StyledTableCell>
+
+                  <StyledTableCell align="center">BALANCE</StyledTableCell>
+                  <StyledTableCell align="center">
+                    PAYMENT TERMS
+                  </StyledTableCell>
+                  <StyledTableCell align="center">Action</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {invoiceData.map((row, i) => {
+                  return (
+                    <StyledTableRow key={i}>
+                      <StyledTableCell align="center">
+                        {row.pi_number}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.generation_date}
+                      </StyledTableCell>
+                      {/* <StyledTableCell align="center">
+                        {row.name_of_party}
+                      </StyledTableCell> */}
+                      <StyledTableCell align="center">
+                        {row.company_name}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.billing_city}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.contact}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.status}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.total}
+                      </StyledTableCell>
+
+                      <StyledTableCell align="center">
+                        {row.balance_amount}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.payment_terms}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Button variant="text" onClick={() => openInPopup(row)}>
+                          View
+                        </Button>
+                        {(users.groups.toString() === "Sales" ||
+                          users.groups.toString() === "Customer Service") &&
+                          row.status === "Raised" && (
+                            <Button
+                              variant="text"
+                              color="success"
+                              onClick={() => openInPopup2(row)}
+                            >
+                              PI Edit
+                            </Button>
+                          )}
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
           <CustomPagination
             pageCount={pageCount}
@@ -426,3 +487,34 @@ const TypeOptions = [
   { label: "Customer", value: "customer" },
   { label: "Lead", value: "lead" },
 ];
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+    padding: "1px", // Adjust the padding value to reduce space
+    marginLeft: "10px", // Add margin to the left
+    marginRight: "10px", // Add margin to the right
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+    padding: "1px", // Adjust the padding value to reduce space
+    marginLeft: "10px", // Add margin to the left
+    marginRight: "10px", // Add margin to the right
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+  "& td": {
+    padding: "1px", // Adjust the padding value to reduce space
+    marginLeft: "10px", // Add margin to the left
+    marginRight: "10px", // Add margin to the right
+  },
+}));

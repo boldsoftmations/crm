@@ -1382,19 +1382,6 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/leads/view-unassigned-lead"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Unassigned Lead"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
                     to="/leads/view-followup"
                     style={{ width: 300 }}
                   >
@@ -2479,19 +2466,7 @@ export const ListItems = (props) => {
                       primary="Interested Lead"
                     />
                   </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/leads/view-unassigned-lead"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Unassigned Lead"
-                    />
-                  </ListItem>
+
                   <ListItem
                     button
                     component={RouterLink}
