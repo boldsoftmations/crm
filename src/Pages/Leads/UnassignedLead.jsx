@@ -54,6 +54,7 @@ export const UnassignedLead = () => {
   const [followup, setFollowup] = useState(null);
   const [potential, setPotential] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
+
   const handleInputChange = (event) => {
     setFilterSelectedQuery(event.target.value);
     getSearchData(event.target.value);
@@ -228,7 +229,6 @@ export const UnassignedLead = () => {
       setOpen(false);
     }
   };
-  console.log("selectedRows", selectedRows);
 
   const updateAssigned = async (e) => {
     try {

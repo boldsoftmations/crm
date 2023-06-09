@@ -45,15 +45,15 @@ const getFilterAssignedtoPaginateLeads = (currentPage, filter, search) => {
 // duplicate leads
 
 const getAllDuplicateLeads = () => {
-  return CustomAxios.get(`/api/lead//duplicate-leads/`);
+  return CustomAxios.get(`/api/lead/duplicate-leads/`);
 };
 
 const getAllPaginateDuplicateLeads = (currentPage) => {
-  return CustomAxios.get(`/api/lead//duplicate-leads/&page=${currentPage}`);
+  return CustomAxios.get(`/api/lead/duplicate-leads/&page=${currentPage}`);
 };
 
 const getAllSearchDuplicateLeads = (filter, search) => {
-  return CustomAxios.get(`/api/lead//duplicate-leads/?${filter}=${search}`);
+  return CustomAxios.get(`/api/lead/duplicate-leads/?${filter}=${search}`);
 };
 
 const getFilterPaginateDuplicateLeads = (
@@ -62,7 +62,7 @@ const getFilterPaginateDuplicateLeads = (
   assignedToValue
 ) => {
   return CustomAxios.get(
-    `/api/lead//duplicate-leads/?page=${currentPage}&${assignedTo}=${assignedToValue}`
+    `/api/lead/duplicate-leads/?page=${currentPage}&${assignedTo}=${assignedToValue}`
   );
 };
 

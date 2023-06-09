@@ -560,7 +560,6 @@ export const DuplicateLead = () => {
               </Button>
             </Box>
           </Box>
-          return (
           <TableContainer
             sx={{
               maxHeight: 440,
@@ -582,7 +581,7 @@ export const DuplicateLead = () => {
             >
               <TableHead>
                 <TableRow>
-                  <StyledTableCell align="center">Checkbox</StyledTableCell>
+                  {/* <StyledTableCell align="center">Checkbox</StyledTableCell> */}
                   <StyledTableCell align="center">COMPANY</StyledTableCell>
                   <StyledTableCell align="center">NAME</StyledTableCell>
                   <StyledTableCell align="center">CONTACT</StyledTableCell>
@@ -596,19 +595,15 @@ export const DuplicateLead = () => {
               </TableHead>
               <TableBody>
                 {leads.map((row, i) => {
-                  const isChecked =
-                    selectedRows.findIndex(
-                      (item) => item.lead_id === row.lead_id
-                    ) > -1;
                   return (
                     <StyledTableRow key={i}>
-                      <StyledTableCell align="center">
+                      {/* <StyledTableCell align="center">
                         <Checkbox
                           checked={isChecked}
                           onChange={() => handleCheckboxChange(row)}
                           inputProps={{ "aria-label": "controlled" }}
                         />
-                      </StyledTableCell>
+                      </StyledTableCell> */}
                       <StyledTableCell align="center">
                         {row.company}
                       </StyledTableCell>
