@@ -831,7 +831,7 @@ export const UpdateLeads = (props) => {
                 marginRight: "1em",
               }}
             >
-              Generate PI
+              PI
             </Button>
           </div>
         </Paper>

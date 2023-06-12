@@ -163,7 +163,7 @@ export const OpenLead = () => {
         const response = await LeadServices.getFilterPaginateLeads(
           currentPage,
           "others",
-          "priority",
+          "-lead_id",
           filterQuery,
           filterSelectedQuery
         );
@@ -175,7 +175,7 @@ export const OpenLead = () => {
         const response = await LeadServices.getAllPaginateLeads(
           currentPage,
           "others",
-          "priority"
+          "-lead_id"
         );
         setLeads(response.data.results);
         const total = response.data.count;
@@ -217,7 +217,7 @@ export const OpenLead = () => {
       if (filterQuery) {
         const response = await LeadServices.getAllSearchLeads(
           "others",
-          "priority",
+          "-lead_id",
           filterQuery,
           filterSearch
         );
@@ -247,7 +247,7 @@ export const OpenLead = () => {
         const response = await LeadServices.getFilterPaginateLeads(
           page,
           "others",
-          "priority",
+          "-lead_id",
           filterQuery,
           filterSelectedQuery
         );
@@ -263,7 +263,7 @@ export const OpenLead = () => {
         const response = await LeadServices.getAllPaginateLeads(
           page,
           "others",
-          "priority"
+          "-lead_id"
         );
         setLeads(response.data.results);
         const total = response.data.count;
