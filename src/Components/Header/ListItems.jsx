@@ -272,7 +272,7 @@ export const ListItems = (props) => {
                   component={Button}
                   onClick={() => setOpen(false)}
                   inset
-                  primary="New Lead"
+                  primary="New Leads"
                 />
               </ListItem>
               <ListItem
@@ -285,7 +285,7 @@ export const ListItems = (props) => {
                   component={Button}
                   onClick={() => setOpen(false)}
                   inset
-                  primary="Opened Lead"
+                  primary="Opened Leads"
                 />
               </ListItem>
 
@@ -299,7 +299,7 @@ export const ListItems = (props) => {
                   component={Button}
                   onClick={() => setOpen(false)}
                   inset
-                  primary="Dropped Lead"
+                  primary="Dropped Leads"
                 />
               </ListItem>
               <ListItem
@@ -312,7 +312,7 @@ export const ListItems = (props) => {
                   component={Button}
                   onClick={() => setOpen(false)}
                   inset
-                  primary="Duplicate Lead"
+                  primary="Duplicate Leads"
                 />
               </ListItem>
               <ListItem
@@ -325,7 +325,7 @@ export const ListItems = (props) => {
                   component={Button}
                   onClick={() => setOpen(false)}
                   inset
-                  primary="Unassigned Lead"
+                  primary="Unassigned Leads"
                 />
               </ListItem>
             </List>
@@ -1291,7 +1291,7 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="New Lead"
+                      primary="New Leads"
                     />
                   </ListItem>
                   <ListItem
@@ -1304,7 +1304,7 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Open Lead"
+                      primary="Open Leads"
                     />
                   </ListItem>
                 </List>
@@ -2337,7 +2337,7 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="New Lead"
+                      primary="New Leads"
                     />
                   </ListItem>
                   <ListItem
@@ -2350,7 +2350,7 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Open Lead"
+                      primary="Open Leads"
                     />
                   </ListItem>
                 </List>
