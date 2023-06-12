@@ -161,9 +161,9 @@ export const NewLeads = () => {
       setOpen(true);
       if (filterSelectedQuery !== "" && filterQuery !== "" && currentPage) {
         const response = await LeadServices.getFilterPaginateLeads(
+          currentPage,
           "new",
           "priority",
-          currentPage,
           filterQuery,
           filterSelectedQuery
         );
@@ -173,9 +173,9 @@ export const NewLeads = () => {
         setpageCount(Math.ceil(total / 25));
       } else if (currentPage) {
         const response = await LeadServices.getAllPaginateLeads(
+          currentPage,
           "new",
-          "priority",
-          currentPage
+          "priority"
         );
         setLeads(response.data.results);
         const total = response.data.count;
@@ -245,9 +245,9 @@ export const NewLeads = () => {
 
       if (filterSelectedQuery) {
         const response = await LeadServices.getFilterPaginateLeads(
+          page,
           "new",
           "priority",
-          page,
           filterQuery,
           filterSelectedQuery
         );
@@ -261,9 +261,9 @@ export const NewLeads = () => {
         }
       } else {
         const response = await LeadServices.getAllPaginateLeads(
+          page,
           "new",
-          "priority",
-          page
+          "priority"
         );
         setLeads(response.data.results);
         const total = response.data.count;

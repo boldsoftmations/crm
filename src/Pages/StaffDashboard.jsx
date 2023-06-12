@@ -597,7 +597,7 @@ export const StaffDashboard = (props) => {
                 dominantBaseline="middle"
                 className="chart-title"
               >
-                Month Wise Existing Lead and New Lead and Customer
+                Monthly Calls
               </text>
             </BarChart>
           </ResponsiveContainer>
@@ -652,7 +652,7 @@ export const StaffDashboard = (props) => {
                 dominantBaseline="middle"
                 className="chart-title"
               >
-                Week Wise Existing Lead and New Lead and Customer
+                Weekly Calls
               </text>
             </BarChart>
           </ResponsiveContainer>
@@ -704,7 +704,7 @@ export const StaffDashboard = (props) => {
                 dominantBaseline="middle"
                 className="chart-title"
               >
-                Daily Wise Existing Lead and New Lead and Customer
+                Daily Calls
               </text>
             </BarChart>
           </ResponsiveContainer>

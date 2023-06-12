@@ -116,15 +116,15 @@ export const Home = () => {
       setTotal(Total);
       const Data = [
         {
-          label: "Active",
+          label: "Active Customers",
           value: response.data.active_customers,
         },
         {
-          label: "Dead",
+          label: "Dead Customers",
           value: response.data.dead_customers,
         },
         {
-          label: "New",
+          label: "New Customers",
           value: response.data.new_customers,
         },
         {
@@ -589,15 +589,15 @@ export const Home = () => {
       setTotal(Total);
       const Data = [
         {
-          label: "Active",
+          label: "Active Customers",
           value: response.data.active_customers,
         },
         {
-          label: "Dead",
+          label: "Dead Customers",
           value: response.data.dead_customers,
         },
         {
-          label: "New",
+          label: "New Customers",
           value: response.data.new_customers,
         },
         {

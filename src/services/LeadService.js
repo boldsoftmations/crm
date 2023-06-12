@@ -10,38 +10,27 @@ const getAllLeads = (stage, lead_id) => {
   );
 };
 
-const getAllPaginateLeads = (stage, currentPage, orderingValue) => {
+const getAllPaginateLeads = (currentPage, stage, orderingValue) => {
   return CustomAxios.get(
     `/api/lead/list-lead/?page=${currentPage}&funnel=${stage}&ordering=${orderingValue}`
   );
 };
 
-const getAllSearchLeads = (stage, orderingValue, filter, search) => {
+const getAllSearchLeads = (stage, orderingValue, filter, filterValue) => {
   return CustomAxios.get(
-    `/api/lead/list-lead/?funnel=${stage}&ordering=${orderingValue}&${filter}=${search}`
-  );
-};
-
-const getFilterLeads = (
-  assignedTo,
-  assignedToValue,
-  stage,
-  stageValue,
-  lead_id
-) => {
-  return CustomAxios.get(
-    `/api/lead/list-lead/?${assignedTo}=${assignedToValue}&${stage}=${stageValue}&ordering=${lead_id}`
+    `/api/lead/list-lead/?funnel=${stage}&ordering=${orderingValue}&${filter}=${filterValue}`
   );
 };
 
 const getFilterPaginateLeads = (
-  stage,
   currentPage,
-  assignedTo,
-  assignedToValue
+  stage,
+  orderValue,
+  filter,
+  filterValue
 ) => {
   return CustomAxios.get(
-    `/api/lead/list-lead/?page=${currentPage}&stage=${stage}&${assignedTo}=${assignedToValue}`
+    `/api/lead/list-lead/?page=${currentPage}&stage=${stage}&ordering=${orderValue}&${filter}=${filterValue}`
   );
 };
 const getFilterAssignedtoPaginateLeads = (currentPage, filter, search) => {
@@ -203,7 +192,6 @@ const LeadServices = {
   getAllPaginateUnassigned,
   getAllPaginateWithFilterUnassigned,
   getAllSearchLeads,
-  getFilterLeads,
   getFilterPaginateLeads,
   getFilterAssignedtoPaginateLeads,
   getAllDuplicateLeads,

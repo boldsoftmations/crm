@@ -161,9 +161,9 @@ export const ClosedLead = () => {
       setOpen(true);
       if (filterSelectedQuery !== "" && filterQuery !== "" && currentPage) {
         const response = await LeadServices.getFilterPaginateLeads(
+          currentPage,
           "close",
           "priority",
-          currentPage,
           filterQuery,
           filterSelectedQuery
         );
@@ -173,9 +173,9 @@ export const ClosedLead = () => {
         setpageCount(Math.ceil(total / 25));
       } else if (currentPage) {
         const response = await LeadServices.getAllPaginateLeads(
+          currentPage,
           "close",
-          "priority",
-          currentPage
+          "priority"
         );
         setLeads(response.data.results);
         const total = response.data.count;
@@ -245,9 +245,9 @@ export const ClosedLead = () => {
 
       if (filterSelectedQuery) {
         const response = await LeadServices.getFilterPaginateLeads(
+          page,
           "close",
           "priority",
-          page,
           filterQuery,
           filterSelectedQuery
         );
@@ -261,9 +261,9 @@ export const ClosedLead = () => {
         }
       } else {
         const response = await LeadServices.getAllPaginateLeads(
+          page,
           "close",
-          "priority",
-          page
+          "priority"
         );
         setLeads(response.data.results);
         const total = response.data.count;
