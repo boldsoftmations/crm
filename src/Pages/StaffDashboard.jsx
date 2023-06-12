@@ -51,6 +51,7 @@ export const StaffDashboard = (props) => {
     funnelData,
     hoveredSegment,
     handleRowClick,
+    descriptionQuantity,
   } = props;
   const paletteColors = [
     "#f14c14",
@@ -230,6 +231,15 @@ export const StaffDashboard = (props) => {
                 fill={COLORS[1]}
                 barSize={20}
               />
+              <text
+                x="50%"
+                y={20}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="chart-title"
+              >
+                Actual vs Forecast
+              </text>
             </BarChart>
           </ResponsiveContainer>
         </Grid>
@@ -259,6 +269,15 @@ export const StaffDashboard = (props) => {
                 stroke={COLORS[0]}
                 strokeWidth={2}
               />
+              <text
+                x="50%"
+                y={20}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="chart-title"
+              >
+                New Customer
+              </text>
             </LineChart>
           </ResponsiveContainer>
         </Grid>
@@ -298,6 +317,15 @@ export const StaffDashboard = (props) => {
                   console.log("Bar clicked:", data);
                 }}
               />
+              <text
+                x="50%"
+                y={20}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="chart-title"
+              >
+                LR vs POD
+              </text>
             </BarChart>
           </ResponsiveContainer>
         </Grid>
@@ -562,6 +590,15 @@ export const StaffDashboard = (props) => {
                 fill={COLORS[2]}
                 barSize={20}
               />
+              <text
+                x="50%"
+                y={20}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="chart-title"
+              >
+                Month Wise Existing Lead and New Lead and Customer
+              </text>
             </BarChart>
           </ResponsiveContainer>
         </Grid>
@@ -608,6 +645,15 @@ export const StaffDashboard = (props) => {
                 fill={COLORS[2]}
                 barSize={20}
               />
+              <text
+                x="50%"
+                y={20}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="chart-title"
+              >
+                Week Wise Existing Lead and New Lead and Customer
+              </text>
             </BarChart>
           </ResponsiveContainer>
         </Grid>
@@ -651,10 +697,20 @@ export const StaffDashboard = (props) => {
                 fill={COLORS[2]}
                 barSize={20}
               />
+              <text
+                x="50%"
+                y={20}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="chart-title"
+              >
+                Daily Wise Existing Lead and New Lead and Customer
+              </text>
             </BarChart>
           </ResponsiveContainer>
         </Grid>
       </Grid>
+      {/* description wise pending quantity */}
       <Grid container spacing={2}>
         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ marginTop: "20px" }}>
           <ResponsiveContainer
@@ -684,6 +740,59 @@ export const StaffDashboard = (props) => {
               <Tooltip />
               <Legend />
               <Bar dataKey="value" fill={COLORS[0]} barSize={20} />
+              <text
+                x="50%"
+                y={20}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="chart-title"
+              >
+                Description Wise Pending Quantity
+              </text>
+            </BarChart>
+          </ResponsiveContainer>
+        </Grid>
+      </Grid>
+
+      {/* description wise quantity */}
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={12} md={12} lg={12} sx={{ marginTop: "20px" }}>
+          <ResponsiveContainer
+            width="100%"
+            height={400}
+            preserveAspectRatio={false}
+          >
+            <BarChart
+              width={600}
+              height={300}
+              data={descriptionQuantity}
+              layout="vertical"
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis type="number" width={300} />
+              <YAxis
+                dataKey="name"
+                type="category"
+                // angle={-45}
+                textAnchor="end"
+                interval={0}
+                width={300}
+                tick={{ fontSize: 15 }} // Adjust font size of tick labels
+                tickLine={false} // Disable tick lines
+                tickMargin={10} // Add margin to tick labels
+              />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="value" fill={COLORS[0]} barSize={20} />
+              <text
+                x="50%"
+                y={20}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="chart-title"
+              >
+                Description Wise Quantity
+              </text>
             </BarChart>
           </ResponsiveContainer>
         </Grid>

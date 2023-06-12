@@ -21,6 +21,7 @@ export const Home = () => {
   const [pendingTask, setPendingTask] = useState([]);
   const [pendingFollowup, setPendingFollowup] = useState([]);
   const [pendingDescription, setPendingDescription] = useState([]);
+  const [descriptionQuantity, setDescriptionQuantity] = useState([]);
   const [piData, setPiData] = useState([]);
   const [monthlyStatus, setMonthlyStatus] = useState([]);
   const [weeklyStatus, setWeeklyStatus] = useState([]);
@@ -47,6 +48,7 @@ export const Home = () => {
     getMonthlyCallStatusDetails();
     getWeeklyCallStatusDetails();
     getDailyCallStatusDetails();
+    getDescriptionQuantityDetails();
   }, []);
 
   useEffect(() => {
@@ -397,6 +399,25 @@ export const Home = () => {
     }
   };
 
+  const getDescriptionQuantityDetails = async () => {
+    try {
+      setOpen(true);
+      const response = await DashboardService.getDescriptionWiseQuantityData();
+      const Data = response.data.map((item) => {
+        return {
+          name: item.product__description__name,
+          value: item.total_quantity,
+        };
+      });
+      setDescriptionQuantity(Data);
+
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("err", err);
+    }
+  };
+
   const handleAutocompleteChange = (value) => {
     setFilterValue(value);
     setAssign(value);
@@ -411,6 +432,7 @@ export const Home = () => {
     getMonthlyCallStatusByFilter(value);
     getWeeklyCallStatusByFilter(value);
     getDailyCallStatusByFilter(value);
+    getDescriptionQuantityByFilter(value);
   };
 
   const getDataByFilter = async (value) => {
@@ -738,6 +760,29 @@ export const Home = () => {
     }
   };
 
+  const getDescriptionQuantityByFilter = async (value) => {
+    try {
+      const FilterData = value;
+      setOpen(true);
+      const response =
+        await DashboardService.getDescriptionWiseQuantityDataByFilter(
+          FilterData
+        );
+      const Data = response.data.map((item) => {
+        return {
+          name: item.product__description__name,
+          value: item.total_quantity,
+        };
+      });
+      setDescriptionQuantity(Data);
+
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
   const getResetData = () => {
     getForecastDetails();
     getNewCustomerDetails();
@@ -752,6 +797,7 @@ export const Home = () => {
     getMonthlyCallStatusDetails();
     getWeeklyCallStatusDetails();
     getDailyCallStatusDetails();
+    getDescriptionQuantityDetails();
   };
 
   const handleSegmentHover = (segment) => {
@@ -824,6 +870,7 @@ export const Home = () => {
           funnelData={funnelData}
           hoveredSegment={hoveredSegment}
           handleRowClick={handleRowClick}
+          descriptionQuantity={descriptionQuantity}
         />
       )}
       {userData.groups.includes("Sales") && userData.is_staff !== true && (
@@ -846,6 +893,7 @@ export const Home = () => {
           funnelData={funnelData}
           hoveredSegment={hoveredSegment}
           handleRowClick={handleRowClick}
+          descriptionQuantity={descriptionQuantity}
         />
       )}
       <Popup

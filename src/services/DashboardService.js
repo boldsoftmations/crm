@@ -101,6 +101,18 @@ const getDailyCallStatusDataByFilter = (filter) => {
   return CustomAxios.get(`/api/dashboard/daily-call-status/?email=${filter}`);
 };
 
+const getDescriptionWiseQuantityData = () => {
+  return CustomAxios.get(
+    "/api/dashboard/list-current-month-orders-description-wise/"
+  );
+};
+
+const getDescriptionWiseQuantityDataByFilter = (filter) => {
+  return CustomAxios.get(
+    `/api/dashboard/list-current-month-orders-description-wise/?email=${filter}`
+  );
+};
+
 const DashboardService = {
   getLastThreeMonthForecastData,
   getConsLastThreeMonthForecastData,
@@ -125,6 +137,8 @@ const DashboardService = {
   getWeeklyCallStatusDataByFilter,
   getDailyCallStatusData,
   getDailyCallStatusDataByFilter,
+  getDescriptionWiseQuantityData,
+  getDescriptionWiseQuantityDataByFilter,
 };
 
 export default DashboardService;
