@@ -53,6 +53,7 @@ export const TodayFollowup = (props) => {
     type: row.type,
     lead: row.lead,
     company: row.company,
+    company_name: row.company_name,
     name: row.name,
     user: row.user,
 
@@ -69,6 +70,7 @@ export const TodayFollowup = (props) => {
     "TYPE",
     "LEADS",
     "COMPANY",
+    "COMPANY NAME",
     "NAME",
     "USER",
     "CURRENT DATE",

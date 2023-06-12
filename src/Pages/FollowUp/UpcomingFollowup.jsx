@@ -58,6 +58,7 @@ export const UpcomingFollowup = (props) => {
     type: row.type,
     lead: row.leads,
     company: row.company,
+    company_name: row.company_name,
     name: row.name,
     user: row.user,
 
@@ -73,6 +74,7 @@ export const UpcomingFollowup = (props) => {
     "TYPE",
     "LEADS",
     "COMPANY",
+    "COMPANY NAME",
     "NAME",
     "USER",
     "CURRENT DATE",

@@ -22,17 +22,15 @@ import { tableCellClasses } from "@mui/material/TableCell";
 import InvoiceServices from "../../../services/InvoiceService";
 import { Popup } from "../../../Components/Popup";
 import { ProformaInvoiceView } from "./ProformaInvoiceView";
-import ClearIcon from "@mui/icons-material/Clear";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
 import { useDispatch, useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 import { UpdateCustomerProformaInvoice } from "./UpdateCustomerProformaInvoice";
-import { CustomTable } from "../../../Components/CustomTable";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { UpdateLeadsProformaInvoice } from "./UpdateLeadsProformaInvoice";
 
-export const ProformaInvoice = () => {
+export const ActivePI = () => {
   const dispatch = useDispatch();
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup1, setOpenPopup1] = useState(false);
@@ -110,8 +108,8 @@ export const ProformaInvoice = () => {
     try {
       setOpen(true);
       const response = currentPage
-        ? await InvoiceServices.getPIPagination(currentPage)
-        : await InvoiceServices.getPIData();
+        ? await InvoiceServices.getAllPIPagination("active", currentPage)
+        : await InvoiceServices.getAllPIData("active");
       setInvoiceData(response.data.results);
       const total = response.data.count;
       setpageCount(Math.ceil(total / 25));
@@ -142,7 +140,8 @@ export const ProformaInvoice = () => {
       setOpen(true);
       const Search = searchValue ? "search" : "";
       if (filterValue || searchValue) {
-        const response = await InvoiceServices.getPISearch(
+        const response = await InvoiceServices.getAllPISearch(
+          "active",
           filterType,
           filterValue,
           Search,
@@ -173,7 +172,8 @@ export const ProformaInvoice = () => {
       setOpen(true);
       const Search = searchValue ? "search" : "";
       if (statusValue || typeValue || searchValue) {
-        const response = await InvoiceServices.getPIPaginationWithFilterBy(
+        const response = await InvoiceServices.getAllPIPaginationWithFilterBy(
+          "active",
           "page",
           page,
           filterType,
@@ -192,7 +192,7 @@ export const ProformaInvoice = () => {
           setTypeValue(null);
         }
       } else {
-        const response = await InvoiceServices.getPIPagination(page);
+        const response = await InvoiceServices.getAllPIPagination(page);
         setInvoiceData(response.data.results);
       }
 
@@ -209,121 +209,107 @@ export const ProformaInvoice = () => {
       <Grid item xs={12}>
         <ErrorMessage errRef={errRef} errMsg={errMsg} />
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
-          <Box display="flex">
-            <Box flexGrow={0.6}>
-              <FormControl fullWidth size="small">
-                <InputLabel id="demo-simple-select-label">Fliter By</InputLabel>
+          <Box display="flex" marginBottom="10px">
+            <FormControl fullWidth sx={{ maxWidth: "300px" }} size="small">
+              <InputLabel id="demo-simple-select-label">Fliter By</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="values"
+                label="Fliter By"
+                value={filterType}
+                onChange={(event) => setFilterType(event.target.value)}
+              >
+                {FilterOptions.map((option, i) => (
+                  <MenuItem key={i} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            {filterType === "status" && (
+              <FormControl
+                sx={{ minWidth: "200px", marginLeft: "1em" }}
+                size="small"
+              >
+                <InputLabel id="demo-simple-select-label">Status</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   name="values"
-                  label="Fliter By"
-                  value={filterType}
-                  onChange={(event) => setFilterType(event.target.value)}
+                  label="Status"
+                  value={statusValue}
+                  onChange={(event) => handleStatusValue(event)}
                 >
-                  {FilterOptions.map((option, i) => (
+                  {StatusOptions.map((option, i) => (
                     <MenuItem key={i} value={option.value}>
                       {option.label}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-            </Box>
-            <Box flexGrow={2}>
-              {filterType === "status" && (
-                <FormControl
-                  sx={{ minWidth: "200px", marginLeft: "1em" }}
-                  size="small"
-                >
-                  <InputLabel id="demo-simple-select-label">Status</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    name="values"
-                    label="Status"
-                    value={statusValue}
-                    onChange={(event) => handleStatusValue(event)}
-                  >
-                    {StatusOptions.map((option, i) => (
-                      <MenuItem key={i} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-              {filterType === "type" && (
-                <FormControl
-                  sx={{ minWidth: "200px", marginLeft: "1em" }}
-                  size="small"
-                >
-                  <InputLabel id="demo-simple-select-label">Status</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    name="values"
-                    label="Status"
-                    value={typeValue}
-                    onChange={(event) => handleTypeValue(event)}
-                  >
-                    {TypeOptions.map((option, i) => (
-                      <MenuItem key={i} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-              <TextField
-                value={searchValue}
-                onChange={(event) => setSearchValue(event.target.value)}
-                name="search"
+            )}
+            {filterType === "type" && (
+              <FormControl
+                sx={{ minWidth: "200px", marginLeft: "1em" }}
                 size="small"
-                placeholder="search"
-                label="Search"
-                variant="outlined"
-                sx={{ marginLeft: "1em" }}
-              />
-              <Button
-                variant="contained"
-                color="success"
-                sx={{ marginLeft: "1em" }}
-                onClick={handleSearchValue}
               >
-                Search
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ marginLeft: "1em" }}
-                onClick={getResetData}
-              >
-                Reset All
-              </Button>
-            </Box>
-            <Box flexGrow={1}>
-              <h3
-                style={{
-                  textAlign: "left",
-                  marginBottom: "1em",
-                  fontSize: "24px",
-                  color: "rgb(34, 34, 34)",
-                  fontWeight: 800,
-                }}
-              >
-                Proforma Invoice
-              </h3>
-            </Box>
-            <Box flexGrow={0.5} align="right">
-              {/* <Button
-                onClick={() => setOpenPopup(true)}
-                variant="contained"
-                color="success"
-                startIcon={<AddIcon />}
-              >
-                Generate PI
-              </Button> */}
-            </Box>
+                <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  name="values"
+                  label="Type"
+                  value={typeValue}
+                  onChange={(event) => handleTypeValue(event)}
+                >
+                  {TypeOptions.map((option, i) => (
+                    <MenuItem key={i} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+            <TextField
+              value={searchValue}
+              onChange={(event) => setSearchValue(event.target.value)}
+              name="search"
+              size="small"
+              placeholder="search"
+              label="Search"
+              variant="outlined"
+              sx={{ marginLeft: "1em" }}
+            />
+            <Button
+              variant="contained"
+              color="success"
+              sx={{ marginLeft: "1em" }}
+              onClick={handleSearchValue}
+            >
+              Search
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ marginLeft: "1em" }}
+              onClick={getResetData}
+            >
+              Reset All
+            </Button>
+          </Box>
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <h3
+              style={{
+                marginBottom: "1em",
+                fontSize: "24px",
+                color: "rgb(34, 34, 34)",
+                fontWeight: 800,
+              }}
+            >
+              Active PI
+            </h3>
           </Box>
           <TableContainer
             sx={{
@@ -346,18 +332,14 @@ export const ProformaInvoice = () => {
             >
               <TableHead>
                 <TableRow>
+                  <StyledTableCell align="center">TYPE</StyledTableCell>
                   <StyledTableCell align="center">PI NUMBER</StyledTableCell>
                   <StyledTableCell align="center">PI DATE</StyledTableCell>
-                  {/* <StyledTableCell align="center">
-                    COMPANY NAME OLD
-                  </StyledTableCell> */}
                   <StyledTableCell align="center">COMPANY</StyledTableCell>
                   <StyledTableCell align="center">BILLING CITY</StyledTableCell>
                   <StyledTableCell align="center">CONTACT</StyledTableCell>
                   <StyledTableCell align="center">STATUS</StyledTableCell>
-
                   <StyledTableCell align="center">PI AMOUNT</StyledTableCell>
-
                   <StyledTableCell align="center">BALANCE</StyledTableCell>
                   <StyledTableCell align="center">
                     PAYMENT TERMS
@@ -370,14 +352,14 @@ export const ProformaInvoice = () => {
                   return (
                     <StyledTableRow key={i}>
                       <StyledTableCell align="center">
+                        {row.type}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
                         {row.pi_number}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {row.generation_date}
                       </StyledTableCell>
-                      {/* <StyledTableCell align="center">
-                        {row.name_of_party}
-                      </StyledTableCell> */}
                       <StyledTableCell align="center">
                         {row.company_name}
                       </StyledTableCell>
