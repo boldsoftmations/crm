@@ -559,7 +559,7 @@ export const ClosedLead = () => {
                   fontWeight: 800,
                 }}
               >
-                Dropped
+                Dropped Leads
               </h3>
             </Box>
             <Box flexGrow={0.5} align="right">

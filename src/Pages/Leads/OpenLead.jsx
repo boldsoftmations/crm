@@ -560,7 +560,7 @@ export const OpenLead = () => {
                   fontWeight: 800,
                 }}
               >
-                Opened
+                Opened Leads
               </h3>
             </Box>
             <Box flexGrow={0.5} align="right">

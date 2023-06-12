@@ -377,7 +377,7 @@ export const UnassignedLead = () => {
                   fontWeight: 800,
                 }}
               >
-                Unassigned Lead
+                Unassigned Leads
               </h3>
             </Box>
             {selectedRows.length > 0 && (

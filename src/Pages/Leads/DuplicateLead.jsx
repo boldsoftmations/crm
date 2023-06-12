@@ -398,7 +398,7 @@ export const DuplicateLead = () => {
                   fontWeight: 800,
                 }}
               >
-                Duplicate Lead
+                Duplicate Leads
               </h3>
             </Box>
             <Box flexGrow={0.5} align="right">

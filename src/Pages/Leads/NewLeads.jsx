@@ -560,7 +560,7 @@ export const NewLeads = () => {
                   fontWeight: 800,
                 }}
               >
-                New
+                New Leads
               </h3>
             </Box>
             <Box flexGrow={0.5} align="right">
