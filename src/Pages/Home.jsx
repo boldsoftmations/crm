@@ -826,7 +826,7 @@ export const Home = () => {
           handleRowClick={handleRowClick}
         />
       )}
-      {userData.groups.includes("Sales") && (
+      {userData.groups.includes("Sales") && userData.is_staff !== true && (
         <SalesDashboard
           barChartData={barChartData}
           pieChartData={pieChartData}

@@ -85,6 +85,12 @@ export const NewLeads = () => {
     setOpenModalPotential(true);
   };
 
+  const getResetData = () => {
+    setFilterSelectedQuery("");
+    // setFilterQuery("");
+    getleads();
+  };
+
   useEffect(() => {
     getAllSellerAccountsDetails();
     getProduct();
@@ -156,6 +162,7 @@ export const NewLeads = () => {
       if (filterSelectedQuery !== "" && filterQuery !== "" && currentPage) {
         const response = await LeadServices.getFilterPaginateLeads(
           "new",
+          "priority",
           currentPage,
           filterQuery,
           filterSelectedQuery
@@ -167,13 +174,14 @@ export const NewLeads = () => {
       } else if (currentPage) {
         const response = await LeadServices.getAllPaginateLeads(
           "new",
+          "priority",
           currentPage
         );
         setLeads(response.data.results);
         const total = response.data.count;
         setpageCount(Math.ceil(total / 25));
       } else {
-        let response = await LeadServices.getAllLeads("new");
+        let response = await LeadServices.getAllLeads("new", "priority");
         if (response) {
           setLeads(response.data.results);
           const total = response.data.count;
@@ -209,6 +217,7 @@ export const NewLeads = () => {
       if (filterQuery) {
         const response = await LeadServices.getAllSearchLeads(
           "new",
+          "priority",
           filterQuery,
           filterSearch
         );
@@ -228,12 +237,6 @@ export const NewLeads = () => {
     }
   };
 
-  const getResetData = () => {
-    setFilterSelectedQuery("");
-    // setFilterQuery("");
-    getleads();
-  };
-
   const handlePageClick = async (event, value) => {
     try {
       const page = value;
@@ -243,6 +246,7 @@ export const NewLeads = () => {
       if (filterSelectedQuery) {
         const response = await LeadServices.getFilterPaginateLeads(
           "new",
+          "priority",
           page,
           filterQuery,
           filterSelectedQuery
@@ -256,7 +260,11 @@ export const NewLeads = () => {
           setFilterSelectedQuery("");
         }
       } else {
-        const response = await LeadServices.getAllPaginateLeads("new", page);
+        const response = await LeadServices.getAllPaginateLeads(
+          "new",
+          "priority",
+          page
+        );
         setLeads(response.data.results);
         const total = response.data.count;
         setpageCount(Math.ceil(total / 25));
@@ -552,7 +560,7 @@ export const NewLeads = () => {
                   fontWeight: 800,
                 }}
               >
-                New Leads
+                New
               </h3>
             </Box>
             <Box flexGrow={0.5} align="right">

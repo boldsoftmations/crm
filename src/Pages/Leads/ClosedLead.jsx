@@ -85,6 +85,12 @@ export const ClosedLead = () => {
     setOpenModalPotential(true);
   };
 
+  const getResetData = () => {
+    setFilterSelectedQuery("");
+    // setFilterQuery("");
+    getleads();
+  };
+
   useEffect(() => {
     getAllSellerAccountsDetails();
     getProduct();
@@ -156,6 +162,7 @@ export const ClosedLead = () => {
       if (filterSelectedQuery !== "" && filterQuery !== "" && currentPage) {
         const response = await LeadServices.getFilterPaginateLeads(
           "close",
+          "priority",
           currentPage,
           filterQuery,
           filterSelectedQuery
@@ -167,13 +174,14 @@ export const ClosedLead = () => {
       } else if (currentPage) {
         const response = await LeadServices.getAllPaginateLeads(
           "close",
+          "priority",
           currentPage
         );
         setLeads(response.data.results);
         const total = response.data.count;
         setpageCount(Math.ceil(total / 25));
       } else {
-        let response = await LeadServices.getAllLeads("close");
+        let response = await LeadServices.getAllLeads("close", "priority");
         if (response) {
           setLeads(response.data.results);
           const total = response.data.count;
@@ -209,6 +217,7 @@ export const ClosedLead = () => {
       if (filterQuery) {
         const response = await LeadServices.getAllSearchLeads(
           "close",
+          "priority",
           filterQuery,
           filterSearch
         );
@@ -228,12 +237,6 @@ export const ClosedLead = () => {
     }
   };
 
-  const getResetData = () => {
-    setFilterSelectedQuery("");
-    // setFilterQuery("");
-    getleads();
-  };
-
   const handlePageClick = async (event, value) => {
     try {
       const page = value;
@@ -243,6 +246,7 @@ export const ClosedLead = () => {
       if (filterSelectedQuery) {
         const response = await LeadServices.getFilterPaginateLeads(
           "close",
+          "priority",
           page,
           filterQuery,
           filterSelectedQuery
@@ -256,7 +260,11 @@ export const ClosedLead = () => {
           setFilterSelectedQuery("");
         }
       } else {
-        const response = await LeadServices.getAllPaginateLeads("close", page);
+        const response = await LeadServices.getAllPaginateLeads(
+          "close",
+          "priority",
+          page
+        );
         setLeads(response.data.results);
         const total = response.data.count;
         setpageCount(Math.ceil(total / 25));
@@ -268,7 +276,6 @@ export const ClosedLead = () => {
       setOpen(false);
     }
   };
-
   const PriorityColor = leads.map((row) => {
     let color = "";
     switch (row.priority) {
@@ -552,7 +559,7 @@ export const ClosedLead = () => {
                   fontWeight: 800,
                 }}
               >
-                Closed Lead
+                Dropped
               </h3>
             </Box>
             <Box flexGrow={0.5} align="right">

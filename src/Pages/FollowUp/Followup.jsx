@@ -6,11 +6,12 @@ import { getSellerAccountData } from "../../Redux/Action/Action";
 import { useDispatch } from "react-redux";
 import ProductService from "../../services/ProductService";
 import LeadServices from "../../services/LeadService";
-import { LeadPendingFollowup } from "./LeadPendingFollowup";
-import { LeadTodayFollowup } from "./LeadTodayFollowup";
-import { LeadUpcomingFollowup } from "./LeadUpcomingFollowup";
+import { AllFollowup } from "./AllFollowup";
+import { PendingFollowup } from "./PendingFollowup";
+import { UpcomingFollowup } from "./UpcomingFollowup";
+import { TodayFollowup } from "./TodayFollowup";
 
-export const LeadFollowup = () => {
+export const Followup = () => {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const errRef = useRef();
@@ -111,9 +112,10 @@ export const LeadFollowup = () => {
   };
 
   const tabs = [
-    { label: "Lead Pending Followup" },
-    { label: "Lead Today Followup" },
-    { label: "Lead Upcoming Followup" },
+    { label: "Pending Followup" },
+    { label: "Today Followup" },
+    { label: "Upcoming Followup" },
+    { label: "All Followup" },
   ];
 
   return (
@@ -128,7 +130,7 @@ export const LeadFollowup = () => {
         <div>
           {activeTab === 0 && (
             <div>
-              <LeadPendingFollowup
+              <PendingFollowup
                 assigned={assigned}
                 descriptionMenuData={descriptionMenuData}
                 product={product}
@@ -139,7 +141,7 @@ export const LeadFollowup = () => {
           )}
           {activeTab === 1 && (
             <div>
-              <LeadTodayFollowup
+              <TodayFollowup
                 assigned={assigned}
                 descriptionMenuData={descriptionMenuData}
                 product={product}
@@ -150,12 +152,21 @@ export const LeadFollowup = () => {
           )}
           {activeTab === 2 && (
             <div>
-              <LeadUpcomingFollowup
+              <UpcomingFollowup
                 assigned={assigned}
                 descriptionMenuData={descriptionMenuData}
                 product={product}
                 upcomingFollowUp={upcomingFollowUp}
                 getFollowUp={getFollowUp}
+              />
+            </div>
+          )}
+          {activeTab === 3 && (
+            <div>
+              <AllFollowup
+                assigned={assigned}
+                descriptionMenuData={descriptionMenuData}
+                product={product}
               />
             </div>
           )}

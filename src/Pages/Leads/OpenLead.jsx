@@ -85,6 +85,12 @@ export const OpenLead = () => {
     setOpenModalPotential(true);
   };
 
+  const getResetData = () => {
+    setFilterSelectedQuery("");
+    // setFilterQuery("");
+    getleads();
+  };
+
   useEffect(() => {
     getAllSellerAccountsDetails();
     getProduct();
@@ -155,7 +161,8 @@ export const OpenLead = () => {
       setOpen(true);
       if (filterSelectedQuery !== "" && filterQuery !== "" && currentPage) {
         const response = await LeadServices.getFilterPaginateLeads(
-          "open",
+          "others",
+          "priority",
           currentPage,
           filterQuery,
           filterSelectedQuery
@@ -166,14 +173,15 @@ export const OpenLead = () => {
         setpageCount(Math.ceil(total / 25));
       } else if (currentPage) {
         const response = await LeadServices.getAllPaginateLeads(
-          "open",
+          "others",
+          "priority",
           currentPage
         );
         setLeads(response.data.results);
         const total = response.data.count;
         setpageCount(Math.ceil(total / 25));
       } else {
-        let response = await LeadServices.getAllLeads("open");
+        let response = await LeadServices.getAllLeads("others", "priority");
         if (response) {
           setLeads(response.data.results);
           const total = response.data.count;
@@ -208,7 +216,8 @@ export const OpenLead = () => {
       const filterSearch = value;
       if (filterQuery) {
         const response = await LeadServices.getAllSearchLeads(
-          "open",
+          "others",
+          "priority",
           filterQuery,
           filterSearch
         );
@@ -228,12 +237,6 @@ export const OpenLead = () => {
     }
   };
 
-  const getResetData = () => {
-    setFilterSelectedQuery("");
-    // setFilterQuery("");
-    getleads();
-  };
-
   const handlePageClick = async (event, value) => {
     try {
       const page = value;
@@ -242,7 +245,8 @@ export const OpenLead = () => {
 
       if (filterSelectedQuery) {
         const response = await LeadServices.getFilterPaginateLeads(
-          "open",
+          "others",
+          "priority",
           page,
           filterQuery,
           filterSelectedQuery
@@ -256,7 +260,11 @@ export const OpenLead = () => {
           setFilterSelectedQuery("");
         }
       } else {
-        const response = await LeadServices.getAllPaginateLeads("open", page);
+        const response = await LeadServices.getAllPaginateLeads(
+          "others",
+          "priority",
+          page
+        );
         setLeads(response.data.results);
         const total = response.data.count;
         setpageCount(Math.ceil(total / 25));
@@ -552,7 +560,7 @@ export const OpenLead = () => {
                   fontWeight: 800,
                 }}
               >
-                Open Lead
+                Opened
               </h3>
             </Box>
             <Box flexGrow={0.5} align="right">
@@ -658,16 +666,17 @@ const FilterOptions = [
   { label: "References", value: "references__source" },
   { label: "Description", value: "description__name" },
   { label: "Assigned To", value: "assigned_to__email" },
+  { label: "Stage", value: "stage" },
   { label: "Search", value: "search" },
 ];
 
 const StageOptions = [
-  { label: "New", value: "new" },
+  // { label: "New", value: "new" },
   { label: "Open", value: "open" },
   { label: "Opportunity", value: "opportunity" },
   { label: "Potential", value: "potential" },
-  { label: "Interested", value: "interested" },
-  { label: "Converted", value: "converted" },
-  { label: "Not Interested", value: "not_interested" },
-  { label: "Close", value: "close" },
+  // { label: "Interested", value: "interested" },
+  // { label: "Converted", value: "converted" },
+  // { label: "Not Interested", value: "not_interested" },
+  // { label: "Close", value: "close" },
 ];

@@ -489,26 +489,28 @@ export const DuplicateLead = () => {
                       <StyledTableCell align="center">
                         {row.assigned_to}
                       </StyledTableCell>
-                      <StyledTableCell align="center">
-                        <Button
-                          variant="contained"
+                      <StyledTableCell
+                        align="center"
+                        style={{ width: "200px" }}
+                      >
+                        <div
+                          style={{ color: "blue" }}
                           onClick={() => openInPopup(row)}
                         >
                           View
-                        </Button>
-
-                        <Button
-                          variant="contained"
+                        </div>
+                        <div
+                          style={{ color: "green" }}
                           onClick={() => openInPopup2(row)}
                         >
                           Activity
-                        </Button>
-                        <Button
-                          variant="contained"
-                          onClick={() => openInPopup2(row)}
+                        </div>
+                        <div
+                          style={{ color: "red" }}
+                          onClick={() => openInPopup3(row)}
                         >
                           Potential
-                        </Button>
+                        </div>
                       </StyledTableCell>
                     </StyledTableRow>
                   );
