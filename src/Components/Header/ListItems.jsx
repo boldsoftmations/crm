@@ -1394,31 +1394,19 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/invoice/performa-invoice"
+                    to="/invoice/active-pi"
                     style={{ width: 300 }}
                   >
                     <ListItemText
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Performa Invoice"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/all-performa-invoice"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="All Performa Invoice"
+                      primary="Active PI"
                     />
                   </ListItem>
                 </List>
               </Collapse>
+
               {/*Sales Invoice  */}
               <ListItem
                 button
@@ -2336,7 +2324,6 @@ export const ListItems = (props) => {
                 <ListItemText primary="Leads" />
                 {expand ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-
               <Collapse in={expand} timeout="auto" unmountOnExit>
                 <Divider />
                 <List component="div" disablePadding>
@@ -2453,27 +2440,14 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/invoice/performa-invoice"
+                    to="/invoice/active-pi"
                     style={{ width: 300 }}
                   >
                     <ListItemText
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Performa Invoice"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/all-performa-invoice"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="All Performa Invoice"
+                      primary="Active PI"
                     />
                   </ListItem>
                 </List>
@@ -2941,19 +2915,6 @@ export const ListItems = (props) => {
                       onClick={() => setOpen(false)}
                       inset
                       primary="UnApproved PI"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/active-pi"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Active PI"
                     />
                   </ListItem>
                   <ListItem
