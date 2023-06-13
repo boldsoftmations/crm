@@ -26,6 +26,7 @@ export const Home = () => {
   const [monthlyStatus, setMonthlyStatus] = useState([]);
   const [weeklyStatus, setWeeklyStatus] = useState([]);
   const [dailyStatus, setDailyStatus] = useState([]);
+  const [callPerformance, setCallPerformance] = useState([]);
   const [dispatchDataByID, setDispatchDataByID] = useState(null);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [hoveredSegment, setHoveredSegment] = useState(null);
@@ -49,6 +50,7 @@ export const Home = () => {
     getWeeklyCallStatusDetails();
     getDailyCallStatusDetails();
     getDescriptionQuantityDetails();
+    getCallPerformanceDetails();
   }, []);
 
   useEffect(() => {
@@ -418,6 +420,68 @@ export const Home = () => {
     }
   };
 
+  const getCallPerformanceDetails = async () => {
+    try {
+      setOpen(true);
+      const response = await DashboardService.getCallPerformanceData();
+
+      const Data = [
+        {
+          name: "Order",
+          value: response.data.order,
+        },
+        {
+          name: "Followup",
+          value: response.data.followup,
+        },
+        {
+          name: "Credit",
+          value: response.data.credit,
+        },
+        {
+          name: "Issue",
+          value: response.data.issue,
+        },
+        {
+          name: "Not Connect",
+          value: response.data.not_connect,
+        },
+        {
+          name: "OEM",
+          value: response.data.oem,
+        },
+        {
+          name: "One Time",
+          value: response.data.one_time,
+        },
+        {
+          name: "Passed",
+          value: response.data.passed,
+        },
+        {
+          name: "Potential",
+          value: response.data.potential,
+        },
+        {
+          name: "Sample",
+          value: response.data.sample,
+        },
+        {
+          name: "Dropped",
+          value: response.data.dropped,
+        },
+        // Add more data for other categories if needed
+      ];
+
+      setCallPerformance(Data);
+
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("err", err);
+    }
+  };
+
   const handleAutocompleteChange = (value) => {
     setFilterValue(value);
     setAssign(value);
@@ -433,6 +497,7 @@ export const Home = () => {
     getWeeklyCallStatusByFilter(value);
     getDailyCallStatusByFilter(value);
     getDescriptionQuantityByFilter(value);
+    getCallPerformanceByFilter(value);
   };
 
   const getDataByFilter = async (value) => {
@@ -783,6 +848,69 @@ export const Home = () => {
     }
   };
 
+  const getCallPerformanceByFilter = async (value) => {
+    try {
+      const FilterData = value;
+      setOpen(true);
+      const response = await DashboardService.getCallPerformanceDataByFilter(
+        FilterData
+      );
+      const Data = [
+        {
+          name: "Order",
+          value: response.data.order,
+        },
+        {
+          name: "Followup",
+          value: response.data.followup,
+        },
+        {
+          name: "Credit",
+          value: response.data.credit,
+        },
+        {
+          name: "Issue",
+          value: response.data.issue,
+        },
+        {
+          name: "Not Connect",
+          value: response.data.not_connect,
+        },
+        {
+          name: "OEM",
+          value: response.data.oem,
+        },
+        {
+          name: "One Time",
+          value: response.data.one_time,
+        },
+        {
+          name: "Passed",
+          value: response.data.passed,
+        },
+        {
+          name: "Potential",
+          value: response.data.potential,
+        },
+        {
+          name: "Sample",
+          value: response.data.sample,
+        },
+        {
+          name: "Dropped",
+          value: response.data.dropped,
+        },
+        // Add more data for other categories if needed
+      ];
+
+      setCallPerformance(Data);
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
   const getResetData = () => {
     getForecastDetails();
     getNewCustomerDetails();
@@ -798,6 +926,7 @@ export const Home = () => {
     getWeeklyCallStatusDetails();
     getDailyCallStatusDetails();
     getDescriptionQuantityDetails();
+    getCallPerformanceDetails();
   };
 
   const handleSegmentHover = (segment) => {
@@ -871,6 +1000,7 @@ export const Home = () => {
           hoveredSegment={hoveredSegment}
           handleRowClick={handleRowClick}
           descriptionQuantity={descriptionQuantity}
+          callPerformance={callPerformance}
         />
       )}
       {userData.groups.includes("Sales") && userData.is_staff !== true && (
@@ -894,6 +1024,7 @@ export const Home = () => {
           hoveredSegment={hoveredSegment}
           handleRowClick={handleRowClick}
           descriptionQuantity={descriptionQuantity}
+          callPerformance={callPerformance}
         />
       )}
       <Popup

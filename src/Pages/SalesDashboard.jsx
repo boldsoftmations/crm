@@ -13,6 +13,8 @@ import {
   CartesianGrid,
   LineChart,
   Line,
+  AreaChart,
+  Area,
 } from "recharts";
 import { Grid, Box, Typography, Paper, CircularProgress } from "@mui/material";
 import { experimentalStyled as styled } from "@mui/material/styles";
@@ -38,6 +40,7 @@ export const SalesDashboard = (props) => {
     hoveredSegment,
     handleRowClick,
     descriptionQuantity,
+    callPerformance,
   } = props;
 
   const paletteColors = [
@@ -673,6 +676,7 @@ export const SalesDashboard = (props) => {
           </ResponsiveContainer>
         </Grid>
       </Grid>
+
       <Grid container spacing={2}>
         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ marginTop: "20px" }}>
           <ResponsiveContainer
@@ -712,6 +716,30 @@ export const SalesDashboard = (props) => {
                 Description Wise Quantity
               </text>
             </BarChart>
+          </ResponsiveContainer>
+        </Grid>
+      </Grid>
+
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={12} md={12} lg={12} sx={{ marginTop: "20px" }}>
+          <ResponsiveContainer
+            width="100%"
+            height={400}
+            preserveAspectRatio={false}
+          >
+            <AreaChart width={600} height={400} data={callPerformance}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke="#8884d8"
+                fill="#8884d8"
+              />
+            </AreaChart>
           </ResponsiveContainer>
         </Grid>
       </Grid>

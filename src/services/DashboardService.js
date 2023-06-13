@@ -113,6 +113,14 @@ const getDescriptionWiseQuantityDataByFilter = (filter) => {
   );
 };
 
+const getCallPerformanceData = () => {
+  return CustomAxios.get("/api/dashboard/call-performance/");
+};
+
+const getCallPerformanceDataByFilter = (filter) => {
+  return CustomAxios.get(`/api/dashboard/call-performance/?email=${filter}`);
+};
+
 const DashboardService = {
   getLastThreeMonthForecastData,
   getConsLastThreeMonthForecastData,
@@ -139,6 +147,8 @@ const DashboardService = {
   getDailyCallStatusDataByFilter,
   getDescriptionWiseQuantityData,
   getDescriptionWiseQuantityDataByFilter,
+  getCallPerformanceData,
+  getCallPerformanceDataByFilter,
 };
 
 export default DashboardService;

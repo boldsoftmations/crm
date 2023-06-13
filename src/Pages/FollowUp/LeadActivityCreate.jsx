@@ -143,8 +143,8 @@ const ActivityOption = [
   },
   {
     id: 5,
-    value: "Not dealing in our product range",
-    label: "Not dealing in our product range",
+    value: "Not buying from us due to product range",
+    label: "Not buying from us due to product range",
   },
   {
     id: 6,

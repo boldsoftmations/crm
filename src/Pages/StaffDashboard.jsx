@@ -13,6 +13,8 @@ import {
   CartesianGrid,
   LineChart,
   Line,
+  AreaChart,
+  Area,
 } from "recharts";
 import {
   Autocomplete,
@@ -52,7 +54,9 @@ export const StaffDashboard = (props) => {
     hoveredSegment,
     handleRowClick,
     descriptionQuantity,
+    callPerformance,
   } = props;
+  console.log("callPerformance", callPerformance);
   const paletteColors = [
     "#f14c14",
     "#f39c35",
@@ -794,6 +798,31 @@ export const StaffDashboard = (props) => {
                 Description Wise Quantity
               </text>
             </BarChart>
+          </ResponsiveContainer>
+        </Grid>
+      </Grid>
+
+      {/* call performance area chart */}
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={12} md={12} lg={12} sx={{ marginTop: "20px" }}>
+          <ResponsiveContainer
+            width="100%"
+            height={400}
+            preserveAspectRatio={false}
+          >
+            <AreaChart width={600} height={400} data={callPerformance}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke="#8884d8"
+                fill="#8884d8"
+              />
+            </AreaChart>
           </ResponsiveContainer>
         </Grid>
       </Grid>
