@@ -29,7 +29,7 @@ export const LeadActivityCreate = (props) => {
       e.preventDefault();
       setOpen(true);
       const data = {
-        leads: followupData.lead_id,
+        leads: followupData,
         user: userId,
         activity: followUp.activity,
         notes: followUp.note,

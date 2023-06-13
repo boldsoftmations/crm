@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Grid, Paper, Box } from "@mui/material";
-import LeadServices from "../../services/LeadService";
 import moment from "moment";
 import { Popup } from "../../Components/Popup";
 import { UpdateLeads } from "../Leads/UpdateLeads";
@@ -24,16 +23,12 @@ export const UpcomingFollowup = (props) => {
   const [popupLead, setPopupLead] = useState(false);
   const [popupCustomer, setPopupCustomer] = useState(false);
   const [leadsByID, setLeadsByID] = useState(null);
-  const [followup, setFollowup] = useState(null);
 
   const openInPopup = async (item) => {
     try {
-      console.log("item", item);
       setOpen(true);
       if (item.type === "lead") {
-        const response = await LeadServices.getLeadsById(item.lead);
-        setLeadsByID(response.data);
-        setFollowup(response.data.followup);
+        setLeadsByID(item.lead);
         setPopupLead(true);
       } else {
         setLeadsByID(item.company);
@@ -121,7 +116,6 @@ export const UpcomingFollowup = (props) => {
         setOpenPopup={setPopupLead}
       >
         <UpdateLeads
-          followup={followup}
           assigned={assigned}
           descriptionMenuData={descriptionMenuData}
           leadsByID={leadsByID}

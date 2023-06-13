@@ -10,15 +10,51 @@ const getAllLeads = (stage, lead_id) => {
   );
 };
 
-const getAllPaginateLeads = (currentPage, stage, orderingValue) => {
+const getAllSearchWithFilteredLeads = (
+  stage,
+  orderingValue,
+  filter,
+  filterValue,
+  searchValue
+) => {
   return CustomAxios.get(
-    `/api/lead/list-lead/?page=${currentPage}&funnel=${stage}&ordering=${orderingValue}`
+    `/api/lead/list-lead/?funnel=${stage}&ordering=${orderingValue}&${filter}=${filterValue}&search=${searchValue}`
   );
 };
 
-const getAllSearchLeads = (stage, orderingValue, filter, filterValue) => {
+const getFilteredLeads = (stage, orderingValue, filter, filterValue) => {
   return CustomAxios.get(
     `/api/lead/list-lead/?funnel=${stage}&ordering=${orderingValue}&${filter}=${filterValue}`
+  );
+};
+
+const getSearchLeads = (stage, orderingValue, searchValue) => {
+  return CustomAxios.get(
+    `/api/lead/list-lead/?funnel=${stage}&ordering=${orderingValue}&search=${searchValue}`
+  );
+};
+
+const getFilterWithSearchPaginateLeads = (
+  currentPage,
+  stage,
+  orderValue,
+  filter,
+  filterValue,
+  searchValue
+) => {
+  return CustomAxios.get(
+    `/api/lead/list-lead/?page=${currentPage}&funnel=${stage}&ordering=${orderValue}&${filter}=${filterValue}&search=${searchValue}`
+  );
+};
+
+const getSearchPaginateLeads = (
+  currentPage,
+  stage,
+  orderValue,
+  searchValue
+) => {
+  return CustomAxios.get(
+    `/api/lead/list-lead/?page=${currentPage}&funnel=${stage}&ordering=${orderValue}&search=${searchValue}`
   );
 };
 
@@ -30,9 +66,16 @@ const getFilterPaginateLeads = (
   filterValue
 ) => {
   return CustomAxios.get(
-    `/api/lead/list-lead/?page=${currentPage}&stage=${stage}&ordering=${orderValue}&${filter}=${filterValue}`
+    `/api/lead/list-lead/?page=${currentPage}&funnel=${stage}&ordering=${orderValue}&${filter}=${filterValue}`
   );
 };
+
+const getAllPaginateLeads = (currentPage, stage, orderingValue) => {
+  return CustomAxios.get(
+    `/api/lead/list-lead/?page=${currentPage}&funnel=${stage}&ordering=${orderingValue}`
+  );
+};
+
 const getFilterAssignedtoPaginateLeads = (currentPage, filter, search) => {
   return CustomAxios.get(
     `/api/lead/list-lead/?page=${currentPage}&${filter}=${search}`
@@ -182,14 +225,18 @@ const getFollowupWithPaginationAndSearch = (
 const LeadServices = {
   getProfile,
   getAllLeads,
-  getAllPaginateLeads,
   getAllAssignedUser,
   getAllUnassignedData,
   getAllFilterByUnassignedData,
   getAllPaginateUnassigned,
   getAllPaginateWithFilterUnassigned,
-  getAllSearchLeads,
+  getAllSearchWithFilteredLeads,
+  getFilteredLeads,
+  getSearchLeads,
+  getFilterWithSearchPaginateLeads,
+  getSearchPaginateLeads,
   getFilterPaginateLeads,
+  getAllPaginateLeads,
   getFilterAssignedtoPaginateLeads,
   getAllDuplicateLeads,
   getAllPaginateDuplicateLeads,

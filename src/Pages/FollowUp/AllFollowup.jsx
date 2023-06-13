@@ -22,7 +22,6 @@ export const AllFollowup = (props) => {
   const [allFollowupData, setAllFollowupData] = useState([]);
   const [openPopup, setOpenPopup] = useState(false);
   const [leadsByID, setLeadsByID] = useState(null);
-  const [followup, setFollowup] = useState(null);
   const [pageCount, setpageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [endDate, setEndDate] = useState(new Date());
@@ -30,15 +29,11 @@ export const AllFollowup = (props) => {
   const minDate = new Date().toISOString().split("T")[0];
   const maxDate = new Date("2030-12-31").toISOString().split("T")[0];
   const [searchQuery, setSearchQuery] = useState("");
-  const dispatch = useDispatch();
 
   const openInPopup = async (item) => {
     try {
       setOpen(true);
-      const response = await LeadServices.getLeadsById(item.lead);
-      setLeadsByID(response.data);
-      setFollowup(response.data.followup);
-      setOpenPopup(true);
+      setLeadsByID(item.lead);
       setOpen(false);
     } catch (err) {
       console.log("err", err);
@@ -289,7 +284,6 @@ export const AllFollowup = (props) => {
         setOpenPopup={setOpenPopup}
       >
         <UpdateLeads
-          followup={followup}
           assigned={assigned}
           descriptionMenuData={descriptionMenuData}
           leadsByID={leadsByID}

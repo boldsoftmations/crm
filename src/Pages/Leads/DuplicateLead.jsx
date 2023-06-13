@@ -52,8 +52,6 @@ export const DuplicateLead = () => {
   const [openModalFollowup, setOpenModalFollowup] = useState(false);
   const [openModalPotential, setOpenModalPotential] = useState(false);
   const [leadsByID, setLeadsByID] = useState(null);
-  const [followup, setFollowup] = useState(null);
-  const [potential, setPotential] = useState(null);
   const [assigned, setAssigned] = useState([]);
   const [referenceData, setReferenceData] = useState([]);
   const [descriptionMenuData, setDescriptionMenuData] = useState([]);
@@ -69,9 +67,7 @@ export const DuplicateLead = () => {
   };
 
   const openInPopup = (item) => {
-    setLeadsByID(item);
-    setFollowup(item.followup);
-    setPotential(item.potential);
+    setLeadsByID(item.lead_id);
     setOpenPopup(true);
   };
 
@@ -83,6 +79,11 @@ export const DuplicateLead = () => {
   const openInPopup3 = (item) => {
     setLeadsByID(item);
     setOpenModalPotential(true);
+  };
+
+  const getResetSearchData = () => {
+    setFilterSelectedQuery("");
+    getSearchData(filterQuery, ""); // Pass an empty string as the second parameter
   };
 
   const handleCheckboxChange = (row) => {
@@ -241,11 +242,6 @@ export const DuplicateLead = () => {
       console.log("error Search leads", error);
       setOpen(false);
     }
-  };
-
-  const getResetSearchData = () => {
-    setFilterSelectedQuery("");
-    getSearchData(filterQuery, ""); // Pass an empty string as the second parameter
   };
 
   const handlePageClick = async (event, value) => {
@@ -412,7 +408,8 @@ export const DuplicateLead = () => {
                   <StyledTableCell align="center">NAME</StyledTableCell>
                   <StyledTableCell align="center">CONTACT</StyledTableCell>
                   <StyledTableCell align="center">ALT. CONTACT</StyledTableCell>
-                  <StyledTableCell align="center">EMAIL</StyledTableCell>
+                  <StyledTableCell align="center">CITY</StyledTableCell>
+                  <StyledTableCell align="center">STATE</StyledTableCell>
                   <StyledTableCell align="center">GST NO.</StyledTableCell>
                   <StyledTableCell align="center">PAN NO.</StyledTableCell>
                   <StyledTableCell align="center">ASSIGNED TO</StyledTableCell>
@@ -443,7 +440,10 @@ export const DuplicateLead = () => {
                         {row.alternate_contact}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {row.email}
+                        {row.city}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.state}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {row.gst_number}
@@ -510,8 +510,6 @@ export const DuplicateLead = () => {
         setOpenPopup={setOpenPopup}
       >
         <UpdateLeads
-          followup={followup}
-          potential={potential}
           assigned={assigned}
           descriptionMenuData={descriptionMenuData}
           leadsByID={leadsByID}
