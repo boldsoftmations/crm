@@ -103,18 +103,7 @@ export const CreateLeads = (props) => {
   return (
     <>
       <CustomLoader open={open} />
-      <Box display="flex" alignItems="center" justifyContent="center">
-        <h3
-          style={{
-            marginBottom: "1em",
-            fontSize: "24px",
-            color: "rgb(34, 34, 34)",
-            fontWeight: 800,
-          }}
-        >
-          Create Leads
-        </h3>
-      </Box>
+
       <Box
         component="form"
         noValidate

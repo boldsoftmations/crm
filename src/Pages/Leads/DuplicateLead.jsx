@@ -72,12 +72,12 @@ export const DuplicateLead = () => {
   };
 
   const openInPopup2 = (item) => {
-    setLeadsByID(item);
+    setLeadsByID(item.lead_id);
     setOpenModalFollowup(true);
   };
 
   const openInPopup3 = (item) => {
-    setLeadsByID(item);
+    setLeadsByID(item.lead_id);
     setOpenModalPotential(true);
   };
 
@@ -529,6 +529,7 @@ export const DuplicateLead = () => {
           followupData={leadsByID}
           setOpenModal={setOpenModalFollowup}
           getAllleadsData={getleads}
+          getLeadByID={null}
         />
       </Popup>
       <Popup
@@ -539,6 +540,7 @@ export const DuplicateLead = () => {
       >
         <PotentialCreate
           getAllleadsData={getleads}
+          getLeadByID={null}
           leadsByID={leadsByID}
           product={product}
           setOpenModal={setOpenModalPotential}

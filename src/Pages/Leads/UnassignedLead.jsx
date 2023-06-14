@@ -60,7 +60,6 @@ export const UnassignedLead = () => {
 
   const openInPopup = (item) => {
     setLeadsByID(item.lead_id);
-
     setOpenPopup(true);
   };
 

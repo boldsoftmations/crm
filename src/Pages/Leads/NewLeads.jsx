@@ -685,6 +685,7 @@ export const NewLeads = () => {
       >
         <LeadActivityCreate
           followupData={leadsByID}
+          getLeadByID={null}
           setOpenModal={setOpenModalFollowup}
           getAllleadsData={getleads}
         />
@@ -697,6 +698,7 @@ export const NewLeads = () => {
       >
         <PotentialCreate
           getAllleadsData={getleads}
+          getLeadByID={null}
           leadsByID={leadsByID}
           product={product}
           setOpenModal={setOpenModalPotential}
