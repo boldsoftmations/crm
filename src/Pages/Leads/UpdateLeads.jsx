@@ -132,7 +132,7 @@ export const UpdateLeads = (props) => {
       <Box
         component="form"
         noValidate
-        onSubmit={(e) => createLeadsData(e)}
+        onSubmit={(e) => updateLeadsData(e)}
         sx={{ mt: 1 }}
       >
         <Grid container spacing={2}>
