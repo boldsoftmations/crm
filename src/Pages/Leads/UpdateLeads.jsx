@@ -28,7 +28,7 @@ import { LeadActivity } from "../FollowUp/LeadActivity";
 export const UpdateLeads = (props) => {
   const {
     setOpenPopup,
-    getleads,
+    getAllleadsData,
     descriptionMenuData,
     assigned,
     product,
@@ -119,7 +119,7 @@ export const UpdateLeads = (props) => {
 
       setOpen(false);
       setOpenPopup(false);
-      getleads();
+      getAllleadsData();
     } catch (error) {
       console.log("error :>> ", error);
       setOpen(false);

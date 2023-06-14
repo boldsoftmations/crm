@@ -167,7 +167,6 @@ export const NewLeads = () => {
       setOpen(true);
       const filterValue = filterSelectedQuery ? filterSelectedQuery : null;
       const searchValue = searchQuery ? searchQuery : null;
-
       if (filterQuery !== "" && filterValue !== null && searchValue !== null) {
         const response = await LeadServices.getAllSearchWithFilteredLeads(
           "new",
