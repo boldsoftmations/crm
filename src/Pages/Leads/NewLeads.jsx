@@ -684,10 +684,10 @@ export const NewLeads = () => {
         setOpenPopup={setOpenModalFollowup}
       >
         <LeadActivityCreate
-          followupData={leadsByID}
-          getLeadByID={null}
+          leadsByID={leadsByID}
           setOpenModal={setOpenModalFollowup}
           getAllleadsData={getleads}
+          getLeadByID={null}
         />
       </Popup>
       <Popup
