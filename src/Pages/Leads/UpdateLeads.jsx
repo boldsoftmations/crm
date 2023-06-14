@@ -460,7 +460,7 @@ export const UpdateLeads = (props) => {
               size="small"
               onChange={(event, value) => handleSelectChange("state", value)}
               name="state"
-              value={leads.state}
+              value={leads.state || ""}
               options={StateOption.map((option) => option.label)}
               getOptionLabel={(option) => option}
               renderInput={(params) => <TextField {...params} label="State" />}
