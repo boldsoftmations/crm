@@ -74,7 +74,7 @@ export const UpdateLeads = (props) => {
     }
   };
 
-  const createLeadsData = async (e) => {
+  const updateLeadsData = async (e) => {
     try {
       e.preventDefault();
       setOpen(true);
@@ -115,7 +115,7 @@ export const UpdateLeads = (props) => {
           checked === true ? leads.pincode : leads.shipping_pincode,
       };
 
-      await LeadServices.createLeads(data);
+      await LeadServices.updateLeads(leadsByID, data);
 
       setOpenPopup(false);
       setOpen(false);
