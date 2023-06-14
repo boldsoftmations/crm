@@ -117,8 +117,8 @@ export const UpdateLeads = (props) => {
 
       await LeadServices.updateLeads(leadsByID, data);
 
-      setOpenPopup(false);
       setOpen(false);
+      setOpenPopup(false);
       getleads();
     } catch (error) {
       console.log("error :>> ", error);
