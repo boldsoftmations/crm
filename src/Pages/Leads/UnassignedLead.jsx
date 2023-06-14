@@ -462,6 +462,7 @@ export const UnassignedLead = () => {
                           View
                         </Button>
                         <Button
+                          color="success"
                           variant="text"
                           onClick={() => openInPopup2(row)}
                         >

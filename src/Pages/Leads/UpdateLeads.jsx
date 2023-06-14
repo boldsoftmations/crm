@@ -16,10 +16,13 @@ import {
   Radio,
   Divider,
   Checkbox,
+  Snackbar,
+  IconButton,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
+import CloseIcon from "@mui/icons-material/Close";
 import LeadServices from "../../services/LeadService";
 import { CustomLoader } from "../../Components/CustomLoader";
 import { ViewAllPotential } from "../Potential/ViewAllPotential";
@@ -39,6 +42,8 @@ export const UpdateLeads = (props) => {
   const [leads, setLeads] = useState([]);
   const [followup, setFollowup] = useState(null);
   const [potential, setPotential] = useState(null);
+  const [error, setError] = useState(null);
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setLeads({ ...leads, [name]: value });
@@ -94,13 +99,13 @@ export const UpdateLeads = (props) => {
         business_mismatch: leads.business_mismatch || "No",
         interested: leads.interested || "Yes",
         references: leads.references,
-        assigned_to: leads.assigned_to,
+        assigned_to: leads.assigned_to || null,
         description: leads.description || [],
         target_date: leads.target_date,
         type_of_customer: leads.type_of_customer,
-        company: leads.company,
-        gst_number: leads.gst_number,
-        pan_number: leads.pan_number,
+        company: leads.company || null,
+        gst_number: leads.gst_number || null,
+        pan_number: leads.pan_number || null,
         address: leads.address,
         city: leads.city,
         state: leads.state,
@@ -122,6 +127,9 @@ export const UpdateLeads = (props) => {
       getAllleadsData();
     } catch (error) {
       console.log("error :>> ", error);
+      setError(
+        error.response.data.errors ? error.response.data.errors.assigned_to : ""
+      );
       setOpen(false);
     }
   };
@@ -135,6 +143,22 @@ export const UpdateLeads = (props) => {
         onSubmit={(e) => updateLeadsData(e)}
         sx={{ mt: 1 }}
       >
+        <Snackbar
+          open={Boolean(error)}
+          onClose={() => setError(null)}
+          message={`Assigned To ${error}`}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              sx={{ p: 0.5 }}
+              onClick={() => setError(null)}
+            >
+              <CloseIcon />
+            </IconButton>
+          }
+        />
         <Grid container spacing={2}>
           {/* Create Basic Details */}
           <Grid item xs={12}>
@@ -310,7 +334,12 @@ export const UpdateLeads = (props) => {
               getOptionLabel={(option) => option}
               // sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Assignied To" />
+                <TextField
+                  {...params}
+                  label="Assigned To"
+                  error={error} // Set the 'error' prop based on the error variable
+                  helperText={error ? error : ""}
+                />
               )}
             />
           </Grid>
