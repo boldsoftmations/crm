@@ -16,7 +16,15 @@ import {
   AreaChart,
   Area,
 } from "recharts";
-import { Grid, Box, Typography, Paper, CircularProgress,Autocomplete,TextField } from "@mui/material";
+import {
+  Grid,
+  Box,
+  Typography,
+  Paper,
+  CircularProgress,
+  Autocomplete,
+  TextField,
+} from "@mui/material";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import PropTypes from "prop-types";
 
@@ -791,6 +799,15 @@ export const SalesDashboard = (props) => {
               <Tooltip />
               <Legend />
               <Line type="monotone" dataKey="total" stroke="#8884d8" />
+              <text
+                x="50%"
+                y={20}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="chart-title"
+              >
+                Daily Sales Invoice Quantity
+              </text>
             </LineChart>
           </ResponsiveContainer>
         </Grid>
