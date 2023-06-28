@@ -66,8 +66,7 @@ export const StoresInventoryCreate = (props) => {
   const getProduct = async () => {
     try {
       setOpen(true);
-      const res = await ProductService.getAllValidPriceList("all");
-      console.log("res product", res.data);
+      const res = await ProductService.getAllProduct();
       setProduct(res.data);
       setOpen(false);
     } catch (err) {
@@ -149,7 +148,7 @@ export const StoresInventoryCreate = (props) => {
               id="combo-box-demo"
               value={storeInventoryData.product || ""}
               onChange={(event, value) => handleSelectChange("product", value)}
-              options={product.map((option) => option.product)}
+              options={product.map((option) => option.name)}
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
