@@ -148,7 +148,7 @@ export const Login = () => {
     <ThemeProvider theme={theme}>
       <CustomLoader open={open} />
       <Grid>
-        <Paper style={paperStyle}>
+        {/* <Paper style={paperStyle}> */}
           <Grid align="center">
             <Avatar style={avatarStyle}>
               <LockOutlinedIcon />
@@ -242,7 +242,7 @@ export const Login = () => {
               </Grid>
             </Grid>
           </Box>
-        </Paper>
+        {/* </Paper> */}
       </Grid>
     </ThemeProvider>
   );
