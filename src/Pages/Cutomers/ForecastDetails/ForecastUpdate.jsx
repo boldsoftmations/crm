@@ -44,7 +44,6 @@ export const ForecastUpdate = (props) => {
     try {
       e.preventDefault();
       setOpen(true);
-
       const req = {
         product_forecast: selectedMonthForecast.product_forecast,
         month: selectedMonthForecast.month,
@@ -92,7 +91,7 @@ export const ForecastUpdate = (props) => {
                   return (
                     i >= 3 && (
                       <MenuItem key={i} value={option}>
-                        {months[option.month - 1]}
+                        {months[option.month]}
                       </MenuItem>
                     )
                   );
