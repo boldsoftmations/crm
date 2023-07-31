@@ -89,9 +89,9 @@ export const ForecastUpdate = (props) => {
               >
                 {forecastDataByID.product_forecast.map((option, i) => {
                   return (
-                    i >= 3 && (
+                    option.index_position >= 3 && (
                       <MenuItem key={i} value={option}>
-                        {months[option.month]}
+                        {months[option.month - 1]}
                       </MenuItem>
                     )
                   );
