@@ -44,11 +44,10 @@ export const Home = () => {
   const [startDate, setStartDate] = useState(new Date()); // set default value as current date
   const minDate = new Date().toISOString().split("T")[0];
   const maxDate = new Date("2030-12-31").toISOString().split("T")[0];
-  // const userData = data.profile;
   useEffect(() => {
     getAllTaskDetails();
     getCustomerDetails();
-    getAssignedData();
+    getTeamLeadData();
     getAllDispatchData();
     getNewCustomerDetails();
     getPendingTaskDetails();
@@ -145,13 +144,59 @@ export const Home = () => {
   const getResetData = () => {
     setStartDate(new Date());
     setEndDate(new Date());
+    setAssign(null);
   };
 
-  const getAssignedData = async () => {
+  const getTeamLeadData = async () => {
     try {
       setOpen(true);
-      const res = await LeadServices.getAllAssignedUser();
-      setAssigned(res.data);
+      const res = await LeadServices.getTeamLeader();
+      console.log("res", res);
+
+      // Assuming res is an object with properties team_leader_name, sub_team_leaders, and team_leader_sales_user
+      const { position, sub_team_leaders, team_leader_sales_user } =
+        res.data[0];
+      // const { position } = userData;
+      console.log("position", position);
+
+      if (userData.position === position) {
+        // If team_leader_name matches position, add sub_team_leaders and team_leader_sales_user to your data
+        console.log("Adding sub_team_leaders to your data:", sub_team_leaders);
+        console.log(
+          "Adding team_leader_sales_user to your data:",
+          team_leader_sales_user
+        );
+
+        let subTeamLeadersWithEmail = [];
+
+        // Check if sub_team_leaders exists and add them to subTeamLeadersWithEmail
+        if (
+          sub_team_leaders &&
+          position === "Team Leader" &&
+          sub_team_leaders.length > 0
+        ) {
+          subTeamLeadersWithEmail = sub_team_leaders.map((email) => ({
+            email,
+          }));
+        }
+
+        // Check if team_leader_sales_user exists and add them to subTeamLeadersWithEmail
+        if (
+          team_leader_sales_user &&
+          position === "Sub Team Leader" &&
+          team_leader_sales_user.length > 0
+        ) {
+          subTeamLeadersWithEmail = team_leader_sales_user.map((email) => ({
+            email,
+          }));
+        }
+
+        console.log("Sub team leaders with email:", subTeamLeadersWithEmail);
+        setAssigned(subTeamLeadersWithEmail);
+
+        // You can add the logic here to update your data with subTeamLeadersWithEmail
+      }
+
       setOpen(false);
     } catch (error) {
       console.log("error", error);
@@ -1230,6 +1275,10 @@ export const Home = () => {
           openPopup3={openPopup3}
           setOpenPopup3={setOpenPopup3}
           getResetDate={getResetDate}
+          handleAutocompleteChange={handleAutocompleteChange}
+          assign={assign}
+          assigned={assigned}
+          getResetData={getResetData}
         />
       )}
       <Popup
