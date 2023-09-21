@@ -16,6 +16,7 @@ import {
 import PropTypes from "prop-types";
 import { CustomChart } from "../Components/CustomChart";
 import { Popup } from "../Components/Popup";
+import { useSelector } from "react-redux";
 
 export const StaffDashboard = (props) => {
   const {
@@ -33,7 +34,7 @@ export const StaffDashboard = (props) => {
     handleAutocompleteChange,
     assign,
     total,
-    assigned,
+    // assigned,
     getResetData,
     piData,
     funnelData,
@@ -54,10 +55,11 @@ export const StaffDashboard = (props) => {
     setOpenPopup3,
     getResetDate,
   } = props;
+  const userData = useSelector((state) => state.auth.profile);
   const [dIQdata, setDIQData] = useState([]);
   const [dOBQdata, setDOBQData] = useState([]);
   const [activeButton, setActiveButton] = useState("monthly");
-
+  const assigned = userData.sales_users || [];
   const handleButtonClick = (buttonType) => {
     setActiveButton(buttonType);
   };
@@ -212,7 +214,7 @@ export const StaffDashboard = (props) => {
                 size="small"
                 onChange={(event, value) => handleAutocompleteChange(value)}
                 value={assign}
-                options={assigned.map((option) => option.email)}
+                options={assigned.map((option) => option)}
                 getOptionLabel={(option) => option}
                 renderInput={(params) => (
                   <TextField {...params} label="Filter By Sales Person" />

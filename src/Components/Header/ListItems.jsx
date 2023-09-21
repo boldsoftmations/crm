@@ -41,13 +41,17 @@ export const ListItems = (props) => {
   const [expandInventory, setExpandInventory] = useState(false);
   const [expandFollowup, setExpandFollowup] = useState(false);
   const [expandTask, setExpandTask] = useState(false);
+  const [expandUser, setExpandUser] = useState(false);
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
 
   return (
     <div>
       {/* Staff */}
-      {userData.is_staff === true ? (
+      {userData.is_staff === true ||
+      userData.groups.includes("Sales Manager") ||
+      userData.groups.includes("Sales Deputy Manager") ||
+      userData.groups.includes("Sales Assistant Deputy Manager") ? (
         <>
           {/* Dashboard */}
           <ListItem
@@ -937,6 +941,87 @@ export const ListItems = (props) => {
         </>
       ) : (
         <>
+          {/* Hr */}
+          {userData.groups.includes("HR") && (
+            <>
+              {/* Users */}
+              <ListItem
+                button
+                onClick={() => setExpandUser(!expandUser)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <PersonIcon />
+                </ListItemIcon>
+                <ListItemText primary="Users" />
+                {expandUser ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+
+              <Collapse in={expandUser} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/active-user"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Active Users"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/inactive-user"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="InActive Users"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              {/* Tasks */}
+              <ListItem
+                button
+                onClick={() => setExpandTask(!expandTask)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <AssignmentTurnedInIcon />
+                </ListItemIcon>
+                <ListItemText primary="Task" />
+                {expandTask ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+
+              <Collapse in={expandTask} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/task/view-task"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Task"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+            </>
+          )}
           {/* Factory orderbook */}
           {(userData.groups.includes("Factory-Delhi-OrderBook") ||
             userData.groups.includes("Factory-Mumbai-OrderBook")) && (
@@ -2299,7 +2384,8 @@ export const ListItems = (props) => {
           )}
 
           {/* sales  */}
-          {userData.groups.includes("Sales") && (
+          {(userData.groups.includes("Sales") ||
+            userData.groups.includes("Sales Executive")) && (
             <>
               {/* Dashboard */}
               {userData.is_staff !== true && (
@@ -2391,21 +2477,6 @@ export const ListItems = (props) => {
                       primary="Hot Leads"
                     />
                   </ListItem>
-                  {userData.position === "Sub Team Leader" && (
-                    <ListItem
-                      button
-                      component={RouterLink}
-                      to="/leads/view-unassigned-lead"
-                      style={{ width: 300 }}
-                    >
-                      <ListItemText
-                        component={Button}
-                        onClick={() => setOpen(false)}
-                        inset
-                        primary="Unassigned Leads"
-                      />
-                    </ListItem>
-                  )}
                 </List>
               </Collapse>
 

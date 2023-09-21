@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import {
   AppBar,
@@ -11,8 +11,10 @@ import {
   Divider,
   Drawer,
   MenuItem,
+  Badge,
   // Menu,
 } from "@mui/material";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import Menu from "@mui/material/Menu";
 import { styled, useTheme } from "@mui/material/styles";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -22,6 +24,9 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { logoutUser } from "../../Redux/Action/Action";
 import "./Header.css";
 import { ListItems } from "./ListItems";
+import TaskService from "../../services/TaskService";
+import TaskPopup from "./TaskPopup";
+import { Popup } from "../Popup";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -38,7 +43,18 @@ export const Header = () => {
   const theme = useTheme();
   const auth = useSelector((state) => state.auth);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [task, setTask] = useState([]);
   const ProfileName = auth.profile ? auth.profile : [];
+  const [popupOpen, setPopupOpen] = useState(false);
+
+  const closePopup = () => {
+    setPopupOpen(false);
+  };
+
+  const handleBellClick = () => {
+    setPopupOpen(true);
+  };
+
   const handleDrawerClose = () => {
     setOpen(false);
   };
@@ -54,6 +70,22 @@ export const Header = () => {
   const logout = () => {
     dispatch(logoutUser());
     localStorage.removeItem("user");
+  };
+
+  useEffect(() => {
+    getAllTaskDetails();
+  }, []);
+
+  const getAllTaskDetails = async () => {
+    try {
+      setOpen(true);
+      const response = await TaskService.getAllTask();
+      setTask(response.data.results);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setOpen(false);
+    }
   };
 
   return (
@@ -105,6 +137,12 @@ export const Header = () => {
               Bold-SoftMation
             </Typography>
             <>
+              <IconButton color="inherit" onClick={handleBellClick}>
+                <Badge badgeContent={task.length} color="error">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+
               <IconButton
                 size="large"
                 aria-label="account of current user"
@@ -149,6 +187,14 @@ export const Header = () => {
           </Toolbar>
         </AppBar>
       )}
+      <Popup
+        openPopup={popupOpen}
+        setOpenPopup={setPopupOpen}
+        title="Notifications"
+        maxWidth="md"
+      >
+        <TaskPopup tasks={task} closePopup={closePopup} />
+      </Popup>
     </div>
   );
 };

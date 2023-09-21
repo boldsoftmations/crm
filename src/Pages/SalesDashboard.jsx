@@ -51,7 +51,6 @@ export const SalesDashboard = (props) => {
     openPopup3,
     setOpenPopup3,
     getResetDate,
-    assigned,
     getResetData,
     handleAutocompleteChange,
     assign,
@@ -61,6 +60,7 @@ export const SalesDashboard = (props) => {
   const [dIQdata, setDIQData] = useState();
   const [dOBQdata, setDOBQData] = useState();
   const [activeButton, setActiveButton] = useState("monthly");
+  const assigned = userData.sales_users || [];
 
   const handleButtonClick = (buttonType) => {
     setActiveButton(buttonType);
@@ -652,7 +652,7 @@ export const SalesDashboard = (props) => {
                         handleAutocompleteChange(value)
                       }
                       value={assign}
-                      options={assigned.map((option) => option.email)}
+                      options={assigned.map((option) => option)}
                       getOptionLabel={(option) => option}
                       renderInput={(params) => (
                         <TextField {...params} label="Filter By Sales Person" />

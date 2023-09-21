@@ -57,6 +57,8 @@ import { Followup } from "../Pages/FollowUp/Followup";
 import { ActivePI } from "../Pages/Invoice/ProformaInvoice/ActivePI";
 import { ApprovePi } from "../Pages/Invoice/ProformaInvoice/ApprovePi";
 import { HotLeads } from "../Pages/Leads/HotLeads";
+import { ActiveUsers } from "./../Pages/Users/ActiveUsers";
+import { InActiveUsers } from "./../Pages/Users/InActiveUsers";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -233,6 +235,9 @@ export const RouteScreen = () => {
             />
             {/* task Routes */}
             <Route path="/task/view-task" element={<TaskView />} />
+            <Route path="/user/active-user" element={<ActiveUsers />} />
+            <Route path="/user/inactive-user" element={<InActiveUsers />} />
+
             <Route path="*" element={<Home />} />
           </>
         )}
