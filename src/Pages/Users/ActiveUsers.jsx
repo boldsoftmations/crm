@@ -31,11 +31,7 @@ export const ActiveUsers = () => {
       [name]: value,
     });
 
-    const desiredRoles = [
-      "Sales Executive",
-      "Sales Assistant Deputy Manager",
-      "Sales",
-    ];
+    const desiredRoles = ["Sales Executive", "Sales Assistant Deputy Manager"];
 
     // Check if the selected options include any of the desired roles
     if (
@@ -93,6 +89,7 @@ export const ActiveUsers = () => {
     try {
       e.preventDefault();
       setOpen(true);
+      console.log("active", activeUsersByIDData);
       const req = {
         first_name: activeUsersByIDData.first_name,
         last_name: activeUsersByIDData.last_name,
@@ -100,7 +97,9 @@ export const ActiveUsers = () => {
         email: activeUsersByIDData.email,
         is_active: activeUsersByIDData.is_active,
         group_names: activeUsersByIDData.groups,
-        ref_users: activeUsersByIDData.ref_user.email,
+        ref_users: activeUsersByIDData.ref_user
+          ? activeUsersByIDData.ref_user.email
+          : null,
       };
       await TaskService.createUsers(activeUsersByIDData.emp_id, req);
       setOpenPopup(false);

@@ -213,7 +213,7 @@ export const Home = () => {
         { name: "open", label: "Open", value: response.data.open },
         {
           name: "opportunity",
-          label: "Oppurtunity",
+          label: "Opportunity",
           value: response.data.opportunity,
         },
         {
@@ -909,7 +909,7 @@ export const Home = () => {
         { name: "open", label: "Open", value: response.data.open },
         {
           name: "opportunity",
-          label: "Oppurtunity",
+          label: "Opportunity",
           value: response.data.opportunity,
         },
         {

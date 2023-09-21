@@ -51,6 +51,7 @@ export const SalesDashboard = (props) => {
     openPopup3,
     setOpenPopup3,
     getResetDate,
+    // assigned,
     getResetData,
     handleAutocompleteChange,
     assign,
@@ -448,7 +449,7 @@ export const SalesDashboard = (props) => {
                   ...pendingDescription.map((item) => [item.name, item.value]),
                 ]}
                 options={{
-                  title: "Pending Quantity by Description",
+                  title: "Pending Orderbook by Description",
                   width: "100%",
                   height: "400px",
                   legend: { position: "none" },
