@@ -48,10 +48,7 @@ export const ListItems = (props) => {
   return (
     <div>
       {/* Staff */}
-      {userData.is_staff === true ||
-      userData.groups.includes("Sales Manager") ||
-      userData.groups.includes("Sales Deputy Manager") ||
-      userData.groups.includes("Sales Assistant Deputy Manager") ? (
+      {userData.is_staff === true || userData.groups.includes("Director") ? (
         <>
           {/* Dashboard */}
           <ListItem
@@ -386,6 +383,19 @@ export const ListItems = (props) => {
                   onClick={() => setOpen(false)}
                   inset
                   primary="Unassigned Customer"
+                />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/customers/incomplete-kyc-details"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Incomplete Kyc"
                 />
               </ListItem>
             </List>
@@ -2384,44 +2394,42 @@ export const ListItems = (props) => {
           )}
 
           {/* sales  */}
-          {(userData.groups.includes("Sales") ||
+          {(userData.groups.includes("Sales Assistant Deputy Manager") ||
             userData.groups.includes("Sales Executive")) && (
             <>
               {/* Dashboard */}
-              {userData.is_staff !== true && (
-                <>
+
+              <ListItem
+                button
+                onClick={() => setExpandDashboard(!expandDashboard)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText primary="Dashboard" />
+                {expandDashboard ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+
+              <Collapse in={expandDashboard} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
                   <ListItem
                     button
-                    onClick={() => setExpandDashboard(!expandDashboard)}
+                    component={RouterLink}
+                    to="/user/home"
                     style={{ width: 300 }}
                   >
-                    <ListItemIcon>
-                      <DashboardIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Dashboard" />
-                    {expandDashboard ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Analytics"
+                    />
                   </ListItem>
+                </List>
+              </Collapse>
 
-                  <Collapse in={expandDashboard} timeout="auto" unmountOnExit>
-                    <Divider />
-                    <List component="div" disablePadding>
-                      <ListItem
-                        button
-                        component={RouterLink}
-                        to="/user/home"
-                        style={{ width: 300 }}
-                      >
-                        <ListItemText
-                          component={Button}
-                          onClick={() => setOpen(false)}
-                          inset
-                          primary="Analytics"
-                        />
-                      </ListItem>
-                    </List>
-                  </Collapse>
-                </>
-              )}
               {/* Leads */}
 
               <ListItem
@@ -2506,6 +2514,19 @@ export const ListItems = (props) => {
                       onClick={() => setOpen(false)}
                       inset
                       primary="Customer"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customers/incomplete-kyc-details"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Incomplete Kyc"
                     />
                   </ListItem>
                 </List>
@@ -2721,6 +2742,505 @@ export const ListItems = (props) => {
                 </List>
               </Collapse>
 
+              <ListItem
+                button
+                onClick={() => setExpandTask(!expandTask)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <AssignmentTurnedInIcon />
+                </ListItemIcon>
+                <ListItemText primary="Task" />
+                {expandTask ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+
+              <Collapse in={expandTask} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/task/view-task"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Task"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+            </>
+          )}
+
+          {/* Sales Manager and Sales Deputy Manager */}
+          {(userData.groups.includes("Sales Manager") ||
+            userData.groups.includes("Sales Deputy Manager")) && (
+            <>
+              {/* Dashboard */}
+              <ListItem
+                button
+                onClick={() => setExpandDashboard(!expandDashboard)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText primary="Dashboard" />
+                {expandDashboard ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={expandDashboard} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/dashoard"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Reports"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/home"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Analytics"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              {/* Leads */}
+              <ListItem
+                button
+                onClick={() => setExpand(!expand)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <AssignmentIndIcon />
+                </ListItemIcon>
+                <ListItemText primary="Leads" />
+                {expand ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={expand} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/new-lead"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="New Leads"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/open-lead"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Opened Leads"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/hot-lead"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Hot Leads"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/closed-lead"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Dropped Leads"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/duplicate-lead"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Duplicate Leads"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/view-unassigned-lead"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Unassigned Leads"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              {/* Customer */}
+              <ListItem
+                button
+                onClick={() => setExpandCustomer(!expandCustomer)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <PersonIcon />
+                </ListItemIcon>
+                <ListItemText primary="Customer" />
+                {expandCustomer ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={expandCustomer} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customers/company-details"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Customer"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customers/unassigned-company-details"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Unassigned Customer"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customers/incomplete-kyc-details"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Incomplete Kyc"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              {/* All Followup */}
+              <ListItem
+                button
+                onClick={() => setExpandFollowup(!expandFollowup)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <FollowTheSignsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Followup" />
+                {expandFollowup ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={expandFollowup} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/followp/view-followup"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Followup"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/*Proforma Invoice  */}
+              <ListItem
+                button
+                onClick={() => setExpandProformaInvoice(!expandProformaInvoice)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <InsertDriveFileIcon />
+                </ListItemIcon>
+                <ListItemText primary="Proforma Invoice" />
+                {expandProformaInvoice ? (
+                  <ExpandLessIcon />
+                ) : (
+                  <ExpandMoreIcon />
+                )}
+              </ListItem>
+              <Collapse in={expandProformaInvoice} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/approve-pi"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Approve PI"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/active-pi"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Active PI"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/all-performa-invoice"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="All PI"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              {/* Forecast */}
+              <ListItem
+                button
+                onClick={() => setProductForecast(!productForecast)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <TrendingUpIcon />
+                </ListItemIcon>
+                <ListItemText primary="Forecast" />
+                {productForecast ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={productForecast} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/forecast/view-product-forecast"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Forecast"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* Seller Account */}
+              <ListItem
+                button
+                onClick={() => setSellerAccount(!sellerAccount)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <AccountCircleIcon />
+                </ListItemIcon>
+                <ListItemText primary="Seller Account" />
+                {sellerAccount ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={sellerAccount} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/seller-account"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Seller Account"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* Order book */}
+              <ListItem
+                button
+                onClick={() => setExpandOrderBook(!expandOrderBook)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <ReceiptIcon />
+                </ListItemIcon>
+                <ListItemText primary="Order Book" />
+                {expandOrderBook ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={expandOrderBook} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/customer-order-book"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Customer Wise Order Book"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/product-order-book"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Product Wise Order Book"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/pi-order-book"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="PI Wise Order Book"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* Dispatch */}
+              <ListItem
+                button
+                onClick={() => setDispatchDetails(!dispatchDetails)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <LocalShippingIcon />
+                </ListItemIcon>
+                <ListItemText primary="Dispatch" />
+                {dispatchDetails ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={dispatchDetails} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/dispatch/view-dispatch"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Pending Dispatch"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/dispatch/view-dispatched"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Dispatched"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/dispatch/view-sales-register"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Sales Register"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              {/* Tasks */}
               <ListItem
                 button
                 onClick={() => setExpandTask(!expandTask)}
@@ -2987,6 +3507,19 @@ export const ListItems = (props) => {
                       onClick={() => setOpen(false)}
                       inset
                       primary="Unassigned Customer"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customers/incomplete-kyc-details"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Incomplete Kyc"
                     />
                   </ListItem>
                 </List>

@@ -59,7 +59,7 @@ export const ActiveUsers = () => {
     setActiveUsersByIDData(data);
     setOpenPopup(true);
   };
-
+  console.log("activeUsersByIDData.ref_user", activeUsersByIDData);
   useEffect(() => {
     getAllUsersDetails();
   }, []);
@@ -102,25 +102,34 @@ export const ActiveUsers = () => {
       setOpen(false);
     }
   };
-
+  console.log("refUserList", refUserList);
   // Helper function to preprocess the refUserList
-  const preprocessRefUserList = (list) => {
-    return list.reduce((acc, user) => {
+  const preprocessRefUserList = (list, group) => {
+    if (!group) return [];
+
+    let filteredList = [];
+
+    if (group.includes("Sales Executive")) {
+      filteredList = list.filter(
+        (user) =>
+          user.groups.includes("Sales Deputy Manager") ||
+          user.groups.includes("Sales Assistant Deputy Manager")
+      );
+    } else if (group.includes("Sales Assistant Deputy Manager")) {
+      filteredList = list.filter((user) =>
+        user.groups.includes("Sales Deputy Manager")
+      );
+    }
+
+    return filteredList.reduce((acc, user) => {
       if (
         user.groups.includes("Sales Deputy Manager") &&
-        !acc.some(
-          (u) =>
-            u.email === user.email && u.primaryGroup === "Sales Deputy Manager"
-        )
+        !acc.some((u) => u.email === user.email)
       ) {
         acc.push({ ...user, primaryGroup: "Sales Deputy Manager" });
       } else if (
         user.groups.includes("Sales Assistant Deputy Manager") &&
-        !acc.some(
-          (u) =>
-            u.email === user.email &&
-            u.primaryGroup === "Sales Assistant Deputy Manager"
-        )
+        !acc.some((u) => u.email === user.email)
       ) {
         acc.push({ ...user, primaryGroup: "Sales Assistant Deputy Manager" });
       }
@@ -129,7 +138,15 @@ export const ActiveUsers = () => {
   };
 
   // Preprocess the refUserList
-  const processedRefUserList = preprocessRefUserList(refUserList);
+  const processedRefUserList = preprocessRefUserList(
+    refUserList,
+    activeUsersByIDData.groups
+  );
+
+  const selectedRefUser = processedRefUserList.find(
+    (user) => user.email === activeUsersByIDData.ref_user
+  );
+  console.log("selectedRefUser", selectedRefUser);
   console.log("processedRefUserList", processedRefUserList);
   const createUsersDetails = async (e) => {
     try {
@@ -142,7 +159,7 @@ export const ActiveUsers = () => {
         email: activeUsersByIDData.email,
         is_active: activeUsersByIDData.is_active,
         group_names: activeUsersByIDData.groups,
-        ref_users: activeUsersByIDData.ref_user.email,
+        ref_user: activeUsersByIDData.ref_user.email || null,
       };
       await TaskService.createUsers(activeUsersByIDData.emp_id, req);
       setOpenPopup(false);
@@ -313,21 +330,31 @@ export const ActiveUsers = () => {
                 )}
               />
             </Grid>
+            {selectedRefUser && (
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Reporting Groups"
+                  variant="outlined"
+                  value={selectedRefUser.primaryGroup || ""}
+                />
+              </Grid>
+            )}
             {showRefUserList && (
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6}>
                 <Autocomplete
                   id="grouped-demo"
                   size="small"
-                  value={activeUsersByIDData.ref_user}
+                  value={selectedRefUser}
                   onChange={(event, value) => {
                     handleSelectChange("ref_user", value);
                   }}
                   options={processedRefUserList}
                   groupBy={(option) => option.primaryGroup || null}
                   getOptionLabel={(option) => option.email}
-                  sx={{ width: 300 }}
                   renderInput={(params) => (
-                    <TextField {...params} label="Team Reference" />
+                    <TextField {...params} label="Reports" />
                   )}
                 />
               </Grid>
