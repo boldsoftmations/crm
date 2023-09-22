@@ -147,7 +147,8 @@ export const InActiveUsers = () => {
     "LastName",
     "Email",
     "Contact",
-    "Groups",
+    "Designation",
+    "Reporting To",
     "Action",
   ];
 
@@ -159,6 +160,7 @@ export const InActiveUsers = () => {
       email: row.email,
       contact: row.contact,
       groups: row.groups.map((row) => row).join(","),
+      name: row.name,
     };
   });
 

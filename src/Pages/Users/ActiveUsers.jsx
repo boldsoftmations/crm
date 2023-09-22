@@ -190,7 +190,8 @@ export const ActiveUsers = () => {
     "LastName",
     "Email",
     "Contact",
-    "Groups",
+    "Designation",
+    "Reporting To",
     "Action",
   ];
 
@@ -202,6 +203,7 @@ export const ActiveUsers = () => {
       email: row.email,
       contact: row.contact,
       groups: row.groups.map((row) => row).join(","),
+      name: row.name,
     };
   });
 
