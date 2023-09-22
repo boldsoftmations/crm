@@ -31,7 +31,11 @@ export const ActiveUsers = () => {
       [name]: value,
     });
 
-    const desiredRoles = ["Sales Executive", "Sales Assistant Deputy Manager"];
+    const desiredRoles = [
+      "Sales Executive",
+      "Sales Assistant Deputy Manager",
+      "Sales",
+    ];
 
     // Check if the selected options include any of the desired roles
     if (
@@ -78,6 +82,20 @@ export const ActiveUsers = () => {
 
       // Set the refUserList state with the filtered data
       setRefUserList(filteredData);
+      const desiredRoles = [
+        "Sales Executive",
+        "Sales Assistant Deputy Manager",
+        "Sales",
+      ];
+      // Check if any of the users in response.data.users have a role in the desiredRoles array
+      const hasDesiredRole = response.data.users.some((user) =>
+        user.groups.some((role) => desiredRoles.includes(role))
+      );
+
+      if (hasDesiredRole) {
+        setShowRefUserList(true);
+      }
+      setOpen(false);
     } catch (error) {
       console.log("error active users", error);
     } finally {
@@ -85,11 +103,38 @@ export const ActiveUsers = () => {
     }
   };
 
+  // Helper function to preprocess the refUserList
+  const preprocessRefUserList = (list) => {
+    return list.reduce((acc, user) => {
+      if (
+        user.groups.includes("Sales Deputy Manager") &&
+        !acc.some(
+          (u) =>
+            u.email === user.email && u.primaryGroup === "Sales Deputy Manager"
+        )
+      ) {
+        acc.push({ ...user, primaryGroup: "Sales Deputy Manager" });
+      } else if (
+        user.groups.includes("Sales Assistant Deputy Manager") &&
+        !acc.some(
+          (u) =>
+            u.email === user.email &&
+            u.primaryGroup === "Sales Assistant Deputy Manager"
+        )
+      ) {
+        acc.push({ ...user, primaryGroup: "Sales Assistant Deputy Manager" });
+      }
+      return acc;
+    }, []);
+  };
+
+  // Preprocess the refUserList
+  const processedRefUserList = preprocessRefUserList(refUserList);
+  console.log("processedRefUserList", processedRefUserList);
   const createUsersDetails = async (e) => {
     try {
       e.preventDefault();
       setOpen(true);
-      console.log("active", activeUsersByIDData);
       const req = {
         first_name: activeUsersByIDData.first_name,
         last_name: activeUsersByIDData.last_name,
@@ -97,9 +142,7 @@ export const ActiveUsers = () => {
         email: activeUsersByIDData.email,
         is_active: activeUsersByIDData.is_active,
         group_names: activeUsersByIDData.groups,
-        ref_users: activeUsersByIDData.ref_user
-          ? activeUsersByIDData.ref_user.email
-          : null,
+        ref_users: activeUsersByIDData.ref_user.email,
       };
       await TaskService.createUsers(activeUsersByIDData.emp_id, req);
       setOpenPopup(false);
@@ -275,21 +318,12 @@ export const ActiveUsers = () => {
                 <Autocomplete
                   id="grouped-demo"
                   size="small"
+                  value={activeUsersByIDData.ref_user}
                   onChange={(event, value) => {
                     handleSelectChange("ref_user", value);
                   }}
-                  options={refUserList}
-                  groupBy={(option) => {
-                    if (option.groups.includes("Sales Deputy Manager")) {
-                      return "Sales Deputy Manager";
-                    } else if (
-                      option.groups.includes("Sales Assistant Deputy Manager")
-                    ) {
-                      return "Sales Assistant Deputy Manager";
-                    } else {
-                      return "Other"; // or return null if you don't want to group other roles
-                    }
-                  }}
+                  options={processedRefUserList}
+                  groupBy={(option) => option.primaryGroup || null}
                   getOptionLabel={(option) => option.email}
                   sx={{ width: 300 }}
                   renderInput={(params) => (

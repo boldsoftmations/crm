@@ -4,10 +4,6 @@ const getProfile = () => {
   return CustomAxios.get(`/api/user/profile/`);
 };
 
-const getTeamLeader = () => {
-  return CustomAxios.get(`/api/user/team-leader/`);
-};
-
 const getAllLeads = (stage, lead_id) => {
   return CustomAxios.get(
     `/api/lead/list-lead/?funnel=${stage}&ordering=${lead_id}`
@@ -241,7 +237,6 @@ const getFollowupWithPaginationAndSearch = (
 
 const LeadServices = {
   getProfile,
-  getTeamLeader,
   getAllLeads,
   getAllAssignedUser,
   getAllUnassignedData,

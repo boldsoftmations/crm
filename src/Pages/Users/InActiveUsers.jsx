@@ -84,6 +84,20 @@ export const InActiveUsers = () => {
 
       // Set the refUserList state with the filtered data
       setRefUserList(filteredData);
+      const desiredRoles = [
+        "Sales Executive",
+        "Sales Assistant Deputy Manager",
+        "Sales",
+      ];
+      // Check if any of the users in response.data.users have a role in the desiredRoles array
+      const hasDesiredRole = response.data.users.some((user) =>
+        user.groups.some((role) => desiredRoles.includes(role))
+      );
+
+      if (hasDesiredRole) {
+        setShowRefUserList(true);
+      }
+      setOpen(false);
     } catch (error) {
       console.log("error active users", error);
     } finally {
@@ -278,6 +292,7 @@ export const InActiveUsers = () => {
                 <Autocomplete
                   id="grouped-demo"
                   size="small"
+                  value={inActiveUsersByIDData.ref_user}
                   onChange={(event, value) => {
                     handleSelectChange("ref_user", value);
                   }}
