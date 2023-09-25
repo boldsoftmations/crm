@@ -3272,62 +3272,6 @@ export const ListItems = (props) => {
                   </ListItem>
                 </List>
               </Collapse>
-              {/* Dispatch */}
-              {/* <ListItem
-                button
-                onClick={() => setDispatchDetails(!dispatchDetails)}
-                style={{ width: 300 }}
-              >
-                <ListItemIcon>
-                  <LocalShippingIcon />
-                </ListItemIcon>
-                <ListItemText primary="Dispatch" />
-                {dispatchDetails ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-              </ListItem>
-              <Collapse in={dispatchDetails} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/dispatch/view-dispatch"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Pending Dispatch"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/dispatch/view-dispatched"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Dispatched"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/dispatch/view-sales-register"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Sales Register"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse> */}
 
               {/* Tasks */}
               <ListItem
@@ -3654,7 +3598,7 @@ export const ListItems = (props) => {
                   </ListItem>
                 </List>
               </Collapse>
-
+              {/* Task */}
               <ListItem
                 button
                 onClick={() => setExpandTask(!expandTask)}
@@ -3666,7 +3610,6 @@ export const ListItems = (props) => {
                 <ListItemText primary="Task" />
                 {expandTask ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-
               <Collapse in={expandTask} timeout="auto" unmountOnExit>
                 <Divider />
                 <List component="div" disablePadding>
