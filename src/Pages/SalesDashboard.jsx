@@ -41,6 +41,7 @@ export const SalesDashboard = (props) => {
     dailyInvoiceQuantity,
     dailyOrderBookQuantity,
     handleChange,
+    selectedDate,
     handleStartDateChange,
     handleEndDateChange,
     startDate,
@@ -905,6 +906,7 @@ export const SalesDashboard = (props) => {
                   labelId="demo-select-small"
                   id="demo-select-small"
                   label="Date"
+                  value={selectedDate}
                   onChange={(event) => handleChange(event)}
                 >
                   {DateOptions.map((option, i) => (
