@@ -8,6 +8,7 @@ import ProductService from "../../../services/ProductService";
 
 import "../../CommonStyle.css";
 import { CustomLoader } from "../../../Components/CustomLoader";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const UpdateProductCode = (props) => {
   const { recordForEdit, setOpenPopup, getproductCodes } = props;
@@ -128,7 +129,7 @@ export const UpdateProductCode = (props) => {
             {errMsg}
           </p>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="code"
               size="small"
@@ -151,7 +152,7 @@ export const UpdateProductCode = (props) => {
               options={description.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               renderInput={(params) => (
-                <TextField
+                <CustomTextField
                   size="small"
                   name="description"
                   {...params}

@@ -13,7 +13,7 @@ import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
-
+import CustomTextField from "../../../Components/CustomTextField";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 
@@ -174,12 +174,12 @@ export const MaterialRequisitionFormUpdate = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Seller Account" />
+                <CustomTextField {...params} label="Seller Account" />
               )}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="packing_list_no"
@@ -218,12 +218,12 @@ export const MaterialRequisitionFormUpdate = (props) => {
                     getOptionLabel={(option) => option}
                     sx={{ minWidth: 300 }}
                     renderInput={(params) => (
-                      <TextField {...params} label="Product Name" />
+                      <CustomTextField {...params} label="Product Name" />
                     )}
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="unit"
                     size="small"
@@ -233,7 +233,7 @@ export const MaterialRequisitionFormUpdate = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="quantity"
                     size="small"

@@ -6,6 +6,7 @@ import { Popup } from "../../../Components/Popup";
 import CustomerServices from "../../../services/CustomerService";
 import ProductService from "../../../services/ProductService";
 import { ForecastProductCreate } from "./ForecastProductCreate";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const ForecastCreate = (props) => {
   const { setOpenPopup, getAllCompanyDetailsByID } = props;
@@ -77,7 +78,7 @@ export const ForecastCreate = (props) => {
             </Button> */}
           </Grid>
           <Grid item xs={12}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="company"
@@ -87,7 +88,7 @@ export const ForecastCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <TextField
+            <CustomTextField
               multiline
               fullWidth
               name="cheque_no"
@@ -108,7 +109,7 @@ export const ForecastCreate = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Product Name" />
+                <CustomTextField {...params} label="Product Name" />
               )}
             />
           </Grid>

@@ -15,7 +15,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { useSelector } from "react-redux";
-
+import CustomTextField from "../../../Components/CustomTextField";
 export const MaterialRequisitionFormCreate = (props) => {
   const {
     setOpenPopup,
@@ -137,7 +137,7 @@ export const MaterialRequisitionFormCreate = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Seller Account" />
+                <CustomTextField {...params} label="Seller Account" />
               )}
             />
           </Grid>
@@ -166,12 +166,12 @@ export const MaterialRequisitionFormCreate = (props) => {
                     getOptionLabel={(option) => option}
                     sx={{ minWidth: 300 }}
                     renderInput={(params) => (
-                      <TextField {...params} label="Product Name" />
+                      <CustomTextField {...params} label="Product Name" />
                     )}
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="unit"
                     size="small"
@@ -181,7 +181,7 @@ export const MaterialRequisitionFormCreate = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="quantity"
                     size="small"

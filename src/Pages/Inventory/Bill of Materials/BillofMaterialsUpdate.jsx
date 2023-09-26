@@ -13,7 +13,7 @@ import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
-
+import CustomTextField from "../../../Components/CustomTextField";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 
@@ -162,7 +162,7 @@ export const BillofMaterialsUpdate = (props) => {
         />
         <Grid container spacing={2}>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               label="Product"
@@ -204,12 +204,12 @@ export const BillofMaterialsUpdate = (props) => {
                     getOptionLabel={(option) => option}
                     sx={{ minWidth: 300 }}
                     renderInput={(params) => (
-                      <TextField {...params} label="Product Name" />
+                      <CustomTextField {...params} label="Product Name" />
                     )}
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="quantity"
                     size="small"
@@ -220,7 +220,7 @@ export const BillofMaterialsUpdate = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="unit"
                     size="small"

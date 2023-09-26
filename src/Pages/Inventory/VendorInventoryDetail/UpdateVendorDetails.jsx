@@ -16,6 +16,7 @@ import { getVendorName } from "../../../Redux/Action/Action";
 import axios from "axios";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
+import CustomTextField from "../../../Components/CustomTextField";
 import { country } from "../Country";
 export const UpdateVendorDetails = (props) => {
   const { setOpenPopup, getAllVendorDetails, recordForEdit } = props;
@@ -181,7 +182,7 @@ export const UpdateVendorDetails = (props) => {
               }
               onChange={(event, value) => handleInputChange(event, value)}
               renderInput={(params) => (
-                <TextField
+                <CustomTextField
                   {...params}
                   label={
                     typeData === "International"
@@ -195,7 +196,7 @@ export const UpdateVendorDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={2}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="name"
               size="small"
@@ -210,7 +211,7 @@ export const UpdateVendorDetails = (props) => {
           </Grid>
           {typeData === "Domestic" ? (
             <Grid item xs={12} sm={2}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 name="pincode"
                 size="small"
@@ -224,7 +225,7 @@ export const UpdateVendorDetails = (props) => {
             </Grid>
           ) : null}
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="state"
@@ -244,7 +245,7 @@ export const UpdateVendorDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="city"
               size="small"
@@ -265,7 +266,7 @@ export const UpdateVendorDetails = (props) => {
           </Grid>
 
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="website"
@@ -279,7 +280,7 @@ export const UpdateVendorDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               type="date"
               name="estd_date"
@@ -295,7 +296,7 @@ export const UpdateVendorDetails = (props) => {
           </Grid>
           {typeData === "Domestic" ? (
             <Grid item xs={12} sm={4}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 size="small"
                 name="gst_number"
@@ -323,7 +324,7 @@ export const UpdateVendorDetails = (props) => {
           ) : null}
           {typeData === "Domestic" ? (
             <Grid item xs={12} sm={4}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 required
                 size="small"
@@ -341,7 +342,7 @@ export const UpdateVendorDetails = (props) => {
             </Grid>
           ) : null}
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="total_sales_turnover"
               size="small"
@@ -360,7 +361,7 @@ export const UpdateVendorDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="address"
               size="small"

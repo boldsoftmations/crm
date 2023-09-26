@@ -13,6 +13,8 @@ import React, { useRef, useEffect, useState } from "react";
 import ProductService from "../../../services/ProductService";
 
 import "../../CommonStyle.css";
+import { CustomLoader } from "../../../Components/CustomLoader";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const CreatePriceList = (props) => {
   const { setOpenPopup, getPriceList, product } = props;
@@ -73,14 +75,7 @@ export const CreatePriceList = (props) => {
 
   return (
     <>
-      <div>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={open}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      </div>
+      <CustomLoader open={open} />
       <Box
         component="form"
         noValidate
@@ -115,12 +110,12 @@ export const CreatePriceList = (props) => {
               options={product.map((option) => option.name)}
               getOptionLabel={(option) => `${option ? option : "No Options"}`}
               renderInput={(params) => (
-                <TextField {...params} label="Product Name" />
+                <CustomTextField {...params} label="Product Name" />
               )}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               required
               fullWidth
               name="slab1"
@@ -136,7 +131,7 @@ export const CreatePriceList = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="slab1_price"
               size="small"
@@ -147,7 +142,7 @@ export const CreatePriceList = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               required
               fullWidth
               name="slab2"
@@ -166,7 +161,7 @@ export const CreatePriceList = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="slab2_price"
               size="small"
@@ -177,7 +172,7 @@ export const CreatePriceList = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="slab3_price"
               size="small"
@@ -188,7 +183,7 @@ export const CreatePriceList = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               type="date"
               name="validity"

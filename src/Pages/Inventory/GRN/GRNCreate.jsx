@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
+import CustomTextField from "../../../Components/CustomTextField";
 import { styled } from "@mui/material/styles";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -153,11 +154,13 @@ export const GRNCreate = (props) => {
                 `${option.vendor} ${option.packing_list_no}`
               }
               sx={{ minWidth: 300 }}
-              renderInput={(params) => <TextField {...params} label="Vendor" />}
+              renderInput={(params) => (
+                <CustomTextField {...params} label="Vendor" />
+              )}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="packing_list"
@@ -178,7 +181,7 @@ export const GRNCreate = (props) => {
             return (
               <>
                 <Grid key={index} item xs={12} sm={4}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="products"
                     size="small"
@@ -189,7 +192,7 @@ export const GRNCreate = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     size="small"
                     label="Unit"
@@ -198,7 +201,7 @@ export const GRNCreate = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="order_quantity"
                     size="small"
@@ -209,7 +212,7 @@ export const GRNCreate = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="qa_rejected"
                     size="small"
@@ -220,7 +223,7 @@ export const GRNCreate = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="qa_accepted"
                     size="small"

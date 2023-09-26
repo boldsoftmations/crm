@@ -16,6 +16,7 @@ import Autocomplete from "@mui/lab/Autocomplete";
 import Option from "../../../Options/Options";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomerServices from "../../../services/CustomerService";
+import CustomTextField from "../../../Components/CustomTextField";
 
 const KycUpdate = ({ setOpenPopup, getAllCompanyDetails, recordForEdit }) => {
   const [inputValue, setInputValue] = useState([]);
@@ -134,7 +135,7 @@ const KycUpdate = ({ setOpenPopup, getAllCompanyDetails, recordForEdit }) => {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="website"
               size="small"
@@ -145,7 +146,7 @@ const KycUpdate = ({ setOpenPopup, getAllCompanyDetails, recordForEdit }) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="estd_year"
               size="small"
@@ -156,7 +157,7 @@ const KycUpdate = ({ setOpenPopup, getAllCompanyDetails, recordForEdit }) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="approx_annual_turnover"
               size="small"
@@ -179,13 +180,13 @@ const KycUpdate = ({ setOpenPopup, getAllCompanyDetails, recordForEdit }) => {
               options={contactsData.map((option) => option.name)}
               getOptionLabel={(option) => option}
               renderInput={(params) => (
-                <TextField {...params} label="Purchase Decision Maker" />
+                <CustomTextField {...params} label="Purchase Decision Maker" />
               )}
             />
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               type="date"
               name="birth_date"
@@ -200,7 +201,7 @@ const KycUpdate = ({ setOpenPopup, getAllCompanyDetails, recordForEdit }) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               type="date"
               name="anniversary_date"
@@ -228,7 +229,7 @@ const KycUpdate = ({ setOpenPopup, getAllCompanyDetails, recordForEdit }) => {
                 options={Option.IndustriesList.map((option) => option.label)}
                 getOptionLabel={(option) => option}
                 renderInput={(params) => (
-                  <TextField {...params} label="Industrial List" />
+                  <CustomTextField {...params} label="Industrial List" />
                 )}
               />
             </Grid>
@@ -249,7 +250,7 @@ const KycUpdate = ({ setOpenPopup, getAllCompanyDetails, recordForEdit }) => {
                 )}
                 getOptionLabel={(option) => option}
                 renderInput={(params) => (
-                  <TextField {...params} label="Distribution Type" />
+                  <CustomTextField {...params} label="Distribution Type" />
                 )}
               />
             </Grid>
@@ -277,7 +278,7 @@ const KycUpdate = ({ setOpenPopup, getAllCompanyDetails, recordForEdit }) => {
                   ))
                 }
                 renderInput={(params) => (
-                  <TextField
+                  <CustomTextField
                     {...params}
                     label="Category"
                     placeholder="Category"
@@ -309,7 +310,7 @@ const KycUpdate = ({ setOpenPopup, getAllCompanyDetails, recordForEdit }) => {
                   ))
                 }
                 renderInput={(params) => (
-                  <TextField
+                  <CustomTextField
                     {...params}
                     label="Main Distribution"
                     placeholder="Main Distribution"

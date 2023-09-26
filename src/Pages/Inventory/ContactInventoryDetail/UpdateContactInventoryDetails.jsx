@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
-
+import CustomTextField from "../../../Components/CustomTextField";
 export const UpdateContactInventoryDetails = (props) => {
   const { setOpenPopup, getAllVendorDetailsByID, IDForEdit, vendorData } =
     props;
@@ -131,7 +131,7 @@ export const UpdateContactInventoryDetails = (props) => {
             {errMsg}
           </p>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="name"
@@ -185,7 +185,7 @@ export const UpdateContactInventoryDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="email"
@@ -196,7 +196,7 @@ export const UpdateContactInventoryDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="alternate_email"
@@ -213,7 +213,7 @@ export const UpdateContactInventoryDetails = (props) => {
             designation === "owner" ||
             designation === "partner") ? (
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 disabled={
                   designation !== "director" &&
@@ -237,7 +237,7 @@ export const UpdateContactInventoryDetails = (props) => {
             designation === "owner" ||
             designation === "partner") ? (
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 disabled={
                   designation !== "director" &&

@@ -12,7 +12,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CloseIcon from "@mui/icons-material/Close";
-
+import CustomTextField from "../../../Components/CustomTextField";
 import InventoryServices from "../../../services/InventoryService";
 import ProductService from "../../../services/ProductService";
 import { styled } from "@mui/material/styles";
@@ -181,7 +181,7 @@ export const PackingListCreate = (props) => {
         />
         <Grid container spacing={2}>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               sx={{ minWidth: "8rem" }}
               name="vendor_name"
               size="small"
@@ -206,7 +206,7 @@ export const PackingListCreate = (props) => {
                 getOptionLabel={(option) => option.name}
                 sx={{ minWidth: 300 }}
                 renderInput={(params) => (
-                  <TextField {...params} label="Vendor" />
+                  <CustomTextField {...params} label="Vendor" />
                 )}
               />
             </Grid>
@@ -222,12 +222,12 @@ export const PackingListCreate = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Seller Account" />
+                <CustomTextField {...params} label="Seller Account" />
               )}
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="packing_list_no"
@@ -238,7 +238,7 @@ export const PackingListCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               type="date"
               name="invoice_date"
@@ -273,12 +273,12 @@ export const PackingListCreate = (props) => {
                     getOptionLabel={(option) => option}
                     sx={{ minWidth: 300 }}
                     renderInput={(params) => (
-                      <TextField {...params} label="Product Name" />
+                      <CustomTextField {...params} label="Product Name" />
                     )}
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="unit"
                     size="small"
@@ -288,7 +288,7 @@ export const PackingListCreate = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="quantity"
                     size="small"

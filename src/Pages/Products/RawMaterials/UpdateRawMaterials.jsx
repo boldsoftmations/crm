@@ -12,6 +12,7 @@ import {
   Button,
   Autocomplete,
 } from "@mui/material";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const UpdateRawMaterials = (props) => {
   const { recordForEdit, setOpenPopup, getrawMaterials } = props;
@@ -166,7 +167,7 @@ export const UpdateRawMaterials = (props) => {
             {errMsg}
           </p>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               label="Raw Material"
@@ -175,7 +176,7 @@ export const UpdateRawMaterials = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="name"
               size="small"
@@ -185,7 +186,7 @@ export const UpdateRawMaterials = (props) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="size"
               size="small"
@@ -207,7 +208,7 @@ export const UpdateRawMaterials = (props) => {
               options={unitData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               renderInput={(params) => (
-                <TextField {...params} name={"unit"} label={"Unit"} />
+                <CustomTextField {...params} name={"unit"} label={"Unit"} />
               )}
             />
           </Grid>
@@ -223,7 +224,7 @@ export const UpdateRawMaterials = (props) => {
               options={colorData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               renderInput={(params) => (
-                <TextField {...params} name={"color"} label={"Colour"} />
+                <CustomTextField {...params} name={"color"} label={"Colour"} />
               )}
             />
           </Grid>
@@ -239,7 +240,7 @@ export const UpdateRawMaterials = (props) => {
               options={brandData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               renderInput={(params) => (
-                <TextField {...params} name={"brand"} label={"Brand"} />
+                <CustomTextField {...params} name={"brand"} label={"Brand"} />
               )}
             />
           </Grid>
@@ -255,7 +256,7 @@ export const UpdateRawMaterials = (props) => {
               options={productCodeData.map((option) => option.code)}
               getOptionLabel={(option) => `${option}`}
               renderInput={(params) => (
-                <TextField
+                <CustomTextField
                   {...params}
                   name={"productCode"}
                   label={"Product Code"}
@@ -264,7 +265,7 @@ export const UpdateRawMaterials = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               label="Description"
@@ -273,7 +274,7 @@ export const UpdateRawMaterials = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="hsn_code"
               size="small"
@@ -284,7 +285,7 @@ export const UpdateRawMaterials = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               name="gst"
               type={"number"}
               size="small"
@@ -295,7 +296,7 @@ export const UpdateRawMaterials = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               size="small"
               label="CGST"
               variant="outlined"
@@ -303,7 +304,7 @@ export const UpdateRawMaterials = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               size="small"
               label="SGST"
               variant="outlined"

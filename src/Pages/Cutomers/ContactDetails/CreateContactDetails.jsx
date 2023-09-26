@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
 import { CustomLoader } from "../../../Components/CustomLoader";
+import CustomTextField from "../../../Components/CustomTextField";
 export const CreateContactDetails = (props) => {
   const { setOpenPopup, getAllCompanyDetailsByID } = props;
   const [open, setOpen] = useState(false);
@@ -110,7 +111,7 @@ export const CreateContactDetails = (props) => {
       <Box component="form" noValidate onSubmit={(e) => handleSubmit(e)}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="name"
@@ -165,7 +166,7 @@ export const CreateContactDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="email"
@@ -178,7 +179,7 @@ export const CreateContactDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="alternate_email"
@@ -191,7 +192,7 @@ export const CreateContactDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               disabled={
                 designation !== "Director" &&
@@ -211,7 +212,7 @@ export const CreateContactDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               disabled={
                 designation !== "Director" &&

@@ -1,12 +1,4 @@
-import {
-  Autocomplete,
-  Backdrop,
-  Box,
-  Button,
-  CircularProgress,
-  Grid,
-  TextField,
-} from "@mui/material";
+import { Autocomplete, Box, Button, Grid } from "@mui/material";
 
 import React, { useEffect, useRef, useState } from "react";
 
@@ -14,6 +6,8 @@ import ProductService from "../../../services/ProductService";
 
 import "../../CommonStyle.css";
 import { useSelector } from "react-redux";
+import { CustomLoader } from "../../../Components/CustomLoader";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const CreateConsumable = (props) => {
   const { setOpenPopup, getconsumables } = props;
@@ -118,14 +112,7 @@ export const CreateConsumable = (props) => {
 
   return (
     <>
-      <div>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={open}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      </div>
+      <CustomLoader open={open} />
 
       <Box component="form" noValidate onSubmit={(e) => createconsumable(e)}>
         <Grid container spacing={2}>
@@ -148,7 +135,7 @@ export const CreateConsumable = (props) => {
           </p>
 
           <Grid item xs={12}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="code"
               size="small"
@@ -169,12 +156,12 @@ export const CreateConsumable = (props) => {
               options={allDescription.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               renderInput={(params) => (
-                <TextField {...params} label="description" />
+                <CustomTextField {...params} label="description" />
               )}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="addDsc"
               size="small"
@@ -194,7 +181,7 @@ export const CreateConsumable = (props) => {
               options={unitData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               renderInput={(params) => (
-                <TextField fullWidth={"false"} {...params} label="Unit" />
+                <CustomTextField fullWidth={"false"} {...params} label="Unit" />
               )}
             />
           </Grid>
@@ -208,12 +195,12 @@ export const CreateConsumable = (props) => {
               options={brandData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               renderInput={(params) => (
-                <TextField {...params} name="brand" label="Brand" />
+                <CustomTextField {...params} name="brand" label="Brand" />
               )}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="size"
               size="small"
@@ -225,7 +212,7 @@ export const CreateConsumable = (props) => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="hsn_code"
               size="small"
@@ -236,7 +223,7 @@ export const CreateConsumable = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               name="gst"
               type={"number"}
               size="small"
@@ -247,7 +234,7 @@ export const CreateConsumable = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               size="small"
               label="CGST"
               variant="outlined"
@@ -255,7 +242,7 @@ export const CreateConsumable = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               size="small"
               label="SGST"
               variant="outlined"

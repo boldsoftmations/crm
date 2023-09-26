@@ -12,6 +12,8 @@ import React from "react";
 import ProductService from "../../../services/ProductService";
 
 import "../../CommonStyle.css";
+import CustomTextField from "../../../Components/CustomTextField";
+import { CustomLoader } from "../../../Components/CustomLoader";
 
 export const CreateBrand = (props) => {
   const { setOpenPopup, getBrandList } = props;
@@ -60,14 +62,7 @@ export const CreateBrand = (props) => {
 
   return (
     <>
-      <div>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={open}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      </div>
+      <CustomLoader open={open} />
       <Box component="form" noValidate onSubmit={(e) => createBrand(e)}>
         <Grid container spacing={2}>
           <p
@@ -88,7 +83,7 @@ export const CreateBrand = (props) => {
             {errMsg}
           </p>
           <Grid item xs={12}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="name"
               size="small"
@@ -99,7 +94,7 @@ export const CreateBrand = (props) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="shortName"
               size="small"

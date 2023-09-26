@@ -21,7 +21,7 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import ProductService from "../../../services/ProductService";
 import InvoiceServices from "../../../services/InvoiceService";
 import InventoryServices from "../../../services/InventoryService";
-
+import CustomTextField from "../../../Components/CustomTextField";
 export const StoresInventoryCreate = (props) => {
   const { setOpenPopup, getAllStoresInventoryDetails } = props;
   const [open, setOpen] = useState(false);
@@ -136,7 +136,7 @@ export const StoresInventoryCreate = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Seller Account" />
+                <CustomTextField {...params} label="Seller Account" />
               )}
             />
           </Grid>
@@ -152,12 +152,12 @@ export const StoresInventoryCreate = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Product Name" />
+                <CustomTextField {...params} label="Product Name" />
               )}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="quantity"
               size="small"
@@ -168,7 +168,7 @@ export const StoresInventoryCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="pending_quantity"
               size="small"
@@ -178,7 +178,7 @@ export const StoresInventoryCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="rate"
               size="small"
@@ -189,7 +189,7 @@ export const StoresInventoryCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="amount"
               size="small"

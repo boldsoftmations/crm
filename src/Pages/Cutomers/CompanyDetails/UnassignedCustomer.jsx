@@ -10,6 +10,7 @@ import { CustomPagination } from "../../../Components/CustomPagination";
 import LeadServices from "../../../services/LeadService";
 import { useSelector } from "react-redux";
 import Option from "../../../Options/Options";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const UnassignedCustomer = () => {
   const [openPopup, setOpenPopup] = useState(false);
@@ -343,7 +344,7 @@ export const UnassignedCustomer = () => {
                 ))
               }
               renderInput={(params) => (
-                <TextField
+                <CustomTextField
                   {...params}
                   label="Assign To"
                   placeholder="Assign To"

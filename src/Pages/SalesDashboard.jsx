@@ -18,7 +18,7 @@ import PropTypes from "prop-types";
 import { CustomChart } from "../Components/CustomChart";
 import { useSelector } from "react-redux";
 import { Popup } from "../Components/Popup";
-
+import CustomTextField from "../Components/CustomTextField";
 export const SalesDashboard = (props) => {
   const {
     barChartData,
@@ -517,7 +517,7 @@ export const SalesDashboard = (props) => {
                 options={descriptionOptionsForInvoice.map((option) => option)}
                 getOptionLabel={(option) => option}
                 renderInput={(params) => (
-                  <TextField {...params} label="Filter By Description" />
+                  <CustomTextField {...params} label="Filter By Description" />
                 )}
               />
               <CustomChart
@@ -549,7 +549,7 @@ export const SalesDashboard = (props) => {
                 options={descriptionOptionsForOrderBook.map((option) => option)}
                 getOptionLabel={(option) => option}
                 renderInput={(params) => (
-                  <TextField {...params} label="Filter By Description" />
+                  <CustomTextField {...params} label="Filter By Description" />
                 )}
               />
               <CustomChart
@@ -942,7 +942,7 @@ export const SalesDashboard = (props) => {
                 options={descriptionOptionsForInvoice.map((option) => option)}
                 getOptionLabel={(option) => option}
                 renderInput={(params) => (
-                  <TextField {...params} label="Filter By Description" />
+                  <CustomTextField {...params} label="Filter By Description" />
                 )}
               />
               <CustomChart
@@ -974,7 +974,7 @@ export const SalesDashboard = (props) => {
                 options={descriptionOptionsForOrderBook.map((option) => option)}
                 getOptionLabel={(option) => option}
                 renderInput={(params) => (
-                  <TextField {...params} label="Filter By Description" />
+                  <CustomTextField {...params} label="Filter By Description" />
                 )}
               />
               <CustomChart
@@ -1017,7 +1017,7 @@ export const SalesDashboard = (props) => {
         >
           <Grid container spacing={2}>
             <Grid item xs={5} sm={5} md={5} lg={5}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 label="Start Date"
                 variant="outlined"
@@ -1031,7 +1031,7 @@ export const SalesDashboard = (props) => {
               />
             </Grid>
             <Grid item xs={5} sm={5} md={5} lg={5}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 label="End Date"
                 variant="outlined"

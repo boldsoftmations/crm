@@ -11,6 +11,7 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import { CustomButton } from "../../../Components/CustomButton";
 import CustomerServices from "../../../services/CustomerService";
 import LeadServices from "../../../services/LeadService";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const BulkCustomerAssign = (props) => {
   const { setOpenPopup, setOpenSnackbar } = props;
@@ -70,7 +71,7 @@ export const BulkCustomerAssign = (props) => {
               getOptionLabel={(option) => option}
               // sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField
+                <CustomTextField
                   {...params}
                   label="Assign From"
                   error={assignFrom === assignTo}
@@ -93,7 +94,7 @@ export const BulkCustomerAssign = (props) => {
               getOptionLabel={(option) => option}
               // sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField
+                <CustomTextField
                   {...params}
                   label="Assign To"
                   error={assignFrom === assignTo}

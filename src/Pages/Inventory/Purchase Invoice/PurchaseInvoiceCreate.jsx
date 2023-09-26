@@ -8,7 +8,7 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useState } from "react";
-
+import CustomTextField from "../../../Components/CustomTextField";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { styled } from "@mui/material/styles";
@@ -114,14 +114,14 @@ export const PurchaseInvoiceCreate = (props) => {
                 getOptionLabel={(option) => option.grn_no}
                 sx={{ minWidth: 300 }}
                 renderInput={(params) => (
-                  <TextField {...params} label="GRN No" />
+                  <CustomTextField {...params} label="GRN No" />
                 )}
               />
             </Grid>
           )}
 
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               label="Vendor"
@@ -134,7 +134,7 @@ export const PurchaseInvoiceCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               label="Invoice No"
@@ -157,7 +157,7 @@ export const PurchaseInvoiceCreate = (props) => {
             return (
               <>
                 <Grid key={index} item xs={12} sm={4}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="product"
                     size="small"
@@ -168,7 +168,7 @@ export const PurchaseInvoiceCreate = (props) => {
                   />
                 </Grid>
                 <Grid key={index} item xs={12} sm={2}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     size="small"
                     label="Unit"
@@ -177,7 +177,7 @@ export const PurchaseInvoiceCreate = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="quantity"
                     size="small"
@@ -188,7 +188,7 @@ export const PurchaseInvoiceCreate = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="rate"
                     size="small"
@@ -199,7 +199,7 @@ export const PurchaseInvoiceCreate = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="amount"
                     size="small"

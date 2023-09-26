@@ -12,6 +12,7 @@ import React, { useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomerServices from "../../../services/CustomerService";
 // import { month, year } from "./DateAndYear";
+import CustomTextField from "../../../Components/CustomTextField";
 
 const months = [
   "January",
@@ -101,7 +102,7 @@ export const ForecastUpdate = (props) => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="forecast"
               size="small"

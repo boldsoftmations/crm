@@ -13,6 +13,7 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomerServices from "../../../services/CustomerService";
 import { year } from "./DateAndYear";
 import { month } from "./DateAndYear";
+import CustomTextField from "../../../Components/CustomTextField";
 export const ForecastProductCreate = (props) => {
   const { setOpenModal, getAllCompanyDetailsByID, IDForEdit } = props;
   const [open, setOpen] = useState(false);
@@ -87,7 +88,7 @@ export const ForecastProductCreate = (props) => {
             return (
               <> */}
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="product_forecast"
               size="small"
@@ -135,7 +136,7 @@ export const ForecastProductCreate = (props) => {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               type={"number"}
               name="forecast"

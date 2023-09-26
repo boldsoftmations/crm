@@ -14,6 +14,8 @@ import ProductService from "../../../services/ProductService";
 
 import "../../CommonStyle.css";
 import { useSelector } from "react-redux";
+import { CustomLoader } from "../../../Components/CustomLoader";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const CreateRawMaterials = (props) => {
   const { setOpenPopup, getrawMaterials } = props;
@@ -106,14 +108,7 @@ export const CreateRawMaterials = (props) => {
 
   return (
     <div>
-      <div>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={open}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      </div>
+      <CustomLoader open={open} />
 
       <Box component="form" noValidate onSubmit={(e) => createrawMaterials(e)}>
         <Grid container spacing={2}>
@@ -135,7 +130,7 @@ export const CreateRawMaterials = (props) => {
             {errMsg}
           </p>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="Name"
               size="small"
@@ -146,7 +141,7 @@ export const CreateRawMaterials = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="size"
               size="small"
@@ -165,7 +160,9 @@ export const CreateRawMaterials = (props) => {
               onChange={(e, value) => setUnit(value)}
               options={unitData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
-              renderInput={(params) => <TextField {...params} label={"Unit"} />}
+              renderInput={(params) => (
+                <CustomTextField {...params} label={"Unit"} />
+              )}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -178,7 +175,7 @@ export const CreateRawMaterials = (props) => {
               options={colorData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               renderInput={(params) => (
-                <TextField fullWidth {...params} label="Colour" />
+                <CustomTextField {...params} label="Colour" />
               )}
             />
           </Grid>
@@ -192,7 +189,9 @@ export const CreateRawMaterials = (props) => {
               onChange={(event, value) => setBrand(value)}
               options={brandData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
-              renderInput={(params) => <TextField {...params} label="brand" />}
+              renderInput={(params) => (
+                <CustomTextField {...params} label="brand" />
+              )}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -206,7 +205,7 @@ export const CreateRawMaterials = (props) => {
               options={productCodeData.map((option) => option.code)}
               getOptionLabel={(option) => `${option}`}
               renderInput={(params) => (
-                <TextField
+                <CustomTextField
                   {...params}
                   name="Product Code"
                   label="Product Code"
@@ -215,7 +214,7 @@ export const CreateRawMaterials = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               label="Description"
@@ -224,7 +223,7 @@ export const CreateRawMaterials = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="hsn_code"
               size="small"
@@ -235,7 +234,7 @@ export const CreateRawMaterials = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               name="gst"
               type={"number"}
               size="small"
@@ -246,7 +245,7 @@ export const CreateRawMaterials = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               size="small"
               label="CGST"
               variant="outlined"
@@ -254,7 +253,7 @@ export const CreateRawMaterials = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               size="small"
               label="SGST"
               variant="outlined"

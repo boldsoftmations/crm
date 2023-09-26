@@ -14,6 +14,7 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
+import CustomTextField from "../../../Components/CustomTextField";
 export const CreateContactInventoryDetails = (props) => {
   const { setOpenPopup, getAllVendorDetailsByID, vendorData } = props;
   const [open, setOpen] = useState(false);
@@ -132,7 +133,7 @@ export const CreateContactInventoryDetails = (props) => {
       <Box component="form" noValidate onSubmit={(e) => handleSubmit(e)}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="name"
@@ -187,7 +188,7 @@ export const CreateContactInventoryDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="email"
@@ -200,7 +201,7 @@ export const CreateContactInventoryDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="alternate_email"
@@ -214,7 +215,7 @@ export const CreateContactInventoryDetails = (props) => {
           </Grid>
           {vendorData.type === "Domestic" ? (
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 disabled={
                   designation !== "Director" &&
@@ -236,7 +237,7 @@ export const CreateContactInventoryDetails = (props) => {
           ) : null}
           {vendorData.type === "Domestic" ? (
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 disabled={
                   designation !== "Director" &&

@@ -4,9 +4,10 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
-
+import CustomTextField from "../../../Components/CustomTextField";
 export const CreateWareHouseInventoryDetails = (props) => {
-  const { setOpenPopup, getAllVendorDetailsByID, contactData,vendorData } = props;
+  const { setOpenPopup, getAllVendorDetailsByID, contactData, vendorData } =
+    props;
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState([]);
   const [pinCodeData, setPinCodeData] = useState(null);
@@ -82,27 +83,27 @@ export const CreateWareHouseInventoryDetails = (props) => {
               getOptionLabel={(option) => `${option.name} ${option.contact}`}
               // sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Contact" />
+                <CustomTextField {...params} label="Contact" />
               )}
             />
           </Grid>
           {vendorData.type === "Domestic" ? (
+            <Grid item xs={12}>
+              <CustomTextField
+                fullWidth
+                name="pincode"
+                size="small"
+                type={"number"}
+                label="Pin Code"
+                variant="outlined"
+                value={inputValue.pincode}
+                onChange={handleInputChange}
+                onBlur={handleInputChange}
+              />
+            </Grid>
+          ) : null}
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              name="pincode"
-              size="small"
-              type={"number"}
-              label="Pin Code"
-              variant="outlined"
-              value={inputValue.pincode}
-              onChange={handleInputChange}
-              onBlur={handleInputChange}
-            />
-          </Grid>
-          ) : null }
-          <Grid item xs={12}>
-            <TextField
+            <CustomTextField
               fullWidth
               multiline
               onChange={handleInputChange}
@@ -117,7 +118,7 @@ export const CreateWareHouseInventoryDetails = (props) => {
           {pinCodeData ? (
             <>
               <Grid item xs={12} sm={6}>
-                <TextField
+                <CustomTextField
                   fullWidth
                   size="small"
                   name="state"
@@ -127,7 +128,7 @@ export const CreateWareHouseInventoryDetails = (props) => {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
+                <CustomTextField
                   fullWidth
                   size="small"
                   name="city"

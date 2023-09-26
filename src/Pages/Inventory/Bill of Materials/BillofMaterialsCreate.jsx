@@ -15,7 +15,7 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { useSelector } from "react-redux";
 import { styled } from "@mui/material/styles";
-
+import CustomTextField from "../../../Components/CustomTextField";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -147,7 +147,7 @@ export const BillofMaterialsCreate = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Product Name" />
+                <CustomTextField {...params} label="Product Name" />
               )}
             />
           </Grid>
@@ -182,12 +182,12 @@ export const BillofMaterialsCreate = (props) => {
                     getOptionLabel={(option) => option}
                     sx={{ minWidth: 300 }}
                     renderInput={(params) => (
-                      <TextField {...params} label="Product Name" />
+                      <CustomTextField {...params} label="Product Name" />
                     )}
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="quantity"
                     size="small"
@@ -198,7 +198,7 @@ export const BillofMaterialsCreate = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="unit"
                     size="small"

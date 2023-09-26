@@ -4,7 +4,7 @@ import { Box, Button, Grid, TextField, Autocomplete } from "@mui/material";
 import axios from "axios";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
-
+import CustomTextField from "../../../Components/CustomTextField";
 export const UpdateWareHouseInventoryDetails = (props) => {
   const {
     IDForEdit,
@@ -79,7 +79,7 @@ export const UpdateWareHouseInventoryDetails = (props) => {
       >
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="contact"
@@ -104,13 +104,13 @@ export const UpdateWareHouseInventoryDetails = (props) => {
                 getOptionLabel={(option) => `${option.name} ${option.contact}`}
                 // sx={{ minWidth: 300 }}
                 renderInput={(params) => (
-                  <TextField {...params} label="Update Contact" />
+                  <CustomTextField {...params} label="Update Contact" />
                 )}
               />
             </Grid>
           ) : null}
           <Grid item xs={12}>
-            <TextField
+            <CustomTextField
               fullWidth
               multiline
               onChange={handleInputChange}
@@ -122,7 +122,7 @@ export const UpdateWareHouseInventoryDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="pincode"
               size="small"
@@ -135,7 +135,7 @@ export const UpdateWareHouseInventoryDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="state"
@@ -148,7 +148,7 @@ export const UpdateWareHouseInventoryDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               name="city"

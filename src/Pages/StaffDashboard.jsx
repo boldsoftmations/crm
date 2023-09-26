@@ -17,6 +17,7 @@ import PropTypes from "prop-types";
 import { CustomChart } from "../Components/CustomChart";
 import { Popup } from "../Components/Popup";
 import { useSelector } from "react-redux";
+import CustomTextField from "../Components/CustomTextField";
 
 export const StaffDashboard = (props) => {
   const {
@@ -218,7 +219,7 @@ export const StaffDashboard = (props) => {
                 options={assigned.map((option) => option)}
                 getOptionLabel={(option) => option}
                 renderInput={(params) => (
-                  <TextField {...params} label="Filter By Sales Person" />
+                  <CustomTextField {...params} label="Filter By Sales Person" />
                 )}
               />
             </Grid>
@@ -555,7 +556,7 @@ export const StaffDashboard = (props) => {
             options={descriptionOptionsForInvoice.map((option) => option)}
             getOptionLabel={(option) => option}
             renderInput={(params) => (
-              <TextField {...params} label="Filter By Description" />
+              <CustomTextField {...params} label="Filter By Description" />
             )}
           />
           <CustomChart
@@ -587,7 +588,7 @@ export const StaffDashboard = (props) => {
             options={descriptionOptionsForOrderBook.map((option) => option)}
             getOptionLabel={(option) => option}
             renderInput={(params) => (
-              <TextField {...params} label="Filter By Description" />
+              <CustomTextField {...params} label="Filter By Description" />
             )}
           />
           <CustomChart
@@ -628,7 +629,7 @@ export const StaffDashboard = (props) => {
         >
           <Grid container spacing={2}>
             <Grid item xs={5} sm={5} md={5} lg={5}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 label="Start Date"
                 variant="outlined"
@@ -642,7 +643,7 @@ export const StaffDashboard = (props) => {
               />
             </Grid>
             <Grid item xs={5} sm={5} md={5} lg={5}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 label="End Date"
                 variant="outlined"

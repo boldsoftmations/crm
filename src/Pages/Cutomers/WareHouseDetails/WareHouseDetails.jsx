@@ -82,7 +82,7 @@ export const WareHouseDetails = (props) => {
         {/* <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}> */}
         <Box display="flex">
           <Box flexGrow={2}>
-            {/* <TextField
+            {/* <CustomTextField
               // value={searchQuery}
               // onChange={(e) => setSearchQuery(e.target.value)}
               name="search"

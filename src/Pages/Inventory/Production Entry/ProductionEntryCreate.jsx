@@ -17,7 +17,7 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { useSelector } from "react-redux";
 import { styled } from "@mui/material/styles";
-
+import CustomTextField from "../../../Components/CustomTextField";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -184,7 +184,7 @@ export const ProductionEntryCreate = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Seller Account" />
+                <CustomTextField {...params} label="Seller Account" />
               )}
             />
           </Grid>
@@ -203,7 +203,7 @@ export const ProductionEntryCreate = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Product Name" />
+                <CustomTextField {...params} label="Product Name" />
               )}
             />
           </Grid>
@@ -218,7 +218,7 @@ export const ProductionEntryCreate = (props) => {
               getOptionLabel={(option) => option.bom_id}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Bill of Material" />
+                <CustomTextField {...params} label="Bill of Material" />
               )}
             />
           </Grid>
@@ -235,7 +235,7 @@ export const ProductionEntryCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="quantity"
               size="small"
@@ -256,7 +256,7 @@ export const ProductionEntryCreate = (props) => {
             return (
               <>
                 <Grid key={index} item xs={12} sm={4}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     size="small"
                     label="Product"
@@ -265,7 +265,7 @@ export const ProductionEntryCreate = (props) => {
                   />
                 </Grid>
                 <Grid key={index} item xs={12} sm={2}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     size="small"
                     label="Unit"
@@ -275,7 +275,7 @@ export const ProductionEntryCreate = (props) => {
                 </Grid>
                 {checked === false ? (
                   <Grid item xs={12} sm={3}>
-                    <TextField
+                    <CustomTextField
                       fullWidth
                       name="quantity"
                       size="small"
@@ -297,7 +297,7 @@ export const ProductionEntryCreate = (props) => {
                   </Grid>
                 ) : (
                   <Grid item xs={12} sm={3}>
-                    <TextField
+                    <CustomTextField
                       fullWidth
                       name="quantity"
                       size="small"
@@ -318,7 +318,7 @@ export const ProductionEntryCreate = (props) => {
                 )}
                 {checked && (
                   <Grid item xs={12} sm={3}>
-                    <TextField
+                    <CustomTextField
                       fullWidth
                       name="expected_quantity"
                       size="small"

@@ -14,7 +14,7 @@ import {
   TextField,
 } from "@mui/material";
 import { Popup } from "../../Components/Popup";
-
+import CustomTextField from "../../Components/CustomTextField";
 export const InActiveUsers = () => {
   const [open, setOpen] = useState(false);
   const [inActiveUsersData, setInActiveUsersData] = useState([]);
@@ -222,7 +222,7 @@ export const InActiveUsers = () => {
         >
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 size="small"
                 label="First Name"
@@ -234,7 +234,7 @@ export const InActiveUsers = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 size="small"
                 label="Last Name"
@@ -246,7 +246,7 @@ export const InActiveUsers = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 size="small"
                 label="Contact"
@@ -256,7 +256,7 @@ export const InActiveUsers = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 size="small"
                 label="Email"
@@ -287,7 +287,11 @@ export const InActiveUsers = () => {
                   ))
                 }
                 renderInput={(params) => (
-                  <TextField {...params} label="Groups" placeholder="Groups" />
+                  <CustomTextField
+                    {...params}
+                    label="Groups"
+                    placeholder="Groups"
+                  />
                 )}
               />
             </Grid>
@@ -315,7 +319,7 @@ export const InActiveUsers = () => {
                   getOptionLabel={(option) => option.email}
                   sx={{ width: 300 }}
                   renderInput={(params) => (
-                    <TextField {...params} label="Team Reference" />
+                    <CustomTextField {...params} label="Team Reference" />
                   )}
                 />
               </Grid>

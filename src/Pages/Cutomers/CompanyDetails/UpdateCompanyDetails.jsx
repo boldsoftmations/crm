@@ -22,6 +22,7 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import { ViewCustomerFollowUp } from "../../FollowUp/ViewCustomerFollowUp";
 import { CustomerAllPotential } from "../../Potential/CustomerAllPotential";
 import Option from "../../../Options/Options";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const UpdateCompanyDetails = (props) => {
   const { setOpenPopup, getAllCompanyDetails, recordForEdit, product } = props;
@@ -171,7 +172,7 @@ export const UpdateCompanyDetails = (props) => {
             </Root>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="name"
               size="small"
@@ -205,7 +206,7 @@ export const UpdateCompanyDetails = (props) => {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               sx={{ minWidth: "200px" }}
               name="pincode"
               size="small"
@@ -225,7 +226,7 @@ export const UpdateCompanyDetails = (props) => {
           </Grid>
 
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               label="State"
@@ -235,7 +236,7 @@ export const UpdateCompanyDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               label="City"
@@ -245,7 +246,7 @@ export const UpdateCompanyDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="gst_number"
               size="small"
@@ -262,7 +263,7 @@ export const UpdateCompanyDetails = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               required
               size="small"
@@ -304,7 +305,7 @@ export const UpdateCompanyDetails = (props) => {
                   ))
                 }
                 renderInput={(params) => (
-                  <TextField
+                  <CustomTextField
                     {...params}
                     label="Assign To"
                     placeholder="Assign To"
@@ -314,7 +315,7 @@ export const UpdateCompanyDetails = (props) => {
             </Grid>
           )}
           <Grid item xs={12}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="address"
               size="small"

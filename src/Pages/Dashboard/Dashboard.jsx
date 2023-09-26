@@ -24,6 +24,7 @@ import DashboardService from "../../services/DashboardService";
 import { useSelector } from "react-redux";
 import { Popup } from "../../Components/Popup";
 import { DescriptionWiseTurnover } from "./DescriptionWiseTurnover/DescriptionWiseTurnover";
+import CustomTextField from "../../Components/CustomTextField";
 
 export function Dashboard() {
   const [open, setOpen] = useState(false);
@@ -374,7 +375,7 @@ export function Dashboard() {
         >
           <Grid container spacing={2}>
             <Grid item xs={5} sm={5} md={5} lg={5}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 label="Start Date"
                 variant="outlined"
@@ -388,7 +389,7 @@ export function Dashboard() {
               />
             </Grid>
             <Grid item xs={5} sm={5} md={5} lg={5}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 label="End Date"
                 variant="outlined"
