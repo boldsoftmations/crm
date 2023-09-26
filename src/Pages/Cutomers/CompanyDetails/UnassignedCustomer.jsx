@@ -162,13 +162,13 @@ export const UnassignedCustomer = () => {
       setOpen(false);
     }
   };
-
+  console.log("recordForEdit", recordForEdit);
   const UpdateCompanyDetails = async (e) => {
     try {
       e.preventDefault();
       setOpen(true);
       const req = {
-        type: recordForEdit.type,
+        type_of_customer: recordForEdit.type_of_customer,
         name: recordForEdit.name,
         address: recordForEdit.address,
         pincode: recordForEdit.pincode,
