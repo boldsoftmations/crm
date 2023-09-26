@@ -248,21 +248,7 @@ export const SalesInvoiceCreate = (props) => {
                 }
                 sx={{ minWidth: 300 }}
                 renderInput={(params) => (
-                  <CustomTextField
-                    {...params}
-                    label="PI Number"
-                    // InputProps={{
-                    //   ...params.InputProps,
-                    //   endAdornment: (
-                    //     <>
-                    //       {loading ? (
-                    //         <CircularProgress color="inherit" size={20} />
-                    //       ) : null}
-                    //       {params.InputProps.endAdornment}
-                    //     </>
-                    //   ),
-                    // }}
-                  />
+                  <CustomTextField {...params} label="PI Number" />
                 )}
               />
             </Grid>

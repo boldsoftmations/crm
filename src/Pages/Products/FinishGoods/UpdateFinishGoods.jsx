@@ -2,15 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import ProductService from "../../../services/ProductService";
 
-import {
-  Backdrop,
-  Box,
-  CircularProgress,
-  Grid,
-  TextField,
-  Button,
-  Autocomplete,
-} from "@mui/material";
+import { Box, Grid, Button, Autocomplete } from "@mui/material";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
