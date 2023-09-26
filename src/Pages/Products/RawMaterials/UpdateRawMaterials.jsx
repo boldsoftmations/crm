@@ -13,7 +13,7 @@ import {
   Autocomplete,
 } from "@mui/material";
 import CustomTextField from "../../../Components/CustomTextField";
-
+import { CustomLoader } from "../../../Components/CustomLoader";
 export const UpdateRawMaterials = (props) => {
   const { recordForEdit, setOpenPopup, getrawMaterials } = props;
 
@@ -135,17 +135,7 @@ export const UpdateRawMaterials = (props) => {
 
   return (
     <>
-      <div>
-        <Backdrop
-          sx={{
-            color: "#fff",
-            zIndex: (theme) => theme.zIndex.drawer + 1,
-          }}
-          open={open}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      </div>
+      <CustomLoader open={open} />
 
       <Box component="form" noValidate onSubmit={(e) => updateRawMaterial(e)}>
         <Grid container spacing={2}>

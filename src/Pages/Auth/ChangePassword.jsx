@@ -18,6 +18,7 @@ import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CustomTextField from "../../Components/CustomTextField";
+import { CustomLoader } from "../../Components/CustomLoader";
 // const RESET_URL = `${process.env.REACT_APP_DEPLOY_BACKEND_URL}/api/user/reset-password`;
 const RESET_URL = `${process.env.REACT_APP_TESTING_BACKEND_URL}/api/user/reset-password`;
 const style = {
@@ -66,14 +67,7 @@ export const ChangePassword = () => {
 
   return (
     <ThemeProvider className="main" theme={theme}>
-      <div>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={open}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      </div>
+      <CustomLoader open={open} />
       <Modal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
