@@ -21,6 +21,7 @@ import {
   InputAdornment,
   Paper,
   Avatar,
+  TextField,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -164,7 +165,7 @@ export const Login = () => {
           <ErrorMessage errMsg={errMsg} errRef={errRef} />
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <CustomTextField
+              <TextField
                 fullWidth
                 name="email"
                 size="small"
