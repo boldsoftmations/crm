@@ -8,7 +8,6 @@ import {
   Box,
   Grid,
   Button,
-  TextField,
   Backdrop,
   CircularProgress,
   Modal,
@@ -18,6 +17,7 @@ import LockResetIcon from "@mui/icons-material/LockReset";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CustomTextField from "../../Components/CustomTextField";
 // const RESET_URL = `${process.env.REACT_APP_DEPLOY_BACKEND_URL}/api/user/reset-password`;
 const RESET_URL = `${process.env.REACT_APP_TESTING_BACKEND_URL}/api/user/reset-password`;
 const style = {
@@ -120,7 +120,7 @@ export const ChangePassword = () => {
           >
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <TextField
+                <CustomTextField
                   fullWidth
                   size="small"
                   label="Password"
@@ -132,7 +132,7 @@ export const ChangePassword = () => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
+                <CustomTextField
                   fullWidth
                   size="small"
                   label="Confirm Password"

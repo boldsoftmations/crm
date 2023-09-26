@@ -8,16 +8,14 @@ import {
   Box,
   Grid,
   Button,
-  TextField,
-  Backdrop,
-  CircularProgress,
-  Modal,
-  Typography,
 } from "@mui/material";
 import LockResetIcon from "@mui/icons-material/LockReset";
 import axios from "axios";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { Link } from "react-router-dom";
+import CustomTextField from "../../Components/CustomTextField";
+import { CustomLoader } from "../../Components/CustomLoader";
+import { Popup } from "../../Components/Popup";
 // const RESET_URL = `${process.env.REACT_APP_DEPLOY_BACKEND_URL}/api/user/send-reset-password-email/`;
 const RESET_URL = `${process.env.REACT_APP_TESTING_BACKEND_URL}/api/user/send-reset-password-email/`;
 
@@ -63,32 +61,15 @@ export const ForgotPassword = () => {
 
   return (
     <ThemeProvider className="main" theme={theme}>
-      <div>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={open}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      </div>
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+      <CustomLoader open={open} />
+      <Popup
+        openPopup={modalOpen}
+        setOpenPopup={setModalOpen}
+        title="Verify Your Email"
+        maxWidth="md"
       >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Verify Your Email
-          </Typography>
-          <Typography
-            id="modal-modal-description"
-            sx={{ mb: 2, mt: 2, color: "#3980F4" }}
-          >
-            {message}
-          </Typography>
-        </Box>
-      </Modal>
+        {message}
+      </Popup>
       <Container className="Auth-form-container" component="main" maxWidth="xs">
         <Box
           className="Auth-form"
@@ -122,7 +103,7 @@ export const ForgotPassword = () => {
           >
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <TextField
+                <CustomTextField
                   fullWidth
                   size="small"
                   label="Email"

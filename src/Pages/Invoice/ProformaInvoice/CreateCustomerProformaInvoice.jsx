@@ -11,7 +11,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField,
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -26,6 +25,7 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 import { Popup } from "../../../Components/Popup";
 import { UpdateCompanyDetails } from "../../Cutomers/CompanyDetails/UpdateCompanyDetails";
+import CustomTextField from "../../../Components/CustomTextField";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -259,7 +259,7 @@ export const CreateCustomerProformaInvoice = (props) => {
               getOptionLabel={(option) => option.unit}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Seller Account" sx={tfStyle} />
+                <CustomTextField {...params} label="Seller Account" sx={tfStyle} />
               )}
             />
           </Grid>
@@ -274,7 +274,7 @@ export const CreateCustomerProformaInvoice = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Payment Terms" sx={tfStyle} />
+                <CustomTextField {...params} label="Payment Terms" sx={tfStyle} />
               )}
             />
           </Grid>
@@ -289,7 +289,7 @@ export const CreateCustomerProformaInvoice = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Delivery Terms" sx={tfStyle} />
+                <CustomTextField {...params} label="Delivery Terms" sx={tfStyle} />
               )}
             />
           </Grid>
@@ -301,7 +301,7 @@ export const CreateCustomerProformaInvoice = (props) => {
             </Root>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="company"
               size="small"
@@ -337,7 +337,7 @@ export const CreateCustomerProformaInvoice = (props) => {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={2}>
-            <TextField
+            <CustomTextField
               fullWidth
               disabled
               name="contact"
@@ -354,7 +354,7 @@ export const CreateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={2}>
-            <TextField
+            <CustomTextField
               fullWidth
               disabled
               name="alternate_contact"
@@ -371,7 +371,7 @@ export const CreateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               multiline
               required
@@ -384,7 +384,7 @@ export const CreateCustomerProformaInvoice = (props) => {
           </Grid>
 
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               required
               name="city"
@@ -395,7 +395,7 @@ export const CreateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               required
               name="state"
@@ -406,7 +406,7 @@ export const CreateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               required
               name="pincode"
@@ -440,7 +440,7 @@ export const CreateCustomerProformaInvoice = (props) => {
           </Grid>
 
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               required
               disabled
@@ -458,7 +458,7 @@ export const CreateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               required
               disabled
@@ -476,7 +476,7 @@ export const CreateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               required
               disabled
@@ -505,7 +505,7 @@ export const CreateCustomerProformaInvoice = (props) => {
               }
             />
 
-            <TextField
+            <CustomTextField
               required
               name="buyer_order_no"
               size="small"
@@ -528,7 +528,7 @@ export const CreateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               type={"date"}
               name="buyer_order_date"
@@ -547,7 +547,7 @@ export const CreateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="place_of_supply"
               size="small"
@@ -558,7 +558,7 @@ export const CreateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="transporter_name"
               size="small"
@@ -592,7 +592,7 @@ export const CreateCustomerProformaInvoice = (props) => {
                     getOptionLabel={(option) => option}
                     sx={{ minWidth: 300 }}
                     renderInput={(params) => (
-                      <TextField
+                      <CustomTextField
                         {...params}
                         label="Product Name"
                         sx={tfStyle}
@@ -601,7 +601,7 @@ export const CreateCustomerProformaInvoice = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="quantity"
                     size="small"
@@ -612,7 +612,7 @@ export const CreateCustomerProformaInvoice = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     size="small"
                     label="Unit"
@@ -621,7 +621,7 @@ export const CreateCustomerProformaInvoice = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <TextField
+                  <CustomTextField
                     type={"number"}
                     fullWidth
                     name="rate"
@@ -635,7 +635,7 @@ export const CreateCustomerProformaInvoice = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={4}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     type={"number"}
                     name="amount"
@@ -647,7 +647,7 @@ export const CreateCustomerProformaInvoice = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     type={"date"}
                     name="requested_date"
@@ -666,7 +666,7 @@ export const CreateCustomerProformaInvoice = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="special_instructions"
                     size="small"

@@ -10,7 +10,6 @@ import {
   MenuItem,
   IconButton,
   Autocomplete,
-  TextField,
 } from "@mui/material";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
@@ -43,6 +42,7 @@ import { PotentialCreate } from "../Potential/PotentialCreate";
 import { CreateLeadsProformaInvoice } from "../Invoice/ProformaInvoice/CreateLeadsProformaInvoice";
 import { Helmet } from "react-helmet";
 import Option from "../../Options/Options";
+import CustomTextField from "../../Components/CustomTextField";
 
 export const NewLeads = () => {
   const dispatch = useDispatch();
@@ -129,7 +129,7 @@ export const NewLeads = () => {
       onChange={(event, value) => onChange(value)}
       options={options}
       getOptionLabel={(option) => option}
-      renderInput={(params) => <TextField {...params} label={label} />}
+      renderInput={(params) => <CustomTextField {...params} label={label} />}
     />
   );
 

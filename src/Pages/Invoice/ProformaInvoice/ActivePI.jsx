@@ -16,7 +16,6 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  TextField,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import InvoiceServices from "../../../services/InvoiceService";
@@ -31,6 +30,7 @@ import { CustomPagination } from "../../../Components/CustomPagination";
 import { UpdateLeadsProformaInvoice } from "./UpdateLeadsProformaInvoice";
 import LeadServices from "../../../services/LeadService";
 import { Helmet } from "react-helmet";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const ActivePI = () => {
   const dispatch = useDispatch();
@@ -378,7 +378,7 @@ export const ActivePI = () => {
                 </Select>
               </FormControl>
             )}
-            <TextField
+            <CustomTextField
               value={searchValue}
               onChange={(event) => setSearchValue(event.target.value)}
               name="search"

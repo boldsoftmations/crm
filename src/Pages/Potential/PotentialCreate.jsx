@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { CustomLoader } from "../../Components/CustomLoader";
-import { Autocomplete, Box, Button, Grid, TextField } from "@mui/material";
+import { Autocomplete, Box, Button, Grid } from "@mui/material";
 import LeadServices from "../../services/LeadService";
+import CustomTextField from "../../Components/CustomTextField";
 
 export const PotentialCreate = (props) => {
   const { leadsByID, getLeadByID, product, setOpenModal } = props;
@@ -72,12 +73,12 @@ export const PotentialCreate = (props) => {
                 options={product.map((option) => option.name)}
                 getOptionLabel={(option) => `${option ? option : "No Options"}`}
                 renderInput={(params) => (
-                  <TextField {...params} label="Product Name" />
+                  <CustomTextField {...params} label="Product Name" />
                 )}
               />
             </Grid>
             <Grid item xs={24} sm={4}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 name="current_brand"
                 size="small"
@@ -88,7 +89,7 @@ export const PotentialCreate = (props) => {
               />
             </Grid>
             <Grid item xs={24} sm={4}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 name="current_buying_price"
                 size="small"
@@ -103,7 +104,7 @@ export const PotentialCreate = (props) => {
               />
             </Grid>
             <Grid item xs={24} sm={4}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 name="current_buying_quantity"
                 size="small"
@@ -118,7 +119,7 @@ export const PotentialCreate = (props) => {
               />
             </Grid>
             <Grid item xs={24} sm={4}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 name="target_price"
                 size="small"
@@ -129,7 +130,7 @@ export const PotentialCreate = (props) => {
               />
             </Grid>
             <Grid item xs={24} sm={4}>
-              <TextField
+              <CustomTextField
                 fullWidth
                 name="quantity"
                 size="small"

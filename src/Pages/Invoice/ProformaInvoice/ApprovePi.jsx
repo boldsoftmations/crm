@@ -16,7 +16,6 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  TextField,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import InvoiceServices from "../../../services/InvoiceService";
@@ -29,6 +28,7 @@ import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 import { UpdateCustomerProformaInvoice } from "./UpdateCustomerProformaInvoice";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { UpdateLeadsProformaInvoice } from "./UpdateLeadsProformaInvoice";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const ApprovePi = () => {
   const dispatch = useDispatch();
@@ -274,7 +274,7 @@ export const ApprovePi = () => {
                 </Select>
               </FormControl>
             )}
-            <TextField
+            <CustomTextField
               value={searchValue}
               onChange={(event) => setSearchValue(event.target.value)}
               name="search"

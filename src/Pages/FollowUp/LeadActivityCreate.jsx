@@ -7,13 +7,13 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField,
   Typography,
 } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Error";
 import { useSelector } from "react-redux";
 import LeadServices from "../../services/LeadService";
 import { CustomLoader } from "../../Components/CustomLoader";
+import CustomTextField from "../../Components/CustomTextField";
 
 export const LeadActivityCreate = ({
   leadsByID,
@@ -108,7 +108,7 @@ export const LeadActivityCreate = ({
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <TextField
+            <CustomTextField
               fullWidth
               multiline
               name="notes"
@@ -120,7 +120,7 @@ export const LeadActivityCreate = ({
             />
           </Grid>
           <Grid item xs={12}>
-            <TextField
+            <CustomTextField
               fullWidth
               type="date"
               name="next_followup_date"

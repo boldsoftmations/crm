@@ -1,11 +1,4 @@
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Grid,
-  Snackbar,
-  TextField,
-} from "@mui/material";
+import { Autocomplete, Box, Button, Grid, Snackbar } from "@mui/material";
 import { Alert, AlertTitle } from "@mui/material";
 import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
@@ -13,6 +6,7 @@ import Divider from "@mui/material/Divider";
 import Chip from "@mui/material/Chip";
 import InvoiceServices from "../../../services/InvoiceService";
 import { CustomLoader } from "./../../../Components/CustomLoader";
+import CustomTextField from "../../../Components/CustomTextField";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -225,7 +219,7 @@ export const SalesInvoiceCreate = (props) => {
         </Snackbar>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               sx={{ minWidth: "8rem" }}
               name="company"
               size="small"
@@ -254,7 +248,7 @@ export const SalesInvoiceCreate = (props) => {
                 }
                 sx={{ minWidth: 300 }}
                 renderInput={(params) => (
-                  <TextField
+                  <CustomTextField
                     {...params}
                     label="PI Number"
                     // InputProps={{
@@ -274,7 +268,7 @@ export const SalesInvoiceCreate = (props) => {
             </Grid>
           )}
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="seller_state"
               size="small"
@@ -286,7 +280,7 @@ export const SalesInvoiceCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="seller_auto_number"
               size="small"
@@ -300,7 +294,7 @@ export const SalesInvoiceCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="company"
               size="small"
@@ -310,7 +304,7 @@ export const SalesInvoiceCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               multiline
               name="shipping_address"
@@ -325,7 +319,7 @@ export const SalesInvoiceCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               multiline
               name="shipping_state"
@@ -340,7 +334,7 @@ export const SalesInvoiceCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               multiline
               name="shipping_city"
@@ -353,7 +347,7 @@ export const SalesInvoiceCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               multiline
               name="shipping_pincode"
@@ -368,7 +362,7 @@ export const SalesInvoiceCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               multiline
               name="billing_address"
@@ -383,7 +377,7 @@ export const SalesInvoiceCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               multiline
               name="billing_state"
@@ -396,7 +390,7 @@ export const SalesInvoiceCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               multiline
               name="billing_city"
@@ -409,7 +403,7 @@ export const SalesInvoiceCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               multiline
               name="billing_pincode"
@@ -424,7 +418,7 @@ export const SalesInvoiceCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               required
               name="transporter_name"
@@ -444,7 +438,7 @@ export const SalesInvoiceCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="place_of_supply"
               size="small"
@@ -461,7 +455,7 @@ export const SalesInvoiceCreate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
+            <CustomTextField
               fullWidth
               type="date"
               name="generation_date"
@@ -488,7 +482,7 @@ export const SalesInvoiceCreate = (props) => {
                 return (
                   <>
                     <Grid key={index} item xs={12} sm={3}>
-                      <TextField
+                      <CustomTextField
                         fullWidth
                         name="product"
                         size="small"
@@ -498,7 +492,7 @@ export const SalesInvoiceCreate = (props) => {
                       />
                     </Grid>
                     <Grid item xs={12} sm={2}>
-                      <TextField
+                      <CustomTextField
                         fullWidth
                         name="pending_quantity"
                         size="small"
@@ -508,7 +502,7 @@ export const SalesInvoiceCreate = (props) => {
                       />
                     </Grid>
                     <Grid item xs={12} sm={2}>
-                      <TextField
+                      <CustomTextField
                         fullWidth
                         name="quantity"
                         size="small"
@@ -526,7 +520,7 @@ export const SalesInvoiceCreate = (props) => {
                     </Grid>
 
                     <Grid item xs={12} sm={2}>
-                      <TextField
+                      <CustomTextField
                         fullWidth
                         name="rate"
                         size="small"
@@ -536,7 +530,7 @@ export const SalesInvoiceCreate = (props) => {
                       />
                     </Grid>
                     <Grid item xs={12} sm={2}>
-                      <TextField
+                      <CustomTextField
                         fullWidth
                         // type={"number"}
                         name="amount"
@@ -561,7 +555,7 @@ export const SalesInvoiceCreate = (props) => {
             : null}
           {/* Display the total amount */}
           <Grid item xs={12} sm={2}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="totalAmount"
               size="small"

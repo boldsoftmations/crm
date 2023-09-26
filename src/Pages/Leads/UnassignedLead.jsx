@@ -3,7 +3,6 @@ import {
   Grid,
   Button,
   Paper,
-  TextField,
   Box,
   IconButton,
   Autocomplete,
@@ -33,6 +32,7 @@ import { CustomPagination } from "../../Components/CustomPagination";
 import ProductService from "../../services/ProductService";
 import { useSelector } from "react-redux";
 import Option from "../../Options/Options";
+import CustomTextField from "../../Components/CustomTextField";
 
 export const UnassignedLead = () => {
   const [leads, setLeads] = useState([]);
@@ -520,7 +520,11 @@ export const UnassignedLead = () => {
               options={assigned.map((option) => option.email)}
               getOptionLabel={(option) => `${option}`}
               renderInput={(params) => (
-                <TextField {...params} name={"assign"} label={"Assign To"} />
+                <CustomTextField
+                  {...params}
+                  name={"assign"}
+                  label={"Assign To"}
+                />
               )}
             />
           </Grid>

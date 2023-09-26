@@ -8,7 +8,6 @@ import {
   Divider,
   FormControlLabel,
   Grid,
-  TextField,
   FormControl,
   InputLabel,
   Select,
@@ -22,6 +21,7 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomerServices from "../../../services/CustomerService";
 import InvoiceServices from "../../../services/InvoiceService";
 import ProductService from "../../../services/ProductService";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const UpdateCustomerProformaInvoice = (props) => {
   const { idForEdit, getProformaInvoiceData, setOpenPopup } = props;
@@ -299,7 +299,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
       >
         <Grid container spacing={2}>
           <Grid item xs={12} sm={2}>
-            <TextField
+            <CustomTextField
               fullWidth
               size="small"
               label="Seller Account"
@@ -323,7 +323,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
               getOptionLabel={(option) => option.unit}
               sx={{ minWidth: 200 }}
               renderInput={(params) => (
-                <TextField
+                <CustomTextField
                   {...params}
                   label="Update Seller Account"
                   required
@@ -344,7 +344,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField
+                <CustomTextField
                   {...params}
                   label="Payment Terms"
                   required
@@ -365,7 +365,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <TextField {...params} label="Delivery Terms" sx={tfStyle} />
+                <CustomTextField {...params} label="Delivery Terms" sx={tfStyle} />
               )}
             />
           </Grid>
@@ -377,7 +377,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
             </Root>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               required
               size="small"
@@ -423,7 +423,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               disabled
               name="alternate_contact"
@@ -440,7 +440,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               multiline
               required
@@ -453,7 +453,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
           </Grid>
 
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               required
               name="city"
@@ -464,7 +464,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               required
               name="state"
@@ -475,7 +475,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               required
               name="pincode"
@@ -515,7 +515,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
           </Grid>
 
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               required
               disabled
@@ -538,7 +538,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
           </Grid>
 
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               required
               disabled
@@ -562,7 +562,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               required
               disabled
@@ -597,7 +597,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
               }
             />
 
-            <TextField
+            <CustomTextField
               required
               name="buyer_order_no"
               size="small"
@@ -622,7 +622,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               type={"date"}
               name="buyer_order_date"
@@ -646,7 +646,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="place_of_supply"
               size="small"
@@ -667,7 +667,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <TextField
+            <CustomTextField
               fullWidth
               name="transporter_name"
               size="small"
@@ -713,7 +713,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
                     getOptionLabel={(option) => option}
                     sx={{ minWidth: 300 }}
                     renderInput={(params) => (
-                      <TextField
+                      <CustomTextField
                         {...params}
                         label="Product Name"
                         sx={tfStyle}
@@ -722,7 +722,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="quantity"
                     size="small"
@@ -733,7 +733,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     size="small"
                     label="Unit"
@@ -742,7 +742,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                  <TextField
+                  <CustomTextField
                     type={"number"}
                     fullWidth
                     name="rate"
@@ -756,7 +756,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={4}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     type={"number"}
                     name="amount"
@@ -772,7 +772,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     type={"date"}
                     name="requested_date"
@@ -791,7 +791,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
-                  <TextField
+                  <CustomTextField
                     fullWidth
                     name="special_instructions"
                     size="small"

@@ -7,7 +7,6 @@ import {
   Box,
   Grid,
   Button,
-  TextField,
   Paper,
   Avatar,
   Modal,
@@ -19,6 +18,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { CustomButton } from "./../../Components/CustomButton";
 import { CustomLoader } from "../../Components/CustomLoader";
+import CustomTextField from "../../Components/CustomTextField";
 
 export const SignUp = (props) => {
   const { handleToggle } = props;
@@ -131,7 +131,7 @@ export const SignUp = (props) => {
           >
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <TextField
+                <CustomTextField
                   required
                   name="first_name"
                   size="small"
@@ -149,7 +149,7 @@ export const SignUp = (props) => {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
+                <CustomTextField
                   required
                   name="last_name"
                   size="small"
@@ -166,7 +166,7 @@ export const SignUp = (props) => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
+                <CustomTextField
                   required
                   name="email"
                   fullWidth
@@ -180,7 +180,7 @@ export const SignUp = (props) => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
+                <CustomTextField
                   required
                   name="contact"
                   fullWidth
@@ -198,7 +198,7 @@ export const SignUp = (props) => {
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <TextField
+                <CustomTextField
                   required
                   name="password"
                   size="small"
@@ -214,7 +214,7 @@ export const SignUp = (props) => {
                 />
               </Grid>
               <Grid rowSpacing={0.5} item xs={12} sm={6}>
-                <TextField
+                <CustomTextField
                   required
                   name="password2"
                   size="small"

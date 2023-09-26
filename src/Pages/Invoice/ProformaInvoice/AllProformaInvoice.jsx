@@ -10,7 +10,6 @@ import {
   Select,
   MenuItem,
   IconButton,
-  TextField,
   Autocomplete,
 } from "@mui/material";
 import InvoiceServices from "../../../services/InvoiceService";
@@ -23,6 +22,7 @@ import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 import { CustomTable } from "../../../Components/CustomTable";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { AllProformaInvoiceView } from "./AllProformaInvoiceView";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const AllProformaInvoice = () => {
   const dispatch = useDispatch();
@@ -290,7 +290,11 @@ export const AllProformaInvoice = () => {
               defaultValue="today"
               onChange={(event, value) => handleSelectChange(value)}
               renderInput={(params) => (
-                <TextField {...params} label="Sort By" variant="outlined" />
+                <CustomTextField
+                  {...params}
+                  label="Sort By"
+                  variant="outlined"
+                />
               )}
             />
             <FormControl fullWidth size="small" sx={{ maxWidth: "200px" }}>
@@ -355,7 +359,7 @@ export const AllProformaInvoice = () => {
                 </Select>
               </FormControl>
             )}
-            <TextField
+            <CustomTextField
               value={searchValue}
               onChange={(event) => setSearchValue(event.target.value)}
               name="search"
