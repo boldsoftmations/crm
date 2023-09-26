@@ -202,17 +202,6 @@ export const Login = () => {
                   label="Password"
                 />
               </FormControl>
-              {/* <TextField
-                  fullWidth
-                  name="password"
-                  size="small"
-                  type="Password"
-                  label="Password"
-                  variant="outlined"
-                  onChange={(e) => setPwd(e.target.value)}
-                  value={pwd}
-                  required
-                /> */}
             </Grid>
           </Grid>
           <CustomButton

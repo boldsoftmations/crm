@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Autocomplete,
-  Box,
-  Grid,
-  Snackbar,
-  TextField,
-  IconButton,
-} from "@mui/material";
+import { Autocomplete, Box, Grid, Snackbar, IconButton } from "@mui/material";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { CustomButton } from "../../../Components/CustomButton";
 import CustomerServices from "../../../services/CustomerService";

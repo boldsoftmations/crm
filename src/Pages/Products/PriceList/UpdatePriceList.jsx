@@ -6,7 +6,6 @@ import {
   FormControlLabel,
   Grid,
   Switch,
-  TextField,
 } from "@mui/material";
 import ProductService from "../../../services/ProductService";
 import "../../CommonStyle.css";
