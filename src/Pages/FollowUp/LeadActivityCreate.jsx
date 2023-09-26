@@ -50,25 +50,29 @@ export const LeadActivityCreate = ({
   };
 
   const createFollowUpLeadsData = async (e) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
       setOpen(true);
+
       const followUpData = {
         leads: leadsByID,
         user: userId,
-        activity: followUp.activity,
-        notes: followUp.notes,
-        next_followup_date: followUp.next_followup_date,
+        ...followUp,
       };
 
       await LeadServices.createFollowUpLeads(followUpData);
-      setOpenModal(false);
       await getLeadByID(leadsByID);
-      setOpen(false);
     } catch (error) {
-      console.log("error :>> ", error);
-      setErrorMessage(error.response.data.message);
+      console.error("Error creating follow-up leads data:", error);
+      // Check if error.response and error.response.data exist before trying to access error.response.data.message
+      const errorMessage =
+        error.response && error.response.data
+          ? error.response.data.message
+          : "An unexpected error occurred";
+      setErrorMessage(errorMessage);
+    } finally {
       setOpen(false);
+      setOpenModal(false);
     }
   };
 
