@@ -3166,7 +3166,6 @@ export const ListItems = (props) => {
                   </ListItem>
                 </List>
               </Collapse>
-
               {/* Forecast */}
               <ListItem
                 button
@@ -3510,6 +3509,19 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
+                    to="/invoice/approve-pi"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Approve PI"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
                     to="/invoice/active-pi"
                     style={{ width: 300 }}
                   >
@@ -3518,6 +3530,19 @@ export const ListItems = (props) => {
                       onClick={() => setOpen(false)}
                       inset
                       primary="Active PI"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/all-performa-invoice"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="All PI"
                     />
                   </ListItem>
                 </List>
