@@ -2631,19 +2631,6 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/invoice/approve-pi"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Approve PI"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
                     to="/invoice/active-pi"
                     style={{ width: 300 }}
                   >
@@ -3070,19 +3057,6 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/invoice/approve-pi"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Approve PI"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
                     to="/invoice/active-pi"
                     style={{ width: 300 }}
                   >
@@ -3448,19 +3422,6 @@ export const ListItems = (props) => {
               <Collapse in={expandProformaInvoice} timeout="auto" unmountOnExit>
                 <Divider />
                 <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/approve-pi"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Approve PI"
-                    />
-                  </ListItem>
                   <ListItem
                     button
                     component={RouterLink}
