@@ -67,11 +67,12 @@ export const SalesInvoiceCreate = (props) => {
     try {
       e.preventDefault();
       setOpen(true);
-      const response = await InvoiceServices.getAllOrderBookDataWithSearch(
-        "all",
-        "customer",
-        inputValue.company
-      );
+      const response = await InvoiceServices.getOrderBookData({
+        type: "customer",
+        page: "all",
+        searchType: "search",
+        searchValue: inputValue.company,
+      });
       setCustomerOrderBookOption(response.data);
       console.log("response.data.results by company", response.data.results);
       setOpen(false);
