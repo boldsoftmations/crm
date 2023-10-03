@@ -264,7 +264,7 @@ export const ProductWiseTurnover = () => {
                   fontWeight: 800,
                 }}
               >
-                Product Wise TurnOver
+                Forecasted Turnover
               </h3>
             </Box>
             <Box flexGrow={0.5}></Box>
