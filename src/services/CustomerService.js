@@ -54,6 +54,10 @@ const getCompanyDataById = (id) => {
   return CustomAxios.get(`/api/customer/list-company/${id}`);
 };
 
+const getCompanyDataByIdWithType = (id, typeValue) => {
+  return CustomAxios.get(`/api/customer/list-company/${id}?type=${typeValue}`);
+};
+
 const updateCompanyData = (id, data) => {
   return CustomAxios.patch(`/api/customer/list-company/${id}`, data);
 };
@@ -314,6 +318,7 @@ const CustomerServices = {
   getAllSearchIncompleteKycData,
   createCompanyData,
   getCompanyDataById,
+  getCompanyDataByIdWithType,
   updateCompanyData,
   getUnassignedData,
   getSearchByUnassignedData,

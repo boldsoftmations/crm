@@ -5,7 +5,7 @@ import CustomerServices from "../../services/CustomerService";
 import CustomTextField from "../../Components/CustomTextField";
 
 export const CustomerPotentialCreate = (props) => {
-  const { recordForEdit, getAllleadsData, product, setOpenModal } = props;
+  const { recordForEdit, getCompanyDetailsByID, product, setOpenModal } = props;
   const [open, setOpen] = useState(false);
   const [potential, setPotential] = useState([]);
 
@@ -35,7 +35,7 @@ export const CustomerPotentialCreate = (props) => {
 
       await CustomerServices.createPotentialCustomer(data);
       setOpenModal(false);
-      await getAllleadsData();
+      await getCompanyDetailsByID();
       setOpen(false);
     } catch (error) {
       console.log("error:", error);

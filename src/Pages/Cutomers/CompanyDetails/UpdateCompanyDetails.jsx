@@ -28,8 +28,7 @@ export const UpdateCompanyDetails = (props) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState([]);
   const [assigned, setAssigned] = useState([]);
-  const [followUpData, setFollowUpData] = useState([]);
-  const [potential, setPotential] = useState(null);
+
   const dispatch = useDispatch();
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
@@ -107,8 +106,6 @@ export const UpdateCompanyDetails = (props) => {
       const response = await CustomerServices.getCompanyDataById(recordForEdit);
       setInputValue(response.data);
       dispatch(getCompanyName(response.data.name));
-      setFollowUpData(response.data.followup);
-      setPotential(response.data.potential);
       setOpen(false);
     } catch (err) {
       setOpen(false);
@@ -351,19 +348,13 @@ export const UpdateCompanyDetails = (props) => {
       </Box>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <ViewCustomerFollowUp
-            recordForEdit={recordForEdit}
-            followUpData={followUpData}
-            getAllCompanyDetailsByID={getAllCompanyDetailsByID}
-          />
+          <ViewCustomerFollowUp recordForEdit={recordForEdit} />
         </Grid>
       </Grid>
 
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <CustomerAllPotential
-            getAllleadsData={getAllCompanyDetails}
-            potential={potential}
             product={product}
             recordForEdit={recordForEdit}
           />
