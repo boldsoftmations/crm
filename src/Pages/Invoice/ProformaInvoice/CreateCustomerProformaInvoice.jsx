@@ -117,7 +117,24 @@ export const CreateCustomerProformaInvoice = (props) => {
 
   useEffect(() => {
     getAllCompanyDetailsByID();
+    getContactsDetailsByID();
   }, [openPopup3]);
+
+  const getContactsDetailsByID = async () => {
+    try {
+      setOpen(true);
+      const [contactResponse, warehouseResponse] = await Promise.all([
+        CustomerServices.getCompanyDataByIdWithType(recordForEdit, "contacts"),
+        CustomerServices.getCompanyDataByIdWithType(recordForEdit, "warehouse"),
+      ]);
+      setContactOptions(contactResponse.data.contacts);
+      setWarehouseOptions(warehouseResponse.data.warehouse);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("company data by id error", err);
+    }
+  };
 
   const getAllCompanyDetailsByID = async () => {
     try {
@@ -125,8 +142,7 @@ export const CreateCustomerProformaInvoice = (props) => {
 
       const response = await CustomerServices.getCompanyDataById(recordForEdit);
       setCustomerData(response.data);
-      setContactOptions(response.data.contacts);
-      setWarehouseOptions(response.data.warehouse);
+
       setOpen(false);
     } catch (err) {
       setOpen(false);
@@ -259,7 +275,11 @@ export const CreateCustomerProformaInvoice = (props) => {
               getOptionLabel={(option) => option.unit}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <CustomTextField {...params} label="Seller Account" sx={tfStyle} />
+                <CustomTextField
+                  {...params}
+                  label="Seller Account"
+                  sx={tfStyle}
+                />
               )}
             />
           </Grid>
@@ -274,7 +294,11 @@ export const CreateCustomerProformaInvoice = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <CustomTextField {...params} label="Payment Terms" sx={tfStyle} />
+                <CustomTextField
+                  {...params}
+                  label="Payment Terms"
+                  sx={tfStyle}
+                />
               )}
             />
           </Grid>
@@ -289,7 +313,11 @@ export const CreateCustomerProformaInvoice = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <CustomTextField {...params} label="Delivery Terms" sx={tfStyle} />
+                <CustomTextField
+                  {...params}
+                  label="Delivery Terms"
+                  sx={tfStyle}
+                />
               )}
             />
           </Grid>
@@ -373,6 +401,7 @@ export const CreateCustomerProformaInvoice = (props) => {
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
+              disabled
               multiline
               required
               name="address"
@@ -386,6 +415,7 @@ export const CreateCustomerProformaInvoice = (props) => {
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
+              disabled
               required
               name="city"
               size="small"
@@ -397,6 +427,7 @@ export const CreateCustomerProformaInvoice = (props) => {
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
+              disabled
               required
               name="state"
               size="small"
@@ -408,6 +439,7 @@ export const CreateCustomerProformaInvoice = (props) => {
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
+              disabled
               required
               name="pincode"
               size="small"
