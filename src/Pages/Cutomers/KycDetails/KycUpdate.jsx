@@ -17,8 +17,14 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomerServices from "../../../services/CustomerService";
 import CustomTextField from "../../../Components/CustomTextField";
 
-const KycUpdate = ({ setOpenPopup, getAllCompanyDetails, recordForEdit }) => {
-  const [inputValue, setInputValue] = useState([]);
+const KycUpdate = ({
+  setOpenPopup,
+  getAllCompanyDetailsByID,
+  contactData,
+  recordForEdit,
+  kycData,
+}) => {
+  const [inputValue, setInputValue] = useState(kycData);
   const [open, setOpen] = useState(false);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -28,7 +34,8 @@ const KycUpdate = ({ setOpenPopup, getAllCompanyDetails, recordForEdit }) => {
         : value;
     setInputValue({ ...inputValue, [name]: updatedValue });
   };
-
+  console.log("kycData", kycData);
+  console.log("inputValue", inputValue);
   const handleSelectChange = (name, value) => {
     setInputValue({
       ...inputValue,
@@ -36,23 +43,6 @@ const KycUpdate = ({ setOpenPopup, getAllCompanyDetails, recordForEdit }) => {
     });
   };
 
-  useEffect(() => {
-    getAllCompanyDetailsByID();
-  }, []);
-
-  const getAllCompanyDetailsByID = async () => {
-    try {
-      setOpen(true);
-      const response = await CustomerServices.getCompanyDataById(recordForEdit);
-      setInputValue(response.data);
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-      console.log("company data by id error", err);
-    }
-  };
-  console.log("recordForEdit", recordForEdit);
-  console.log("inputValue", inputValue);
   const UpdateCompanyDetails = async (e) => {
     try {
       e.preventDefault();
@@ -83,13 +73,13 @@ const KycUpdate = ({ setOpenPopup, getAllCompanyDetails, recordForEdit }) => {
       await CustomerServices.updateCompanyData(recordForEdit, req);
       setOpenPopup(false);
       setOpen(false);
-      getAllCompanyDetails();
+      getAllCompanyDetailsByID();
     } catch (error) {
       console.log("createing company detail error", error);
       setOpen(false);
     }
   };
-  const contactsData = inputValue.contacts || []; // Handle cases when inputValue.contacts is undefined or null
+
   return (
     <>
       <CustomLoader open={open} />
@@ -176,7 +166,7 @@ const KycUpdate = ({ setOpenPopup, getAllCompanyDetails, recordForEdit }) => {
                 handleSelectChange("purchase_decision_maker", value)
               }
               value={inputValue.purchase_decision_maker || ""}
-              options={contactsData.map((option) => option.name)}
+              options={contactData.map((option) => option.name)}
               getOptionLabel={(option) => option}
               renderInput={(params) => (
                 <CustomTextField {...params} label="Purchase Decision Maker" />
