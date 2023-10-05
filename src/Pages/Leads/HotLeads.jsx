@@ -248,16 +248,6 @@ export const HotLeads = () => {
       }
 
       if (response) {
-        // Assuming response.data.references_list is the array you are referring to
-        const references_list = response.data.references_list;
-
-        // Filter out null values from references_list
-        const filteredReferences = references_list.filter((ref) => ref != null);
-
-        // Only update state if filteredReferences is not empty
-        if (filteredReferences.length > 0) {
-          setReferenceData(filteredReferences); // Assuming you have a state variable called references
-        }
         setLeads(response.data.results);
         setpageCount(Math.ceil(response.data.count / 25));
       }
