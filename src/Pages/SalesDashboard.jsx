@@ -52,7 +52,11 @@ export const SalesDashboard = (props) => {
     getResetDate,
   } = props;
   const userData = useSelector((state) => state.auth.profile);
-  const [privacy] = useState(!userData.groups.includes("Sales Executive"));
+  const [privacy] = useState(
+    !userData.groups.includes("Sales Executive") &&
+      !userData.groups.includes("Sales Manager without Leads")
+  );
+
   const [dIQdata, setDIQData] = useState();
   const [dOBQdata, setDOBQData] = useState();
   const [activeButton, setActiveButton] = useState("monthly");
