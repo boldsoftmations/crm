@@ -94,7 +94,26 @@ export const UpdateCustomerProformaInvoice = (props) => {
 
   useEffect(() => {
     getProduct();
+    getCustomerProformaInvoiceDetailsByID();
+    getAllCompanyDetailsByID();
+    getContactsDetailsByID();
   }, []);
+
+  const getContactsDetailsByID = async () => {
+    try {
+      setOpen(true);
+      const [contactResponse, warehouseResponse] = await Promise.all([
+        CustomerServices.getCompanyDataByIdWithType(idForEdit, "contacts"),
+        CustomerServices.getCompanyDataByIdWithType(idForEdit, "warehouse"),
+      ]);
+      setContactOptions(contactResponse.data.contacts);
+      setWarehouseOptions(warehouseResponse.data.warehouse);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("company data by id error", err);
+    }
+  };
 
   const getProduct = async () => {
     try {
@@ -107,10 +126,6 @@ export const UpdateCustomerProformaInvoice = (props) => {
       setOpen(false);
     }
   };
-
-  useEffect(() => {
-    getCustomerProformaInvoiceDetailsByID();
-  }, []);
 
   const getCustomerProformaInvoiceDetailsByID = async (e) => {
     try {
@@ -149,8 +164,6 @@ export const UpdateCustomerProformaInvoice = (props) => {
       const data = value;
       const response = await CustomerServices.getCompanyDataById(data);
       setCustomerData(response.data);
-      setContactOptions(response.data.contacts);
-      setWarehouseOptions(response.data.warehouse);
       setOpen(false);
     } catch (err) {
       setOpen(false);
@@ -365,7 +378,11 @@ export const UpdateCustomerProformaInvoice = (props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               renderInput={(params) => (
-                <CustomTextField {...params} label="Delivery Terms" sx={tfStyle} />
+                <CustomTextField
+                  {...params}
+                  label="Delivery Terms"
+                  sx={tfStyle}
+                />
               )}
             />
           </Grid>
