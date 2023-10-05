@@ -29,6 +29,7 @@ const KycUpdate = ({ recordForEdit }) => {
       getAllCompanyDetailsByID();
     }
   }, [recordForEdit]);
+
   useEffect(() => {
     getCompetitors();
   }, []);
@@ -37,7 +38,6 @@ const KycUpdate = ({ recordForEdit }) => {
     try {
       setOpen(true);
       const response = await CustomerServices.getAllPaginateCompetitors("all");
-      console.log("response main", response);
       setAllCompetitors(response.data);
 
       setOpen(false);

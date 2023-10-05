@@ -118,7 +118,7 @@ export function Dashboard() {
     { label: "Current Month Sales(Finish Good)" },
     { label: "Current Month Sales(Raw Material)" },
     { label: "Sales Person Summary" },
-    { label: "Forecasted Turnover" },
+    { label: "Forecast Turnover" },
     { label: "Description Wise Turnover" },
     ...(userData.email === "devannsh@glutape.com" ||
     userData.email === "mahesh@glutaoe.com" ||
