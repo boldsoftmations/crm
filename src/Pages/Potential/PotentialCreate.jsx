@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CustomLoader } from "../../Components/CustomLoader";
 import { Autocomplete, Box, Button, Grid } from "@mui/material";
 import LeadServices from "../../services/LeadService";
 import CustomTextField from "../../Components/CustomTextField";
+import ProductService from "../../services/ProductService";
 
 export const PotentialCreate = (props) => {
-  const { leadsByID, getLeadByID, product, setOpenModal } = props;
+  const { leadsByID, getLeadByID, setOpenModal } = props;
   const [open, setOpen] = useState(false);
   const [potential, setPotential] = useState([]);
-
+  const [product, setProduct] = useState([]);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setPotential({ ...potential, [name]: value });
@@ -16,6 +17,22 @@ export const PotentialCreate = (props) => {
 
   const handleAutocompleteChange = (value) => {
     setPotential({ ...potential, ["product"]: value });
+  };
+
+  useEffect(() => {
+    getProduct();
+  }, []);
+
+  const getProduct = async () => {
+    try {
+      setOpen(true);
+      const res = await ProductService.getAllProduct();
+      setProduct(res.data);
+      setOpen(false);
+    } catch (err) {
+      console.error("error potential", err);
+      setOpen(false);
+    }
   };
 
   let handleSubmit = async (e) => {

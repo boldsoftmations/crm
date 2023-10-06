@@ -68,10 +68,9 @@ export const CreateLeadsProformaInvoice = (props) => {
       special_instructions: "",
     },
   ]);
-
+  const [sellerData, setSellerData] = useState([]);
   const data = useSelector((state) => state.auth);
   const users = data.profile;
-  const sellerData = data.sellerAccount;
 
   const handleAutocompleteChange = (index, event, value) => {
     let data = [...products];
@@ -110,8 +109,22 @@ export const CreateLeadsProformaInvoice = (props) => {
   };
 
   useEffect(() => {
+    getAllSellerAccountsDetails();
     getProduct();
   }, []);
+
+  const getAllSellerAccountsDetails = async () => {
+    try {
+      setOpen(true);
+      const response = await InvoiceServices.getAllPaginateSellerAccountData(
+        "all"
+      );
+      setSellerData(response.data);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+    }
+  };
 
   const getProduct = async () => {
     try {
