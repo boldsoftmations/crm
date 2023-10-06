@@ -493,9 +493,12 @@ export const ActivePI = () => {
                           View
                         </Button>
                         {(users.groups.toString() === "Sales Manager" ||
-                        users.groups.toString() === "Sales Deputy Manager" ||
-                        users.groups.toString() === "Sales Assistant Deputy Manager" ||
-                        users.groups.toString() === "Sales Executive" ||
+                          users.groups.toString() === "Sales Deputy Manager" ||
+                          users.groups.toString() ===
+                            "Sales Assistant Deputy Manager" ||
+                          users.groups.toString() === "Sales Executive" ||
+                          users.groups.toString() ===
+                            "Sales Manager without Leads" ||
                           users.groups.toString() === "Customer Service") &&
                           row.status === "Raised" && (
                             <Button
