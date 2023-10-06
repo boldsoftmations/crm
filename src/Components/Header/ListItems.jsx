@@ -2878,8 +2878,8 @@ export const ListItems = (props) => {
                 </List>
               </Collapse>
 
-              {/* Leads */}
-              <ListItem
+                {/* Leads */}
+                <ListItem
                 button
                 onClick={() => setExpand(!expand)}
                 style={{ width: 300 }}
@@ -2937,7 +2937,40 @@ export const ListItems = (props) => {
                     component={RouterLink}
                     to="/leads/closed-lead"
                     style={{ width: 300 }}
-                  ></ListItem>
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Dropped Leads"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/duplicate-lead"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Duplicate Leads"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/view-unassigned-lead"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Unassigned Leads"
+                    />
+                  </ListItem>
                 </List>
               </Collapse>
 
@@ -3220,8 +3253,8 @@ export const ListItems = (props) => {
                 </List>
               </Collapse>
 
-              {/* Leads */}
-              <ListItem
+                {/* Leads */}
+                <ListItem
                 button
                 onClick={() => setExpand(!expand)}
                 style={{ width: 300 }}
@@ -3279,7 +3312,40 @@ export const ListItems = (props) => {
                     component={RouterLink}
                     to="/leads/closed-lead"
                     style={{ width: 300 }}
-                  ></ListItem>
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Dropped Leads"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/duplicate-lead"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Duplicate Leads"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/view-unassigned-lead"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Unassigned Leads"
+                    />
+                  </ListItem>
                 </List>
               </Collapse>
 
