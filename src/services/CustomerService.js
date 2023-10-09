@@ -14,6 +14,15 @@ const getAllPaginateCompanyDataWithSearch = (currentPage, search) => {
   );
 };
 
+// Generic function to get order book data
+const getAllCustomerData = ({ page, assignToFilter, searchValue }) => {
+  let url = `/api/customer/list-company/?`;
+  if (page) url += `page=${page}&`;
+  if (assignToFilter) url += `assigned_to=${assignToFilter}&`;
+  if (searchValue) url += `search=${searchValue}&`;
+  return CustomAxios.get(url);
+};
+
 const getAllSearchCompanyData = (search) => {
   return CustomAxios.get(`/api/customer/list-company/?search=${search}`);
 };
@@ -313,7 +322,9 @@ const getAllCompetitors = () => {
 };
 
 const getCompetitorsPaginatewithSearch = (all, search) => {
-  return CustomAxios.get(`/api/customer/list-main-distribution/?page=${all}&search=${search}`);
+  return CustomAxios.get(
+    `/api/customer/list-main-distribution/?page=${all}&search=${search}`
+  );
 };
 
 const getAllPaginateCompetitors = (all) => {
@@ -324,12 +335,14 @@ const getCompetitorsById = (id) => {
   return CustomAxios.get(`/api/customer/list-main-distribution/${id}`);
 };
 
-const createCompetitorAPI  = (data) => {
+const createCompetitorAPI = (data) => {
   return CustomAxios.post("/api/customer/list-main-distribution/", data);
 };
 
 const getAllSearchCompetitors = (search) => {
-  return CustomAxios.get(`/api/customer/list-main-distribution/?search=${search}`);
+  return CustomAxios.get(
+    `/api/customer/list-main-distribution/?search=${search}`
+  );
 };
 
 const updateCompetitors = (id, data) => {
@@ -338,6 +351,7 @@ const updateCompetitors = (id, data) => {
 
 const CustomerServices = {
   getAllCompanyData,
+  getAllCustomerData,
   getAllPaginateCompanyData,
   getAllPaginateCompanyDataWithSearch,
   getAllSearchCompanyData,
@@ -403,7 +417,7 @@ const CustomerServices = {
   getCompetitorsById,
   createCompetitorAPI,
   getAllSearchCompetitors,
-  updateCompetitors
+  updateCompetitors,
 };
 
 export default CustomerServices;
