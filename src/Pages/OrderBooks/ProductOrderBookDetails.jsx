@@ -44,6 +44,7 @@ export const ProductOrderBookDetails = () => {
   const csvLinkRef = useRef(null);
   const dataList = useSelector((state) => state.auth);
   const userData = dataList.profile;
+  const assigned = userData.sales_users || [];
 
   const handleDownload = async () => {
     const data = await handleExport();
@@ -272,6 +273,7 @@ export const ProductOrderBookDetails = () => {
   const Tableheaders = [
     "ID",
     "Product",
+    "Raised By",
     "Pi Date",
     "Pi No",
     "Quantity",
@@ -290,6 +292,7 @@ export const ProductOrderBookDetails = () => {
   const Tabledata = orderBookData.map((row, i) => ({
     id: row.id,
     product: row.product,
+    raised_by: row.raised_by,
     pi_date: row.pi_date,
     pi_no: row.proforma_invoice,
     quantity: row.quantity,
@@ -307,6 +310,7 @@ export const ProductOrderBookDetails = () => {
   const Tableheaders2 = [
     "ID",
     "Product",
+    "Raised By",
     "Pi Date",
     "Pi No",
     "Quantity",
@@ -324,6 +328,7 @@ export const ProductOrderBookDetails = () => {
   const Tabledata2 = orderBookData.map((row, i) => ({
     id: row.id,
     product: row.product,
+    raised_by: row.raised_by,
     pi_date: row.pi_date,
     pi_no: row.proforma_invoice,
     quantity: row.quantity,
@@ -403,6 +408,52 @@ export const ProductOrderBookDetails = () => {
                   >
                     <MenuItem value={"Delhi"}>Delhi</MenuItem>
                     <MenuItem value={"Maharashtra"}>Maharashtra</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+              {filterQuery.includes(
+                "orderbook__proforma_invoice__raised_by__email"
+              ) && (
+                <FormControl
+                  sx={{ minWidth: "200px", marginLeft: "1em" }}
+                  size="small"
+                >
+                  <InputLabel id="demo-simple-select-label">
+                    Filter By Sales Person
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    name="values"
+                    label="Filter By Sales Person"
+                    value={filterSelectedQuery}
+                    onChange={(event) => handleInputChanges(event)}
+                    sx={{
+                      "& .MuiSelect-iconOutlined": {
+                        display: filterSelectedQuery ? "none" : "",
+                      },
+                      "&.Mui-focused .MuiIconButton-root": {
+                        color: "primary.main",
+                      },
+                    }}
+                    endAdornment={
+                      <IconButton
+                        sx={{
+                          visibility: filterSelectedQuery
+                            ? "visible"
+                            : "hidden",
+                        }}
+                        onClick={getResetData}
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    }
+                  >
+                    {assigned.map((option, i) => (
+                      <MenuItem key={i} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               )}
@@ -521,6 +572,11 @@ const filterOption = [
     label: "Search By State",
     value: "orderbook__proforma_invoice__seller_account__state",
   },
+  {
+    label: "Search By Sales Person",
+    value: "orderbook__proforma_invoice__raised_by__email",
+  },
+
   { label: "Search", value: "search" },
 ];
 const headers = [

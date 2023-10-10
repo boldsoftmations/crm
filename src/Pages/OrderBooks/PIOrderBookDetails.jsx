@@ -25,13 +25,6 @@ import {
 } from "./OrderBookUpdate";
 import { CustomTable } from "../../Components/CustomTable";
 
-const filterOption = [
-  {
-    label: "Search By State",
-    value: "orderbook__proforma_invoice__seller_account__state",
-  },
-  { label: "Search", value: "search" },
-];
 export const PIOrderBookDetails = () => {
   const [orderBookData, setOrderBookData] = useState([]);
   const errRef = useRef();
@@ -49,6 +42,7 @@ export const PIOrderBookDetails = () => {
   const csvLinkRef = useRef(null);
   const dataList = useSelector((state) => state.auth);
   const userData = dataList.profile;
+  const assigned = userData.sales_users || [];
 
   const handleDownload = async () => {
     const data = await handleExport();
@@ -264,6 +258,7 @@ export const PIOrderBookDetails = () => {
     "Pi No",
     "Pi Date",
     "Company",
+    "Raised By",
     "Billing City",
     "Shipping City",
     "Product",
@@ -282,6 +277,7 @@ export const PIOrderBookDetails = () => {
     pi_no: row.proforma_invoice,
     pi_date: row.pi_date,
     company: row.company,
+    raised_by: row.raised_by,
     billing_city: row.billing_city,
     shipping_city: row.shipping_city,
     product: row.product,
@@ -299,6 +295,7 @@ export const PIOrderBookDetails = () => {
     "Pi No",
     "Pi Date",
     "Company",
+    "Raised_by",
     "Billing City",
     "Shipping City",
     "Product",
@@ -316,6 +313,7 @@ export const PIOrderBookDetails = () => {
     pi_no: row.proforma_invoice,
     pi_date: row.pi_date,
     company: row.company,
+    raised_by: row.raised_by,
     billing_city: row.billing_city,
     shipping_city: row.shipping_city,
     product: row.product,
@@ -392,6 +390,52 @@ export const PIOrderBookDetails = () => {
                   >
                     <MenuItem value={"Delhi"}>Delhi</MenuItem>
                     <MenuItem value={"Maharashtra"}>Maharashtra</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+              {filterQuery.includes(
+                "orderbook__proforma_invoice__raised_by__email"
+              ) && (
+                <FormControl
+                  sx={{ minWidth: "200px", marginLeft: "1em" }}
+                  size="small"
+                >
+                  <InputLabel id="demo-simple-select-label">
+                    Filter By Sales Person
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    name="values"
+                    label="Filter By Sales Person"
+                    value={filterSelectedQuery}
+                    onChange={(event) => handleInputChanges(event)}
+                    sx={{
+                      "& .MuiSelect-iconOutlined": {
+                        display: filterSelectedQuery ? "none" : "",
+                      },
+                      "&.Mui-focused .MuiIconButton-root": {
+                        color: "primary.main",
+                      },
+                    }}
+                    endAdornment={
+                      <IconButton
+                        sx={{
+                          visibility: filterSelectedQuery
+                            ? "visible"
+                            : "hidden",
+                        }}
+                        onClick={getResetData}
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    }
+                  >
+                    {assigned.map((option, i) => (
+                      <MenuItem key={i} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               )}
@@ -489,6 +533,17 @@ export const PIOrderBookDetails = () => {
   );
 };
 
+const filterOption = [
+  {
+    label: "Search By State",
+    value: "orderbook__proforma_invoice__seller_account__state",
+  },
+  {
+    label: "Search By Sales Person",
+    value: "orderbook__proforma_invoice__raised_by__email",
+  },
+  { label: "Search", value: "search" },
+];
 const headers = [
   { label: "PI Number", key: "proforma_invoice" },
   { label: "PI Date", key: "pi_date" },

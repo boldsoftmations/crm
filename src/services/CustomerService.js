@@ -18,7 +18,7 @@ const getAllPaginateCompanyDataWithSearch = (currentPage, search) => {
 const getAllCustomerData = ({ page, assignToFilter, searchValue }) => {
   let url = `/api/customer/list-company/?`;
   if (page) url += `page=${page}&`;
-  if (assignToFilter) url += `assigned_to=${assignToFilter}&`;
+  if (assignToFilter) url += `assigned_to__email=${assignToFilter}&`;
   if (searchValue) url += `search=${searchValue}&`;
   return CustomAxios.get(url);
 };
@@ -38,7 +38,13 @@ const getAllPaginateIncompleteKycData = (boolValue, currentPage) => {
     `/api/customer/list-company/?is_verified=${boolValue}&page=${currentPage}`
   );
 };
-
+const getIncompleteKycCustomerData = ({  page, assignToFilter, searchValue }) => {
+  let url = `/api/customer/list-company/??is_verified=false&`;
+  if (page) url += `page=${page}&`;
+  if (assignToFilter) url += `assigned_to__email=${assignToFilter}&`;
+  if (searchValue) url += `search=${searchValue}&`;
+  return CustomAxios.get(url);
+};
 const getAllPaginateIncompleteKycDataWithSearch = (
   boolValue,
   currentPage,
@@ -357,6 +363,7 @@ const CustomerServices = {
   getAllSearchCompanyData,
   getAllIncompleteKycData,
   getAllPaginateIncompleteKycData,
+  getIncompleteKycCustomerData,
   getAllPaginateIncompleteKycDataWithSearch,
   getAllSearchIncompleteKycData,
   createCompanyData,

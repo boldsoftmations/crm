@@ -25,14 +25,6 @@ import {
 } from "./OrderBookUpdate";
 import { CustomTable } from "../../Components/CustomTable";
 
-const filterOption = [
-  {
-    label: "Search By State",
-    value: "orderbook__proforma_invoice__seller_account__state",
-  },
-  { label: "Search", value: "search" },
-];
-
 export const CustomerOrderBookDetails = () => {
   const [orderBookData, setOrderBookData] = useState([]);
   const errRef = useRef();
@@ -50,6 +42,7 @@ export const CustomerOrderBookDetails = () => {
   const csvLinkRef = useRef(null);
   const dataList = useSelector((state) => state.auth);
   const userData = dataList.profile;
+  const assigned = userData.sales_users || [];
 
   const openInPopup = (item) => {
     try {
@@ -286,6 +279,7 @@ export const CustomerOrderBookDetails = () => {
   const Tableheaders = [
     "ID",
     "Company",
+    "Raised By",
     "Billing City",
     "Shipping City",
     "Pi Date",
@@ -304,6 +298,7 @@ export const CustomerOrderBookDetails = () => {
   const Tabledata = orderBookData.map((row, i) => ({
     id: row.id,
     company: row.company,
+    raised_by: row.raised_by,
     billing_city: row.billing_city,
     shipping_city: row.shipping_city,
     pi_date: row.pi_date,
@@ -321,6 +316,7 @@ export const CustomerOrderBookDetails = () => {
   const Tableheaders2 = [
     "ID",
     "Company",
+    "Raised By",
     "Billing City",
     "Shipping City",
     "Pi Date",
@@ -338,6 +334,7 @@ export const CustomerOrderBookDetails = () => {
   const Tabledata2 = orderBookData.map((row, i) => ({
     id: row.id,
     company: row.company,
+    raised_by: row.raised_by,
     billing_city: row.billing_city,
     shipping_city: row.shipping_city,
     pi_date: row.pi_date,
@@ -416,6 +413,52 @@ export const CustomerOrderBookDetails = () => {
                   >
                     <MenuItem value={"Delhi"}>Delhi</MenuItem>
                     <MenuItem value={"Maharashtra"}>Maharashtra</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+              {filterQuery.includes(
+                "orderbook__proforma_invoice__raised_by__email"
+              ) && (
+                <FormControl
+                  sx={{ minWidth: "200px", marginLeft: "1em" }}
+                  size="small"
+                >
+                  <InputLabel id="demo-simple-select-label">
+                    Filter By Sales Person
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    name="values"
+                    label="Filter By Sales Person"
+                    value={filterSelectedQuery}
+                    onChange={(event) => handleInputChanges(event)}
+                    sx={{
+                      "& .MuiSelect-iconOutlined": {
+                        display: filterSelectedQuery ? "none" : "",
+                      },
+                      "&.Mui-focused .MuiIconButton-root": {
+                        color: "primary.main",
+                      },
+                    }}
+                    endAdornment={
+                      <IconButton
+                        sx={{
+                          visibility: filterSelectedQuery
+                            ? "visible"
+                            : "hidden",
+                        }}
+                        onClick={getResetData}
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    }
+                  >
+                    {assigned.map((option, i) => (
+                      <MenuItem key={i} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               )}
@@ -516,6 +559,18 @@ export const CustomerOrderBookDetails = () => {
     </div>
   );
 };
+
+const filterOption = [
+  {
+    label: "Search By State",
+    value: "orderbook__proforma_invoice__seller_account__state",
+  },
+  {
+    label: "Search By Sales Person",
+    value: "orderbook__proforma_invoice__raised_by__email",
+  },
+  { label: "Search", value: "search" },
+];
 
 const headers = [
   {
