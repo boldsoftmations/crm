@@ -420,6 +420,7 @@ export const ActivePI = () => {
                   <StyledTableCell align="center">TYPE</StyledTableCell>
                   <StyledTableCell align="center">PI NUMBER</StyledTableCell>
                   <StyledTableCell align="center">PI DATE</StyledTableCell>
+                  <StyledTableCell align="center">RAISED BY</StyledTableCell>
                   <StyledTableCell align="center">COMPANY</StyledTableCell>
                   <StyledTableCell align="center">BILLING CITY</StyledTableCell>
                   <StyledTableCell align="center">CONTACT</StyledTableCell>
@@ -444,6 +445,9 @@ export const ActivePI = () => {
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {row.generation_date}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.raised_by}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {row.company_name}
