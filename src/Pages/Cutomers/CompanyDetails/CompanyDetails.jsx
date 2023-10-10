@@ -105,15 +105,11 @@ export const CompanyDetails = () => {
   const handleExport = async () => {
     try {
       setOpen(true);
-      let response;
-      if (filterSelectedQuery) {
-        response = await CustomerServices.getAllPaginateCompanyDataWithSearch(
-          "all",
-          filterSelectedQuery
-        );
-      } else {
-        response = await CustomerServices.getAllPaginateCompanyData("all");
-      }
+      let response = await CustomerServices.getAllCustomerData({
+        page: "all",
+        assignToFilter: filterSelectedQuery,
+        searchValue: searchQuery,
+      });
       const data = response.data.map((row) => {
         return {
           id: row.id,
@@ -268,9 +264,6 @@ export const CompanyDetails = () => {
   const getSearchData = async (filterValue, searchValue) => {
     try {
       setOpen(true);
-      console.log("filterValue", filterValue);
-      console.log("searchValue", searchValue);
-      console.log("currentPage", currentPage);
       let response;
       if (filterValue || searchValue) {
         response = await CustomerServices.getAllCustomerData({

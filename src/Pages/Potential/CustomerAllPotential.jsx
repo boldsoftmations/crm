@@ -10,7 +10,7 @@ const PotentialDetail = ({ label, value }) => (
   </Grid>
 );
 
-export const CustomerAllPotential = ({ product, recordForEdit }) => {
+export const CustomerAllPotential = ({ recordForEdit }) => {
   const [openModal, setOpenModal] = useState(false);
   const [open, setOpen] = useState(false);
   const [potential, setPotential] = useState([]);
@@ -113,7 +113,6 @@ export const CustomerAllPotential = ({ product, recordForEdit }) => {
         <CustomerPotentialCreate
           getCompanyDetailsByID={getCompanyDetailsByID}
           recordForEdit={recordForEdit}
-          product={product}
           setOpenModal={setOpenModal}
         />
       </Popup>

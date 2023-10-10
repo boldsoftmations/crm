@@ -1,17 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CustomLoader } from "../../Components/CustomLoader";
 import { Autocomplete, Box, Button, Grid } from "@mui/material";
 import CustomerServices from "../../services/CustomerService";
 import CustomTextField from "../../Components/CustomTextField";
+import ProductService from "../../services/ProductService";
 
 export const CustomerPotentialCreate = (props) => {
-  const { recordForEdit, getCompanyDetailsByID, product, setOpenModal } = props;
+  const { recordForEdit, getCompanyDetailsByID, setOpenModal } = props;
   const [open, setOpen] = useState(false);
   const [potential, setPotential] = useState([]);
-
+  const [product, setProduct] = useState([]);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setPotential({ ...potential, [name]: value });
+  };
+
+  useEffect(() => {
+    getProduct();
+  }, []);
+
+  const getProduct = async () => {
+    try {
+      setOpen(true);
+      const res = await ProductService.getAllProduct();
+      setProduct(res.data);
+      setOpen(false);
+    } catch (err) {
+      console.error("error potential", err);
+      setOpen(false);
+    }
   };
 
   const handleAutocompleteChange = (value) => {

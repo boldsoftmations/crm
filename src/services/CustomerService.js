@@ -1,19 +1,5 @@
 import CustomAxios from "./api";
 
-const getAllCompanyData = () => {
-  return CustomAxios.get(`/api/customer/list-company/`);
-};
-
-const getAllPaginateCompanyData = (currentPage) => {
-  return CustomAxios.get(`/api/customer/list-company/?page=${currentPage}`);
-};
-
-const getAllPaginateCompanyDataWithSearch = (currentPage, search) => {
-  return CustomAxios.get(
-    `/api/customer/list-company/?page=${currentPage}&search=${search}`
-  );
-};
-
 // Generic function to get order book data
 const getAllCustomerData = ({ page, assignToFilter, searchValue }) => {
   let url = `/api/customer/list-company/?`;
@@ -23,42 +9,16 @@ const getAllCustomerData = ({ page, assignToFilter, searchValue }) => {
   return CustomAxios.get(url);
 };
 
-const getAllSearchCompanyData = (search) => {
-  return CustomAxios.get(`/api/customer/list-company/?search=${search}`);
-};
-
-const getAllIncompleteKycData = (boolValue) => {
-  return CustomAxios.get(
-    `/api/customer/list-company/?is_verified=${boolValue}`
-  );
-};
-
-const getAllPaginateIncompleteKycData = (boolValue, currentPage) => {
-  return CustomAxios.get(
-    `/api/customer/list-company/?is_verified=${boolValue}&page=${currentPage}`
-  );
-};
-const getIncompleteKycCustomerData = ({  page, assignToFilter, searchValue }) => {
+const getIncompleteKycCustomerData = ({
+  page,
+  assignToFilter,
+  searchValue,
+}) => {
   let url = `/api/customer/list-company/??is_verified=false&`;
   if (page) url += `page=${page}&`;
   if (assignToFilter) url += `assigned_to__email=${assignToFilter}&`;
   if (searchValue) url += `search=${searchValue}&`;
   return CustomAxios.get(url);
-};
-const getAllPaginateIncompleteKycDataWithSearch = (
-  boolValue,
-  currentPage,
-  search
-) => {
-  return CustomAxios.get(
-    `/api/customer/list-company/?is_verified=${boolValue}&page=${currentPage}&search=${search}`
-  );
-};
-
-const getAllSearchIncompleteKycData = (boolValue, search) => {
-  return CustomAxios.get(
-    `/api/customer/list-company/?is_verified=${boolValue}&search=${search}`
-  );
 };
 
 const createCompanyData = (data) => {
@@ -356,16 +316,8 @@ const updateCompetitors = (id, data) => {
 };
 
 const CustomerServices = {
-  getAllCompanyData,
   getAllCustomerData,
-  getAllPaginateCompanyData,
-  getAllPaginateCompanyDataWithSearch,
-  getAllSearchCompanyData,
-  getAllIncompleteKycData,
-  getAllPaginateIncompleteKycData,
   getIncompleteKycCustomerData,
-  getAllPaginateIncompleteKycDataWithSearch,
-  getAllSearchIncompleteKycData,
   createCompanyData,
   getCompanyDataById,
   getCompanyDataByIdWithType,

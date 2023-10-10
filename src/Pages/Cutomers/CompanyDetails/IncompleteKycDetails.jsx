@@ -98,20 +98,11 @@ export const IncompleteKycDetails = () => {
   const handleExport = async () => {
     try {
       setOpen(true);
-      let response;
-      if (filterSelectedQuery) {
-        response =
-          await CustomerServices.getAllPaginateIncompleteKycDataWithSearch(
-            "false",
-            "all",
-            filterSelectedQuery
-          );
-      } else {
-        response = await CustomerServices.getAllPaginateIncompleteKycData(
-          "false",
-          "all"
-        );
-      }
+      let response = await CustomerServices.getIncompleteKycCustomerData({
+        page: "all",
+        assignToFilter: filterSelectedQuery,
+        searchValue: searchQuery,
+      });
       const data = response.data.map((row) => {
         return {
           id: row.id,
