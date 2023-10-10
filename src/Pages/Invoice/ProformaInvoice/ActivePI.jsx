@@ -28,9 +28,8 @@ import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 import { UpdateCustomerProformaInvoice } from "./UpdateCustomerProformaInvoice";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { UpdateLeadsProformaInvoice } from "./UpdateLeadsProformaInvoice";
-import LeadServices from "../../../services/LeadService";
 import { Helmet } from "react-helmet";
-import CustomTextField from "../../../Components/CustomTextField";
+import { CustomSearchWithButton } from "../../../Components/CustomSearchWithButton";
 
 export const ActivePI = () => {
   const dispatch = useDispatch();
@@ -49,9 +48,9 @@ export const ActivePI = () => {
   const [typeValue, setTypeValue] = useState("");
   const [assign, setAssign] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
-  const [assigned, setAssigned] = useState([]);
   const data = useSelector((state) => state.auth);
   const users = data.profile;
+  const assigned = users.sales_users || [];
   const [isPrinting, setIsPrinting] = useState(false);
 
   useEffect(() => {
@@ -104,6 +103,11 @@ export const ActivePI = () => {
     getProformaInvoiceData();
   };
 
+  const getResetSearchData = () => {
+    setSearchValue("");
+    getProformaInvoiceData();
+  };
+
   const openInPopup = (item) => {
     setIDForEdit(item);
     setOpenPopup2(true);
@@ -119,22 +123,9 @@ export const ActivePI = () => {
   };
 
   useEffect(() => {
-    getAssignedData();
     getAllSellerAccountsDetails();
     getProformaInvoiceData();
   }, []);
-
-  const getAssignedData = async () => {
-    try {
-      setOpen(true);
-      const res = await LeadServices.getAllAssignedUser();
-      setAssigned(res.data);
-      setOpen(false);
-    } catch (error) {
-      console.log("error", error);
-      setOpen(false);
-    }
-  };
 
   const getAllSellerAccountsDetails = async () => {
     try {
@@ -152,9 +143,13 @@ export const ActivePI = () => {
   const getProformaInvoiceData = async () => {
     try {
       setOpen(true);
-      const response = currentPage
-        ? await InvoiceServices.getAllPIPagination("active", currentPage)
-        : await InvoiceServices.getAllPIData("active");
+      const response = await InvoiceServices.getAllPIData({
+        piType: "active",
+        page: currentPage,
+        filterType: filterType,
+        filterValue: statusValue || typeValue || assign,
+        searchValue: searchValue,
+      });
       setInvoiceData(response.data.results);
       const total = response.data.count;
       setpageCount(Math.ceil(total / 25));
@@ -185,13 +180,12 @@ export const ActivePI = () => {
       setOpen(true);
       const Search = searchValue ? "search" : "";
       if (filterValue || searchValue) {
-        const response = await InvoiceServices.getAllPISearch(
-          "active",
-          filterType,
-          filterValue,
-          Search,
-          searchValue
-        );
+        const response = await InvoiceServices.getAllPIData({
+          piType: "active",
+          filterType: filterType,
+          filterValue: filterValue,
+          searchValue: searchValue,
+        });
         if (response) {
           setInvoiceData(response.data.results);
           const total = response.data.count;
@@ -215,34 +209,31 @@ export const ActivePI = () => {
       const page = value;
       setCurrentPage(page);
       setOpen(true);
-      const Search = searchValue ? "search" : "";
+      let response;
       if (statusValue || typeValue || searchValue) {
-        const response = await InvoiceServices.getAllPIPaginationWithFilterBy(
-          "active",
-          page,
-          filterType,
-          statusValue || typeValue,
-          Search,
-          searchValue
-        );
-        if (response) {
-          setInvoiceData(response.data.results);
-          const total = response.data.count;
-          setpageCount(Math.ceil(total / 25));
-        } else {
-          getProformaInvoiceData();
-          setSearchValue(null);
-          setStatusValue(null);
-          setTypeValue(null);
-        }
+        response = await InvoiceServices.getAllPIData({
+          piType: "active",
+          page: page,
+          filterType: filterType,
+          filterValue: statusValue || typeValue || assign,
+          searchValue: searchValue,
+        });
       } else {
-        const response = await InvoiceServices.getAllPIPagination(
-          "active",
-          page
-        );
-        setInvoiceData(response.data.results);
+        response = await InvoiceServices.getAllPIData({
+          piType: "active",
+          page: page,
+        });
       }
-
+      if (response) {
+        setInvoiceData(response.data.results);
+        const total = response.data.count;
+        setpageCount(Math.ceil(total / 25));
+      } else {
+        getProformaInvoiceData();
+        setSearchValue(null);
+        setStatusValue(null);
+        setTypeValue(null);
+      }
       setOpen(false);
     } catch (error) {
       console.log("error", error);
@@ -371,31 +362,19 @@ export const ActivePI = () => {
                   }}
                 >
                   {assigned.map((option, i) => (
-                    <MenuItem key={i} value={option.email}>
-                      {option.email}
+                    <MenuItem key={i} value={option}>
+                      {option}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
             )}
-            <CustomTextField
-              value={searchValue}
-              onChange={(event) => setSearchValue(event.target.value)}
-              name="search"
-              size="small"
-              placeholder="search"
-              label="Search"
-              variant="outlined"
-              sx={{ marginLeft: "1em" }}
+            <CustomSearchWithButton
+              filterSelectedQuery={searchValue}
+              setFilterSelectedQuery={setSearchValue}
+              handleInputChange={handleSearchValue}
+              getResetData={getResetSearchData}
             />
-            <Button
-              variant="contained"
-              color="success"
-              sx={{ marginLeft: "1em" }}
-              onClick={handleSearchValue}
-            >
-              Search
-            </Button>
             <Button
               variant="contained"
               color="primary"
