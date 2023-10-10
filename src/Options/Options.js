@@ -404,10 +404,33 @@ const ALLOWED_ROLES = [
   "Sales Executive",
 ];
 
-const Marital_Status_Options =[
-"Married",
-"UnMarried"
-]
+const Marital_Status_Options = ["Married", "UnMarried"];
+
+const religionsInIndia = [
+  "Hinduism",
+  "Islam",
+  "Christianity",
+  "Sikhism",
+  "Buddhism",
+  "Jainism",
+  "Zoroastrianism",
+  "Judaism",
+  "Bahá'í Faith",
+  "Animism",
+  "Tribal Religions",
+  "Sanamahism",
+  "Sarnaism",
+  "Donyi-Polo",
+  "Ravidassia",
+  "Ahmadiyya",
+  "Shia Islam",
+  "Sunni Islam",
+  "Roman Catholicism",
+  "Protestantism",
+  "Orthodox Christianity",
+  "Others",
+];
+
 const Option = {
   LeadBusinessTypeData,
   CustomerBusinessTypeData,
@@ -419,6 +442,7 @@ const Option = {
   interestOption,
   MainDistribution,
   ALLOWED_ROLES,
-  Marital_Status_Options
+  Marital_Status_Options,
+  religionsInIndia,
 };
 export default Option;
