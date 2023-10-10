@@ -10,6 +10,10 @@ import {
   Select,
   Chip,
   Divider,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 import CustomerServices from "../../../services/CustomerService";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,7 +28,7 @@ import Option from "../../../Options/Options";
 import CustomTextField from "../../../Components/CustomTextField";
 
 export const UpdateCompanyDetails = (props) => {
-  const { setOpenPopup, getAllCompanyDetails, recordForEdit, product } = props;
+  const { setOpenPopup, getAllCompanyDetails, recordForEdit } = props;
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState([]);
   const [assigned, setAssigned] = useState([]);
@@ -175,6 +179,33 @@ export const UpdateCompanyDetails = (props) => {
                 <Chip label="Company Details" />
               </Divider>
             </Root>
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl>
+              <FormLabel id="demo-row-radio-buttons-group-label">
+                Type of Customer
+              </FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                value={inputValue.type_of_customer || ""}
+                onChange={(event) =>
+                  handleSelectChange("type_of_customer", event.target.value)
+                }
+              >
+                <FormControlLabel
+                  value="Industrial Customer"
+                  control={<Radio />}
+                  label="Industrial Customer"
+                />
+                <FormControlLabel
+                  value="Distribution Customer"
+                  control={<Radio />}
+                  label="Distribution Customer"
+                />
+              </RadioGroup>
+            </FormControl>
           </Grid>
           <Grid item xs={12} sm={4}>
             <CustomTextField
@@ -357,10 +388,7 @@ export const UpdateCompanyDetails = (props) => {
 
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <CustomerAllPotential
-            product={product}
-            recordForEdit={recordForEdit}
-          />
+          <CustomerAllPotential recordForEdit={recordForEdit} />
         </Grid>
       </Grid>
     </>
