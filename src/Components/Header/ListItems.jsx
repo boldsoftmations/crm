@@ -476,6 +476,19 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
+                to="/invoice/price-approval-pi"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Price Approval PI"
+                />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
                 to="/invoice/all-performa-invoice"
                 style={{ width: 300 }}
               >
@@ -2878,8 +2891,8 @@ export const ListItems = (props) => {
                 </List>
               </Collapse>
 
-                {/* Leads */}
-                <ListItem
+              {/* Leads */}
+              <ListItem
                 button
                 onClick={() => setExpand(!expand)}
                 style={{ width: 300 }}
@@ -3253,8 +3266,8 @@ export const ListItems = (props) => {
                 </List>
               </Collapse>
 
-                {/* Leads */}
-                <ListItem
+              {/* Leads */}
+              <ListItem
                 button
                 onClick={() => setExpand(!expand)}
                 style={{ width: 300 }}
@@ -4558,6 +4571,19 @@ export const ListItems = (props) => {
                       onClick={() => setOpen(false)}
                       inset
                       primary="Active PI"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/price-approval-pi"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Price Approval PI"
                     />
                   </ListItem>
                   <ListItem

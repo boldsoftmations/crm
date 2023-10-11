@@ -56,7 +56,8 @@ export const CreateLeadsProformaInvoice = (props) => {
   const [idForEdit, setIDForEdit] = useState();
   const [errorMessage, setErrorMessage] = useState();
   const [validationPrice, setValidationPrice] = useState("");
-  const [checked, setChecked] = React.useState(true);
+  const [checked, setChecked] = useState(true);
+  const [priceApproval, setPriceApproval] = useState(false);
   const [leads, setLeads] = useState([]);
   const [products, setProducts] = useState([
     {
@@ -206,7 +207,8 @@ export const CreateLeadsProformaInvoice = (props) => {
           : values.someDate,
         payment_terms: paymentTermData,
         delivery_terms: deliveryTermData,
-        status: "Raised",
+        status: priceApproval ? "Price Approval" : "Approved",
+        price_approval: priceApproval,
         products: products,
       };
       setOpen(true);
@@ -526,6 +528,17 @@ export const CreateLeadsProformaInvoice = (props) => {
             </Root>
           </Grid>
           <ErrorMessage errMsg={validationPrice} />
+          <Grid item xs={12}>
+            <FormControlLabel
+              label="Price Approval"
+              control={
+                <Checkbox
+                  checked={priceApproval}
+                  onChange={(event) => setPriceApproval(event.target.checked)}
+                />
+              }
+            />
+          </Grid>
           {products.map((input, index) => {
             return (
               <>

@@ -484,10 +484,8 @@ const headers = [
 
   { label: "Billing City", key: "billing_city" },
   { label: "Billing Address", key: "billing_address" },
-  { label: "Billing Pincode", key: "billing_pincode" },
   { label: "Shipping City", key: "shipping_city" },
   { label: "Shipping Address", key: "shipping_address" },
-  { label: "Shipping Pincode", key: "shipping_pincode" },
   {
     label: "Product",
     key: "product",
@@ -546,6 +544,8 @@ const headers2 = [
   { label: "PI Number", key: "proforma_invoice" },
   { label: "Billing City", key: "billing_city" },
   { label: "Shipping City", key: "shipping_city" },
+  { label: "Shipping Pincode", key: "shipping_pincode" },
+  { label: "Billing Pincode", key: "billing_pincode" },
   {
     label: "Product",
     key: "product",

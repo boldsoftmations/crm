@@ -121,6 +121,8 @@ export const ProductOrderBookDetails = () => {
             company: item.company,
             billing_city: item.billing_city,
             shipping_city: item.shipping_city,
+            billing_pincode: item.billing_pincode,
+            shipping_pincode: item.shipping_pincode,
             seller_state: item.seller_state,
             estimated_date: item.estimated_date,
             special_instructions: item.special_instructions,
@@ -497,6 +499,8 @@ const headers = [
   { label: "Customer", key: "company" },
   { label: "Billing City", key: "billing_city" },
   { label: "Shipping City", key: "shipping_city" },
+  { label: "Shipping Pincode", key: "shipping_pincode" },
+  { label: "Billing Pincode", key: "billing_pincode" },
   {
     label: "Seller State",
     key: "seller_state",
