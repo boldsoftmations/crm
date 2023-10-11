@@ -231,7 +231,11 @@ export const CreateCustomerProformaInvoice = (props) => {
       ) {
         await InvoiceServices.createCustomerProformaInvoiceData(req);
         setOpenPopup(false);
-        navigate("/invoice/active-pi");
+        if (priceApproval) {
+          navigate("/invoice/price-approval-pi");
+        } else {
+          navigate("/invoice/active-pi");
+        }
       } else {
         setOpenPopup2(true);
       }
