@@ -352,7 +352,7 @@ export const ProformaInvoiceView = (props) => {
                   variant="contained"
                   color="error"
                   onClick={(e) => {
-                    SendForApprovedPI(e);
+                    SendForRejectPI(e);
                     // SendForApprovalStatus(e);
                   }}
                 >
