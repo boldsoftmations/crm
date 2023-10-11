@@ -340,18 +340,19 @@ export const IncompleteKycDetails = () => {
         }}
       >
         <Box display="flex" alignItems="center">
-          <Autocomplete
-            size="small"
-            sx={{ width: 300 }}
-            onChange={(event, value) => handleFilterChange(value)}
-            value={filterSelectedQuery}
-            options={assigned.map((option) => option)}
-            getOptionLabel={(option) => option}
-            renderInput={(params) => (
-              <CustomTextField {...params} label="Filter By Sales Person" />
-            )}
-          />
-
+          {!userData.groups.includes("Sales Executive") && (
+            <Autocomplete
+              size="small"
+              sx={{ width: 300 }}
+              onChange={(event, value) => handleFilterChange(value)}
+              value={filterSelectedQuery}
+              options={assigned.map((option) => option)}
+              getOptionLabel={(option) => option}
+              renderInput={(params) => (
+                <CustomTextField {...params} label="Filter By Sales Person" />
+              )}
+            />
+          )}
           <CustomSearchWithButton
             filterSelectedQuery={searchQuery}
             setFilterSelectedQuery={setSearchQuery}
