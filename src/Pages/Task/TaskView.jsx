@@ -29,8 +29,8 @@ export const TaskView = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [taskByID, setTaskByID] = useState([]);
   const [openModalactivity, setOpenModalActivity] = useState(false);
-  const data = useSelector((state) => state.auth.profile);
-  const assignedOption = data.sales_users || [];
+  const UsersData = useSelector((state) => state.auth.profile);
+  const assignedOption = UsersData.sales_users || [];
 
   const handleFilterChange = (value) => {
     setFilterSelectedQuery(value);
@@ -225,17 +225,19 @@ export const TaskView = () => {
           }}
         >
           <Box display="flex" marginBottom="10px">
-            <Autocomplete
-              size="small"
-              sx={{ width: 300 }}
-              onChange={(event, value) => handleFilterChange(value)}
-              value={filterSelectedQuery}
-              options={assignedOption.map((option) => option)}
-              getOptionLabel={(option) => option}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="Filter By Sales Person" />
-              )}
-            />
+            {!UsersData.groups.includes("Sales Executive") && (
+              <Autocomplete
+                size="small"
+                sx={{ width: 300 }}
+                onChange={(event, value) => handleFilterChange(value)}
+                value={filterSelectedQuery}
+                options={assignedOption.map((option) => option)}
+                getOptionLabel={(option) => option}
+                renderInput={(params) => (
+                  <CustomTextField {...params} label="Filter By Sales Person" />
+                )}
+              />
+            )}
             <CustomSearchWithButton
               filterSelectedQuery={searchValue}
               setFilterSelectedQuery={setSearchValue}
