@@ -50,6 +50,14 @@ export const AllProformaInvoice = () => {
   const minDate = new Date().toISOString().split("T")[0];
   const maxDate = new Date("2030-12-31").toISOString().split("T")[0];
 
+  const FilterOptions = [
+    { label: "Status", value: "status" },
+    { label: "Type", value: "type" },
+    ...(!users.groups.includes("Sales Executive")
+      ? [{ label: "Sales Person", value: "raised_by__email" }]
+      : []),
+  ];
+
   const handleStartDateChange = (event) => {
     const date = new Date(event.target.value);
     setStartDate(date);
@@ -464,12 +472,6 @@ export const AllProformaInvoice = () => {
     </>
   );
 };
-
-const FilterOptions = [
-  { label: "Status", value: "status" },
-  { label: "Type", value: "type" },
-  { label: "Sales Person", value: "raised_by__email" },
-];
 
 const StatusOptions = [
   { label: "Raised", value: "raised" },

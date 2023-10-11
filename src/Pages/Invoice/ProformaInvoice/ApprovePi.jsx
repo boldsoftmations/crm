@@ -43,6 +43,15 @@ export const ApprovePi = () => {
   const data = useSelector((state) => state.auth);
   const users = data.profile;
   const assigned = users.sales_users || [];
+
+  const FilterOptions = [
+    { label: "Status", value: "status" },
+    { label: "Type", value: "type" },
+    ...(!users.groups.includes("Sales Executive")
+      ? [{ label: "Sales Person", value: "raised_by__email" }]
+      : []),
+  ];
+
   const handleSearchValue = () => {
     setSearchValue(searchValue);
     getSearchData(statusValue || typeValue);
@@ -422,12 +431,6 @@ export const ApprovePi = () => {
     </>
   );
 };
-
-const FilterOptions = [
-  { label: "Status", value: "status" },
-  { label: "Type", value: "type" },
-  { label: "Sales Person", value: "raised_by__email" },
-];
 
 const StatusOptions = [
   { label: "Raised", value: "raised" },

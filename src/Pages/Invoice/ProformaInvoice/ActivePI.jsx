@@ -53,6 +53,14 @@ export const ActivePI = () => {
   const assigned = users.sales_users || [];
   const [isPrinting, setIsPrinting] = useState(false);
 
+  const FilterOptions = [
+    { label: "Status", value: "status" },
+    { label: "Type", value: "type" },
+    ...(!users.groups.includes("Sales Executive")
+      ? [{ label: "Sales Person", value: "raised_by__email" }]
+      : []),
+  ];
+
   useEffect(() => {
     const beforePrint = () => {
       setIsPrinting(true);
@@ -337,39 +345,38 @@ export const ActivePI = () => {
                 </Select>
               </FormControl>
             )}
-            {filterType === "raised_by__email" &&
-              !users.groups.includes("Sales Executive") && (
-                <FormControl
-                  sx={{ minWidth: "200px", marginLeft: "1em" }}
-                  size="small"
-                >
-                  <InputLabel id="demo-simple-select-label">
-                    Filter By Sales Person
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    name="values"
-                    label="Filter By Sales Person"
-                    value={assign}
-                    onChange={(event) => handleAssignValue(event)}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: 300,
-                          width: 250,
-                        },
+            {filterType === "raised_by__email" && (
+              <FormControl
+                sx={{ minWidth: "200px", marginLeft: "1em" }}
+                size="small"
+              >
+                <InputLabel id="demo-simple-select-label">
+                  Filter By Sales Person
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  name="values"
+                  label="Filter By Sales Person"
+                  value={assign}
+                  onChange={(event) => handleAssignValue(event)}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 300,
+                        width: 250,
                       },
-                    }}
-                  >
-                    {assigned.map((option, i) => (
-                      <MenuItem key={i} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
+                    },
+                  }}
+                >
+                  {assigned.map((option, i) => (
+                    <MenuItem key={i} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
             <CustomSearchWithButton
               filterSelectedQuery={searchValue}
               setFilterSelectedQuery={setSearchValue}
@@ -546,12 +553,6 @@ export const ActivePI = () => {
     </>
   );
 };
-
-const FilterOptions = [
-  { label: "Status", value: "status" },
-  { label: "Type", value: "type" },
-  { label: "Sales Person", value: "raised_by__email" },
-];
 
 const StatusOptions = [
   { label: "Raised", value: "raised" },

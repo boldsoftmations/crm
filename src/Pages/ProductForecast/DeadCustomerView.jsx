@@ -24,11 +24,6 @@ import ProductService from "../../services/ProductService";
 import { Helmet } from "react-helmet";
 import { useSelector } from "react-redux";
 
-const filterOption = [
-  { label: "Search", value: "search" },
-  { label: "Sales Person", value: "assigned_to__email" },
-];
-
 export const DeadCustomerView = () => {
   const [open, setOpen] = useState(false);
   const errRef = useRef();
@@ -47,6 +42,18 @@ export const DeadCustomerView = () => {
   const [isPrinting, setIsPrinting] = useState(false);
   const UserData = useSelector((state) => state.auth.profile);
   const assigned = UserData.sales_users || [];
+
+  const filterOption = [
+    { label: "Search", value: "search" },
+    ...(!UserData.groups.includes("Sales Executive")
+      ? [
+          {
+            label: "Sales Person",
+            value: "assigned_to__email",
+          },
+        ]
+      : []),
+  ];
 
   useEffect(() => {
     const beforePrint = () => {

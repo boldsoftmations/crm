@@ -36,6 +36,27 @@ export const CurrentMonthForecastView = () => {
   const [isPrinting, setIsPrinting] = useState(false);
   const UserData = useSelector((state) => state.auth.profile);
   const assigned = UserData.sales_users || [];
+
+  const filterOption = [
+    {
+      label: "Company",
+      value: "product_forecast__company__name",
+    },
+    {
+      label: "Product",
+      value: "product_forecast__product__name",
+    },
+    ...(!UserData.groups.includes("Sales Executive")
+      ? [
+          {
+            label: "Sales Person",
+            value: "product_forecast__sales_person__email",
+          },
+        ]
+      : []),
+    { label: "Search", value: "search" },
+  ];
+
   useEffect(() => {
     const beforePrint = () => {
       setIsPrinting(true);
@@ -411,19 +432,3 @@ export const CurrentMonthForecastView = () => {
     </div>
   );
 };
-
-const filterOption = [
-  {
-    label: "Company",
-    value: "product_forecast__company__name",
-  },
-  {
-    label: "Product",
-    value: "product_forecast__product__name",
-  },
-  {
-    label: "Sales Person",
-    value: "product_forecast__sales_person__email",
-  },
-  { label: "Search", value: "search" },
-];

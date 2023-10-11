@@ -43,6 +43,26 @@ export const CustomerHavingForecastView = () => {
   const UserData = useSelector((state) => state.auth.profile);
   const assigned = UserData.sales_users || [];
 
+  const filterOption = [
+    {
+      label: "Company",
+      value: "product_forecast__company__name",
+    },
+    {
+      label: "Product",
+      value: "product_forecast__product__name",
+    },
+    ...(!UserData.groups.includes("Sales Executive")
+      ? [
+          {
+            label: "Sales Person",
+            value: "product_forecast__sales_person__email",
+          },
+        ]
+      : []),
+    { label: "Search", value: "search" },
+  ];
+
   useEffect(() => {
     const beforePrint = () => {
       setIsPrinting(true);
@@ -537,19 +557,3 @@ export const CustomerHavingForecastView = () => {
     </div>
   );
 };
-
-const filterOption = [
-  {
-    label: "Sales Person",
-    value: "sales_person__email",
-  },
-  {
-    label: "Product",
-    value: "product__name",
-  },
-  {
-    label: "Company",
-    value: "company__name",
-  },
-  { label: "Search", value: "search" },
-];

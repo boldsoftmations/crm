@@ -137,10 +137,17 @@ const updateCustomerProformaInvoiceData = (id, data) => {
 
 // All order Api
 // Generic function to get order book data
-const getOrderBookData = ({ type, page, searchType, searchValue }) => {
-  let url = `/api/invoice/list-order-book/?ordering=${type}&`;
-  if (page) url += `page=${page}&`;
-  if (searchType && searchValue) url += `${searchType}=${searchValue}&`;
+const getOrderBookData = ({
+  type,
+  page,
+  filterType,
+  filterValue,
+  searchValue,
+}) => {
+  let url = `/api/invoice/list-order-book/?ordering=${type}`;
+  if (page) url += `&page=${page}`;
+  if (filterType && filterValue) url += `&${filterType}=${filterValue}`;
+  if (searchValue) url += `&search=${searchValue}`;
   return CustomAxios.get(url);
 };
 
