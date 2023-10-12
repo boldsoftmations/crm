@@ -66,7 +66,16 @@ export const NewLeads = () => {
   const users = tokenData.profile;
   const [isPrinting, setIsPrinting] = useState(false);
   const assigned = users.sales_users || [];
+  const dataList = useSelector((state) => state.auth);
+  const userData = dataList.profile;
 
+  const FilterOptions = [
+    { label: "References", value: "references__source" },
+    { label: "Description", value: "description__name" },
+    ...(!userData.groups.includes("Sales Executive")
+      ? [{ label: "Assigned To", value: "assigned_to__email" }]
+      : []),
+  ];
   useEffect(() => {
     const beforePrint = () => {
       setIsPrinting(true);
@@ -667,13 +676,6 @@ export const NewLeads = () => {
     </>
   );
 };
-
-const FilterOptions = [
-  { label: "References", value: "references__source" },
-  { label: "Description", value: "description__name" },
-  { label: "Assigned To", value: "assigned_to__email" },
-  // { label: "Search", value: "search" },
-];
 
 const StageOptions = [
   { label: "New", value: "new" },
