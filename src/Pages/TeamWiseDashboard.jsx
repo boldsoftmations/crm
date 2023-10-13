@@ -6,7 +6,7 @@ import { Popup } from "../Components/Popup";
 import { DispatchData } from "./DispatchData";
 import { CustomLoader } from "../Components/CustomLoader";
 import InvoiceServices from "../services/InvoiceService";
-import { SalesPersonWiseDashboard } from "./SalesPersonWiseDashboard";
+import { SalesTeamAnalytics } from "./SalesTeamAnalytics";
 
 export const TeamWiseDashboard = () => {
   const navigate = useNavigate();
@@ -56,31 +56,31 @@ export const TeamWiseDashboard = () => {
   const minDate = new Date().toISOString().split("T")[0];
   const maxDate = new Date("2030-12-31").toISOString().split("T")[0];
   useEffect(() => {
-    getAllTaskDetails();
-    getCustomerDetails();
-    getAllDispatchData();
-    getNewCustomerDetails();
-    getPendingTaskDetails();
-    getPendingFollowupDetails();
-    getPIDetails();
-    getPendingDescriptionDetails();
-    getMonthlyCallStatusDetails();
-    getWeeklyCallStatusDetails();
-    getDailyCallStatusDetails();
-    getDescriptionQuantityDetails();
-    getDailyInvoiceQuantityDetails();
-    getDailyOrderBookQuantityDetails();
+    getConsAllTaskDetails();
+    getConsCustomerDetails();
+    getConsAllDispatchData();
+    getConsNewCustomerDetails();
+    getConsPendingTaskDetails();
+    getConsPendingFollowupDetails();
+    getConsPIDetails();
+    getConsPendingDescriptionDetails();
+    getConsMonthlyCallStatusDetails();
+    getConsWeeklyCallStatusDetails();
+    getConsDailyCallStatusDetails();
+    getConsDescriptionQuantityDetails();
+    getConsDailyInvoiceQuantityDetails();
+    getConsDailyOrderBookQuantityDetails();
   }, []);
 
   useEffect(() => {
-    getForecastDetails();
+    getConsForecastDetails();
   }, [userData]);
 
   useEffect(() => {
     if (filterValue) {
-      getCallPerformanceByFilter(filterValue, startDate, endDate);
+      getConsCallPerformanceByFilter(filterValue, startDate, endDate);
     } else {
-      getCallPerformanceDetails();
+      getConsCallPerformanceDetails();
     }
   }, [startDate, endDate]);
 
@@ -157,10 +157,10 @@ export const TeamWiseDashboard = () => {
     setAssign(null);
   };
 
-  const getAllTaskDetails = async () => {
+  const getConsAllTaskDetails = async () => {
     try {
       setOpen(true);
-      const response = await DashboardService.getLeadDashboard();
+      const response = await DashboardService.getConsLeadDashboard();
       const Data = [
         { name: "new", label: "New", value: response.data.new },
         { name: "open", label: "Open", value: response.data.open },
@@ -195,10 +195,10 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getCustomerDetails = async () => {
+  const getConsCustomerDetails = async () => {
     try {
       setOpen(true);
-      const response = await DashboardService.getCustomerDashboard();
+      const response = await DashboardService.getConsCustomerDashboard();
       const Total =
         response.data.active_customers +
         response.data.dead_customers +
@@ -232,13 +232,11 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getForecastDetails = async () => {
+  const getConsForecastDetails = async () => {
     try {
       setOpen(true);
-      const forecastResponse = userData.is_staff
-        ? await DashboardService.getConsLastThreeMonthForecastData()
-        : await DashboardService.getLastThreeMonthForecastData();
-
+      const forecastResponse =
+        await DashboardService.getConsLastThreeMonthForecastData();
       const columnKeys = Object.keys(forecastResponse.data);
       const isAllColumnsEmpty = columnKeys.every(
         (key) => forecastResponse.data[key].length === 0
@@ -268,10 +266,10 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getAllDispatchData = async () => {
+  const getConsAllDispatchData = async () => {
     try {
       setOpen(true);
-      const response = await InvoiceServices.getDispatchDashboardData();
+      const response = await InvoiceServices.getConsDispatchDashboardData();
       const Data = [
         { name: "LR-M1", value: response.data.LR_M1, unit: "M1", type: "LR" },
         { name: "LR-M2", value: response.data.LR_M2, unit: "M2", type: "LR" },
@@ -303,10 +301,11 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getNewCustomerDetails = async () => {
+  const getConsNewCustomerDetails = async () => {
     try {
       setOpen(true);
-      const newcustomerResponse = await DashboardService.getNewCustomerData();
+      const newcustomerResponse =
+        await DashboardService.getConsConsNewCustomerData();
       const Data = Object.keys(newcustomerResponse.data).flatMap((key) => {
         return newcustomerResponse.data[key].map((item) => {
           return {
@@ -324,10 +323,10 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getPendingTaskDetails = async () => {
+  const getConsPendingTaskDetails = async () => {
     try {
       setOpen(true);
-      const response = await DashboardService.getPendingTaskData();
+      const response = await DashboardService.getConsPendingTaskData();
 
       const Data = [
         {
@@ -351,10 +350,10 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getPendingFollowupDetails = async () => {
+  const getConsPendingFollowupDetails = async () => {
     try {
       setOpen(true);
-      const response = await DashboardService.getPendingFollowupData();
+      const response = await DashboardService.getConsPendingFollowupData();
 
       const Data = [
         {
@@ -380,10 +379,10 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getPIDetails = async () => {
+  const getConsPIDetails = async () => {
     try {
       setOpen(true);
-      const response = await DashboardService.getPIData();
+      const response = await DashboardService.getConsPIData();
       const Data = [
         {
           label: "Paid PI",
@@ -408,11 +407,11 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getPendingDescriptionDetails = async () => {
+  const getConsPendingDescriptionDetails = async () => {
     try {
       setOpen(true);
       const response =
-        await DashboardService.getDescriptionWisePendingQuantityData();
+        await DashboardService.getConsDescriptionWisePendingQuantityData();
       const Data = response.data.map((item) => {
         return {
           name: item.product__description__name,
@@ -428,11 +427,11 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getMonthlyCallStatusDetails = async () => {
+  const getConsMonthlyCallStatusDetails = async () => {
     try {
       setOpen(true);
 
-      const response = await DashboardService.getMonthlyCallStatusData();
+      const response = await DashboardService.getConsMonthlyCallStatusData();
       const Data = Object.keys(response.data).flatMap((key) => {
         return response.data[key].map((item) => {
           return {
@@ -452,11 +451,11 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getWeeklyCallStatusDetails = async () => {
+  const getConsWeeklyCallStatusDetails = async () => {
     try {
       setOpen(true);
 
-      const response = await DashboardService.getWeeklyCallStatusData();
+      const response = await DashboardService.getConsWeeklyCallStatusData();
       const Data = response.data.map((dayObject) => {
         const week = Object.keys(dayObject)[0];
         const weekData = dayObject[week][0];
@@ -475,11 +474,11 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getDailyCallStatusDetails = async () => {
+  const getConsDailyCallStatusDetails = async () => {
     try {
       setOpen(true);
 
-      const response = await DashboardService.getDailyCallStatusData();
+      const response = await DashboardService.getConsDailyCallStatusData();
       const Data = response.data.map((dayObject) => {
         const day = Object.keys(dayObject)[0];
         const dayData = dayObject[day][0];
@@ -532,10 +531,11 @@ export const TeamWiseDashboard = () => {
     return fullDay;
   };
 
-  const getDescriptionQuantityDetails = async () => {
+  const getConsDescriptionQuantityDetails = async () => {
     try {
       setOpen(true);
-      const response = await DashboardService.getDescriptionWiseQuantityData();
+      const response =
+        await DashboardService.getConsDescriptionWiseQuantityData();
       const Data = response.data.map((item) => {
         return {
           name: item.product__description__name,
@@ -551,12 +551,12 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getCallPerformanceDetails = async () => {
+  const getConsCallPerformanceDetails = async () => {
     try {
       setOpen(true);
       const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
       const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
-      const response = await DashboardService.getCallPerformanceData(
+      const response = await DashboardService.getConsCallPerformanceData(
         StartDate,
         EndDate
       );
@@ -617,10 +617,10 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getDailyInvoiceQuantityDetails = async () => {
+  const getConsDailyInvoiceQuantityDetails = async () => {
     try {
       setOpen(true);
-      const response = await DashboardService.getDailyInvoiceQuantityData();
+      const response = await DashboardService.getConsDailyInvoiceQuantityData();
       setDailyInvoiceQuantity(response.data);
       setOpen(false);
     } catch (err) {
@@ -629,10 +629,11 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getDailyOrderBookQuantityDetails = async () => {
+  const getConsDailyOrderBookQuantityDetails = async () => {
     try {
       setOpen(true);
-      const response = await DashboardService.getDailyOrderBookQuantityData();
+      const response =
+        await DashboardService.getConsDailyOrderBookQuantityData();
       setDailyOrderBookQuantity(response.data);
       setOpen(false);
     } catch (err) {
@@ -645,49 +646,49 @@ export const TeamWiseDashboard = () => {
     if (value) {
       setFilterValue(value.email);
       setAssign(value.email);
-      getDataByFilter(value.email);
-      getNewCustomerByFilter(value.email);
-      getPendingTaskByFilter(value.email);
-      getPendingFollowupByFilter(value.email);
-      getPIByFilter(value.email);
-      getCustomerByFilter(value.email);
-      geTaskByFilter(value.email);
-      getPendingDescriptionByFilter(value.email);
-      getMonthlyCallStatusByFilter(value.email);
-      getWeeklyCallStatusByFilter(value.email);
-      getDailyCallStatusByFilter(value.email);
-      getDescriptionQuantityByFilter(value.email);
-      getCallPerformanceByFilter(value.email, startDate, endDate);
-      getDailyInvoiceQuantityByFilter(value.email);
-      getDailyOrderBookQuantityByFilter(value.email);
+      getConsDataByFilter(value.email);
+      getConsNewCustomerByFilter(value.email);
+      getConsPendingTaskByFilter(value.email);
+      getConsPendingFollowupByFilter(value.email);
+      getConsPIByFilter(value.email);
+      getConsCustomerByFilter(value.email);
+      getConsTaskByFilter(value.email);
+      getConsPendingDescriptionByFilter(value.email);
+      getConsMonthlyCallStatusByFilter(value.email);
+      getConsWeeklyCallStatusByFilter(value.email);
+      getConsDailyCallStatusByFilter(value.email);
+      getConsDescriptionQuantityByFilter(value.email);
+      getConsCallPerformanceByFilter(value.email, startDate, endDate);
+      getConsDailyInvoiceQuantityByFilter(value.email);
+      getConsDailyOrderBookQuantityByFilter(value.email);
     } else {
       // Handle the case when value is null (i.e., when the Autocomplete is reset)
-      getForecastDetails();
-      getNewCustomerDetails();
-      getPendingTaskDetails();
-      getPendingFollowupDetails();
-      getCustomerDetails();
-      getPIDetails();
-      getAllTaskDetails();
+      getConsForecastDetails();
+      getConsNewCustomerDetails();
+      getConsPendingTaskDetails();
+      getConsPendingFollowupDetails();
+      getConsCustomerDetails();
+      getConsPIDetails();
+      getConsAllTaskDetails();
       setAssign(null);
-      getPendingDescriptionDetails();
+      getConsPendingDescriptionDetails();
       setFilterValue(null);
-      getMonthlyCallStatusDetails();
-      getWeeklyCallStatusDetails();
-      getDailyCallStatusDetails();
-      getDescriptionQuantityDetails();
-      getCallPerformanceDetails();
-      getDailyInvoiceQuantityDetails();
-      getDailyOrderBookQuantityDetails();
+      getConsMonthlyCallStatusDetails();
+      getConsWeeklyCallStatusDetails();
+      getConsDailyCallStatusDetails();
+      getConsDescriptionQuantityDetails();
+      getConsCallPerformanceDetails();
+      getConsDailyInvoiceQuantityDetails();
+      getConsDailyOrderBookQuantityDetails();
     }
   };
 
-  const getDataByFilter = async (value) => {
+  const getConsDataByFilter = async (value) => {
     try {
       const FilterData = value;
       setOpen(true);
       const forecastResponse =
-        await DashboardService.getLastThreeMonthForecastDataByFilter(
+        await DashboardService.getConsLastThreeMonthForecastDataByFilter(
           FilterData
         );
 
@@ -720,12 +721,12 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getNewCustomerByFilter = async (value) => {
+  const getConsNewCustomerByFilter = async (value) => {
     try {
       const FilterData = value;
       setOpen(true);
       const newcustomerResponse =
-        await DashboardService.getNewCustomerDataByFilter(FilterData);
+        await DashboardService.getConsNewCustomerDataByFilter(FilterData);
       const Data = Object.keys(newcustomerResponse.data).flatMap((key) => {
         return newcustomerResponse.data[key].map((item) => {
           return {
@@ -743,11 +744,11 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getPendingTaskByFilter = async (value) => {
+  const getConsPendingTaskByFilter = async (value) => {
     try {
       const FilterData = value;
       setOpen(true);
-      const response = await DashboardService.getPendingTaskDataByFilter(
+      const response = await DashboardService.getConsPendingTaskDataByFilter(
         FilterData
       );
       const Data = [
@@ -774,13 +775,12 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getPendingFollowupByFilter = async (value) => {
+  const getConsPendingFollowupByFilter = async (value) => {
     try {
       const FilterData = value;
       setOpen(true);
-      const response = await DashboardService.getPendingFollowupDataByFilter(
-        FilterData
-      );
+      const response =
+        await DashboardService.getConsPendingFollowupDataByFilter(FilterData);
       const Data = [
         {
           label: "Upcoming FollowUp",
@@ -805,11 +805,11 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getPIByFilter = async (value) => {
+  const getConsPIByFilter = async (value) => {
     try {
       const FilterData = value;
       setOpen(true);
-      const response = await DashboardService.getPIDataByFilter(FilterData);
+      const response = await DashboardService.getConsPIDataByFilter(FilterData);
       const Data = [
         {
           label: "Paid PI",
@@ -834,11 +834,11 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getCustomerByFilter = async (value) => {
+  const getConsCustomerByFilter = async (value) => {
     try {
       const FilterData = value;
       setOpen(true);
-      const response = await DashboardService.getCustomerDataByFilter(
+      const response = await DashboardService.getConsCustomerDataByFilter(
         FilterData
       );
       const Total =
@@ -874,11 +874,13 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const geTaskByFilter = async (value) => {
+  const getConsTaskByFilter = async (value) => {
     try {
       const FilterData = value;
       setOpen(true);
-      const response = await DashboardService.getLeadDataByFilter(FilterData);
+      const response = await DashboardService.getConsLeadDataByFilter(
+        FilterData
+      );
       const Data = [
         { name: "new", label: "New", value: response.data.new },
         { name: "open", label: "Open", value: response.data.open },
@@ -913,12 +915,12 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getPendingDescriptionByFilter = async (value) => {
+  const getConsPendingDescriptionByFilter = async (value) => {
     try {
       const FilterData = value;
       setOpen(true);
       const response =
-        await DashboardService.getDescriptionWisePendingQuantityDataByFilter(
+        await DashboardService.getConsDescriptionWisePendingQuantityDataByFilter(
           FilterData
         );
       const Data = response.data.map((item) => {
@@ -936,13 +938,12 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getMonthlyCallStatusByFilter = async (value) => {
+  const getConsMonthlyCallStatusByFilter = async (value) => {
     try {
       const FilterData = value;
       setOpen(true);
-      const response = await DashboardService.getMonthlyCallStatusDataByFilter(
-        FilterData
-      );
+      const response =
+        await DashboardService.getConsMonthlyCallStatusDataByFilter(FilterData);
       const Data = Object.keys(response.data).flatMap((key) => {
         return response.data[key].map((item) => {
           return {
@@ -963,13 +964,12 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getWeeklyCallStatusByFilter = async (value) => {
+  const getConsWeeklyCallStatusByFilter = async (value) => {
     try {
       const FilterData = value;
       setOpen(true);
-      const response = await DashboardService.getWeeklyCallStatusDataByFilter(
-        FilterData
-      );
+      const response =
+        await DashboardService.getConsWeeklyCallStatusDataByFilter(FilterData);
       const Data = response.data.map((dayObject) => {
         const week = Object.keys(dayObject)[0];
         const weekData = dayObject[week][0];
@@ -991,13 +991,12 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getDailyCallStatusByFilter = async (value) => {
+  const getConsDailyCallStatusByFilter = async (value) => {
     try {
       const FilterData = value;
       setOpen(true);
-      const response = await DashboardService.getDailyCallStatusDataByFilter(
-        FilterData
-      );
+      const response =
+        await DashboardService.getConsDailyCallStatusDataByFilter(FilterData);
       const Data = response.data.map((dayObject) => {
         const day = Object.keys(dayObject)[0];
         const dayData = dayObject[day][0];
@@ -1022,12 +1021,12 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getDescriptionQuantityByFilter = async (value) => {
+  const getConsDescriptionQuantityByFilter = async (value) => {
     try {
       const FilterData = value;
       setOpen(true);
       const response =
-        await DashboardService.getDescriptionWiseQuantityDataByFilter(
+        await DashboardService.getConsDescriptionWiseQuantityDataByFilter(
           FilterData
         );
       const Data = response.data.map((item) => {
@@ -1045,17 +1044,18 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getCallPerformanceByFilter = async (value, startDate, endDate) => {
+  const getConsCallPerformanceByFilter = async (value, startDate, endDate) => {
     try {
       setOpen(true);
       const FilterData = value;
       const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
       const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
-      const response = await DashboardService.getCallPerformanceDataByFilter(
-        FilterData,
-        StartDate,
-        EndDate
-      );
+      const response =
+        await DashboardService.getConsCallPerformanceDataByFilter(
+          FilterData,
+          StartDate,
+          EndDate
+        );
       const Data = [
         {
           name: "Order",
@@ -1112,12 +1112,14 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getDailyInvoiceQuantityByFilter = async (value) => {
+  const getConsDailyInvoiceQuantityByFilter = async (value) => {
     try {
       setOpen(true);
       const FilterData = value;
       const response =
-        await DashboardService.getDailyInvoiceQuantityDataByFilter(FilterData);
+        await DashboardService.getConsDailyInvoiceQuantityDataByFilter(
+          FilterData
+        );
       setDailyInvoiceQuantity(response.data);
       setOpen(false);
     } catch (err) {
@@ -1126,12 +1128,12 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getDailyOrderBookQuantityByFilter = async (value) => {
+  const getConsDailyOrderBookQuantityByFilter = async (value) => {
     try {
       setOpen(true);
       const FilterData = value;
       const response =
-        await DashboardService.getDailyOrderBookQuantityDataByFilter(
+        await DashboardService.getConsDailyOrderBookQuantityDataByFilter(
           FilterData
         );
       setDailyOrderBookQuantity(response.data);
@@ -1162,7 +1164,7 @@ export const TeamWiseDashboard = () => {
   return (
     <>
       <CustomLoader open={open} />
-      <SalesPersonWiseDashboard
+      <SalesTeamAnalytics
         barChartData={barChartData}
         pieChartData={pieChartData}
         horizontalBarData={horizontalBarData}

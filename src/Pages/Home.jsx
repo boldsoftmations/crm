@@ -6,7 +6,7 @@ import { Popup } from "../Components/Popup";
 import { DispatchData } from "./DispatchData";
 import { CustomLoader } from "../Components/CustomLoader";
 import InvoiceServices from "../services/InvoiceService";
-import { SalesPersonWiseDashboard } from "./SalesPersonWiseDashboard";
+import { SalesPersonAnalytics } from "./SalesPersonAnalytics";
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -235,10 +235,8 @@ export const Home = () => {
   const getForecastDetails = async () => {
     try {
       setOpen(true);
-      const forecastResponse = userData.is_staff
-        ? await DashboardService.getConsLastThreeMonthForecastData()
-        : await DashboardService.getLastThreeMonthForecastData();
-
+      const forecastResponse =
+        await DashboardService.getLastThreeMonthForecastData();
       const columnKeys = Object.keys(forecastResponse.data);
       const isAllColumnsEmpty = columnKeys.every(
         (key) => forecastResponse.data[key].length === 0
@@ -1162,7 +1160,7 @@ export const Home = () => {
   return (
     <>
       <CustomLoader open={open} />
-      <SalesPersonWiseDashboard
+      <SalesPersonAnalytics
         barChartData={barChartData}
         pieChartData={pieChartData}
         horizontalBarData={horizontalBarData}
