@@ -102,7 +102,7 @@ export const Login = () => {
         getUsers();
       }
 
-      navigate("/user/home");
+      navigate("/user/analytics");
       setUser("");
 
       setOpen(false);

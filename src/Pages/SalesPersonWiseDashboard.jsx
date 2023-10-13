@@ -1,27 +1,30 @@
 import React, { useState } from "react";
 import {
+  Autocomplete,
   Grid,
+  Button,
   Box,
   Typography,
   CircularProgress,
-  Autocomplete,
-  FormControlLabel,
-  Switch,
-  Button,
+  Paper,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import PropTypes from "prop-types";
 import { CustomChart } from "../Components/CustomChart";
-import { useSelector } from "react-redux";
 import { Popup } from "../Components/Popup";
+import { useSelector } from "react-redux";
 import CustomTextField from "../Components/CustomTextField";
-export const SalesDashboard = (props) => {
+
+export const SalesPersonWiseDashboard = (props) => {
   const {
     barChartData,
     pieChartData,
+    horizontalBarData,
     newCustomerData,
     pendingTask,
     pendingFollowup,
@@ -30,6 +33,8 @@ export const SalesDashboard = (props) => {
     weeklyStatus,
     dailyStatus,
     handleSegmentHover,
+    handleAutocompleteChange,
+    assign,
     total,
     piData,
     funnelData,
@@ -50,20 +55,70 @@ export const SalesDashboard = (props) => {
     openPopup3,
     setOpenPopup3,
     getResetDate,
+    team,
   } = props;
   const userData = useSelector((state) => state.auth.profile);
+  const [dIQdata, setDIQData] = useState([]);
+  const [dOBQdata, setDOBQData] = useState([]);
+  const [activeButton, setActiveButton] = useState("monthly");
+  const assigned = userData.sales_users || [];
   const [privacy] = useState(
-    !userData.groups.includes("Sales Executive") &&
+    !userData.groups.includes("Director") &&
+      !userData.groups.includes("Sales Manager") &&
+      !userData.groups.includes("Sales Deputy Manager") &&
+      !userData.groups.includes("Sales Assistant Deputy Manager") &&
+      !userData.groups.includes("Sales Executive") &&
       !userData.groups.includes("Sales Manager without Leads")
   );
+  let SALES_PERSON_OPTIONS = assigned;
 
-  const [dIQdata, setDIQData] = useState();
-  const [dOBQdata, setDOBQData] = useState();
-  const [activeButton, setActiveButton] = useState("monthly");
+  if (team) {
+    SALES_PERSON_OPTIONS = assigned.filter((user) =>
+      [
+        "Sales Manager",
+        "Sales Deputy Manager",
+        "Sales Assistant Deputy Manager",
+        "Director",
+      ].includes(user.groups__name)
+    );
+  }
+
+  let displayOptions = SALES_PERSON_OPTIONS.map((option) => {
+    return {
+      email: option.email,
+      primaryGroup: team ? option.groups__name : null,
+    };
+  });
+
+  const selectedOption = displayOptions.find(
+    (option) => option.email === assign
+  );
+
+  // Custom sorting function
+  const sortOptions = (a, b) => {
+    const order = [
+      "Sales Manager",
+      "Sales Deputy Manager",
+      "Sales Assistant Deputy Manager",
+      "Director",
+    ];
+    const groupOrderA = order.indexOf(a.primaryGroup);
+    const groupOrderB = order.indexOf(b.primaryGroup);
+
+    if (groupOrderA < groupOrderB) return -1;
+    if (groupOrderA > groupOrderB) return 1;
+
+    // If groups are the same, sort by email
+    return a.email.localeCompare(b.email);
+  };
+
+  // Sort the displayOptions array
+  displayOptions.sort(sortOptions);
 
   const handleButtonClick = (buttonType) => {
     setActiveButton(buttonType);
   };
+
   const descriptionOptionsForInvoice = dailyInvoiceQuantity.flatMap((entry) =>
     Object.keys(entry)
   );
@@ -215,6 +270,35 @@ export const SalesDashboard = (props) => {
               );
             })}
           </Grid>
+
+          {/* Filter By Sales Person */}
+          <Grid container spacing={1} sx={{ my: "20px" }}>
+            {(!userData.groups.includes("Sales Executive") ||
+              !userData.groups.includes("Sales Manager Without Leads")) && (
+              <Paper sx={{ width: "100%", padding: "20px" }}>
+                <Grid container alignItems="center" spacing={1}>
+                  <Grid item xs={9} sm={9} md={9} lg={9}>
+                    <Autocomplete
+                      size="small"
+                      onChange={(event, value) =>
+                        handleAutocompleteChange(value)
+                      }
+                      value={selectedOption}
+                      options={displayOptions}
+                      groupBy={(option) => option.primaryGroup || ""}
+                      getOptionLabel={(option) => option.email}
+                      renderInput={(params) => (
+                        <CustomTextField
+                          {...params}
+                          label="Filter By Sales Person"
+                        />
+                      )}
+                    />
+                  </Grid>
+                </Grid>
+              </Paper>
+            )}
+          </Grid>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <CustomChart
@@ -257,7 +341,31 @@ export const SalesDashboard = (props) => {
             </Grid>
           </Grid>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
+            {userData.groups.includes("Director") && (
+              <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
+                <CustomChart
+                  chartType="BarChart"
+                  data={[
+                    ["Name", "Value", { role: "style" }],
+                    ...horizontalBarData.map((item) => [
+                      item.name,
+                      item.value,
+                      item.type === "LR" ? "blue" : "green",
+                    ]),
+                  ]}
+                  options={{
+                    title: "Dispatch Data",
+                    width: "100%",
+                    height: "300px",
+                    legend: { position: "none" },
+                    hAxis: { title: "Value" },
+                  }}
+                  widthStyle={"100%"}
+                  heightStyle={"300px"}
+                />
+              </Grid>
+            )}
+            <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
               <CustomChart
                 chartType="PieChart"
                 data={[
@@ -274,7 +382,7 @@ export const SalesDashboard = (props) => {
                 heightStyle={"300px"}
               />
             </Grid>
-            <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
+            <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
               <CustomChart
                 chartType="BarChart"
                 data={[
@@ -343,100 +451,100 @@ export const SalesDashboard = (props) => {
                 ))}
               </div>
             </Grid>
-          </Grid>
-          <Grid item xs={12} sm={12} sx={{ marginTop: "20px" }}>
-            <Button
-              variant={activeButton === "monthly" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
-              sx={{ margin: "0 10px 10px 0" }}
-              color="primary"
-              onClick={() => handleButtonClick("monthly")}
-            >
-              Monthly Call Status
-            </Button>
-            <Button
-              variant={activeButton === "weekly" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
-              sx={{ margin: "0 10px 10px 0" }}
-              color="primary"
-              onClick={() => handleButtonClick("weekly")}
-            >
-              Weekly Call Status
-            </Button>
-            <Button
-              variant={activeButton === "daily" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
-              sx={{ margin: "0 10px 10px 0" }}
-              color="primary"
-              onClick={() => handleButtonClick("daily")}
-            >
-              Daily Call Status
-            </Button>
-            {activeButton === "monthly" && (
-              <CustomChart
-                chartType="ColumnChart"
-                data={[
-                  ["Month", "Existing Lead", "New Lead", "Customer"],
-                  ...monthlyStatus.map((item) => [
-                    item.combination,
-                    item.existing_lead,
-                    item.new_lead,
-                    item.customer,
-                  ]),
-                ]}
-                options={{
-                  title: "Monthly Call Status",
-                  width: "100%",
-                  height: "400px",
-                  isStacked: true,
-                  legend: { position: "top" },
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            )}
-            {activeButton === "weekly" && (
-              <CustomChart
-                chartType="ColumnChart"
-                data={[
-                  ["Week", "Existing Lead", "New Lead", "Customer"],
-                  ...weeklyStatus.map((item) => [
-                    item.combination,
-                    item.existing_lead,
-                    item.new_lead,
-                    item.customer,
-                  ]),
-                ]}
-                options={{
-                  title: "Weekly Call Status",
-                  width: "100%",
-                  height: "400px",
-                  curveType: "function",
-                  legend: { position: "top" },
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            )}
-            {activeButton === "daily" && (
-              <CustomChart
-                chartType="ColumnChart"
-                data={[
-                  ["Day", "Existing Lead", "New Lead", "Customer"],
-                  ...dailyStatus.map((item) => [
-                    item.combination,
-                    item.existing_lead,
-                    item.new_lead,
-                    item.customer,
-                  ]),
-                ]}
-                options={{
-                  title: "Daily Call Status",
-                  width: "100%",
-                  height: "400px",
-                  legend: { position: "top" },
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            )}
+            <Grid item xs={12} sm={12} sx={{ marginTop: "20px" }}>
+              <Button
+                variant={activeButton === "monthly" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
+                sx={{ margin: "0 10px 10px 0" }}
+                color="primary"
+                onClick={() => handleButtonClick("monthly")}
+              >
+                Monthly Call Status
+              </Button>
+              <Button
+                variant={activeButton === "weekly" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
+                sx={{ margin: "0 10px 10px 0" }}
+                color="primary"
+                onClick={() => handleButtonClick("weekly")}
+              >
+                Weekly Call Status
+              </Button>
+              <Button
+                variant={activeButton === "daily" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
+                sx={{ margin: "0 10px 10px 0" }}
+                color="primary"
+                onClick={() => handleButtonClick("daily")}
+              >
+                Daily Call Status
+              </Button>
+              {activeButton === "monthly" && (
+                <CustomChart
+                  chartType="ColumnChart"
+                  data={[
+                    ["Month", "Existing Lead", "New Lead", "Customer"],
+                    ...monthlyStatus.map((item) => [
+                      item.combination,
+                      item.existing_lead,
+                      item.new_lead,
+                      item.customer,
+                    ]),
+                  ]}
+                  options={{
+                    title: "Monthly Call Status",
+                    width: "100%",
+                    height: "400px",
+                    isStacked: true,
+                    legend: { position: "top" },
+                  }}
+                  widthStyle={"100%"}
+                  heightStyle={"300px"}
+                />
+              )}
+              {activeButton === "weekly" && (
+                <CustomChart
+                  chartType="ColumnChart"
+                  data={[
+                    ["Week", "Existing Lead", "New Lead", "Customer"],
+                    ...weeklyStatus.map((item) => [
+                      item.combination,
+                      item.existing_lead,
+                      item.new_lead,
+                      item.customer,
+                    ]),
+                  ]}
+                  options={{
+                    title: "Weekly Call Status",
+                    width: "100%",
+                    height: "400px",
+                    curveType: "function",
+                    legend: { position: "top" },
+                  }}
+                  widthStyle={"100%"}
+                  heightStyle={"300px"}
+                />
+              )}
+              {activeButton === "daily" && (
+                <CustomChart
+                  chartType="ColumnChart"
+                  data={[
+                    ["Day", "Existing Lead", "New Lead", "Customer"],
+                    ...dailyStatus.map((item) => [
+                      item.combination,
+                      item.existing_lead,
+                      item.new_lead,
+                      item.customer,
+                    ]),
+                  ]}
+                  options={{
+                    title: "Daily Call Status",
+                    width: "100%",
+                    height: "400px",
+                    legend: { position: "top" },
+                  }}
+                  widthStyle={"100%"}
+                  heightStyle={"300px"}
+                />
+              )}
+            </Grid>
           </Grid>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
@@ -447,7 +555,7 @@ export const SalesDashboard = (props) => {
                   ...pendingDescription.map((item) => [item.name, item.value]),
                 ]}
                 options={{
-                  title: "Pending Orderbook by Description",
+                  title: "OrderBook Pending Quantity by Description",
                   width: "100%",
                   height: "400px",
                   legend: { position: "none" },
@@ -484,6 +592,7 @@ export const SalesDashboard = (props) => {
                   labelId="demo-select-small"
                   id="demo-select-small"
                   label="Date"
+                  value={selectedDate}
                   onChange={(event) => handleChange(event)}
                 >
                   {DateOptions.map((option, i) => (
@@ -493,7 +602,6 @@ export const SalesDashboard = (props) => {
                   ))}
                 </Select>
               </FormControl>
-
               <CustomChart
                 chartType="BarChart"
                 data={[
@@ -579,7 +687,6 @@ export const SalesDashboard = (props) => {
         </div>
       ) : (
         <div>
-          {/* Customer Stats */}
           <Grid
             container
             spacing={{ xs: 2, md: 3 }}
@@ -640,6 +747,34 @@ export const SalesDashboard = (props) => {
               );
             })}
           </Grid>
+
+          {/* Filter By Sales Person */}
+          <Grid container spacing={1} sx={{ my: "20px" }}>
+            {!userData.groups.includes("Sales Executive") && (
+              <Paper sx={{ width: "100%", padding: "20px" }}>
+                <Grid container alignItems="center" spacing={1}>
+                  <Grid item xs={9} sm={9} md={9} lg={9}>
+                    <Autocomplete
+                      size="small"
+                      onChange={(event, value) =>
+                        handleAutocompleteChange(value)
+                      }
+                      value={selectedOption}
+                      options={displayOptions}
+                      groupBy={(option) => option.primaryGroup || ""}
+                      getOptionLabel={(option) => option.email}
+                      renderInput={(params) => (
+                        <CustomTextField
+                          {...params}
+                          label="Filter By Sales Person"
+                        />
+                      )}
+                    />
+                  </Grid>
+                </Grid>
+              </Paper>
+            )}
+          </Grid>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <CustomChart
@@ -682,7 +817,31 @@ export const SalesDashboard = (props) => {
             </Grid>
           </Grid>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
+            {userData.groups.includes("Director") && (
+              <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
+                <CustomChart
+                  chartType="BarChart"
+                  data={[
+                    ["Name", "Value", { role: "style" }],
+                    ...horizontalBarData.map((item) => [
+                      item.name,
+                      item.value,
+                      item.type === "LR" ? "blue" : "green",
+                    ]),
+                  ]}
+                  options={{
+                    title: "Dispatch Data",
+                    width: "100%",
+                    height: "300px",
+                    legend: { position: "none" },
+                    hAxis: { title: "Value" },
+                  }}
+                  widthStyle={"100%"}
+                  heightStyle={"300px"}
+                />
+              </Grid>
+            )}
+            <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
               <CustomChart
                 chartType="PieChart"
                 data={[
@@ -699,7 +858,7 @@ export const SalesDashboard = (props) => {
                 heightStyle={"300px"}
               />
             </Grid>
-            <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
+            <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
               <CustomChart
                 chartType="BarChart"
                 data={[
@@ -768,100 +927,100 @@ export const SalesDashboard = (props) => {
                 ))}
               </div>
             </Grid>
-          </Grid>
-          <Grid item xs={12} sm={12} sx={{ marginTop: "20px" }}>
-            <Button
-              variant={activeButton === "monthly" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
-              sx={{ margin: "0 10px 10px 0" }}
-              color="primary"
-              onClick={() => handleButtonClick("monthly")}
-            >
-              Monthly Call Status
-            </Button>
-            <Button
-              variant={activeButton === "weekly" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
-              sx={{ margin: "0 10px 10px 0" }}
-              color="primary"
-              onClick={() => handleButtonClick("weekly")}
-            >
-              Weekly Call Status
-            </Button>
-            <Button
-              variant={activeButton === "daily" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
-              sx={{ margin: "0 10px 10px 0" }}
-              color="primary"
-              onClick={() => handleButtonClick("daily")}
-            >
-              Daily Call Status
-            </Button>
-            {activeButton === "monthly" && (
-              <CustomChart
-                chartType="ColumnChart"
-                data={[
-                  ["Month", "Existing Lead", "New Lead", "Customer"],
-                  ...monthlyStatus.map((item) => [
-                    item.combination,
-                    item.existing_lead,
-                    item.new_lead,
-                    item.customer,
-                  ]),
-                ]}
-                options={{
-                  title: "Monthly Call Status",
-                  width: "100%",
-                  height: "400px",
-                  isStacked: true,
-                  legend: { position: "top" },
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            )}
-            {activeButton === "weekly" && (
-              <CustomChart
-                chartType="ColumnChart"
-                data={[
-                  ["Week", "Existing Lead", "New Lead", "Customer"],
-                  ...weeklyStatus.map((item) => [
-                    item.combination,
-                    item.existing_lead,
-                    item.new_lead,
-                    item.customer,
-                  ]),
-                ]}
-                options={{
-                  title: "Weekly Call Status",
-                  width: "100%",
-                  height: "400px",
-                  curveType: "function",
-                  legend: { position: "top" },
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            )}
-            {activeButton === "daily" && (
-              <CustomChart
-                chartType="ColumnChart"
-                data={[
-                  ["Day", "Existing Lead", "New Lead", "Customer"],
-                  ...dailyStatus.map((item) => [
-                    item.combination,
-                    item.existing_lead,
-                    item.new_lead,
-                    item.customer,
-                  ]),
-                ]}
-                options={{
-                  title: "Daily Call Status",
-                  width: "100%",
-                  height: "400px",
-                  legend: { position: "top" },
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            )}
+            <Grid item xs={12} sm={12} sx={{ marginTop: "20px" }}>
+              <Button
+                variant={activeButton === "monthly" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
+                sx={{ margin: "0 10px 10px 0" }}
+                color="primary"
+                onClick={() => handleButtonClick("monthly")}
+              >
+                Monthly Call Status
+              </Button>
+              <Button
+                variant={activeButton === "weekly" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
+                sx={{ margin: "0 10px 10px 0" }}
+                color="primary"
+                onClick={() => handleButtonClick("weekly")}
+              >
+                Weekly Call Status
+              </Button>
+              <Button
+                variant={activeButton === "daily" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
+                sx={{ margin: "0 10px 10px 0" }}
+                color="primary"
+                onClick={() => handleButtonClick("daily")}
+              >
+                Daily Call Status
+              </Button>
+              {activeButton === "monthly" && (
+                <CustomChart
+                  chartType="ColumnChart"
+                  data={[
+                    ["Month", "Existing Lead", "New Lead", "Customer"],
+                    ...monthlyStatus.map((item) => [
+                      item.combination,
+                      item.existing_lead,
+                      item.new_lead,
+                      item.customer,
+                    ]),
+                  ]}
+                  options={{
+                    title: "Monthly Call Status",
+                    width: "100%",
+                    height: "400px",
+                    isStacked: true,
+                    legend: { position: "top" },
+                  }}
+                  widthStyle={"100%"}
+                  heightStyle={"300px"}
+                />
+              )}
+              {activeButton === "weekly" && (
+                <CustomChart
+                  chartType="ColumnChart"
+                  data={[
+                    ["Week", "Existing Lead", "New Lead", "Customer"],
+                    ...weeklyStatus.map((item) => [
+                      item.combination,
+                      item.existing_lead,
+                      item.new_lead,
+                      item.customer,
+                    ]),
+                  ]}
+                  options={{
+                    title: "Weekly Call Status",
+                    width: "100%",
+                    height: "400px",
+                    curveType: "function",
+                    legend: { position: "top" },
+                  }}
+                  widthStyle={"100%"}
+                  heightStyle={"300px"}
+                />
+              )}
+              {activeButton === "daily" && (
+                <CustomChart
+                  chartType="ColumnChart"
+                  data={[
+                    ["Day", "Existing Lead", "New Lead", "Customer"],
+                    ...dailyStatus.map((item) => [
+                      item.combination,
+                      item.existing_lead,
+                      item.new_lead,
+                      item.customer,
+                    ]),
+                  ]}
+                  options={{
+                    title: "Daily Call Status",
+                    width: "100%",
+                    height: "400px",
+                    legend: { position: "top" },
+                  }}
+                  widthStyle={"100%"}
+                  heightStyle={"300px"}
+                />
+              )}
+            </Grid>
           </Grid>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
