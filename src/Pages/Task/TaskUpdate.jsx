@@ -147,8 +147,8 @@ export const TaskUpdate = (props) => {
                 }
               >
                 {assigned.map((option, i) => (
-                  <MenuItem key={i} value={option}>
-                    {option}
+                  <MenuItem key={i} value={option.email}>
+                    {option.email}
                   </MenuItem>
                 ))}
               </Select>
