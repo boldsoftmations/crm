@@ -31,6 +31,7 @@ export const ListItems = (props) => {
   const [expand, setExpand] = useState(false);
   const [expandDashboard, setExpandDashboard] = useState(false);
   const [expandProduct, setExpandProduct] = useState(false);
+  const [expandProfiles, setExpandProfiles] = useState(false);
   const [expandCustomer, setExpandCustomer] = useState(false);
   const [expandProformaInvoice, setExpandProformaInvoice] = useState(false);
   const [expandSalesInvoice, setExpandSalesInvoice] = useState(false);
@@ -107,6 +108,7 @@ export const ListItems = (props) => {
               </ListItem>
             </List>
           </Collapse>
+
           {/* Products */}
           <ListItem
             button
@@ -975,6 +977,38 @@ export const ListItems = (props) => {
               </ListItem>
             </List>
           </Collapse>
+
+          {/* Market Analysis */}
+          <ListItem
+            button
+            onClick={() => setExpandCompetitor(!expandCompetitor)}
+            style={{ width: 300 }}
+          >
+            <ListItemIcon>
+              <BarChartIcon />
+            </ListItemIcon>
+            <ListItemText primary="Market Analysis" />
+            {expandCompetitor ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </ListItem>
+
+          <Collapse in={expandCompetitor} timeout="auto" unmountOnExit>
+            <Divider />
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/market-analysis/competitor"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Competitor"
+                />
+              </ListItem>
+            </List>
+          </Collapse>
           {/* Users */}
           <ListItem
             button
@@ -1019,33 +1053,32 @@ export const ListItems = (props) => {
               </ListItem>
             </List>
           </Collapse>
-          {/* Market Analysis */}
+          {/* Profile */}
           <ListItem
             button
-            onClick={() => setExpandCompetitor(!expandCompetitor)}
+            onClick={() => setExpandProfiles(!expandProfiles)}
             style={{ width: 300 }}
           >
             <ListItemIcon>
-              <BarChartIcon />
+              <DashboardIcon />
             </ListItemIcon>
-            <ListItemText primary="Market Analysis" />
-            {expandCompetitor ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            <ListItemText primary="Profile" />
+            {expandProfiles ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItem>
-
-          <Collapse in={expandCompetitor} timeout="auto" unmountOnExit>
+          <Collapse in={expandProfiles} timeout="auto" unmountOnExit>
             <Divider />
             <List component="div" disablePadding>
               <ListItem
                 button
                 component={RouterLink}
-                to="/market-analysis/competitor"
+                to="/user/profile"
                 style={{ width: 300 }}
               >
                 <ListItemText
                   component={Button}
                   onClick={() => setOpen(false)}
                   inset
-                  primary="Competitor"
+                  primary="Profiles"
                 />
               </ListItem>
             </List>
