@@ -1,9 +1,5 @@
 import CustomAxios from "./api";
 
-const getProfile = () => {
-  return CustomAxios.get(`/api/user/profile/`);
-};
-
 const getAllLeads = (stage, lead_id) => {
   return CustomAxios.get(
     `/api/lead/list-lead/?funnel=${stage}&ordering=${lead_id}`
@@ -224,7 +220,6 @@ const getAllFollowup = (options) => {
 };
 
 const LeadServices = {
-  getProfile,
   getAllLeads,
   getAllAssignedUser,
   getAllUnassignedData,

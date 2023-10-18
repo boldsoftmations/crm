@@ -13,6 +13,9 @@ import {
 import CustomTextField from "../../Components/CustomTextField";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
+import { Person } from "@mui/icons-material";
+import { PersonalFields } from "./PersonalFields";
+import { AddressField } from "./AddressFields ";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -26,67 +29,51 @@ export const UserProfile = () => {
   const [open, setOpen] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [formData, setFormData] = useState({
-    first_name: "",
-    middle_name: "",
-    last_name: "",
-    personal_email: "",
-    phone_number: "",
-    date_of_birth: "",
-    place_of_birth: "",
-    nationality: "",
-    pan_card_number: "",
-    aadhar_card_number: "",
-    marital_status: "",
-    marriage_date: "",
-    current_address: "",
-    current_city: "",
-    current_state: "",
-    current_pin: "",
-    permanent_address: "",
-    permanent_city: "",
-    permanent_state: "",
-    permanent_pin: "",
-    bank_name: "",
-    account_number: "",
-    ifsc_code: "",
-    branch: "",
-    bank_city: "",
-    bank_state: "",
-    bank_address: "",
-    emergency_contact_name: "",
-    emergency_contact_relationship: "",
-    emergency_contact_number: "",
-    has_pf_esi_account: "",
-    uan_number: "",
-    pf_number: "",
-    esi_number: "",
-    school_name: "",
-    school_board: "",
-    passout_school: "",
-    college_name: "",
-    college_board: "",
-    passout_college: "",
-    diploma_type: "",
-    diploma_uni_name: "",
-    passout_diploma: "",
-    graduation_type: "",
-    graduation_university: "",
-    passout_graduation: "",
-    pgd_masters: "",
-    passport_number: "",
-    dl_number: "",
-    passout_pg: "",
-    additional_qualifiction: "",
-    surgery_type: "",
-    surgery_date: "",
-    pregnancy: "",
-    previous_surgeries: "",
-    is_permanent_same_as_current: false,
+    personal: {
+      first_name: "",
+      middle_name: "",
+      last_name: "",
+      personal_email: "",
+      phone_number: "",
+      date_of_birth: "",
+      place_of_birth: "",
+      nationality: "",
+      marital_status: "",
+      marriage_date: "",
+      pan_card_number: "",
+      aadhar_card_number: "",
+      passport_number: "",
+      dl_number: "",
+    },
+    address: {
+      current: {
+        address: "",
+        city: "",
+        state: "",
+        pin: "",
+        is_permanent_same_as_current: false,
+      },
+      permanent: {
+        address: "",
+        city: "",
+        state: "",
+        pin: "",
+      },
+    },
+    bank: {
+      name: "",
+      account_number: "",
+      ifsc_code: "",
+      branch: "",
+      city: "",
+      state: "",
+      address: "",
+    },
     emergency_contacts: [
       {
-        emergency_contact_name: "",
-        emergency_contact_relationship: "",
-        emergency_contact_number: "",
+        name: "",
+        relationship: "",
+        number: "",
       },
     ],
     employment_history: [
@@ -99,6 +86,64 @@ export const UserProfile = () => {
         worked_till_year: "",
       },
     ],
+    education: {
+      school: {
+        name: "",
+        board: "",
+        passout: "",
+      },
+      college: {
+        name: "",
+        board: "",
+        passout: "",
+      },
+      diploma: {
+        type: "",
+        uni_name: "",
+        passout: "",
+      },
+      graduation: {
+        type: "",
+        university: "",
+        passout: "",
+      },
+      pg: {
+        masters: "",
+        passout: "",
+      },
+      additional_qualifiction: "",
+    },
+    medical: {
+      surgery: {
+        type: "",
+        date: "",
+      },
+      pregnancy: "",
+      previous_surgeries: "",
+      known_allergies: "",
+      conditions: {
+        diabetic: "",
+        hyper_tension: "",
+        heart_issues: "",
+        cancer: "",
+        high_blood_pressure: "",
+        low_blood_pressure: "",
+        asthama_respiratory: "",
+      },
+      impairments: {
+        vision: "",
+        hearing: "",
+      },
+      habits: {
+        tobacco: "",
+        cigarettes: "",
+        alcohol: "",
+      },
+      doctor: {
+        name: "",
+        phone_number: "",
+      },
+    },
     family_details: [
       {
         name: "",
@@ -107,23 +152,8 @@ export const UserProfile = () => {
         contact_number: "",
       },
     ],
-
-    known_allergies: "",
-    diabetic: "",
-    hyper_tension: "",
-    heart_issues: "",
-    cancer: "",
-    high_blood_pressure: "",
-    low_blood_pressure: "",
-    asthama_respiratory: "",
-    vision_impairments: "",
-    hearing_impairments: "",
-    tobacco: "",
-    cigarettes: "",
-    alcohol: "",
-    doctor_name: "",
-    doctor_phone_number: "",
   });
+
   console.log("formData", formData);
 
   const handleChange = (event) => {
@@ -136,84 +166,8 @@ export const UserProfile = () => {
       [name]: value,
     };
 
-    // If 'Same as Current Address' is checked
-    if (formData.is_permanent_same_as_current) {
-      switch (name) {
-        // If the current address pin is changed
-        case "current_pin":
-          // Update the permanent address pin as well
-          updatedFormData.permanent_pin = value;
-
-          // Validate the new pin code for permanent address
-          validatePinCode("permanent", value);
-          break;
-
-        // If the current city is changed
-        case "current_city":
-          // Update the permanent city as well
-          updatedFormData.permanent_city = value;
-          break;
-
-        // If the current state is changed
-        case "current_state":
-          // Update the permanent state as well
-          updatedFormData.permanent_state = value;
-          break;
-
-        // If the current address is changed
-        case "current_address":
-          // Update the permanent address as well
-          updatedFormData.permanent_address = value;
-          break;
-
-        // Default case, if any other field is changed which we don't need to mirror
-        default:
-          break;
-      }
-    }
-
-    // If the current pin code field is changed, validate it
-    if (name === "current_pin") {
-      validatePinCode("current", value);
-    }
-    // If the permanent pin code field is changed, validate it
-    else if (name === "permanent_pin") {
-      validatePinCode("permanent", value);
-    }
-
     // Set the updated form data to the state
     setFormData(updatedFormData);
-  };
-
-  const validatePinCode = async (type, pinCode) => {
-    try {
-      const response = await axios.get(
-        `https://api.postalpincode.in/pincode/${pinCode}`
-      );
-
-      if (response.data[0].Status === "Success") {
-        const newState = response.data[0].PostOffice[0].State;
-        const newCity = response.data[0].PostOffice[0].District;
-
-        if (type === "current") {
-          setFormData((prevState) => ({
-            ...prevState,
-            current_city: newCity,
-            current_state: newState,
-          }));
-        } else {
-          setFormData((prevState) => ({
-            ...prevState,
-            permanent_city: newCity,
-            permanent_state: newState,
-          }));
-        }
-      } else {
-        console.log("Pincode not valid or data not found.");
-      }
-    } catch (error) {
-      console.log("Error validating pincode", error);
-    }
   };
 
   const validateIFSC = async () => {
@@ -254,31 +208,6 @@ export const UserProfile = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form Data Submitted:", formData);
-  };
-
-  const handlePermanentSameAsCurrentChange = (event) => {
-    const { checked } = event.target;
-    if (checked) {
-      // If checked, copy values from current address to permanent address
-      setFormData({
-        ...formData,
-        is_permanent_same_as_current: true,
-        permanent_address: formData.current_address,
-        permanent_city: formData.current_city,
-        permanent_state: formData.current_state,
-        permanent_pin: formData.current_pin,
-      });
-    } else {
-      // If unchecked, clear the permanent address
-      setFormData({
-        ...formData,
-        is_permanent_same_as_current: false,
-        permanent_address: "",
-        permanent_city: "",
-        permanent_state: "",
-        permanent_pin: "",
-      });
-    }
   };
 
   // Utility functions
@@ -429,296 +358,19 @@ export const UserProfile = () => {
       </Grid>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="First Name"
-              name="first_name"
-              value={formData.first_name}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Middle Name"
-              name="middle_name"
-              value={formData.middle_name}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Last Name"
-              name="last_name"
-              value={formData.last_name}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Personal Email"
-              type="email"
-              name="personal_email"
-              value={formData.personal_email}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Phone Number"
-              type="tel"
-              name="phone_number"
-              value={formData.phone_number}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={["Male", "Female", "Others"]}
-              getOptionLabel={(option) => option}
-              fullWidth
-              size="small"
-              name="gender"
-              value={formData.gender || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "gender",
-                    value: newValue || "", // Handle the case when nothing is selected
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="Gender" />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Date of Birth"
-              type="date"
-              name="date_of_birth"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              value={formData.date_of_birth || ""}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Place of Birth"
-              name="place_of_birth"
-              value={formData.place_of_birth}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Nationality"
-              name="nationality"
-              value={formData.nationality}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={[
-                "Christianity",
-                "Islam",
-                "Hinduism",
-                "Buddhism",
-                "Sikhism",
-                "Judaism",
-                "No religion",
-                "Others",
-              ]}
-              fullWidth
-              size="small"
-              value={formData.religion || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "religion",
-                    value: newValue || "",
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField label="Religion" {...params} />
-              )}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={["Married", "Unmarried"]}
-              fullWidth
-              size="small"
-              value={formData.marital_status || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "marital_status",
-                    value: newValue || "",
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField label="Marital Status" {...params} />
-              )}
-            />
-          </Grid>
-          {formData.marital_status === "Married" && (
-            <Grid item xs={12} sm={4}>
-              <CustomTextField
-                fullWidth
-                type="date"
-                size="small"
-                label="Marriage Date"
-                name="marriage_date"
-                value={formData.marriage_date}
-                onChange={handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </Grid>
-          )}
-          {/* Current Address */}
-          <Grid item xs={12}>
-            <Root>
-              <Divider>
-                <Chip label="Current Address" />
-              </Divider>
-            </Root>
-          </Grid>
-          <Grid item xs={12} sm={12}>
-            <CustomTextField
-              fullWidth
-              type="text"
-              size="small"
-              label="Current Address"
-              name="current_address"
-              value={formData.current_address}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Current Pin"
-              name="current_pin"
-              value={formData.current_pin}
-              onChange={handleChange}
-              onBlur={() => validatePinCode("current", formData.current_pin)}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              disabled
-              fullWidth
-              size="small"
-              label="Current City"
-              name="current_city"
-              value={formData.current_city}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              disabled
-              fullWidth
-              size="small"
-              label="Current State"
-              name="current_state"
-              value={formData.current_state}
-            />
-          </Grid>
-
-          {/* Permanent Address */}
-
-          <Grid item xs={12}>
-            <Root>
-              <Divider>
-                <Chip label="Permanent Address" />
-              </Divider>
-            </Root>
-          </Grid>
-          <Grid item xs={12}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formData.is_permanent_same_as_current}
-                  onChange={handlePermanentSameAsCurrentChange}
-                  name="is_permanent_same_as_current"
-                  color="primary"
-                />
-              }
-              label="Same as Current Address"
-            />
-          </Grid>
-          <Grid item xs={12} sm={12}>
-            <CustomTextField
-              fullWidth
-              type="text"
-              size="small"
-              label="Permanant Address"
-              name="permanent_address"
-              value={formData.permanent_address}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Permanant Pin"
-              name="permanent_pin"
-              value={formData.permanent_pin}
-              onChange={handleChange}
-              onBlur={() =>
-                validatePinCode("permanent", formData.permanent_pin)
-              }
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              disabled
-              fullWidth
-              size="small"
-              label="Permanant City"
-              name="permanent_city"
-              value={formData.permanent_city}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              disabled
-              fullWidth
-              size="small"
-              label="Permanant State"
-              name="permanent_state"
-              value={formData.permanent_state}
-            />
-          </Grid>
+          {/* Personal Details */}
+          <PersonalFields formData={formData} setFormData={setFormData} />
+          {/* Current And Permanent Address Details */}
+          <AddressField
+            type="current"
+            formData={formData}
+            setFormData={setFormData}
+          />
+          <AddressField
+            type="permanent"
+            formData={formData}
+            setFormData={setFormData}
+          />
 
           <Grid item xs={12}>
             <Root>

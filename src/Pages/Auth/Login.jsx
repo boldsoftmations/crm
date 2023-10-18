@@ -32,8 +32,7 @@ import { CustomButton } from "../../Components/CustomButton";
 import { ErrorMessage } from "./../../Components/ErrorMessage/ErrorMessage";
 import { CustomLoader } from "./../../Components/CustomLoader";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import LeadServices from "../../services/LeadService";
-import CustomTextField from "../../Components/CustomTextField";
+import { UserProfile } from "../Profile/UserProfile";
 
 const paperStyle = {
   padding: 20,
@@ -134,7 +133,7 @@ export const Login = () => {
   const getUsers = async () => {
     try {
       setOpen(true);
-      const res = await LeadServices.getProfile();
+      const res = await UserProfile.getProfile();
       dispatch(getProfileUser(res.data));
       // setUserData(res.data);
       setOpen(false);

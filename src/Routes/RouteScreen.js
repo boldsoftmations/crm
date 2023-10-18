@@ -64,7 +64,7 @@ import { IncompleteKycDetails } from "../Pages/Cutomers/CompanyDetails/Incomplet
 import { CompetitorView } from "../Pages/MarketAnalysis/CompetitorView";
 import { PriceApprovalPI } from "../Pages/Invoice/ProformaInvoice/PriceApprovalPI";
 import { TeamWiseDashboard } from "../Pages/TeamWiseDashboard";
-import UserProfile from "../Pages/Profile/UserProfile";
+import { UserProfile } from "../Pages/Profile/UserProfile";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -93,7 +93,7 @@ export const RouteScreen = () => {
               element={<TeamWiseDashboard />}
             />
             <Route path="/user/dashoard" element={<Dashboard />} />
-            <Route path="/user/profile" exact element={<UserProfile/>} />
+            <Route path="/user/profile" exact element={<UserProfile />} />
             {/* Leads Routes */}
             <Route path="/leads/hot-lead" element={<HotLeads />} />
             <Route path="/leads/new-lead" element={<NewLeads />} />
