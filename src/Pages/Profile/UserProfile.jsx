@@ -26,93 +26,103 @@ export const UserProfile = () => {
   const [open, setOpen] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [formData, setFormData] = useState({
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    personalEmail: "",
-    phoneNumber: "",
-    dateOfBirth: "",
-    placeOfBirth: "",
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    personal_email: "",
+    phone_number: "",
+    date_of_birth: "",
+    place_of_birth: "",
     nationality: "",
-    panCardNumber: "",
-    aadharCardNumber: "",
-    maritalStatus: "",
-    marriageDate: "",
-    currentAddress: "",
-    currentCity: "",
-    currentState: "",
-    currentPin: "",
-    permanentAddress: "",
-    permanentCity: "",
-    permanentState: "",
-    permanentPin: "",
+    pan_card_number: "",
+    aadhar_card_number: "",
+    marital_status: "",
+    marriage_date: "",
+    current_address: "",
+    current_city: "",
+    current_state: "",
+    current_pin: "",
+    permanent_address: "",
+    permanent_city: "",
+    permanent_state: "",
+    permanent_pin: "",
     bank_name: "",
-    accountNumber: "",
-    ifscCode: "",
+    account_number: "",
+    ifsc_code: "",
     branch: "",
     bank_city: "",
     bank_state: "",
     bank_address: "",
-    emergencyContactName: "",
-    emergencyContactRelationship: "",
-    emergencyContactNumber: "",
-    hasPfEsiAccount: "",
-    uanNumber: "",
-    pfNumber: "",
-    esiNumber: "",
-    currentSchoolName: "",
-    currentSchoolBoard: "",
-    currentPassoutSchool: "",
-    currentCollegeName: "",
-    currentCollegeBoard: "",
-    currentPassoutYCollege: "",
-    currentGraduationType: "",
-    currentGraduationUniversity: "",
-    currentPassoutGraduation: "",
-    currentPgdMasters: "",
-    currentAdditionalQualifiction: "",
-    isPermanentSameAsCurrent: false,
-    emergencyContacts: [
+    emergency_contact_name: "",
+    emergency_contact_relationship: "",
+    emergency_contact_number: "",
+    has_pf_esi_account: "",
+    uan_number: "",
+    pf_number: "",
+    esi_number: "",
+    school_name: "",
+    school_board: "",
+    passout_school: "",
+    college_name: "",
+    college_board: "",
+    passout_college: "",
+    diploma_type: "",
+    diploma_uni_name: "",
+    passout_diploma: "",
+    graduation_type: "",
+    graduation_university: "",
+    passout_graduation: "",
+    pgd_masters: "",
+    passport_number: "",
+    dl_number: "",
+    passout_pg: "",
+    additional_qualifiction: "",
+    surgery_type: "",
+    surgery_date: "",
+    pregnancy: "",
+    previous_surgeries: "",
+    is_permanent_same_as_current: false,
+    emergency_contacts: [
       {
-        emergencyContactName: "",
-        emergencyContactRelationship: "",
-        emergencyContactNumber: "",
+        emergency_contact_name: "",
+        emergency_contact_relationship: "",
+        emergency_contact_number: "",
       },
     ],
-    employmentHistory: [
+    employment_history: [
       {
-        employerName: "",
-        postHeld: "",
-        workedFromMonth: "",
-        workedFromYear: "",
-        workedTillMonth: "",
-        workedTillYear: "",
+        company_name: "",
+        post_held: "",
+        worked_from_month: "",
+        worked_from_year: "",
+        worked_till_month: "",
+        worked_till_year: "",
       },
     ],
-    familyDetails: [
+    family_details: [
       {
         name: "",
         relationship: "",
-        bloodGroup: "",
-        contactNumber: "",
+        blood_group: "",
+        contact_number: "",
       },
     ],
 
-    knownAllergies: "",
+    known_allergies: "",
     diabetic: "",
-    hyperTension: "",
-    heartIssues: "",
+    hyper_tension: "",
+    heart_issues: "",
     cancer: "",
-    highBloodPressure: "",
-    lowBloodPressure: "",
-    asthamaRespiratory: "",
-    visionImpairments: "",
-    hearingImpairments: "",
+    high_blood_pressure: "",
+    low_blood_pressure: "",
+    asthama_respiratory: "",
+    vision_impairments: "",
+    hearing_impairments: "",
     tobacco: "",
     cigarettes: "",
     alcohol: "",
-    doctorName: "",
-    doctorPhoneNumber: "",
+    doctor_name: "",
+    doctor_phone_number: "",
   });
   console.log("formData", formData);
 
@@ -127,33 +137,33 @@ export const UserProfile = () => {
     };
 
     // If 'Same as Current Address' is checked
-    if (formData.isPermanentSameAsCurrent) {
+    if (formData.is_permanent_same_as_current) {
       switch (name) {
         // If the current address pin is changed
-        case "currentPin":
+        case "current_pin":
           // Update the permanent address pin as well
-          updatedFormData.permanentPin = value;
+          updatedFormData.permanent_pin = value;
 
           // Validate the new pin code for permanent address
           validatePinCode("permanent", value);
           break;
 
         // If the current city is changed
-        case "currentCity":
+        case "current_city":
           // Update the permanent city as well
-          updatedFormData.permanentCity = value;
+          updatedFormData.permanent_city = value;
           break;
 
         // If the current state is changed
-        case "currentState":
+        case "current_state":
           // Update the permanent state as well
-          updatedFormData.permanentState = value;
+          updatedFormData.permanent_state = value;
           break;
 
         // If the current address is changed
-        case "currentAddress":
+        case "current_address":
           // Update the permanent address as well
-          updatedFormData.permanentAddress = value;
+          updatedFormData.permanent_address = value;
           break;
 
         // Default case, if any other field is changed which we don't need to mirror
@@ -163,11 +173,11 @@ export const UserProfile = () => {
     }
 
     // If the current pin code field is changed, validate it
-    if (name === "currentPin") {
+    if (name === "current_pin") {
       validatePinCode("current", value);
     }
     // If the permanent pin code field is changed, validate it
-    else if (name === "permanentPin") {
+    else if (name === "permanent_pin") {
       validatePinCode("permanent", value);
     }
 
@@ -188,14 +198,14 @@ export const UserProfile = () => {
         if (type === "current") {
           setFormData((prevState) => ({
             ...prevState,
-            currentCity: newCity,
-            currentState: newState,
+            current_city: newCity,
+            current_state: newState,
           }));
         } else {
           setFormData((prevState) => ({
             ...prevState,
-            permanentCity: newCity,
-            permanentState: newState,
+            permanent_city: newCity,
+            permanent_state: newState,
           }));
         }
       } else {
@@ -252,21 +262,21 @@ export const UserProfile = () => {
       // If checked, copy values from current address to permanent address
       setFormData({
         ...formData,
-        isPermanentSameAsCurrent: true,
-        permanentAddress: formData.currentAddress,
-        permanentCity: formData.currentCity,
-        permanentState: formData.currentState,
-        permanentPin: formData.currentPin,
+        is_permanent_same_as_current: true,
+        permanent_address: formData.current_address,
+        permanent_city: formData.current_city,
+        permanent_state: formData.current_state,
+        permanent_pin: formData.current_pin,
       });
     } else {
       // If unchecked, clear the permanent address
       setFormData({
         ...formData,
-        isPermanentSameAsCurrent: false,
-        permanentAddress: "",
-        permanentCity: "",
-        permanentState: "",
-        permanentPin: "",
+        is_permanent_same_as_current: false,
+        permanent_address: "",
+        permanent_city: "",
+        permanent_state: "",
+        permanent_pin: "",
       });
     }
   };
@@ -280,18 +290,18 @@ export const UserProfile = () => {
   const handleEmploymentHistoryChange = (event, index, field) => {
     const date = new Date(event.target.value);
     const formattedDate = `${date.getMonth() + 1}/${date.getFullYear()}`;
-    const updatedEmploymentHistory = [...formData.employmentHistory];
+    const updatedEmploymentHistory = [...formData.employment_history];
 
     updatedEmploymentHistory[index][field] = formattedDate;
 
     setFormData({
       ...formData,
-      employmentHistory: updatedEmploymentHistory,
+      employment_history: updatedEmploymentHistory,
     });
   };
 
   const handleIsCurrentJobChange = (event, index) => {
-    const updatedEmploymentHistory = [...formData.employmentHistory];
+    const updatedEmploymentHistory = [...formData.employment_history];
     updatedEmploymentHistory[index].isCurrentJob = event.target.checked;
 
     if (event.target.checked) {
@@ -300,22 +310,22 @@ export const UserProfile = () => {
 
     setFormData({
       ...formData,
-      employmentHistory: updatedEmploymentHistory,
+      employment_history: updatedEmploymentHistory,
     });
   };
 
   const removeEmploymentRecord = (index) => {
-    const updatedEmploymentHistory = [...formData.employmentHistory];
+    const updatedEmploymentHistory = [...formData.employment_history];
     updatedEmploymentHistory.splice(index, 1);
     setFormData({
       ...formData,
-      employmentHistory: updatedEmploymentHistory,
+      employment_history: updatedEmploymentHistory,
     });
   };
 
   const addEmploymentRecord = () => {
-    const employers = formData.employmentHistory.map((emp) =>
-      emp.employerName.toLowerCase()
+    const employers = formData.employment_history.map((emp) =>
+      emp.company_name.toLowerCase()
     );
 
     // Check if there are any duplicate employer names
@@ -327,55 +337,55 @@ export const UserProfile = () => {
     }
 
     const updatedEmploymentHistory = [
-      ...formData.employmentHistory,
+      ...formData.employment_history,
       {
-        employerName: "",
+        company_name: "",
         designation: "",
-        workedFromMonth: "",
-        workedTillMonth: "",
-        isCurrentJob: false,
+        worked_from_month: "",
+        worked_till_month: "",
+        is_current_job: false,
       },
     ];
 
     setFormData({
       ...formData,
-      employmentHistory: updatedEmploymentHistory,
+      employment_history: updatedEmploymentHistory,
     });
   };
 
   // Handle the change in family details
   const handleFamilyDetailsChange = (event, index) => {
     const { name, value } = event.target;
-    const updatedFamilyDetails = [...formData.familyDetails];
+    const updatedFamilyDetails = [...formData.family_details];
     updatedFamilyDetails[index][name] = value;
     setFormData({
       ...formData,
-      familyDetails: updatedFamilyDetails,
+      family_details: updatedFamilyDetails,
     });
   };
 
   // Add a new family member
   const addFamilyMember = () => {
-    const updatedFamilyDetails = [...formData.familyDetails];
+    const updatedFamilyDetails = [...formData.family_details];
     updatedFamilyDetails.push({
       name: "",
-      maritalStatus: "",
-      bloodGroup: "",
-      contactNumber: "",
+      marital_status: "",
+      blood_group: "",
+      contact_number: "",
     });
     setFormData({
       ...formData,
-      familyDetails: updatedFamilyDetails,
+      family_details: updatedFamilyDetails,
     });
   };
 
   // Remove a family member
   const removeFamilyMember = (index) => {
-    const updatedFamilyDetails = [...formData.familyDetails];
+    const updatedFamilyDetails = [...formData.family_details];
     updatedFamilyDetails.splice(index, 1);
     setFormData({
       ...formData,
-      familyDetails: updatedFamilyDetails,
+      family_details: updatedFamilyDetails,
     });
   };
   const relationshipOptions = [
@@ -391,35 +401,36 @@ export const UserProfile = () => {
   ];
 
   const YesorNoOptions = ["Yes", "No"];
+  const YesorNoorNotapplicableOptions = ["Yes", "No", "Not Applicable"];
   const handleEmergencyContactChange = (event, index) => {
     const { name, value } = event.target;
-    const updatedEmergencyContacts = [...formData.emergencyContacts];
+    const updatedEmergencyContacts = [...formData.emergency_contacts];
     updatedEmergencyContacts[index][name] = value;
     setFormData({
       ...formData,
-      emergencyContacts: updatedEmergencyContacts,
+      emergency_contacts: updatedEmergencyContacts,
     });
   };
 
   const addEmergencyContact = () => {
-    const updatedEmergencyContacts = [...formData.emergencyContacts];
+    const updatedEmergencyContacts = [...formData.emergency_contacts];
     updatedEmergencyContacts.push({
-      emergencyContactName: "",
-      emergencyContactRelationship: "",
-      emergencyContactNumber: "",
+      emergency_contact_name: "",
+      emergency_contact_relationship: "", // Use the default relationship
+      emergency_contact_number: "",
     });
     setFormData({
       ...formData,
-      emergencyContacts: updatedEmergencyContacts,
+      emergency_contacts: updatedEmergencyContacts,
     });
   };
 
   const removeEmergencyContact = (index) => {
-    const updatedEmergencyContacts = [...formData.emergencyContacts];
+    const updatedEmergencyContacts = [...formData.emergency_contacts];
     updatedEmergencyContacts.splice(index, 1); // This will remove the contact at the given index
     setFormData({
       ...formData,
-      emergencyContacts: updatedEmergencyContacts,
+      emergency_contacts: updatedEmergencyContacts,
     });
   };
   return (
@@ -438,8 +449,8 @@ export const UserProfile = () => {
               fullWidth
               size="small"
               label="First Name"
-              name="firstName"
-              value={formData.firstName}
+              name="first_name"
+              value={formData.first_name}
               onChange={handleChange}
             />
           </Grid>
@@ -448,8 +459,8 @@ export const UserProfile = () => {
               fullWidth
               size="small"
               label="Middle Name"
-              name="middleName"
-              value={formData.middleName}
+              name="middle_name"
+              value={formData.middle_name}
               onChange={handleChange}
             />
           </Grid>
@@ -458,8 +469,8 @@ export const UserProfile = () => {
               fullWidth
               size="small"
               label="Last Name"
-              name="lastName"
-              value={formData.lastName}
+              name="last_name"
+              value={formData.last_name}
               onChange={handleChange}
             />
           </Grid>
@@ -469,8 +480,8 @@ export const UserProfile = () => {
               size="small"
               label="Personal Email"
               type="email"
-              name="email"
-              value={formData.personalEmail}
+              name="personal_email"
+              value={formData.personal_email}
               onChange={handleChange}
             />
           </Grid>
@@ -481,8 +492,8 @@ export const UserProfile = () => {
               size="small"
               label="Phone Number"
               type="tel"
-              name="phoneNumber"
-              value={formData.phoneNumber}
+              name="phone_number"
+              value={formData.phone_number}
               onChange={handleChange}
             />
           </Grid>
@@ -514,11 +525,11 @@ export const UserProfile = () => {
               size="small"
               label="Date of Birth"
               type="date"
-              name="dateOfBirth"
+              name="date_of_birth"
               InputLabelProps={{
                 shrink: true,
               }}
-              value={formData.dateOfBirth || ""}
+              value={formData.date_of_birth || ""}
               onChange={handleChange}
             />
           </Grid>
@@ -527,8 +538,8 @@ export const UserProfile = () => {
               fullWidth
               size="small"
               label="Place of Birth"
-              name="placeOfBirth"
-              value={formData.placeOfBirth}
+              name="place_of_birth"
+              value={formData.place_of_birth}
               onChange={handleChange}
             />
           </Grid>
@@ -570,36 +581,17 @@ export const UserProfile = () => {
               )}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="PAN Card No"
-              name="panCardNumber"
-              value={formData.panCardNumber}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Aadhar Card No"
-              name="aadharCardNumber"
-              value={formData.aadharCardNumber}
-              onChange={handleChange}
-            />
-          </Grid>
+
           <Grid item xs={12} sm={4}>
             <Autocomplete
               options={["Married", "Unmarried"]}
               fullWidth
               size="small"
-              value={formData.maritalStatus || ""}
+              value={formData.marital_status || ""}
               onChange={(event, newValue) => {
                 handleChange({
                   target: {
-                    name: "maritalStatus",
+                    name: "marital_status",
                     value: newValue || "",
                   },
                 });
@@ -609,15 +601,15 @@ export const UserProfile = () => {
               )}
             />
           </Grid>
-          {formData.maritalStatus === "Married" && (
+          {formData.marital_status === "Married" && (
             <Grid item xs={12} sm={4}>
               <CustomTextField
                 fullWidth
                 type="date"
                 size="small"
                 label="Marriage Date"
-                name="marriageDate"
-                value={formData.marriageDate}
+                name="marriage_date"
+                value={formData.marriage_date}
                 onChange={handleChange}
                 InputLabelProps={{
                   shrink: true,
@@ -639,8 +631,8 @@ export const UserProfile = () => {
               type="text"
               size="small"
               label="Current Address"
-              name="currentAddress"
-              value={formData.currentAddress}
+              name="current_address"
+              value={formData.current_address}
               onChange={handleChange}
             />
           </Grid>
@@ -649,10 +641,10 @@ export const UserProfile = () => {
               fullWidth
               size="small"
               label="Current Pin"
-              name="currentPin"
-              value={formData.currentPin}
+              name="current_pin"
+              value={formData.current_pin}
               onChange={handleChange}
-              onBlur={() => validatePinCode("current", formData.currentPin)}
+              onBlur={() => validatePinCode("current", formData.current_pin)}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -661,8 +653,8 @@ export const UserProfile = () => {
               fullWidth
               size="small"
               label="Current City"
-              name="currentCity"
-              value={formData.currentCity}
+              name="current_city"
+              value={formData.current_city}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -671,8 +663,8 @@ export const UserProfile = () => {
               fullWidth
               size="small"
               label="Current State"
-              name="currentState"
-              value={formData.currentState}
+              name="current_state"
+              value={formData.current_state}
             />
           </Grid>
 
@@ -689,9 +681,9 @@ export const UserProfile = () => {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={formData.isPermanentSameAsCurrent}
+                  checked={formData.is_permanent_same_as_current}
                   onChange={handlePermanentSameAsCurrentChange}
-                  name="isPermanentSameAsCurrent"
+                  name="is_permanent_same_as_current"
                   color="primary"
                 />
               }
@@ -704,8 +696,8 @@ export const UserProfile = () => {
               type="text"
               size="small"
               label="Permanant Address"
-              name="permanentAddress"
-              value={formData.permanentAddress}
+              name="permanent_address"
+              value={formData.permanent_address}
               onChange={handleChange}
             />
           </Grid>
@@ -714,10 +706,12 @@ export const UserProfile = () => {
               fullWidth
               size="small"
               label="Permanant Pin"
-              name="permanentPin"
-              value={formData.permanentPin}
+              name="permanent_pin"
+              value={formData.permanent_pin}
               onChange={handleChange}
-              onBlur={() => validatePinCode("permanent", formData.permanentPin)}
+              onBlur={() =>
+                validatePinCode("permanent", formData.permanent_pin)
+              }
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -726,8 +720,8 @@ export const UserProfile = () => {
               fullWidth
               size="small"
               label="Permanant City"
-              name="permanentCity"
-              value={formData.permanentCity}
+              name="permanent_city"
+              value={formData.permanent_city}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -736,15 +730,15 @@ export const UserProfile = () => {
               fullWidth
               size="small"
               label="Permanant State"
-              name="permanentState"
-              value={formData.permanentState}
+              name="permanent_state"
+              value={formData.permanent_state}
             />
           </Grid>
 
           <Grid item xs={12}>
             <Root>
               <Divider>
-                <Chip label="Bank Details" />
+                <Chip label="KYC Details" />
               </Divider>
             </Root>
           </Grid>
@@ -752,9 +746,49 @@ export const UserProfile = () => {
             <CustomTextField
               fullWidth
               size="small"
+              label="PAN Card No"
+              name="pan_card_number"
+              value={formData.pan_card_number}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Aadhar Card No"
+              name="aadhar_card_number"
+              value={formData.aadhar_card_number}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Passport Number"
+              name="passport_number"
+              value={formData.passport_number}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Driving License Number"
+              name="dl_number"
+              value={formData.dl_number}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
               label="Account No"
-              name="accountNumber"
-              value={formData.accountNumber}
+              name="account_number"
+              value={formData.account_number}
               onChange={handleChange}
             />
           </Grid>
@@ -763,8 +797,8 @@ export const UserProfile = () => {
               fullWidth
               size="small"
               label="IFSC Code"
-              name="ifscCode"
-              value={formData.ifscCode}
+              name="ifsc_code"
+              value={formData.ifsc_code}
               onChange={handleChange}
               onBlur={validateIFSC} // <-- Add this line
               error={errMsg && errMsg}
@@ -831,15 +865,15 @@ export const UserProfile = () => {
               </Divider>
             </Root>
           </Grid>
-          {formData.emergencyContacts.map((emergencyContact, index) => (
+          {formData.emergency_contacts.map((emergencyContact, index) => (
             <React.Fragment key={index}>
               <Grid item xs={12} sm={3}>
                 <CustomTextField
                   fullWidth
                   size="small"
                   label="Emergency Contact Person Name"
-                  name="emergencyContactName"
-                  value={emergencyContact.emergencyContactName}
+                  name="emergency_contact_name"
+                  value={emergencyContact.emergency_contact_name}
                   onChange={(event) =>
                     handleEmergencyContactChange(event, index)
                   }
@@ -850,11 +884,11 @@ export const UserProfile = () => {
                   options={relationshipOptions}
                   fullWidth
                   size="small"
-                  value={formData.emergencyContactRelationship || ""}
+                  value={emergencyContact.emergency_contact_relationship || ""}
                   onChange={(event, newValue) => {
-                    handleChange({
+                    handleEmergencyContactChange({
                       target: {
-                        name: "emergencyContactRelationship",
+                        name: "emergency_contact_relationship",
                         value: newValue || "",
                       },
                     });
@@ -873,14 +907,14 @@ export const UserProfile = () => {
                   size="small"
                   label="Emergency Contact Number"
                   type="tel"
-                  name="emergencyContactNumber"
-                  value={emergencyContact.emergencyContactNumber}
+                  name="emergency_contact_number"
+                  value={emergencyContact.emergency_contact_number}
                   onChange={(event) =>
                     handleEmergencyContactChange(event, index)
                   }
                 />
               </Grid>
-              {formData.emergencyContacts.length > 1 && ( // Check if there's more than one emergency contact
+              {formData.emergency_contacts.length > 1 && ( // Check if there's more than one emergency contact
                 <Grid item xs={12} sm={2}>
                   <Button
                     variant="contained"
@@ -911,11 +945,11 @@ export const UserProfile = () => {
               options={YesorNoOptions}
               fullWidth
               size="small"
-              value={formData.hasPfEsiAccount || ""}
+              value={formData.has_pf_esi_account || ""}
               onChange={(event, newValue) => {
                 handleChange({
                   target: {
-                    name: "hasPfEsiAccount",
+                    name: "has_pf_esi_account",
                     value: newValue || "",
                   },
                 });
@@ -928,38 +962,38 @@ export const UserProfile = () => {
               )}
             />
           </Grid>
-          {formData.hasPfEsiAccount === "Yes" && (
+          {formData.has_pf_esi_account === "Yes" && (
             <Grid item xs={12} sm={4}>
               <CustomTextField
                 fullWidth
                 size="small"
                 label="UAN No."
-                name="uanNumber"
-                value={formData.uanNumber}
+                name="uan_number"
+                value={formData.uan_number}
                 onChange={handleChange}
               />
             </Grid>
           )}
-          {formData.hasPfEsiAccount === "Yes" && (
+          {formData.has_pf_esi_account === "Yes" && (
             <Grid item xs={12} sm={4}>
               <CustomTextField
                 fullWidth
                 size="small"
                 label="PF No."
-                name="pfNumber"
-                value={formData.pfNumber}
+                name="pf_number"
+                value={formData.pf_number}
                 onChange={handleChange}
               />
             </Grid>
           )}
-          {formData.hasPfEsiAccount === "Yes" && (
+          {formData.has_pf_esi_account === "Yes" && (
             <Grid item xs={12} sm={4}>
               <CustomTextField
                 fullWidth
                 size="small"
                 label="ESI No."
-                name="esiNumber"
-                value={formData.esiNumber}
+                name="esi_number"
+                value={formData.esi_number}
                 onChange={handleChange}
               />
             </Grid>
@@ -977,8 +1011,8 @@ export const UserProfile = () => {
               type="text"
               size="small"
               label="10th School Name"
-              name="currentSchoolName"
-              value={formData.currentSchoolName}
+              name="school_name"
+              value={formData.school_name}
               onChange={handleChange}
             />
           </Grid>
@@ -988,8 +1022,8 @@ export const UserProfile = () => {
               type="text"
               size="small"
               label="Board"
-              name="currentSchoolBoard"
-              value={formData.currentSchoolBoard}
+              name="school_board"
+              value={formData.school_board}
               onChange={handleChange}
             />
           </Grid>
@@ -999,8 +1033,8 @@ export const UserProfile = () => {
               type="number"
               size="small"
               label="Passout Year"
-              name="currentPassoutYear"
-              value={formData.currentPassoutSchool}
+              name="passout_school"
+              value={formData.passout_school}
               onChange={handleChange}
             />
           </Grid>
@@ -1010,8 +1044,8 @@ export const UserProfile = () => {
               type="text"
               size="small"
               label="12th School/College Name"
-              name="currentCollegeName"
-              value={formData.currentCollegeName}
+              name="college_name"
+              value={formData.college_name}
               onChange={handleChange}
             />
           </Grid>
@@ -1021,8 +1055,8 @@ export const UserProfile = () => {
               type="text"
               size="small"
               label="Board"
-              name="currentCollegeBoard"
-              value={formData.currentCollegeBoard}
+              name="college_board"
+              value={formData.college_board}
               onChange={handleChange}
             />
           </Grid>
@@ -1032,8 +1066,41 @@ export const UserProfile = () => {
               type="number"
               size="small"
               label="Passout Year"
-              name="currentPassoutYear"
-              value={formData.currentPassoutYCollege}
+              name="passout_college"
+              value={formData.passout_college}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              type="text"
+              size="small"
+              label="Diploma Type"
+              name="diploma_type"
+              value={formData.diploma_type}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              type="text"
+              size="small"
+              label="Diploma University Name"
+              name="diploma_uni_name"
+              value={formData.diploma_uni_name}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              type="number"
+              size="small"
+              label="Passout Year"
+              name="passout_diploma"
+              value={formData.passout_diploma}
               onChange={handleChange}
             />
           </Grid>
@@ -1043,8 +1110,8 @@ export const UserProfile = () => {
               type="text"
               size="small"
               label="Graduation Type"
-              name="currentGraduationType"
-              value={formData.currentGraduationType}
+              name="graduation_type"
+              value={formData.graduation_type}
               onChange={handleChange}
             />
           </Grid>
@@ -1054,8 +1121,8 @@ export const UserProfile = () => {
               type="text"
               size="small"
               label="Graduation University Name"
-              name="currentGraduationUniversity"
-              value={formData.currentGraduationUniversity}
+              name="graduation_university"
+              value={formData.graduation_university}
               onChange={handleChange}
             />
           </Grid>
@@ -1066,8 +1133,8 @@ export const UserProfile = () => {
               type="number"
               size="small"
               label="Passout Year"
-              name="currentPassoutGraduation"
-              value={formData.currentPassoutGraduation}
+              name="passout_graduation"
+              value={formData.passout_graduation}
               onChange={handleChange}
             />
           </Grid>
@@ -1077,8 +1144,19 @@ export const UserProfile = () => {
               type="text"
               size="small"
               label="Post Graduation / Masters"
-              name="currentPgdMasters"
-              value={formData.currentPgdMasters}
+              name="pgd_masters"
+              value={formData.pgd_masters}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              type="number"
+              size="small"
+              label="Passout Year"
+              name="passout_pg"
+              value={formData.passout_pg}
               onChange={handleChange}
             />
           </Grid>
@@ -1088,8 +1166,8 @@ export const UserProfile = () => {
               type="text"
               size="small"
               label="Additional Educational Qualifications"
-              name="currentAdditionalQualifiction"
-              value={formData.currentAdditionalQualifiction}
+              name="additional_qualifiction"
+              value={formData.additional_qualifiction}
               onChange={handleChange}
             />
           </Grid>
@@ -1100,15 +1178,15 @@ export const UserProfile = () => {
               </Divider>
             </Root>
           </Grid>
-          {formData.employmentHistory.map((employment, index) => (
+          {formData.employment_history.map((employment, index) => (
             <React.Fragment key={index}>
               <Grid item xs={12} sm={4}>
                 <CustomTextField
                   fullWidth
                   size="small"
-                  label="Name of the Employer"
-                  name="employerName"
-                  value={employment.employerName}
+                  label="Company Name"
+                  name="company_name"
+                  value={employment.company_name}
                   onChange={(event) =>
                     handleEmploymentHistoryChange(event, index)
                   }
@@ -1176,7 +1254,7 @@ export const UserProfile = () => {
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
-                {formData.employmentHistory.length > 1 && (
+                {formData.employment_history.length > 1 && (
                   <Button
                     variant="contained"
                     color="error"
@@ -1201,7 +1279,7 @@ export const UserProfile = () => {
               </Divider>
             </Root>
           </Grid>
-          {formData.familyDetails.map((familyMember, index) => (
+          {formData.family_details.map((familyMember, index) => (
             <React.Fragment key={index}>
               <Grid item xs={12} sm={3}>
                 <CustomTextField
@@ -1215,20 +1293,20 @@ export const UserProfile = () => {
               </Grid>
               <Grid item xs={12} sm={3}>
                 <Autocomplete
-                  options={["Married", "Unmarried"]}
+                  options={relationshipOptions}
                   fullWidth
                   size="small"
-                  value={formData.maritalStatus || ""}
+                  value={formData.contact_relationship || ""}
                   onChange={(event, newValue) => {
                     handleChange({
                       target: {
-                        name: "maritalStatus",
+                        name: "contact_relationship",
                         value: newValue || "",
                       },
                     });
                   }}
                   renderInput={(params) => (
-                    <CustomTextField label="Marital Status" {...params} />
+                    <CustomTextField label="Contact Relationship" {...params} />
                   )}
                 />
               </Grid>
@@ -1237,8 +1315,8 @@ export const UserProfile = () => {
                   fullWidth
                   size="small"
                   label="Blood Group"
-                  name="bloodGroup"
-                  value={familyMember.bloodGroup}
+                  name="blood_group"
+                  value={familyMember.blood_group}
                   onChange={(event) => handleFamilyDetailsChange(event, index)}
                 />
               </Grid>
@@ -1247,13 +1325,13 @@ export const UserProfile = () => {
                   fullWidth
                   size="small"
                   label="Contact Number"
-                  name="contactNumber"
-                  value={familyMember.contactNumber}
+                  name="contact_number"
+                  value={familyMember.contact_number}
                   onChange={(event) => handleFamilyDetailsChange(event, index)}
                 />
               </Grid>
               {/* Remove Family Member Button */}
-              {formData.familyDetails.length > 1 && (
+              {formData.family_details.length > 1 && (
                 <Grid item xs={12} sm={2}>
                   <Button
                     variant="contained"
@@ -1284,8 +1362,8 @@ export const UserProfile = () => {
               fullWidth
               size="small"
               label="Known Allergies"
-              name="knownAllergies"
-              value={formData.knownAllergies}
+              name="known_allergies"
+              value={formData.known_allergies}
               onChange={handleChange}
             />
           </Grid>
@@ -1313,11 +1391,11 @@ export const UserProfile = () => {
               options={YesorNoOptions}
               fullWidth
               size="small"
-              value={formData.asthamaRespiratory || ""}
+              value={formData.asthama_respiratory || ""}
               onChange={(event, newValue) => {
                 handleChange({
                   target: {
-                    name: "asthamaRespiratory",
+                    name: "asthama_respiratory",
                     value: newValue || "",
                   },
                 });
@@ -1335,11 +1413,11 @@ export const UserProfile = () => {
               options={YesorNoOptions}
               fullWidth
               size="small"
-              value={formData.visionImpairments || ""}
+              value={formData.vision_impairments || ""}
               onChange={(event, newValue) => {
                 handleChange({
                   target: {
-                    name: "visionImpairments",
+                    name: "vision_impairments",
                     value: newValue || "",
                   },
                 });
@@ -1354,11 +1432,11 @@ export const UserProfile = () => {
               options={YesorNoOptions}
               fullWidth
               size="small"
-              value={formData.hearingImpairments || ""}
+              value={formData.hearing_impairments || ""}
               onChange={(event, newValue) => {
                 handleChange({
                   target: {
-                    name: "hearingImpairments",
+                    name: "hearing_impairments",
                     value: newValue || "",
                   },
                 });
@@ -1373,11 +1451,11 @@ export const UserProfile = () => {
               options={YesorNoOptions}
               fullWidth
               size="small"
-              value={formData.hyperTension || ""}
+              value={formData.hyper_tension || ""}
               onChange={(event, newValue) => {
                 handleChange({
                   target: {
-                    name: "hyperTension",
+                    name: "hyper_tension",
                     value: newValue || "",
                   },
                 });
@@ -1392,11 +1470,11 @@ export const UserProfile = () => {
               options={YesorNoOptions}
               fullWidth
               size="small"
-              value={formData.heartIssues || ""}
+              value={formData.heart_issues || ""}
               onChange={(event, newValue) => {
                 handleChange({
                   target: {
-                    name: "heartIssues",
+                    name: "heart_issues",
                     value: newValue || "",
                   },
                 });
@@ -1430,11 +1508,11 @@ export const UserProfile = () => {
               options={YesorNoOptions}
               fullWidth
               size="small"
-              value={formData.highBloodPressure || ""}
+              value={formData.high_blood_pressure || ""}
               onChange={(event, newValue) => {
                 handleChange({
                   target: {
-                    name: "highBloodPressure",
+                    name: "high_blood_pressure",
                     value: newValue || "",
                   },
                 });
@@ -1449,17 +1527,71 @@ export const UserProfile = () => {
               options={YesorNoOptions}
               fullWidth
               size="small"
-              value={formData.lowBloodPressure || ""}
+              value={formData.low_blood_pressure || ""}
               onChange={(event, newValue) => {
                 handleChange({
                   target: {
-                    name: "lowBloodPressure",
+                    name: "low_blood_pressure",
                     value: newValue || "",
                   },
                 });
               }}
               renderInput={(params) => (
                 <CustomTextField label="Low Blood Pressure" {...params} />
+              )}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Previous Surgeries"
+              name="previous_surgeries"
+              value={formData.previous_surgeries}
+              onChange={handleChange}
+            />
+          </Grid>
+
+          {/* Surgery Type */}
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Surgery Type"
+              name="surgery_type"
+              value={formData.surgery_type}
+              onChange={handleChange}
+            />
+          </Grid>
+
+          {/* Surgery Date */}
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Surgery Date"
+              type="date" // You can use the 'date' type for a date input field
+              name="surgery_date"
+              value={formData.surgery_date}
+              onChange={handleChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <Autocomplete
+              options={YesorNoorNotapplicableOptions}
+              fullWidth
+              size="small"
+              value={formData.pregnancy || ""}
+              onChange={(event, newValue) => {
+                handleChange({
+                  target: { name: "pregnancy", value: newValue || "" },
+                });
+              }}
+              renderInput={(params) => (
+                <CustomTextField label="Pregnancy" {...params} />
               )}
             />
           </Grid>
@@ -1542,8 +1674,8 @@ export const UserProfile = () => {
               fullWidth
               size="small"
               label="Doctor Name"
-              name="doctorName"
-              value={formData.doctorName}
+              name="doctor_name"
+              value={formData.doctor_name}
               onChange={handleChange}
             />
           </Grid>
@@ -1553,8 +1685,8 @@ export const UserProfile = () => {
               type="number"
               size="small"
               label="Doctor Phone Number"
-              name="doctorPhoneNumber"
-              value={formData.doctorPhoneNumber}
+              name="doctor_phone_number"
+              value={formData.doctor_phone_number}
               onChange={handleChange}
             />
           </Grid>
