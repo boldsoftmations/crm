@@ -886,12 +886,15 @@ export const UserProfile = () => {
                   size="small"
                   value={emergencyContact.emergency_contact_relationship || ""}
                   onChange={(event, newValue) => {
-                    handleEmergencyContactChange({
-                      target: {
-                        name: "emergency_contact_relationship",
-                        value: newValue || "",
+                    handleEmergencyContactChange(
+                      {
+                        target: {
+                          name: "emergency_contact_relationship",
+                          value: newValue || "",
+                        },
                       },
-                    });
+                      index
+                    );
                   }}
                   renderInput={(params) => (
                     <CustomTextField
@@ -1296,14 +1299,17 @@ export const UserProfile = () => {
                   options={relationshipOptions}
                   fullWidth
                   size="small"
-                  value={formData.contact_relationship || ""}
+                  value={familyMember.contact_relationship || ""}
                   onChange={(event, newValue) => {
-                    handleChange({
-                      target: {
-                        name: "contact_relationship",
-                        value: newValue || "",
+                    handleFamilyDetailsChange(
+                      {
+                        target: {
+                          name: "contact_relationship",
+                          value: newValue || "",
+                        },
                       },
-                    });
+                      index
+                    );
                   }}
                   renderInput={(params) => (
                     <CustomTextField label="Contact Relationship" {...params} />
