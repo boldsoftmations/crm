@@ -281,45 +281,36 @@ export const UserProfile = () => {
     }
   };
 
+  // Utility functions
   const formatDateForInput = (monthYear) => {
     if (!monthYear) return "";
     const [month, year] = monthYear.split("/");
     return `${year}-${month.padStart(2, "0")}-01`;
   };
 
-  const handleEmploymentHistoryChange = (event, index, field) => {
-    const date = new Date(event.target.value);
-    const formattedDate = `${date.getMonth() + 1}/${date.getFullYear()}`;
-    const updatedEmploymentHistory = [...formData.employment_history];
-
-    updatedEmploymentHistory[index][field] = formattedDate;
-
-    setFormData({
-      ...formData,
-      employment_history: updatedEmploymentHistory,
-    });
-  };
-
-  const handleIsCurrentJobChange = (event, index) => {
-    const updatedEmploymentHistory = [...formData.employment_history];
-    updatedEmploymentHistory[index].isCurrentJob = event.target.checked;
-
-    if (event.target.checked) {
-      updatedEmploymentHistory[index].workedTill = "";
+  const handleEmploymentChange = (event, index) => {
+    const { name, value } = event.target;
+    const updatedEmployments = [...formData.employment_history];
+    if (name === "workedFrom" || name === "workedTill") {
+      const date = new Date(value);
+      const formattedDate = `${date.getMonth() + 1}/${date.getFullYear()}`;
+      updatedEmployments[index][name] = formattedDate;
+    } else {
+      updatedEmployments[index][name] = value;
     }
 
     setFormData({
       ...formData,
-      employment_history: updatedEmploymentHistory,
+      employment_history: updatedEmployments,
     });
   };
 
   const removeEmploymentRecord = (index) => {
-    const updatedEmploymentHistory = [...formData.employment_history];
-    updatedEmploymentHistory.splice(index, 1);
+    const updatedEmployments = [...formData.employment_history];
+    updatedEmployments.splice(index, 1);
     setFormData({
       ...formData,
-      employment_history: updatedEmploymentHistory,
+      employment_history: updatedEmployments,
     });
   };
 
@@ -328,31 +319,25 @@ export const UserProfile = () => {
       emp.company_name.toLowerCase()
     );
 
-    // Check if there are any duplicate employer names
     const hasDuplicates = new Set(employers).size !== employers.length;
-
     if (hasDuplicates) {
       alert("Please ensure that the employer names are unique.");
       return;
     }
 
-    const updatedEmploymentHistory = [
-      ...formData.employment_history,
-      {
-        company_name: "",
-        designation: "",
-        worked_from_month: "",
-        worked_till_month: "",
-        is_current_job: false,
-      },
-    ];
+    const newRecord = {
+      company_name: "",
+      designation: "",
+      workedFrom: "",
+      workedTill: "",
+    };
 
+    const updatedEmployments = [...formData.employment_history, newRecord];
     setFormData({
       ...formData,
-      employment_history: updatedEmploymentHistory,
+      employment_history: updatedEmployments,
     });
   };
-
   // Handle the change in family details
   const handleFamilyDetailsChange = (event, index) => {
     const { name, value } = event.target;
@@ -1183,31 +1168,27 @@ export const UserProfile = () => {
           </Grid>
           {formData.employment_history.map((employment, index) => (
             <React.Fragment key={index}>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={3}>
                 <CustomTextField
                   fullWidth
                   size="small"
                   label="Company Name"
                   name="company_name"
                   value={employment.company_name}
-                  onChange={(event) =>
-                    handleEmploymentHistoryChange(event, index)
-                  }
+                  onChange={(event) => handleEmploymentChange(event, index)}
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={3}>
                 <CustomTextField
                   fullWidth
                   size="small"
                   label="Designation"
                   name="designation"
                   value={employment.designation}
-                  onChange={(event) =>
-                    handleEmploymentHistoryChange(event, index)
-                  }
+                  onChange={(event) => handleEmploymentChange(event, index)}
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={2}>
                 <CustomTextField
                   fullWidth
                   size="small"
@@ -1215,48 +1196,24 @@ export const UserProfile = () => {
                   type="date"
                   name="workedFrom"
                   value={formatDateForInput(employment.workedFrom)}
-                  onChange={(event) =>
-                    handleEmploymentHistoryChange(event, index, "workedFrom")
-                  }
+                  onChange={(event) => handleEmploymentChange(event, index)}
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>
 
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={2}>
                 <CustomTextField
                   fullWidth
                   size="small"
                   label="Worked Till"
                   type="date"
                   name="workedTill"
-                  value={
-                    employment.isCurrentJob
-                      ? ""
-                      : formatDateForInput(employment.workedTill)
-                  }
-                  disabled={employment.isCurrentJob}
-                  onChange={(event) =>
-                    handleEmploymentHistoryChange(event, index, "workedTill")
-                  }
+                  value={formatDateForInput(employment.workedTill)}
+                  onChange={(event) => handleEmploymentChange(event, index)}
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>
-
-              <Grid item xs={12} sm={4}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={employment.isCurrentJob || false}
-                      onChange={(event) =>
-                        handleIsCurrentJobChange(event, index)
-                      }
-                      name="isCurrentJob"
-                    />
-                  }
-                  label="Current"
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={2}>
                 {formData.employment_history.length > 1 && (
                   <Button
                     variant="contained"
