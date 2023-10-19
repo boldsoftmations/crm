@@ -93,7 +93,8 @@ export const RouteScreen = () => {
               element={<TeamWiseDashboard />}
             />
             <Route path="/user/dashoard" element={<Dashboard />} />
-            <Route path="/user/profile" exact element={<UserProfile />} />
+            <Route path="/user/profile" exact element={<Profile />} />
+            <Route path="/user/user-profile" exact element={<UserProfile />} />
             {/* Leads Routes */}
             <Route path="/leads/hot-lead" element={<HotLeads />} />
             <Route path="/leads/new-lead" element={<NewLeads />} />

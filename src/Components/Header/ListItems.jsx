@@ -1062,7 +1062,7 @@ export const ListItems = (props) => {
             <ListItemIcon>
               <DashboardIcon />
             </ListItemIcon>
-            <ListItemText primary="Profile" />
+            <ListItemText primary="User Profile" />
             {expandProfiles ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItem>
           <Collapse in={expandProfiles} timeout="auto" unmountOnExit>
@@ -1071,14 +1071,14 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/user/profile"
+                to="/user/user-profile"
                 style={{ width: 300 }}
               >
                 <ListItemText
                   component={Button}
                   onClick={() => setOpen(false)}
                   inset
-                  primary="Profiles"
+                  primary="User Profile"
                 />
               </ListItem>
             </List>
