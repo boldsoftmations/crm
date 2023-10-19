@@ -39,7 +39,7 @@ const EmploymentFields = ({ formData, setFormData }) => {
 
   const addEmploymentRecord = () => {
     const employers = formData.employment_history.map((emp) =>
-      emp.company_name.toLowerCase()
+      emp.company_name ? emp.company_name.toLowerCase() : ""
     );
 
     const hasDuplicates = new Set(employers).size !== employers.length;
