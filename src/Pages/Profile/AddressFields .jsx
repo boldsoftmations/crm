@@ -4,7 +4,7 @@ import CustomTextField from "../../Components/CustomTextField";
 import axios from "axios";
 import { CustomLoader } from "../../Components/CustomLoader";
 
-export const AddressField = ({
+export const AddressFields = ({
   type, // current or permanent
   formData,
   setFormData,

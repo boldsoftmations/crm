@@ -15,7 +15,13 @@ import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { Person } from "@mui/icons-material";
 import { PersonalFields } from "./PersonalFields";
-import { AddressField } from "./AddressFields ";
+import { AddressFields } from "./AddressFields ";
+import { BankFields } from "./BankFields";
+import { EmergencyContactFields } from "./EmergencyContactFields";
+import { PFAndESIFields } from "./PFAndESIFields";
+import { MedicalFields } from "./MedicalFields";
+import { DocterFields } from "./DocterFields";
+import { AddictionFields } from "./AddictionFields";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -40,6 +46,8 @@ export const UserProfile = () => {
       nationality: "",
       marital_status: "",
       marriage_date: "",
+      date_of_joining: "",
+      blood_group: "",
       pan_card_number: "",
       aadhar_card_number: "",
       passport_number: "",
@@ -76,6 +84,12 @@ export const UserProfile = () => {
         number: "",
       },
     ],
+    pf_esi_details: {
+      has_pf_esi_account: "", // Yes or No
+      uan_number: "", // UAN No.
+      pf_number: "", // PF No.
+      esi_number: "", // ESI No.
+    },
     employment_history: [
       {
         company_name: "",
@@ -114,35 +128,28 @@ export const UserProfile = () => {
       additional_qualifiction: "",
     },
     medical: {
-      surgery: {
-        type: "",
-        date: "",
-      },
+      surgery_type: "",
       pregnancy: "",
       previous_surgeries: "",
       known_allergies: "",
-      conditions: {
-        diabetic: "",
-        hyper_tension: "",
-        heart_issues: "",
-        cancer: "",
-        high_blood_pressure: "",
-        low_blood_pressure: "",
-        asthama_respiratory: "",
-      },
-      impairments: {
-        vision: "",
-        hearing: "",
-      },
-      habits: {
-        tobacco: "",
-        cigarettes: "",
-        alcohol: "",
-      },
-      doctor: {
-        name: "",
-        phone_number: "",
-      },
+      diabetic: "",
+      hyper_tension: "",
+      heart_issues: "",
+      cancer: "",
+      high_blood_pressure: "",
+      low_blood_pressure: "",
+      asthama_respiratory: "",
+      vision: "",
+      hearing: "",
+    },
+    addiction: {
+      tobacco: "",
+      cigarettes: "",
+      alcohol: "",
+    },
+    doctor: {
+      name: "",
+      phone_number: "",
     },
     family_details: [
       {
@@ -168,41 +175,6 @@ export const UserProfile = () => {
 
     // Set the updated form data to the state
     setFormData(updatedFormData);
-  };
-
-  const validateIFSC = async () => {
-    try {
-      // Start a loading state
-      setOpen(true);
-
-      // Make the API request using the IFSC from formData
-      const response = await axios.get(
-        `https://ifsc.razorpay.com/${formData.ifscCode}`
-      );
-
-      // On successful response, update the form data with the bank's information
-      setFormData((prevData) => ({
-        ...prevData,
-        bank_name: response.data.BANK,
-        branch: response.data.BRANCH,
-        bank_city: response.data.CITY, // Assuming you want to update the current city with bank's city
-        bank_state: response.data.STATE, // Assuming you want to update the current state with bank's state
-        bank_address: response.data.ADDRESS, // Assuming you want to update the current address with bank's address
-      }));
-
-      // Clear any existing error messages
-      setErrMsg("");
-      setOpen(false);
-    } catch (error) {
-      console.log("Error fetching bank data: ", error);
-      setOpen(false);
-
-      if (error.response && error.response.status === 404) {
-        setErrMsg("Please enter a valid IFSC code.");
-      } else {
-        setErrMsg("Error fetching bank details. Please try again later.");
-      }
-    }
   };
 
   const handleSubmit = (e) => {
@@ -314,39 +286,6 @@ export const UserProfile = () => {
     "Neighbour",
   ];
 
-  const YesorNoOptions = ["Yes", "No"];
-  const YesorNoorNotapplicableOptions = ["Yes", "No", "Not Applicable"];
-  const handleEmergencyContactChange = (event, index) => {
-    const { name, value } = event.target;
-    const updatedEmergencyContacts = [...formData.emergency_contacts];
-    updatedEmergencyContacts[index][name] = value;
-    setFormData({
-      ...formData,
-      emergency_contacts: updatedEmergencyContacts,
-    });
-  };
-
-  const addEmergencyContact = () => {
-    const updatedEmergencyContacts = [...formData.emergency_contacts];
-    updatedEmergencyContacts.push({
-      emergency_contact_name: "",
-      emergency_contact_relationship: "", // Use the default relationship
-      emergency_contact_number: "",
-    });
-    setFormData({
-      ...formData,
-      emergency_contacts: updatedEmergencyContacts,
-    });
-  };
-
-  const removeEmergencyContact = (index) => {
-    const updatedEmergencyContacts = [...formData.emergency_contacts];
-    updatedEmergencyContacts.splice(index, 1); // This will remove the contact at the given index
-    setFormData({
-      ...formData,
-      emergency_contacts: updatedEmergencyContacts,
-    });
-  };
   return (
     <Container>
       <Grid item xs={12} sx={{ marginTop: "20px", marginBottom: "20px" }}>
@@ -361,140 +300,19 @@ export const UserProfile = () => {
           {/* Personal Details */}
           <PersonalFields formData={formData} setFormData={setFormData} />
           {/* Current And Permanent Address Details */}
-          <AddressField
+          <AddressFields
             type="current"
             formData={formData}
             setFormData={setFormData}
           />
-          <AddressField
+          <AddressFields
             type="permanent"
             formData={formData}
             setFormData={setFormData}
           />
 
-          <Grid item xs={12}>
-            <Root>
-              <Divider>
-                <Chip label="KYC Details" />
-              </Divider>
-            </Root>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="PAN Card No"
-              name="pan_card_number"
-              value={formData.pan_card_number}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Aadhar Card No"
-              name="aadhar_card_number"
-              value={formData.aadhar_card_number}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Passport Number"
-              name="passport_number"
-              value={formData.passport_number}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Driving License Number"
-              name="dl_number"
-              value={formData.dl_number}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Account No"
-              name="account_number"
-              value={formData.account_number}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="IFSC Code"
-              name="ifsc_code"
-              value={formData.ifsc_code}
-              onChange={handleChange}
-              onBlur={validateIFSC} // <-- Add this line
-              error={errMsg && errMsg}
-              helperText={errMsg && errMsg}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              disabled
-              fullWidth
-              size="small"
-              label="Bank Name"
-              name="bank_name"
-              value={formData.bank_name}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              disabled
-              fullWidth
-              size="small"
-              label="Branch"
-              name="branch"
-              value={formData.branch}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              disabled
-              fullWidth
-              size="small"
-              label="Bank City"
-              name="bank_city"
-              value={formData.bank_city}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              disabled
-              fullWidth
-              size="small"
-              label="Bank State"
-              name="bank_state"
-              value={formData.bank_state}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              disabled
-              fullWidth
-              size="small"
-              label="Bank Address"
-              name="bank_address"
-              value={formData.bank_address}
-            />
-          </Grid>
+          {/* Bank Details */}
+          <BankFields formData={formData} setFormData={setFormData} />
           <Grid item xs={12}>
             <Root>
               <Divider>
@@ -502,77 +320,12 @@ export const UserProfile = () => {
               </Divider>
             </Root>
           </Grid>
-          {formData.emergency_contacts.map((emergencyContact, index) => (
-            <React.Fragment key={index}>
-              <Grid item xs={12} sm={3}>
-                <CustomTextField
-                  fullWidth
-                  size="small"
-                  label="Emergency Contact Person Name"
-                  name="emergency_contact_name"
-                  value={emergencyContact.emergency_contact_name}
-                  onChange={(event) =>
-                    handleEmergencyContactChange(event, index)
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Autocomplete
-                  options={relationshipOptions}
-                  fullWidth
-                  size="small"
-                  value={emergencyContact.emergency_contact_relationship || ""}
-                  onChange={(event, newValue) => {
-                    handleEmergencyContactChange(
-                      {
-                        target: {
-                          name: "emergency_contact_relationship",
-                          value: newValue || "",
-                        },
-                      },
-                      index
-                    );
-                  }}
-                  renderInput={(params) => (
-                    <CustomTextField
-                      label="Emergency Contact Relationship"
-                      {...params}
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <CustomTextField
-                  fullWidth
-                  size="small"
-                  label="Emergency Contact Number"
-                  type="tel"
-                  name="emergency_contact_number"
-                  value={emergencyContact.emergency_contact_number}
-                  onChange={(event) =>
-                    handleEmergencyContactChange(event, index)
-                  }
-                />
-              </Grid>
-              {formData.emergency_contacts.length > 1 && ( // Check if there's more than one emergency contact
-                <Grid item xs={12} sm={2}>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => removeEmergencyContact(index)}
-                  >
-                    Remove Contact
-                  </Button>
-                </Grid>
-              )}
-            </React.Fragment>
-          ))}
-          <Grid item xs={12}>
-            <Button variant="contained" onClick={addEmergencyContact}>
-              Add Emergency Contact
-            </Button>
-          </Grid>
-
+          {/* Emergency Contact Details */}
+          <EmergencyContactFields
+            formData={formData}
+            setFormData={setFormData}
+          />
+          {/* PF & ESI Details */}
           <Grid item xs={12}>
             <Root>
               <Divider>
@@ -580,64 +333,7 @@ export const UserProfile = () => {
               </Divider>
             </Root>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={YesorNoOptions}
-              fullWidth
-              size="small"
-              value={formData.has_pf_esi_account || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "has_pf_esi_account",
-                    value: newValue || "",
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField
-                  label="Do you have PF & ESI Account"
-                  {...params}
-                />
-              )}
-            />
-          </Grid>
-          {formData.has_pf_esi_account === "Yes" && (
-            <Grid item xs={12} sm={4}>
-              <CustomTextField
-                fullWidth
-                size="small"
-                label="UAN No."
-                name="uan_number"
-                value={formData.uan_number}
-                onChange={handleChange}
-              />
-            </Grid>
-          )}
-          {formData.has_pf_esi_account === "Yes" && (
-            <Grid item xs={12} sm={4}>
-              <CustomTextField
-                fullWidth
-                size="small"
-                label="PF No."
-                name="pf_number"
-                value={formData.pf_number}
-                onChange={handleChange}
-              />
-            </Grid>
-          )}
-          {formData.has_pf_esi_account === "Yes" && (
-            <Grid item xs={12} sm={4}>
-              <CustomTextField
-                fullWidth
-                size="small"
-                label="ESI No."
-                name="esi_number"
-                value={formData.esi_number}
-                onChange={handleChange}
-              />
-            </Grid>
-          )}
+          <PFAndESIFields formData={formData} setFormData={setFormData} />
           <Grid item xs={12}>
             <Root>
               <Divider>
@@ -964,6 +660,8 @@ export const UserProfile = () => {
               Add Family Member
             </Button>
           </Grid>
+
+          {/*Known Health Issues Details  */}
           <Grid item xs={12}>
             <Root>
               <Divider>
@@ -971,311 +669,19 @@ export const UserProfile = () => {
               </Divider>
             </Root>
           </Grid>
+          <MedicalFields formData={formData} setFormData={setFormData} />
 
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Known Allergies"
-              name="known_allergies"
-              value={formData.known_allergies}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={YesorNoOptions}
-              fullWidth
-              size="small"
-              value={formData.diabetic || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "diabetic",
-                    value: newValue || "",
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField label="Diabetic" {...params} />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={YesorNoOptions}
-              fullWidth
-              size="small"
-              value={formData.asthama_respiratory || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "asthama_respiratory",
-                    value: newValue || "",
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField
-                  label="Asthama or Respiratory Issues"
-                  {...params}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={YesorNoOptions}
-              fullWidth
-              size="small"
-              value={formData.vision_impairments || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "vision_impairments",
-                    value: newValue || "",
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField label="Vision Impairments" {...params} />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={YesorNoOptions}
-              fullWidth
-              size="small"
-              value={formData.hearing_impairments || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "hearing_impairments",
-                    value: newValue || "",
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField label="Hearing Impairments" {...params} />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={YesorNoOptions}
-              fullWidth
-              size="small"
-              value={formData.hyper_tension || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "hyper_tension",
-                    value: newValue || "",
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField label="Hyper Tension" {...params} />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={YesorNoOptions}
-              fullWidth
-              size="small"
-              value={formData.heart_issues || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "heart_issues",
-                    value: newValue || "",
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField label="Heart Issues" {...params} />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={YesorNoOptions}
-              fullWidth
-              size="small"
-              value={formData.cancer || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "cancer",
-                    value: newValue || "",
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField label="Cancer" {...params} />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={YesorNoOptions}
-              fullWidth
-              size="small"
-              value={formData.high_blood_pressure || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "high_blood_pressure",
-                    value: newValue || "",
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField label="High Blood Pressure" {...params} />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={YesorNoOptions}
-              fullWidth
-              size="small"
-              value={formData.low_blood_pressure || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "low_blood_pressure",
-                    value: newValue || "",
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField label="Low Blood Pressure" {...params} />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Previous Surgeries"
-              name="previous_surgeries"
-              value={formData.previous_surgeries}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          {/* Surgery Type */}
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Surgery Type"
-              name="surgery_type"
-              value={formData.surgery_type}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          {/* Surgery Date */}
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Surgery Date"
-              type="date" // You can use the 'date' type for a date input field
-              name="surgery_date"
-              value={formData.surgery_date}
-              onChange={handleChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={YesorNoorNotapplicableOptions}
-              fullWidth
-              size="small"
-              value={formData.pregnancy || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: { name: "pregnancy", value: newValue || "" },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField label="Pregnancy" {...params} />
-              )}
-            />
-          </Grid>
+          {/*Addiction  */}
           <Grid item xs={12}>
             <Root>
               <Divider>
-                <Chip label="Addictions" />
+                <Chip label="Addiction Details" />
               </Divider>
             </Root>
           </Grid>
+          <AddictionFields formData={formData} setFormData={setFormData} />
 
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={YesorNoOptions}
-              fullWidth
-              size="small"
-              value={formData.tobacco || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "tobacco",
-                    value: newValue || "",
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField label="Tobacco" {...params} />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={YesorNoOptions}
-              fullWidth
-              size="small"
-              value={formData.cigarettes || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "cigarettes",
-                    value: newValue || "",
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField label="Cigarettes" {...params} />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Autocomplete
-              options={YesorNoOptions}
-              fullWidth
-              size="small"
-              value={formData.alcohol || ""}
-              onChange={(event, newValue) => {
-                handleChange({
-                  target: {
-                    name: "alcohol",
-                    value: newValue || "",
-                  },
-                });
-              }}
-              renderInput={(params) => (
-                <CustomTextField label="Alcohol" {...params} />
-              )}
-            />
-          </Grid>
-
+          {/*Family Doctor Details  */}
           <Grid item xs={12}>
             <Root>
               <Divider>
@@ -1283,28 +689,7 @@ export const UserProfile = () => {
               </Divider>
             </Root>
           </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Doctor Name"
-              name="doctor_name"
-              value={formData.doctor_name}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <CustomTextField
-              fullWidth
-              type="number"
-              size="small"
-              label="Doctor Phone Number"
-              name="doctor_phone_number"
-              value={formData.doctor_phone_number}
-              onChange={handleChange}
-            />
-          </Grid>
+          <DocterFields formData={formData} setFormData={setFormData} />
 
           <Grid item xs={12}>
             <Button

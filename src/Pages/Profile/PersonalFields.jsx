@@ -16,7 +16,21 @@ const fieldData = [
   },
   { type: "date", label: "Date of Birth", name: "date_of_birth" },
   { type: "text", label: "Place of Birth", name: "place_of_birth" },
-  { type: "text", label: "Nationality", name: "nationality" },
+  {
+    type: "autocomplete",
+    label: "Nationality",
+    name: "nationality",
+    options: [
+      "Indian",
+      "Canadian",
+      "British",
+      "Chineese",
+      "Japaneese",
+      "Pakistani",
+      "Arabic",
+      "Others",
+    ],
+  },
   {
     type: "autocomplete",
     label: "Religion",
@@ -44,6 +58,17 @@ const fieldData = [
     name: "marriage_date",
     condition: "Married",
   },
+  { type: "date", label: "Date of Joining", name: "date_of_joining" },
+  {
+    type: "autocomplete",
+    label: "Blood Group",
+    name: "blood_group",
+    options: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+  },
+  { type: "text", label: "PAN Card No", name: "pan_card_number" },
+  { type: "text", label: "Aadhar Card No", name: "aadhar_card_number" },
+  { type: "text", label: "Passport Number", name: "passport_number" },
+  { type: "text", label: "Driving License Number", name: "dl_number" },
 ];
 
 export const PersonalFields = ({ formData, setFormData }) => {
