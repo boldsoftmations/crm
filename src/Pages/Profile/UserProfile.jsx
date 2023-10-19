@@ -13,6 +13,7 @@ import { AddictionFields } from "./AddictionFields";
 import { EducationFields } from "./EducationFields";
 import EmploymentFields from "./EmploymentFields";
 import { FamilyFields } from "./FamilyDetails";
+import { useSelector } from "react-redux";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -24,11 +25,13 @@ const Root = styled("div")(({ theme }) => ({
 
 export const UserProfile = () => {
   const [open, setOpen] = useState(false);
+  const auth = useSelector((state) => state.auth);
+  const Profile = auth.profile ? auth.profile : [];
   const [formData, setFormData] = useState({
     personal: {
-      first_name: null,
+      first_name: Profile.first_name,
       middle_name: null,
-      last_name: null,
+      last_name: Profile.last_name,
       personal_email: null,
       phone_number: null,
       date_of_birth: null,

@@ -8,9 +8,9 @@ const fieldData = [
     label: "Upload Profile Picture",
     name: "uploaded_picture",
   },
-  { type: "text", label: "First Name", name: "first_name" },
+  { type: "text", label: "First Name", name: "first_name", disabled: true },
   { type: "text", label: "Middle Name", name: "middle_name" },
-  { type: "text", label: "Last Name", name: "last_name" },
+  { type: "text", label: "Last Name", name: "last_name", disabled: true },
   { type: "email", label: "Personal Email", name: "personal_email" },
   { type: "tel", label: "Phone Number", name: "phone_number" },
   {
@@ -192,6 +192,7 @@ export const PersonalFields = ({ formData, setFormData }) => {
                   name={`personal.${field.name}`}
                   value={value}
                   onChange={handleChange}
+                  disabled={field.disabled} // Add this line
                   InputLabelProps={
                     field.type === "date" ? { shrink: true } : {}
                   }
