@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import CustomTextField from "../../Components/CustomTextField";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const DocterFields = ({ formData, setFormData }) => {
   const handleChange = (event) => {

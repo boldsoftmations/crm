@@ -59,23 +59,27 @@ export const SalesPersonAnalytics = (props) => {
     team,
   } = props;
   // Retrieving user data from Redux store
-  const userData = useSelector((state) => state.auth.profile);
+  const user = useSelector((state) => state.auth);
+  const userData = user.profile ? user.profile : null;
   const [dIQdata, setDIQData] = useState([]);
   const [selectedDIQData, setSelectedDIQData] = useState(null);
   const [dOBQdata, setDOBQData] = useState([]);
   const [selectedDOBQData, setSelectedDOBQData] = useState(null);
   const [activeButton, setActiveButton] = useState("monthly");
   // Filter user data to determine the sales roles assigned to the user
-  const assigned = userData.sales_users || [];
+  const assigned = userData ? userData.sales_users || [] : [];
+
   // Determine if the user has limited privacy rights based on group membership
   const [privacy] = useState(
-    !userData.groups.includes("Director") &&
+    userData &&
+      !userData.groups.includes("Director") &&
       !userData.groups.includes("Sales Manager") &&
       !userData.groups.includes("Sales Deputy Manager") &&
       !userData.groups.includes("Sales Assistant Deputy Manager") &&
       !userData.groups.includes("Sales Executive") &&
       !userData.groups.includes("Sales Manager without Leads")
   );
+
   // Filtering sales users based on the team
   let SALES_PERSON_OPTIONS = assigned;
   if (team) {

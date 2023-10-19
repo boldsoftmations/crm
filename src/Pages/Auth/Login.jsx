@@ -6,6 +6,7 @@ import {
   loginsucces,
   loginfail,
   getProfileUser,
+  getAllProfileUser,
 } from "./../../Redux/Action/Action";
 import "../CommonStyle.css";
 
@@ -133,10 +134,9 @@ export const Login = () => {
   const getUsers = async () => {
     try {
       setOpen(true);
-      const res = await UserProfileService.getProfile();
-      dispatch(getProfileUser(res.data));
-      // setUserData(res.data);
-
+      const response = await UserProfileService.getProfile();
+      dispatch(getProfileUser(response.data));
+      getUserProfileData(response.data.emp_id);
       setOpen(false);
     } catch (err) {
       console.error(err);
@@ -145,6 +145,16 @@ export const Login = () => {
     }
   };
 
+  const getUserProfileData = async (ID) => {
+    try {
+      console.log("ID", ID);
+      const response = await UserProfileService.getUserProfileDataById(ID);
+      console.log("response", response);
+      dispatch(getAllProfileUser(response.data));
+    } catch (err) {
+      console.log("error profile", err);
+    }
+  };
   return (
     <ThemeProvider theme={theme}>
       <CustomLoader open={open} />

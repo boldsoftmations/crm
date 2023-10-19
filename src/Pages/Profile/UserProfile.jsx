@@ -1,19 +1,22 @@
 import React, { useState } from "react";
 import Option from "../../Options/Options";
-import { Button, Container, Grid, Divider, Chip } from "@mui/material";
+import { Button, Container, Grid, Divider, Chip, Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { PersonalFields } from "./PersonalFields";
-import { AddressFields } from "./AddressFields ";
-import { BankFields } from "./BankFields";
-import { EmergencyContactFields } from "./EmergencyContactFields";
-import { PFAndESIFields } from "./PFAndESIFields";
-import { MedicalFields } from "./MedicalFields";
-import { DocterFields } from "./DocterFields";
-import { AddictionFields } from "./AddictionFields";
-import { EducationFields } from "./EducationFields";
-import EmploymentFields from "./EmploymentFields";
-import { FamilyFields } from "./FamilyDetails";
+import { PersonalFields } from "./Personal/PersonalFields";
+import { AddressFields } from "./Address/AddressFields ";
+
+import { EmergencyContactFields } from "./EmergencyContact/EmergencyContactFields";
+import { PFAndESIFields } from "./PFAndESI/PFAndESIFields";
+import { MedicalFields } from "./Medical/MedicalFields";
+import { DocterFields } from "./Docter/DocterFields";
+import { AddictionFields } from "./Addiction/AddictionFields";
+import { EducationFields } from "./Education/EducationFields";
+import EmploymentFields from "./Employment/EmploymentFields";
+import { FamilyFields } from "./Family/FamilyFields";
 import { useSelector } from "react-redux";
+import UserProfileService from "./../../services/UserProfileService";
+import { CustomLoader } from "../../Components/CustomLoader";
+import { KycFields } from "./Kyc/KycFields";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -28,6 +31,7 @@ export const UserProfile = () => {
   const auth = useSelector((state) => state.auth);
   const Profile = auth.profile ? auth.profile : [];
   const [formData, setFormData] = useState({
+    user: Profile.emp_id,
     personal: {
       first_name: Profile.first_name,
       middle_name: null,
@@ -156,14 +160,24 @@ export const UserProfile = () => {
 
   console.log("formData", formData);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form Data Submitted:", formData);
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      setOpen(true);
+
+      await UserProfileService.createUserProfileData(formData);
+      console.log("Form Data Submitted:", formData);
+      setOpen(false);
+    } catch (error) {
+      console.log("error user Profile", error);
+      setOpen(false);
+    }
   };
 
   return (
     <Container>
-      <form onSubmit={handleSubmit}>
+      <CustomLoader open={open} />
+      <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           {/* Personal Details */}
           <Grid item xs={12} sx={{ marginTop: "20px", marginBottom: "20px" }}>
@@ -208,7 +222,7 @@ export const UserProfile = () => {
               </Divider>
             </Root>
           </Grid>
-          <BankFields formData={formData} setFormData={setFormData} />
+          <KycFields formData={formData} setFormData={setFormData} />
           <Grid item xs={12}>
             <Root>
               <Divider>
@@ -298,7 +312,7 @@ export const UserProfile = () => {
             </Button>
           </Grid>
         </Grid>
-      </form>
+      </Box>
     </Container>
   );
 };

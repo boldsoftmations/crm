@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, Autocomplete } from "@mui/material";
-import CustomTextField from "../../Components/CustomTextField";
+import CustomTextField from "../../../Components/CustomTextField";
 
 const educationFieldData = [
   { section: "school", type: "text", label: "10th School Name", name: "name" },

@@ -1,8 +1,8 @@
 import React from "react";
 import { Grid, FormControlLabel, Checkbox } from "@mui/material";
-import CustomTextField from "../../Components/CustomTextField";
+import CustomTextField from "../../../Components/CustomTextField";
 import axios from "axios";
-import { CustomLoader } from "../../Components/CustomLoader";
+import { CustomLoader } from "../../../Components/CustomLoader";
 
 export const AddressFields = ({
   type, // current or permanent
@@ -119,6 +119,9 @@ export const AddressFields = ({
             name={fieldPath(field)}
             value={formData.address[type][field]}
             onChange={field === "pin" ? handlePinChange : handleChange}
+            InputLabelProps={{
+              shrink: formData.address[type][field] ? true : undefined,
+            }}
           />
         </Grid>
       ))}
