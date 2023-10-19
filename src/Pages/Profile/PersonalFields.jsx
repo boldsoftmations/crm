@@ -1,21 +1,8 @@
 import React, { useCallback } from "react";
-import {
-  Grid,
-  Autocomplete,
-  Avatar,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-} from "@mui/material";
+import { Grid, Autocomplete, Avatar, Button } from "@mui/material";
 import CustomTextField from "../../Components/CustomTextField";
 
 const fieldData = [
-  {
-    type: "camera",
-    label: "Capture Profile Picture",
-    name: "captured_picture",
-  },
   {
     type: "upload",
     label: "Upload Profile Picture",
@@ -83,51 +70,11 @@ const fieldData = [
     name: "blood_group",
     options: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
   },
-  { type: "text", label: "PAN Card No", name: "pan_card_number" },
-  { type: "text", label: "Aadhar Card No", name: "aadhar_card_number" },
-  { type: "text", label: "Passport Number", name: "passport_number" },
-  { type: "text", label: "Driving License Number", name: "dl_number" },
 ];
 
 export const PersonalFields = ({ formData, setFormData }) => {
   const [openCameraDialog, setOpenCameraDialog] = React.useState(false);
   const [stream, setStream] = React.useState(null);
-
-  const handleCaptureClick = async () => {
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-      });
-      setStream(mediaStream);
-      setOpenCameraDialog(true);
-    } catch (error) {
-      console.error("Error accessing the camera:", error);
-    }
-  };
-
-  const handleCapturePhoto = useCallback(() => {
-    const videoElement = document.querySelector("#camera-preview");
-    const canvas = document.createElement("canvas");
-    canvas.width = videoElement.videoWidth;
-    canvas.height = videoElement.videoHeight;
-    canvas.getContext("2d").drawImage(videoElement, 0, 0);
-    const imageUrl = canvas.toDataURL("image/png");
-    setFormData((prev) => ({
-      ...prev,
-      personal: {
-        ...prev.personal,
-        captured_picture: imageUrl,
-      },
-    }));
-    handleCloseCameraDialog();
-  }, [setFormData]);
-
-  const handleCloseCameraDialog = useCallback(() => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-    }
-    setOpenCameraDialog(false);
-  }, [stream]);
 
   const handleFileUpload = (event, fieldName) => {
     const file = event.target.files[0];
@@ -165,52 +112,9 @@ export const PersonalFields = ({ formData, setFormData }) => {
       {fieldData.map((field, index) => {
         const value = formData.personal[field.name] || "";
         switch (field.type) {
-          case "camera":
-            // If uploaded_picture has a value, don't show the capture option
-            if (formData.personal.uploaded_picture) return null;
-            return (
-              <Grid item xs={12} sm={2} key={index}>
-                {value && (
-                  <Avatar
-                    src={value}
-                    alt="Captured Profile"
-                    style={{
-                      width: "100px",
-                      height: "100px",
-                      marginBottom: "10px",
-                    }}
-                  />
-                )}
-                <Button variant="contained" onClick={handleCaptureClick}>
-                  Capture
-                </Button>
-                <Dialog
-                  open={openCameraDialog}
-                  onClose={handleCloseCameraDialog}
-                >
-                  <DialogContent>
-                    <video
-                      id="camera-preview"
-                      autoPlay
-                      style={{ width: "100%" }}
-                    ></video>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={handleCapturePhoto} color="primary">
-                      Capture
-                    </Button>
-                    <Button onClick={handleCloseCameraDialog} color="secondary">
-                      Cancel
-                    </Button>
-                  </DialogActions>
-                </Dialog>
-              </Grid>
-            );
           case "upload":
-            // If captured_picture has a value, don't show the upload option
-            if (formData.personal.captured_picture) return null;
             return (
-              <Grid item xs={12} sm={2} key={index}>
+              <Grid item xs={12} key={index}>
                 {value && (
                   <Avatar
                     src={value}

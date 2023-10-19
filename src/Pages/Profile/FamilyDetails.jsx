@@ -49,7 +49,7 @@ export const FamilyFields = ({ formData, setFormData }) => {
     "Friend",
     "Neighbour",
   ];
-
+  const bloodGroupOptions = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
   return (
     <>
       {formData.family_details.map((familyMember, index) => (
@@ -86,14 +86,27 @@ export const FamilyFields = ({ formData, setFormData }) => {
               )}
             />
           </Grid>
+
           <Grid item xs={12} sm={2}>
-            <CustomTextField
+            <Autocomplete
               fullWidth
               size="small"
-              label="Blood Group"
-              name="blood_group"
+              options={bloodGroupOptions}
+              getOptionLabel={(option) => option}
               value={familyMember.blood_group}
-              onChange={(event) => handleFamilyDetailsChange(event, index)}
+              onChange={(event, newValue) => {
+                handleFamilyDetailsChange(
+                  { target: { name: "blood_group", value: newValue } },
+                  index
+                );
+              }}
+              renderInput={(params) => (
+                <CustomTextField
+                  {...params}
+                  label="Blood Group"
+                  name="blood_group"
+                />
+              )}
             />
           </Grid>
           <Grid item xs={12} sm={2}>

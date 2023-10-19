@@ -26,127 +26,127 @@ export const UserProfile = () => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     personal: {
-      first_name: "",
-      middle_name: "",
-      last_name: "",
-      personal_email: "",
-      phone_number: "",
-      date_of_birth: "",
-      place_of_birth: "",
-      nationality: "",
-      marital_status: "",
-      marriage_date: "",
-      date_of_joining: "",
-      blood_group: "",
-      pan_card_number: "",
-      aadhar_card_number: "",
-      passport_number: "",
-      dl_number: "",
+      first_name: null,
+      middle_name: null,
+      last_name: null,
+      personal_email: null,
+      phone_number: null,
+      date_of_birth: null,
+      place_of_birth: null,
+      nationality: null,
+      marital_status: null,
+      marriage_date: null,
+      date_of_joining: null,
+      blood_group: null,
     },
     address: {
       current: {
-        address: "",
-        city: "",
-        state: "",
-        pin: "",
+        address: null,
+        city: null,
+        state: null,
+        pin: null,
         is_permanent_same_as_current: false,
       },
       permanent: {
-        address: "",
-        city: "",
-        state: "",
-        pin: "",
+        address: null,
+        city: null,
+        state: null,
+        pin: null,
       },
     },
-    bank: {
-      name: "",
-      account_number: "",
-      ifsc_code: "",
-      branch: "",
-      city: "",
-      state: "",
-      address: "",
+    kyc: {
+      name: null,
+      account_number: null,
+      ifsc_code: null,
+      branch: null,
+      city: null,
+      state: null,
+      address: null,
+      pan_card_number: null,
+      aadhar_card_number: null,
+      passport_number: null,
+      dl_number: null,
     },
     emergency_contacts: [
       {
-        name: "",
-        relationship: "",
-        number: "",
+        name: null,
+        relationship: null,
+        number: null,
       },
     ],
     pf_esi_details: {
-      has_pf_esi_account: "", // Yes or No
-      uan_number: "", // UAN No.
-      pf_number: "", // PF No.
-      esi_number: "", // ESI No.
+      has_pf_esi_account: null,
+      uan_number: null,
+      pf_number: null,
+      esi_number: null,
     },
     employment_history: [
       {
-        company_name: "",
-        post_held: "",
-        worked_from_month: "",
-        worked_from_year: "",
-        worked_till_month: "",
-        worked_till_year: "",
+        company_name: null,
+        post_held: null,
+        worked_from_month: null,
+        worked_from_year: null,
+        worked_till_month: null,
+        worked_till_year: null,
       },
     ],
     education: {
       school: {
-        name: "",
-        board: "",
-        passout: "",
+        name: null,
+        board: null,
+        passout: null,
       },
       college: {
-        name: "",
-        board: "",
-        passout: "",
+        name: null,
+        board: null,
+        passout: null,
       },
       diploma: {
-        type: "",
-        uni_name: "",
-        passout: "",
+        type: null,
+        uni_name: null,
+        passout: null,
       },
       graduation: {
-        type: "",
-        university: "",
-        passout: "",
+        type: null,
+        university: null,
+        passout: null,
       },
       pg: {
-        masters: "",
-        passout: "",
+        masters: null,
+        passout: null,
       },
-      additional_qualifiction: "",
+      additional_qualifiction: null,
     },
     medical: {
-      surgery_type: "",
-      pregnancy: "",
-      previous_surgeries: "",
-      known_allergies: "",
-      diabetic: "",
-      hyper_tension: "",
-      heart_issues: "",
-      cancer: "",
-      high_blood_pressure: "",
-      low_blood_pressure: "",
-      asthama_respiratory: "",
-      vision: "",
-      hearing: "",
+      surgery_type: null,
+      pregnancy: null,
+      previous_surgeries: null,
+      known_allergies: null,
+      diabetic: null,
+      hyper_tension: null,
+      heart_issues: null,
+      cancer: null,
+      high_blood_pressure: null,
+      low_blood_pressure: null,
+      asthama_respiratory: null,
+      vision: null,
+      hearing: null,
     },
     addiction: {
-      tobacco: "",
-      cigarettes: "",
-      alcohol: "",
+      tobacco: null,
+      cigarettes: null,
+      alcohol: null,
     },
     doctor: {
-      name: "",
-      phone_number: "",
+      name: null,
+      phone_number: null,
     },
     family_details: [
       {
-        name: "",
-        relationship: "",
-        blood_group: "",
-        contact_number: "",
+        name: null,
+        relationship: null,
+        blood_group: null,
+        contact_number: null,
       },
     ],
   });
@@ -197,11 +197,11 @@ export const UserProfile = () => {
             setFormData={setFormData}
           />
 
-          {/* Bank Details */}
+          {/* KYC Details */}
           <Grid item xs={12}>
             <Root>
               <Divider>
-                <Chip label="Bank Details" />
+                <Chip label="KYC Details" />
               </Divider>
             </Root>
           </Grid>

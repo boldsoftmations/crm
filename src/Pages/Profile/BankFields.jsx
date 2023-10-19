@@ -13,7 +13,7 @@ export const BankFields = ({ formData, setFormData }) => {
     const { name, value } = event.target;
     setFormData((prev) => ({
       ...prev,
-      bank: { ...prev.bank, [name]: value },
+      kyc: { ...prev.kyc, [name]: value },
     }));
 
     if (name === "ifsc_code" && value.length === 11) {
@@ -29,7 +29,7 @@ export const BankFields = ({ formData, setFormData }) => {
 
       setFormData((prev) => ({
         ...prev,
-        bank: {
+        kyc: {
           ...prev.bank,
           name: BANK,
           branch: BRANCH,
@@ -63,8 +63,11 @@ export const BankFields = ({ formData, setFormData }) => {
     { label: "Bank City", name: "city", disabled: true },
     { label: "Bank State", name: "state", disabled: true },
     { label: "Bank Address", name: "address", disabled: true },
+    { type: "text", label: "PAN Card No", name: "pan_card_number" },
+    { type: "text", label: "Aadhar Card No", name: "aadhar_card_number" },
+    { type: "text", label: "Passport Number", name: "passport_number" },
+    { type: "text", label: "Driving License Number", name: "dl_number" },
   ];
-
   return (
     <>
       <CustomLoader open={open} />
@@ -75,7 +78,7 @@ export const BankFields = ({ formData, setFormData }) => {
             fullWidth
             size="small"
             onChange={handleChange}
-            value={formData.bank[field.name]}
+            value={formData.kyc[field.name]}
             {...field}
           />
         </Grid>
