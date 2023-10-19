@@ -1,15 +1,6 @@
 import React from "react";
 import { Grid, Autocomplete } from "@mui/material";
 import CustomTextField from "../../Components/CustomTextField";
-import { styled } from "@mui/material/styles";
-
-const Root = styled("div")(({ theme }) => ({
-  width: "100%",
-  ...theme.typography.body2,
-  "& > :not(style) + :not(style)": {
-    marginTop: theme.spacing(2),
-  },
-}));
 
 const YesNoOptions = ["Yes", "No"];
 const YesNoNAOptions = [...YesNoOptions, "Not Applicable"];

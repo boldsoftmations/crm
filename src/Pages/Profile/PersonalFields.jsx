@@ -85,7 +85,7 @@ export const PersonalFields = ({ formData, setFormData }) => {
       },
     }));
   };
-  console.log("formData >>", formData);
+
   return (
     <>
       {fieldData.map((field, index) => {

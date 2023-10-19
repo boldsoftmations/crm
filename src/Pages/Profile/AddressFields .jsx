@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Divider, Chip, FormControlLabel, Checkbox } from "@mui/material";
+import { Grid, FormControlLabel, Checkbox } from "@mui/material";
 import CustomTextField from "../../Components/CustomTextField";
 import axios from "axios";
 import { CustomLoader } from "../../Components/CustomLoader";
@@ -90,12 +90,6 @@ export const AddressFields = ({
   return (
     <>
       <CustomLoader open={open} />
-      <Grid item xs={12}>
-        <Divider>
-          <Chip label={`${capitalize(type)} Address`} />
-        </Divider>
-      </Grid>
-
       {type === "permanent" && (
         <Grid item xs={12}>
           <FormControlLabel

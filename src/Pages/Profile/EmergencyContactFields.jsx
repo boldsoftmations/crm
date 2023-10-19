@@ -1,24 +1,6 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Container,
-  Grid,
-  Autocomplete,
-  FormControlLabel,
-  Checkbox,
-  Divider,
-  Chip,
-} from "@mui/material";
+import { Button, Grid, Autocomplete } from "@mui/material";
 import CustomTextField from "../../Components/CustomTextField";
-import { styled } from "@mui/material/styles";
-
-const Root = styled("div")(({ theme }) => ({
-  width: "100%",
-  ...theme.typography.body2,
-  "& > :not(style) + :not(style)": {
-    marginTop: theme.spacing(2),
-  },
-}));
 
 export const EmergencyContactFields = ({ formData, setFormData }) => {
   const [open, setOpen] = useState(false);

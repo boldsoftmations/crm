@@ -5,14 +5,6 @@ import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { CustomLoader } from "../../Components/CustomLoader";
 
-const Root = styled("div")(({ theme }) => ({
-  width: "100%",
-  ...theme.typography.body2,
-  "& > :not(style) + :not(style)": {
-    marginTop: theme.spacing(2),
-  },
-}));
-
 export const BankFields = ({ formData, setFormData }) => {
   const [errMsg, setErrMsg] = useState("");
   const [open, setOpen] = useState(false);
@@ -76,13 +68,7 @@ export const BankFields = ({ formData, setFormData }) => {
   return (
     <>
       <CustomLoader open={open} />
-      <Grid item xs={12}>
-        <Root>
-          <Divider>
-            <Chip label="Bank Details" />
-          </Divider>
-        </Root>
-      </Grid>
+
       {bankFields.map((field, idx) => (
         <Grid item xs={12} sm={4} key={idx}>
           <CustomTextField
