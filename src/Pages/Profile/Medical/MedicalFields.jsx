@@ -79,24 +79,24 @@ export const MedicalFields = ({ formData, setFormData }) => {
 
   return (
     <Grid container spacing={2}>
-      {fieldsConfig.map(({ label, name, options, type }) => (
+      {fieldsConfig.map(({ label, name, options }) => (
         <Grid item xs={12} sm={4} key={name}>
-          {type === "text" ? (
+          {options ? (
+            <AutoCompleteField
+              label={label}
+              name={name}
+              value={getValue(name) || ""}
+              options={options}
+              handleChange={handleChange}
+            />
+          ) : (
             <CustomTextField
               fullWidth
               size="small"
               label={label}
               name={`medical.${name}`}
-              value={getValue(name)}
+              value={getValue(name) || ""}
               onChange={(e) => handleChange(name, e.target.value)}
-            />
-          ) : (
-            <AutoCompleteField
-              label={label}
-              name={name}
-              value={getValue(name)}
-              options={options}
-              handleChange={handleChange}
             />
           )}
         </Grid>

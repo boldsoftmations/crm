@@ -58,7 +58,7 @@ export const EmploymentFields = ({ formData, setFormData }) => {
               size="small"
               label="Company Name"
               name="company_name"
-              value={employment.company_name}
+              value={employment.company_name || ""}
               onChange={(event) => handleEmploymentChange(event, index)}
             />
           </Grid>
@@ -68,7 +68,7 @@ export const EmploymentFields = ({ formData, setFormData }) => {
               size="small"
               label="Designation"
               name="post_held"
-              value={employment.post_held}
+              value={employment.post_held || ""}
               onChange={(event) => handleEmploymentChange(event, index)}
             />
           </Grid>
