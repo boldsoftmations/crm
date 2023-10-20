@@ -191,10 +191,6 @@ const AssignMultipleLeads = (data) => {
   return CustomAxios.post("/api/lead/assign-multiple-leads/", data);
 };
 
-// IndiaMart Leads API
-const getIndiaMartLeads = (data) => {
-  return CustomAxios.get("/api/lead/indiamart-leads-list/", data);
-};
 const getAllFollowup = (options) => {
   const {
     startDate,
@@ -221,6 +217,11 @@ const getAllFollowup = (options) => {
   }
 
   return CustomAxios.get(url);
+};
+
+// IndiaMart Leads API
+const getIndiaMartLeads = (data) => {
+  return CustomAxios.get(`/api/lead/indiamart-leads-list/?month=${data}`);
 };
 
 const LeadServices = {
@@ -257,7 +258,7 @@ const LeadServices = {
   BulkLeadAssign,
   AssignMultipleLeads,
   getAllFollowup,
-  getIndiaMartLeads
+  getIndiaMartLeads,
 };
 
 export default LeadServices;
