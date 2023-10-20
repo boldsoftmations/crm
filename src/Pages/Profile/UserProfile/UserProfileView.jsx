@@ -63,7 +63,7 @@ export const UserProfileView = () => {
     "ID",
     "FIRST NAME",
     "LAST NAME",
-    "PHONE NUMBER",
+    "PERSONAL CONTACT",
     "PERSONAL EMAIL",
     "DATE OF JOINING",
     "ACTION",
@@ -82,8 +82,8 @@ export const UserProfileView = () => {
     id: user.id,
     first_name: user.personal.first_name || "-",
     last_name: user.personal.last_name || "-",
-    phone_number: user.personal.phone_number || "-", // Adjust as per your actual data structure
-    personal_email: user.personal.personal_email || "-",
+    phone_number: user.personal.contact || "-", // Adjust as per your actual data structure
+    personal_email: user.personal.email || "-",
     date_of_joining: user.personal.date_of_joining || "-",
   }));
 
