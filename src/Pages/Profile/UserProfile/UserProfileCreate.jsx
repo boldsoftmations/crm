@@ -24,7 +24,7 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const UserProfileCreate = ({ getUsers }) => {
+export const UserProfileCreate = ({ setOpenPopup, getUsers }) => {
   const [open, setOpen] = useState(false);
   const auth = useSelector((state) => state.auth);
   const Profile = auth.profile ? auth.profile : [];
@@ -162,6 +162,7 @@ export const UserProfileCreate = ({ getUsers }) => {
       setOpen(true);
 
       await UserProfileService.createUserProfileData(formData);
+      setOpenPopup(false);
       getUsers();
       setOpen(false);
     } catch (error) {
