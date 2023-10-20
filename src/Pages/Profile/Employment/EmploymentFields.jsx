@@ -50,7 +50,7 @@ const EmploymentFields = ({ formData, setFormData }) => {
 
     const newRecord = {
       company_name: "",
-      designation: "",
+      post_held: "",
       workedFrom: "",
       workedTill: "",
     };
@@ -80,8 +80,8 @@ const EmploymentFields = ({ formData, setFormData }) => {
               fullWidth
               size="small"
               label="Designation"
-              name="designation"
-              value={employment.designation}
+              name="post_held"
+              value={employment.post_held}
               onChange={(event) => handleEmploymentChange(event, index)}
             />
           </Grid>

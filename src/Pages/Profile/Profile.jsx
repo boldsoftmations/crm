@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Typography } from "@mui/material";
+import { Avatar, Grid, Paper, Switch, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import UserProfileService from "../../services/UserProfileService";
 import { useSelector } from "react-redux";
@@ -7,13 +7,56 @@ import { PersonalDetails } from "./Personal/PersonalDetails";
 
 export const Profile = () => {
   const [open, setOpen] = React.useState(false);
-  const [userData, setUserData] = useState({});
-  const Users = useSelector((state) => state.auth.allProfile);
+  const data = useSelector((state) => state.auth);
+  const userData = data.profile;
 
   return (
-    <Grid container spacing={2}>
-      {/* Personal Details */}
-      <PersonalDetails personal={Users ? Users.personal : null} />
+    <Grid sx={{ marginTop: "5em" }}>
+      <Paper style={paperStyle}>
+        <Grid align="center">
+          <Avatar style={avatarStyle}>
+            {/* <AccountCircleOutlinedIcon /> */}
+          </Avatar>
+          <h2>User Profile</h2>
+        </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Text>
+              ID :- <span>{userData.emp_id}</span>
+            </Text>
+          </Grid>
+          <Grid item xs={12}>
+            <Text>
+              Name :-{" "}
+              <span>
+                {userData.first_name}
+                {userData.last_name}
+              </span>
+            </Text>
+          </Grid>
+          <Grid item xs={12}>
+            <Text>
+              Email :- <span>{userData.email}</span>
+            </Text>
+          </Grid>
+          <Grid item xs={12}>
+            <Text>
+              Staff :- <span>{userData.groups}</span>
+            </Text>
+          </Grid>
+        </Grid>
+      </Paper>
     </Grid>
   );
 };
+
+const paperStyle = {
+  padding: 20,
+  height: "50vh",
+  width: 340,
+  margin: "0 auto",
+};
+const avatarStyle = { backgroundColor: "#1bbd7e" };
+const Text = styled(Typography)(() => ({
+  padding: "0px",
+}));
