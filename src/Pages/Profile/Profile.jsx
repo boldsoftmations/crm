@@ -1,14 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Button, Grid, Paper, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Popup } from "../../Components/Popup";
 import { UserProfileCreate } from "./UserProfile/UserProfileCreate";
+import UserProfileService from "../../services/UserProfileService";
+import { getAllProfileUser, getProfileUser } from "../../Redux/Action/Action";
 
 export const Profile = () => {
+  const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
   const [openPopup, setOpenPopup] = useState(false);
-  const data = useSelector((state) => state.auth);
-  const userData = data.profile;
+  const [userData, setUserData] = useState([]);
+
+  useEffect(() => {
+    getUsers();
+  }, []);
+
+  const getUsers = async () => {
+    try {
+      setOpen(true);
+      const response = await UserProfileService.getProfile();
+      setUserData(response.data);
+      getUserProfileData(response.data.emp_id);
+      setOpen(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setOpen(false);
+    }
+  };
+
+  const getUserProfileData = async (ID) => {
+    try {
+      console.log("ID", ID);
+      const response = await UserProfileService.getUserProfileDataById(ID);
+      dispatch(getAllProfileUser(response.data));
+    } catch (err) {
+      console.log("error profile", err);
+    }
+  };
 
   return (
     <Grid sx={{ marginTop: "5em" }}>
@@ -44,15 +75,17 @@ export const Profile = () => {
               Staff :- <span>{userData.groups}</span>
             </Text>
           </Grid>
-          <Grid item xs={12}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setOpenPopup(true)}
-            >
-              Complete Profile
-            </Button>
-          </Grid>
+          {!userData.is_created && (
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setOpenPopup(true)}
+              >
+                Complete Profile
+              </Button>
+            </Grid>
+          )}
         </Grid>
       </Paper>
       <Popup
@@ -61,7 +94,7 @@ export const Profile = () => {
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
       >
-        <UserProfileCreate setOpenPopup={setOpenPopup} />
+        <UserProfileCreate setOpenPopup={setOpenPopup} getUsers={getUsers} />
       </Popup>
     </Grid>
   );

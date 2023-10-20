@@ -24,7 +24,7 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const UserProfileCreate = () => {
+export const UserProfileCreate = ({ getUsers }) => {
   const [open, setOpen] = useState(false);
   const auth = useSelector((state) => state.auth);
   const Profile = auth.profile ? auth.profile : [];
@@ -162,7 +162,7 @@ export const UserProfileCreate = () => {
       setOpen(true);
 
       await UserProfileService.createUserProfileData(formData);
-      console.log("Form Data Submitted:", formData);
+      getUsers();
       setOpen(false);
     } catch (error) {
       console.log("error user Profile", error);
