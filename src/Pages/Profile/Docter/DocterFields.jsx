@@ -34,7 +34,7 @@ export const DocterFields = ({ formData, setFormData }) => {
           size="small"
           label="Doctor's Phone Number"
           name="doctor.phone_number"
-          value={formData.doctor.phone_number}
+          value={formData.doctor.phone_number || ""}
           onChange={(e) => handleChange(e)}
         />
       </Grid>

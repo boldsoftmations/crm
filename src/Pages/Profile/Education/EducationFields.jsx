@@ -103,7 +103,7 @@ export const EducationFields = ({ formData, setFormData }) => {
               size="small"
               label={field.label}
               name={field.name}
-              value={value}
+              value={value || ""}
               onChange={(e) => handleChange(e, field.section)}
               InputLabelProps={field.type === "date" ? { shrink: true } : {}}
             />

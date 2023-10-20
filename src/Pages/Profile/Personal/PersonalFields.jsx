@@ -3,13 +3,13 @@ import { Grid, Autocomplete } from "@mui/material";
 import CustomTextField from "../../../Components/CustomTextField";
 
 const fieldData = [
-  { type: "text", label: "First Name", name: "first_name", disabled: true },
+  { type: "text", label: "First Name", name: "first_name" },
   { type: "text", label: "Middle Name", name: "middle_name" },
-  { type: "text", label: "Last Name", name: "last_name", disabled: true },
-  { type: "email", label: "Email", name: "email", disabled: true },
-  { type: "email", label: "Alternate mail", name: "alternate_email" },
-  { type: "tel", label: "Contact", name: "contact", disabled: true },
-  { type: "tel", label: "AlternateContact", name: "alternate_contact" },
+  { type: "text", label: "Last Name", name: "last_name" },
+  { type: "email", label: "Email", name: "email" },
+  { type: "email", label: "Alternate Email", name: "alternate_email" },
+  { type: "tel", label: "Contact", name: "contact" },
+  { type: "tel", label: "Alternate Contact", name: "alternate_contact" },
   {
     type: "autocomplete",
     label: "Gender",

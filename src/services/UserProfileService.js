@@ -18,6 +18,7 @@ const updateUserProfileData = (id, data) => {
 };
 
 const getUserProfileDataById = (id) => {
+  console.log("id", id);
   return CustomAxios.get(`/api/user/user-personal-details/${id}`);
 };
 

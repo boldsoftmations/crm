@@ -14,7 +14,6 @@ import { EducationFields } from "../Education/EducationFields";
 import { EmploymentFields } from "../Employment/EmploymentFields";
 import { FamilyFields } from "../Family/FamilyFields";
 import { KycFields } from "../Kyc/KycFields";
-import { useSelector } from "react-redux";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -167,7 +166,6 @@ export const UserProfileUpdate = ({
 
   const getUserProfileData = async (ID) => {
     try {
-      console.log("ID", ID);
       const response = await UserProfileService.getUserProfileDataById(ID);
       console.log("response", response);
       setFormData(response.data);
@@ -181,8 +179,12 @@ export const UserProfileUpdate = ({
       e.preventDefault();
       setOpen(true);
 
-      await UserProfileService.updateUserProfileData(formData);
-      console.log("Form Data Submitted:", formData);
+      // Create a new object without the 'user' property
+      const formDataWithoutUser = { ...formData };
+      delete formDataWithoutUser.user;
+
+      await UserProfileService.updateUserProfileData(formDataWithoutUser.id);
+      console.log("Form Data Submitted (excluding user):", formDataWithoutUser);
       setOpenPopup(false);
       getAllUserProfileData();
       setOpen(false);

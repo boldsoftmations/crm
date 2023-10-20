@@ -31,12 +31,12 @@ export const UserProfileCreate = () => {
   const [formData, setFormData] = useState({
     user: Profile.emp_id,
     personal: {
-      first_name: Profile.first_name,
+      first_name: null,
       middle_name: null,
-      last_name: Profile.last_name,
-      email: Profile.email,
+      last_name: null,
+      email: null,
       alternate_email: null,
-      contact: Profile.contact,
+      contact: null,
       alternate_contact: null,
       date_of_birth: null,
       place_of_birth: null,
