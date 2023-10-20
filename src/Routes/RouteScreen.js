@@ -65,6 +65,7 @@ import { CompetitorView } from "../Pages/MarketAnalysis/CompetitorView";
 import { PriceApprovalPI } from "../Pages/Invoice/ProformaInvoice/PriceApprovalPI";
 import { TeamWiseDashboard } from "../Pages/TeamWiseDashboard";
 import { UserProfileView } from "../Pages/Profile/UserProfile/UserProfileView";
+import IndiaMartLeads from "../Pages/Leads/IndiaMartLeads";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -102,6 +103,7 @@ export const RouteScreen = () => {
             {/* Leads Routes */}
             <Route path="/leads/hot-lead" element={<HotLeads />} />
             <Route path="/leads/new-lead" element={<NewLeads />} />
+            <Route path="/leads/indiamart-lead" element={<IndiaMartLeads />} />
             <Route path="/leads/open-lead" element={<OpenLead />} />
             <Route path="/leads/closed-lead" element={<ClosedLead />} />
             <Route path="/leads/duplicate-lead" element={<DuplicateLead />} />

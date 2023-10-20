@@ -191,6 +191,10 @@ const AssignMultipleLeads = (data) => {
   return CustomAxios.post("/api/lead/assign-multiple-leads/", data);
 };
 
+// IndiaMart Leads API
+const getIndiaMartLeads = (data) => {
+  return CustomAxios.get("/api/lead/indiamart-leads-list/", data);
+};
 const getAllFollowup = (options) => {
   const {
     startDate,
@@ -253,6 +257,7 @@ const LeadServices = {
   BulkLeadAssign,
   AssignMultipleLeads,
   getAllFollowup,
+  getIndiaMartLeads
 };
 
 export default LeadServices;
