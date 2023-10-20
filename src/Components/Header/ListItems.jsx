@@ -1106,6 +1106,35 @@ export const ListItems = (props) => {
               {/* Users */}
               <ListItem
                 button
+                onClick={() => setExpandProfiles(!expandProfiles)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText primary="User Profile" />
+                {expandProfiles ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={expandProfiles} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/user-profile"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="User Profile"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              <ListItem
+                button
                 onClick={() => setExpandUser(!expandUser)}
                 style={{ width: 300 }}
               >
