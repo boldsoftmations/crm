@@ -1,22 +1,20 @@
 import React, { useState } from "react";
-import Option from "../../Options/Options";
 import { Button, Container, Grid, Divider, Chip, Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { PersonalFields } from "./Personal/PersonalFields";
-import { AddressFields } from "./Address/AddressFields ";
-
-import { EmergencyContactFields } from "./EmergencyContact/EmergencyContactFields";
-import { PFAndESIFields } from "./PFAndESI/PFAndESIFields";
-import { MedicalFields } from "./Medical/MedicalFields";
-import { DocterFields } from "./Docter/DocterFields";
-import { AddictionFields } from "./Addiction/AddictionFields";
-import { EducationFields } from "./Education/EducationFields";
-import EmploymentFields from "./Employment/EmploymentFields";
-import { FamilyFields } from "./Family/FamilyFields";
+import UserProfileService from "../../../services/UserProfileService";
+import { CustomLoader } from "../../../Components/CustomLoader";
+import { PersonalFields } from "../Personal/PersonalFields";
+import { AddressFields } from "../Address/AddressFields ";
+import { EmergencyContactFields } from "../EmergencyContact/EmergencyContactFields";
+import { PFAndESIFields } from "../PFAndESI/PFAndESIFields";
+import { MedicalFields } from "../Medical/MedicalFields";
+import { DocterFields } from "../Docter/DocterFields";
+import { AddictionFields } from "../Addiction/AddictionFields";
+import { EducationFields } from "../Education/EducationFields";
+import { EmploymentFields } from "../Employment/EmploymentFields";
+import { FamilyFields } from "../Family/FamilyFields";
+import { KycFields } from "../Kyc/KycFields";
 import { useSelector } from "react-redux";
-import UserProfileService from "./../../services/UserProfileService";
-import { CustomLoader } from "../../Components/CustomLoader";
-import { KycFields } from "./Kyc/KycFields";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -26,7 +24,7 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const UserProfile = () => {
+export const UserProfileCreate = () => {
   const [open, setOpen] = useState(false);
   const auth = useSelector((state) => state.auth);
   const Profile = auth.profile ? auth.profile : [];
@@ -36,8 +34,10 @@ export const UserProfile = () => {
       first_name: Profile.first_name,
       middle_name: null,
       last_name: Profile.last_name,
-      personal_email: null,
-      phone_number: null,
+      email: Profile.email,
+      alternate_email: null,
+      contact: Profile.contact,
+      alternate_contact: null,
       date_of_birth: null,
       place_of_birth: null,
       nationality: null,
@@ -158,9 +158,7 @@ export const UserProfile = () => {
     ],
   });
 
-  console.log("formData", formData);
-
-  const handleSubmit = async (e) => {
+  const CreateUserProfile = async (e) => {
     try {
       e.preventDefault();
       setOpen(true);
@@ -177,7 +175,7 @@ export const UserProfile = () => {
   return (
     <Container>
       <CustomLoader open={open} />
-      <Box component="form" noValidate onSubmit={handleSubmit}>
+      <Box component="form" noValidate onSubmit={CreateUserProfile}>
         <Grid container spacing={2}>
           {/* Personal Details */}
           <Grid item xs={12} sx={{ marginTop: "20px", marginBottom: "20px" }}>
@@ -316,5 +314,3 @@ export const UserProfile = () => {
     </Container>
   );
 };
-
-export default UserProfile;

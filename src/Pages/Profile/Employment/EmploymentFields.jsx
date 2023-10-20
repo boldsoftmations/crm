@@ -3,7 +3,7 @@ import React from "react";
 import { Grid, Button } from "@mui/material";
 import CustomTextField from "../../../Components/CustomTextField";
 
-const EmploymentFields = ({ formData, setFormData }) => {
+export const EmploymentFields = ({ formData, setFormData }) => {
   // Utility functions
   const formatDateForInput = (monthYear) => {
     if (!monthYear) return "";
@@ -130,5 +130,3 @@ const EmploymentFields = ({ formData, setFormData }) => {
     </>
   );
 };
-
-export default EmploymentFields;

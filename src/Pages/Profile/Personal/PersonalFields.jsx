@@ -1,18 +1,15 @@
-import React, { useCallback } from "react";
-import { Grid, Autocomplete, Avatar, Button } from "@mui/material";
+import React from "react";
+import { Grid, Autocomplete } from "@mui/material";
 import CustomTextField from "../../../Components/CustomTextField";
 
 const fieldData = [
-  {
-    type: "upload",
-    label: "Upload Profile Picture",
-    name: "uploaded_picture",
-  },
   { type: "text", label: "First Name", name: "first_name", disabled: true },
   { type: "text", label: "Middle Name", name: "middle_name" },
   { type: "text", label: "Last Name", name: "last_name", disabled: true },
-  { type: "email", label: "Personal Email", name: "personal_email" },
-  { type: "tel", label: "Phone Number", name: "phone_number" },
+  { type: "email", label: "Email", name: "email", disabled: true },
+  { type: "email", label: "Alternate mail", name: "alternate_email" },
+  { type: "tel", label: "Contact", name: "contact", disabled: true },
+  { type: "tel", label: "AlternateContact", name: "alternate_contact" },
   {
     type: "autocomplete",
     label: "Gender",
@@ -73,26 +70,6 @@ const fieldData = [
 ];
 
 export const PersonalFields = ({ formData, setFormData }) => {
-  const [openCameraDialog, setOpenCameraDialog] = React.useState(false);
-  const [stream, setStream] = React.useState(null);
-
-  const handleFileUpload = (event, fieldName) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => ({
-          ...prev,
-          personal: {
-            ...prev.personal,
-            [fieldName]: reader.result,
-          },
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleChange = (event) => {
     const { name, value } = event.target;
     const keys = name.split(".");
@@ -112,35 +89,6 @@ export const PersonalFields = ({ formData, setFormData }) => {
       {fieldData.map((field, index) => {
         const value = formData.personal[field.name] || "";
         switch (field.type) {
-          case "upload":
-            return (
-              <Grid item xs={12} key={index}>
-                {value && (
-                  <Avatar
-                    src={value}
-                    alt="Uploaded Profile"
-                    style={{
-                      width: "100px",
-                      height: "100px",
-                      marginBottom: "10px",
-                    }}
-                  />
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  id="profile-picture-upload"
-                  onChange={(event) => handleFileUpload(event, field.name)}
-                />
-                <label htmlFor="profile-picture-upload">
-                  <Button variant="contained" component="span">
-                    Upload
-                  </Button>
-                </label>
-              </Grid>
-            );
-
           case "autocomplete":
             return (
               <Grid item xs={12} sm={4} key={index}>

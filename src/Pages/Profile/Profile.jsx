@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Avatar, Grid, Paper, Switch, Typography } from "@mui/material";
+import React, { useState } from "react";
+import { Avatar, Button, Grid, Paper, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import UserProfileService from "../../services/UserProfileService";
 import { useSelector } from "react-redux";
-import { PersonalDetails } from "./Personal/PersonalDetails";
+import { Popup } from "../../Components/Popup";
+import { UserProfileCreate } from "./UserProfile/UserProfileCreate";
 
 export const Profile = () => {
-  const [open, setOpen] = React.useState(false);
+  const [openPopup, setOpenPopup] = useState(false);
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
 
@@ -29,7 +29,7 @@ export const Profile = () => {
             <Text>
               Name :-{" "}
               <span>
-                {userData.first_name}
+                {userData.first_name} &nbsp;
                 {userData.last_name}
               </span>
             </Text>
@@ -44,8 +44,25 @@ export const Profile = () => {
               Staff :- <span>{userData.groups}</span>
             </Text>
           </Grid>
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setOpenPopup(true)}
+            >
+              Complete Profile
+            </Button>
+          </Grid>
         </Grid>
       </Paper>
+      <Popup
+        fullScreen={true}
+        title={"Create User Profile"}
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
+      >
+        <UserProfileCreate setOpenPopup={setOpenPopup} />
+      </Popup>
     </Grid>
   );
 };
