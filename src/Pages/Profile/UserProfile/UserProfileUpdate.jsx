@@ -91,10 +91,8 @@ export const UserProfileUpdate = ({
       {
         company_name: null,
         post_held: null,
-        worked_from_month: null,
-        worked_from_year: null,
-        worked_till_month: null,
-        worked_till_year: null,
+        workedFrom: null,
+        workedTill: null,
       },
     ],
     education: {
@@ -158,6 +156,7 @@ export const UserProfileUpdate = ({
     ],
   });
   console.log("IDForEdit", IDForEdit);
+  console.log("formData update", formData);
   useEffect(() => {
     if (IDForEdit) {
       getUserProfileData(IDForEdit);
@@ -168,7 +167,12 @@ export const UserProfileUpdate = ({
     try {
       const response = await UserProfileService.getUserProfileDataById(ID);
       console.log("response", response);
-      setFormData(response.data);
+
+      // Merge the received data with the existing state
+      setFormData((prevData) => ({
+        ...prevData,
+        ...response.data,
+      }));
     } catch (err) {
       console.log("error profile", err);
     }

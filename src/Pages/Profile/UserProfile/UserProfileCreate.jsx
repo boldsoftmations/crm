@@ -91,10 +91,8 @@ export const UserProfileCreate = () => {
       {
         company_name: null,
         post_held: null,
-        worked_from_month: null,
-        worked_from_year: null,
-        worked_till_month: null,
-        worked_till_year: null,
+        workedFrom: null,
+        workedTill: null,
       },
     ],
     education: {

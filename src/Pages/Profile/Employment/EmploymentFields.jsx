@@ -4,23 +4,10 @@ import { Grid, Button } from "@mui/material";
 import CustomTextField from "../../../Components/CustomTextField";
 
 export const EmploymentFields = ({ formData, setFormData }) => {
-  // Utility functions
-  const formatDateForInput = (monthYear) => {
-    if (!monthYear) return "";
-    const [month, year] = monthYear.split("/");
-    return `${year}-${month.padStart(2, "0")}-01`;
-  };
-
   const handleEmploymentChange = (event, index) => {
     const { name, value } = event.target;
     const updatedEmployments = [...formData.employment_history];
-    if (name === "workedFrom" || name === "workedTill") {
-      const date = new Date(value);
-      const formattedDate = `${date.getMonth() + 1}/${date.getFullYear()}`;
-      updatedEmployments[index][name] = formattedDate;
-    } else {
-      updatedEmployments[index][name] = value;
-    }
+    updatedEmployments[index][name] = value;
 
     setFormData({
       ...formData,
@@ -92,7 +79,7 @@ export const EmploymentFields = ({ formData, setFormData }) => {
               label="Worked From"
               type="date"
               name="workedFrom"
-              value={formatDateForInput(employment.workedFrom)}
+              value={employment.workedFrom}
               onChange={(event) => handleEmploymentChange(event, index)}
               InputLabelProps={{ shrink: true }}
             />
@@ -104,7 +91,7 @@ export const EmploymentFields = ({ formData, setFormData }) => {
               label="Worked Till"
               type="date"
               name="workedTill"
-              value={formatDateForInput(employment.workedTill)}
+              value={employment.workedTill}
               onChange={(event) => handleEmploymentChange(event, index)}
               InputLabelProps={{ shrink: true }}
             />

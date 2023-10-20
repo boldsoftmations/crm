@@ -3,7 +3,6 @@ import { Button, Grid, Autocomplete } from "@mui/material";
 import CustomTextField from "../../../Components/CustomTextField";
 
 export const EmergencyContactFields = ({ formData, setFormData }) => {
-  const [open, setOpen] = useState(false);
   const relationshipOptions = [
     "Father",
     "Mother",
@@ -58,7 +57,7 @@ export const EmergencyContactFields = ({ formData, setFormData }) => {
               size="small"
               label="Emergency Contact Person Name"
               name="name"
-              value={emergencyContact.name}
+              value={emergencyContact.name || ""}
               onChange={(event) => handleEmergencyContactChange(event, index)}
             />
           </Grid>
@@ -94,7 +93,7 @@ export const EmergencyContactFields = ({ formData, setFormData }) => {
               label="Emergency Contact Number"
               type="tel"
               name="number"
-              value={emergencyContact.number}
+              value={emergencyContact.number || ""}
               onChange={(event) => handleEmergencyContactChange(event, index)}
             />
           </Grid>

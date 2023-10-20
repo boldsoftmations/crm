@@ -6,56 +6,56 @@ const YesNoOptions = ["Yes", "No"];
 const YesNoNAOptions = [...YesNoOptions, "Not Applicable"];
 
 const fieldsConfig = [
-  { label: "Known Allergies", name: "medical.known_allergies", options: null },
+  { label: "Known Allergies", name: "known_allergies", options: null },
   {
     label: "Previous Surgeries",
-    name: "medical.previous_surgeries",
+    name: "previous_surgeries",
     options: null,
   },
-  { label: "Surgery Type", name: "medical.surgery_type", options: null },
-  { label: "Diabetic", name: "medical.diabetic", options: YesNoOptions },
+  { label: "Surgery Type", name: "surgery_type", options: null },
+  { label: "Diabetic", name: "diabetic", options: YesNoOptions },
   {
     label: "Asthma or Respiratory Issues",
-    name: "medical.asthama_respiratory",
+    name: "asthama_respiratory",
     options: YesNoOptions,
   },
   {
     label: "Vision Impairments",
-    name: "medical.vision",
+    name: "vision",
     options: YesNoOptions,
   },
   {
     label: "Hearing Impairments",
-    name: "medical.hearing",
+    name: "hearing",
     options: YesNoOptions,
   },
   {
     label: "Hyper Tension",
-    name: "medical.hyper_tension",
+    name: "hyper_tension",
     options: YesNoOptions,
   },
   {
     label: "Heart Issues",
-    name: "medical.heart_issues",
+    name: "heart_issues",
     options: YesNoOptions,
   },
-  { label: "Cancer", name: "medical.cancer", options: YesNoOptions },
+  { label: "Cancer", name: "cancer", options: YesNoOptions },
   {
     label: "High Blood Pressure",
-    name: "medical.high_blood_pressure",
+    name: "high_blood_pressure",
     options: YesNoOptions,
   },
   {
     label: "Low Blood Pressure",
-    name: "medical.low_blood_pressure",
+    name: "low_blood_pressure",
     options: YesNoOptions,
   },
-  { label: "Pregnancy", name: "medical.pregnancy", options: YesNoNAOptions },
+  { label: "Pregnancy", name: "pregnancy", options: YesNoNAOptions },
 ];
 
 const AutoCompleteField = ({ label, name, value, options, handleChange }) => (
   <Autocomplete
-    options={options}
+    options={options || []}
     fullWidth
     size="small"
     value={value}
@@ -66,54 +66,41 @@ const AutoCompleteField = ({ label, name, value, options, handleChange }) => (
 
 export const MedicalFields = ({ formData, setFormData }) => {
   const handleChange = (name, value) => {
-    setFormData((prev) => {
-      const updatedData = { ...prev };
-      const keys = name.split(".");
-      let currentLevel = updatedData;
-      for (let i = 0; i < keys.length - 1; i++) {
-        currentLevel = currentLevel[keys[i]];
-      }
-      currentLevel[keys[keys.length - 1]] = value;
-      return updatedData;
-    });
+    setFormData((prev) => ({
+      ...prev,
+      medical: {
+        ...prev.medical,
+        [name]: value,
+      },
+    }));
   };
 
-  const generateField = ({ label, name, options }) => (
-    <Grid item xs={12} sm={4} key={name}>
-      <AutoCompleteField
-        label={label}
-        name={name}
-        value={formData[name]}
-        options={Array.isArray(options) ? options : []}
-        handleChange={handleChange}
-      />
-    </Grid>
-  );
+  const getValue = (name) => formData.medical && formData.medical[name];
 
   return (
-    <>
-      {fieldsConfig.map((fieldConfig) => {
-        if (
-          fieldConfig.name === "medical.known_allergies" ||
-          fieldConfig.name === "medical.surgery_type" ||
-          fieldConfig.name === "medical.previous_surgeries"
-        ) {
-          return (
-            <Grid item xs={12} sm={4} key={fieldConfig.name}>
-              <CustomTextField
-                fullWidth
-                size="small"
-                label={fieldConfig.label}
-                name={fieldConfig.name}
-                value={formData[fieldConfig.name]}
-                onChange={(e) => handleChange(e.target.name, e.target.value)}
-              />
-            </Grid>
-          );
-        } else {
-          return generateField(fieldConfig);
-        }
-      })}
-    </>
+    <Grid container spacing={2}>
+      {fieldsConfig.map(({ label, name, options, type }) => (
+        <Grid item xs={12} sm={4} key={name}>
+          {type === "text" ? (
+            <CustomTextField
+              fullWidth
+              size="small"
+              label={label}
+              name={`medical.${name}`}
+              value={getValue(name)}
+              onChange={(e) => handleChange(name, e.target.value)}
+            />
+          ) : (
+            <AutoCompleteField
+              label={label}
+              name={name}
+              value={getValue(name)}
+              options={options}
+              handleChange={handleChange}
+            />
+          )}
+        </Grid>
+      ))}
+    </Grid>
   );
 };

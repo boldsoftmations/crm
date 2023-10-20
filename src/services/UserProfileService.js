@@ -14,7 +14,7 @@ const createUserProfileData = (data) => {
 };
 
 const updateUserProfileData = (id, data) => {
-  return CustomAxios.patch(`/api/user/user-personal-details/${id}`, data);
+  return CustomAxios.patch(`/api/user/user-personal-details/${id}/`, data);
 };
 
 const getUserProfileDataById = (id) => {

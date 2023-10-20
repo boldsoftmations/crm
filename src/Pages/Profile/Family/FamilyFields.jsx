@@ -50,6 +50,7 @@ export const FamilyFields = ({ formData, setFormData }) => {
     "Neighbour",
   ];
   const bloodGroupOptions = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+
   return (
     <>
       {formData.family_details.map((familyMember, index) => (
@@ -60,7 +61,7 @@ export const FamilyFields = ({ formData, setFormData }) => {
               size="small"
               label="Name"
               name="name"
-              value={familyMember.name}
+              value={familyMember.name || ""}
               onChange={(event) => handleFamilyDetailsChange(event, index)}
             />
           </Grid>
@@ -69,12 +70,12 @@ export const FamilyFields = ({ formData, setFormData }) => {
               options={relationshipOptions}
               fullWidth
               size="small"
-              value={familyMember.contact_relationship || ""}
+              value={familyMember.relationship || ""}
               onChange={(event, newValue) => {
                 handleFamilyDetailsChange(
                   {
                     target: {
-                      name: "contact_relationship",
+                      name: "relationship",
                       value: newValue || "",
                     },
                   },
@@ -93,7 +94,7 @@ export const FamilyFields = ({ formData, setFormData }) => {
               size="small"
               options={bloodGroupOptions}
               getOptionLabel={(option) => option}
-              value={familyMember.blood_group}
+              value={familyMember.blood_group || ""}
               onChange={(event, newValue) => {
                 handleFamilyDetailsChange(
                   { target: { name: "blood_group", value: newValue } },
@@ -115,7 +116,7 @@ export const FamilyFields = ({ formData, setFormData }) => {
               size="small"
               label="Contact Number"
               name="contact_number"
-              value={familyMember.contact_number}
+              value={familyMember.contact_number || ""}
               onChange={(event) => handleFamilyDetailsChange(event, index)}
             />
           </Grid>

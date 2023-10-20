@@ -24,7 +24,7 @@ export const DocterFields = ({ formData, setFormData }) => {
           size="small"
           label="Doctor's Name"
           name="doctor.name"
-          value={formData.doctor.name}
+          value={formData.doctor.name || ""}
           onChange={(e) => handleChange(e)}
         />
       </Grid>

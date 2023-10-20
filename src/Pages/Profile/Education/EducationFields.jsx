@@ -6,7 +6,63 @@ const educationFieldData = [
   { section: "school", type: "text", label: "10th School Name", name: "name" },
   { section: "school", type: "text", label: "Board", name: "board" },
   { section: "school", type: "number", label: "Passout Year", name: "passout" },
-  // ... other fields ...
+  {
+    section: "college",
+    type: "text",
+    label: "12th School/College Name",
+    name: "name",
+  },
+  { section: "college", type: "text", label: "Board", name: "board" },
+  {
+    section: "college",
+    type: "number",
+    label: "Passout Year",
+    name: "passout",
+  },
+  { section: "diploma", type: "text", label: "Diploma Type", name: "type" },
+  {
+    section: "diploma",
+    type: "text",
+    label: "Diploma University Name",
+    name: "uni_name",
+  },
+  {
+    section: "diploma",
+    type: "number",
+    label: "Passout Year",
+    name: "passout",
+  },
+  {
+    section: "graduation",
+    type: "text",
+    label: "Graduation Type",
+    name: "type",
+  },
+  {
+    section: "graduation",
+    type: "text",
+    label: "Graduation University Name",
+    name: "university",
+  },
+  {
+    section: "graduation",
+    type: "number",
+    label: "Passout Year",
+    name: "passout",
+  },
+  {
+    section: "pg",
+    type: "text",
+    label: "Post Graduation / Masters",
+    name: "masters",
+  },
+  { section: "pg", type: "number", label: "Passout Year", name: "passout" },
+  {
+    section: "education",
+    type: "text",
+    label: "Additional Educational Qualifications",
+    name: "additional_qualifiction",
+  },
 ];
 
 export const EducationFields = ({ formData, setFormData }) => {
@@ -29,7 +85,10 @@ export const EducationFields = ({ formData, setFormData }) => {
     if (section === "education") {
       updatedData[name] = value;
     } else {
-      updatedData[section] = { ...updatedData[section], [name]: value };
+      if (!updatedData[section]) {
+        updatedData[section] = {};
+      }
+      updatedData[section][name] = value;
     }
 
     setFormData((prev) => ({
