@@ -1,13 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import {
-  TableBody,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-} from "@mui/material";
-
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Paper,
@@ -17,11 +8,14 @@ import {
   TableHead,
   TableCell,
   TableRow,
+  TableBody,
+  Autocomplete,
 } from "@mui/material";
-import { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material/styles";
-import { Helmet } from "react-helmet";
-import CustomAxios from "../../services/api";
+import { tableCellClasses } from "@mui/material/TableCell";
+import LeadServices from "../../services/LeadService";
+import CustomTextField from "./../../Components/CustomTextField";
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
@@ -56,8 +50,9 @@ const monthOptions = [
   { value: "12", label: "December" },
 ];
 export const IndiaMartLeads = () => {
+  const currentMonth = new Date().getMonth() + 1;
   const [data, setData] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth.toString());
 
   const Tableheaders = [
     "Date",
@@ -66,63 +61,44 @@ export const IndiaMartLeads = () => {
     "Call Lead",
     "Total Lead",
   ];
-  const getIndiaMartLeads = (data) => {
-    return CustomAxios.get("/api/lead/indiamart-leads-list/", data);
-  };
-  useEffect(() => {
-    getIndiaMartLeads()
-      .then((response) => {
-        if (response.status === 200) return response.data;
-        throw new Error("Failed to fetch data");
-      })
-      .then((data) => setData(data))
-      .catch((error) => console.error("Error fetching data:", error));
-  }, []);
 
-  const filteredData = selectedMonth
-    ? data.filter(
-        (row) => new Date(row.date).getMonth() + 1 === parseInt(selectedMonth)
-      )
-    : data;
+  useEffect(() => {
+    getIndiaMartLeads();
+  }, [selectedMonth]);
+
+  const getIndiaMartLeads = async () => {
+    try {
+      const response = await LeadServices.getIndiaMartLeads(selectedMonth);
+      setData(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const filteredData = data.filter(
+    (row) => new Date(row.date).getMonth() + 1 === parseInt(selectedMonth)
+  );
+
   return (
     <>
-      <Helmet>
-        <style>
-          {`
-                @media print {
-                  html, body {
-                    filter: none !important;
-                  }
-                `}
-        </style>
-      </Helmet>
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
           <Box display="flex" alignItems="center" marginBottom="10px">
-            <FormControl
-              variant="outlined"
-              size="small"
-              style={{
-                width: "200px", // Adjust the width as needed
-              }}
-            >
-              <InputLabel id="month-filter-label" shrink={selectedMonth !== ""}>
-                Filter By Month
-              </InputLabel>
-              <Select
-                labelId="month-filter-label"
-                id="month-filter"
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(e.target.value)}
-                label="Filter By Month"
-              >
-                {monthOptions.map((option, i) => (
-                  <MenuItem key={i} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Autocomplete
+              id="combo-box-demo"
+              value={monthOptions.find(
+                (option) => option.value === selectedMonth
+              )}
+              options={monthOptions}
+              getOptionLabel={(option) => option.label}
+              onChange={(event, value) =>
+                setSelectedMonth(value ? value.value : currentMonth.toString())
+              }
+              sx={{ width: 300 }}
+              renderInput={(params) => (
+                <CustomTextField {...params} label="Filter By Month" />
+              )}
+            />
           </Box>
 
           <Box display="flex" alignItems="center" justifyContent="center">
@@ -162,16 +138,16 @@ export const IndiaMartLeads = () => {
                   <StyledTableRow key={index}>
                     <StyledTableCell align="center">{row.date}</StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.directLead}
+                      {row.directLead || 0}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.buyLead}
+                      {row.buyLead || 0}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.callLead}
+                      {row.callLead || 0}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.totalLead}
+                      {row.totalLead || 0}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
