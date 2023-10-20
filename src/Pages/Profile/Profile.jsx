@@ -6,6 +6,7 @@ import { Popup } from "../../Components/Popup";
 import { UserProfileCreate } from "./UserProfile/UserProfileCreate";
 import UserProfileService from "../../services/UserProfileService";
 import { getAllProfileUser, getProfileUser } from "../../Redux/Action/Action";
+import { CustomLoader } from "../../Components/CustomLoader";
 
 export const Profile = () => {
   const dispatch = useDispatch();
@@ -43,6 +44,7 @@ export const Profile = () => {
 
   return (
     <Grid sx={{ marginTop: "5em" }}>
+      <CustomLoader open={open} />
       <Paper style={paperStyle}>
         <Grid align="center">
           <Avatar style={avatarStyle}>
