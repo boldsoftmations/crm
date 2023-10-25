@@ -263,7 +263,7 @@ export const UserProfileCreate = ({ setOpenPopup, getUsers }) => {
           <Grid item xs={12}>
             <Root>
               <Divider>
-                <Chip label="Address Details" />
+                <Chip label="Current Address Details" />
               </Divider>
             </Root>
           </Grid>
@@ -275,7 +275,7 @@ export const UserProfileCreate = ({ setOpenPopup, getUsers }) => {
           <Grid item xs={12}>
             <Root>
               <Divider>
-                <Chip label="Permanent Details" />
+                <Chip label="Permanent Address Details" />
               </Divider>
             </Root>
           </Grid>
