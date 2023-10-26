@@ -76,8 +76,8 @@ export const CustomerPotentialCreate = (props) => {
           sx={{ mt: 1 }}
           onSubmit={(e) => handleSubmit(e)}
         >
-          <Grid container spacing={2}>
-            <Grid item xs={24} sm={4}>
+          <Grid container spacing={3}>
+            <Grid item xs={24} sm={4} sx={{ mr: 2 }}>
               <Autocomplete
                 style={{
                   minWidth: 180,
@@ -91,38 +91,12 @@ export const CustomerPotentialCreate = (props) => {
                 )}
               />
             </Grid>
-            <Grid item xs={24} sm={4}>
-              <CustomTextField
-                fullWidth
-                name="current_brand"
-                size="small"
-                label="Current Brand"
-                variant="outlined"
-                value={potential.current_brand ? potential.current_brand : ""}
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={24} sm={4}>
-              <CustomTextField
-                fullWidth
-                name="current_buying_price"
-                size="small"
-                label="Current Buying Price"
-                variant="outlined"
-                value={
-                  potential.current_buying_price
-                    ? potential.current_buying_price
-                    : ""
-                }
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={24} sm={4}>
+            <Grid item xs={24} sm={6} sx={{ ml: 2 }}>
               <CustomTextField
                 fullWidth
                 name="current_buying_quantity"
                 size="small"
-                label="Current Buying Quantity"
+                label="Current Buying Quantity Monthly"
                 variant="outlined"
                 value={
                   potential.current_buying_quantity
@@ -132,18 +106,8 @@ export const CustomerPotentialCreate = (props) => {
                 onChange={handleInputChange}
               />
             </Grid>
-            <Grid item xs={24} sm={4}>
-              <CustomTextField
-                fullWidth
-                name="target_price"
-                size="small"
-                label="Target Price"
-                variant="outlined"
-                value={potential.target_price ? potential.target_price : ""}
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={24} sm={4}>
+          </Grid>
+          {/* <Grid item xs={24} sm={4}>
               <CustomTextField
                 fullWidth
                 name="quantity"
@@ -153,8 +117,7 @@ export const CustomerPotentialCreate = (props) => {
                 value={potential.quantity ? potential.quantity : ""}
                 onChange={handleInputChange}
               />
-            </Grid>
-          </Grid>
+            </Grid> */}
 
           <Grid container justifyContent={"flex-end"}>
             <Button type="submit" variant="contained">
