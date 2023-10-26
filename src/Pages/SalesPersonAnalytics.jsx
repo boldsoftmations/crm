@@ -1,1328 +1,1293 @@
 import React, { useEffect, useState } from "react";
-import {
-  Autocomplete,
-  Grid,
-  Button,
-  Box,
-  Typography,
-  CircularProgress,
-  Paper,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormControlLabel,
-  Switch,
-} from "@mui/material";
-import PropTypes from "prop-types";
-import { CustomChart } from "../Components/CustomChart";
-import { Popup } from "../Components/Popup";
 import { useSelector } from "react-redux";
-import CustomTextField from "../Components/CustomTextField";
+import { useNavigate } from "react-router-dom";
+import DashboardService from "../services/DashboardService";
+import { Popup } from "../Components/Popup";
+import { DispatchData } from "./DispatchData";
+import { CustomLoader } from "../Components/CustomLoader";
+import InvoiceServices from "../services/InvoiceService";
+import { SalesPersonAnalytics } from "./SalesPersonAnalytics";
 
-export const SalesPersonAnalytics = (props) => {
-  // Destructuring the props passed to this component
-  const {
-    barChartData,
-    pieChartData,
-    horizontalBarData,
-    newCustomerData,
-    pendingTask,
-    pendingFollowup,
-    pendingDescription,
-    monthlyStatus,
-    weeklyStatus,
-    dailyStatus,
-    handleSegmentHover,
-    handleAutocompleteChange,
-    assign,
-    total,
-    piData,
-    funnelData,
-    hoveredSegment,
-    handleRowClick,
-    descriptionQuantity,
-    callPerformance,
-    dailyInvoiceQuantity,
-    dailyOrderBookQuantity,
-    handleChange,
-    selectedDate,
-    handleStartDateChange,
-    handleEndDateChange,
-    startDate,
-    endDate,
-    maxDate,
-    minDate,
-    openPopup3,
-    setOpenPopup3,
-    getResetDate,
-    team,
-  } = props;
-  // Retrieving user data from Redux store
-  const user = useSelector((state) => state.auth);
-  const userData = user.profile ? user.profile : null;
-  const [dIQdata, setDIQData] = useState([]);
-  const [selectedDIQData, setSelectedDIQData] = useState(null);
-  const [dOBQdata, setDOBQData] = useState([]);
-  const [selectedDOBQData, setSelectedDOBQData] = useState(null);
-  const [activeButton, setActiveButton] = useState("monthly");
-  // Filter user data to determine the sales roles assigned to the user
-  const assigned = userData ? userData.sales_users || [] : [];
-
-  // Determine if the user has limited privacy rights based on group membership
-  const [privacy] = useState(
-    userData &&
-      !userData.groups.includes("Director") &&
-      !userData.groups.includes("Sales Manager") &&
-      !userData.groups.includes("Sales Deputy Manager") &&
-      !userData.groups.includes("Sales Assistant Deputy Manager") &&
-      !userData.groups.includes("Sales Executive") &&
-      !userData.groups.includes("Sales Manager without Leads")
+export const Home = () => {
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [funnelData, setFunnelData] = useState([]);
+  const [barChartData, setBarChartData] = useState([]);
+  const [pieChartData, setPieChartData] = useState([]);
+  const [horizontalBarData, setHorizontalBarData] = useState([]);
+  const [newCustomerData, setNewCustomerData] = useState([]);
+  const [pendingTask, setPendingTask] = useState([]);
+  const [pendingFollowup, setPendingFollowup] = useState([]);
+  const [pendingDescription, setPendingDescription] = useState([]);
+  const [descriptionQuantity, setDescriptionQuantity] = useState([]);
+  const [piData, setPiData] = useState([]);
+  const [indiaMartLeadData, setIndiaMartLeadData] = useState([]);
+  const [monthlyStatus, setMonthlyStatus] = useState([]);
+  const [weeklyStatus, setWeeklyStatus] = useState([]);
+  const [dailyStatus, setDailyStatus] = useState([]);
+  const [callPerformance, setCallPerformance] = useState([]);
+  const [dailyInvoiceQuantity, setDailyInvoiceQuantity] = useState([]);
+  const [dailyOrderBookQuantity, setDailyOrderBookQuantity] = useState([]);
+  const [dispatchDataByID, setDispatchDataByID] = useState(null);
+  const [openPopup2, setOpenPopup2] = useState(false);
+  const [openPopup3, setOpenPopup3] = useState(false);
+  const [hoveredSegment, setHoveredSegment] = useState(null);
+  const [assigned, setAssigned] = useState([]);
+  const [assign, setAssign] = useState(null);
+  const [total, setTotal] = useState(0);
+  const [filterValue, setFilterValue] = useState(null);
+  const userData = useSelector((state) => state.auth.profile);
+  // Get the current date
+  const currentDate = new Date();
+  // Set the initial startDate to the first day of the current month
+  const initialStartDate = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    1
   );
-
-  // Filtering sales users based on the team
-  let SALES_PERSON_OPTIONS = assigned;
-  if (team) {
-    SALES_PERSON_OPTIONS = assigned.filter((user) =>
-      [
-        "Sales Manager",
-        "Sales Deputy Manager",
-        "Sales Assistant Deputy Manager",
-        "Director",
-      ].includes(user.groups__name)
-    );
-  }
-
-  // Mapping sales users to display options
-  let displayOptions = SALES_PERSON_OPTIONS.map((option) => {
-    return {
-      email: option.email,
-      primaryGroup: team ? option.groups__name : null,
-    };
-  });
-
-  // Find the currently selected option based on 'assign' prop
-  const selectedOption = displayOptions.find(
-    (option) => option.email === assign
+  // Set the initial endDate to the last day of the current month
+  const initialEndDate = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() + 1,
+    0
   );
+  const [selectedDate, setSelectedDate] = useState("This Month");
+  const [endDate, setEndDate] = useState(initialEndDate);
+  const [startDate, setStartDate] = useState(initialStartDate); // set default value as current date
+  const minDate = new Date().toISOString().split("T")[0];
+  const maxDate = new Date("2030-12-31").toISOString().split("T")[0];
+  const formattedCurrentDate = currentDate.toISOString().split("T")[0];
+  const [selectedWeek, setSelectedWeek] = useState(formattedCurrentDate);
+  useEffect(() => {
+    getAllTaskDetails();
+    getCustomerDetails();
+    getAllDispatchData();
+    getNewCustomerDetails();
+    getPendingTaskDetails();
+    getPendingFollowupDetails();
+    getPIDetails();
+    getIndiaMartLeadDetails();
+    getPendingDescriptionDetails();
+    getMonthlyCallStatusDetails();
+    getWeeklyCallStatusDetails();
+    getDailyCallStatusDetails();
+    getDescriptionQuantityDetails();
+    getDailyInvoiceQuantityDetails();
+    getDailyOrderBookQuantityDetails();
+  }, []);
 
-  // Custom function to sort the display options
-  const sortOptions = (a, b) => {
-    const order = [
-      "Sales Manager",
-      "Sales Deputy Manager",
-      "Sales Assistant Deputy Manager",
-      "Director",
+  useEffect(() => {
+    getForecastDetails();
+  }, [userData]);
+
+  useEffect(() => {
+    if (filterValue) {
+      getCallPerformanceByFilter(filterValue, startDate, endDate);
+    } else {
+      getCallPerformanceDetails();
+    }
+  }, [startDate, endDate]);
+
+  const handleStartDateChange = (event) => {
+    const date = new Date(event.target.value);
+    setStartDate(date);
+    setEndDate(new Date());
+  };
+
+  const handleEndDateChange = (event) => {
+    const date = new Date(event.target.value);
+    setEndDate(date);
+  };
+
+  const handleDateChange = (event) => {
+    setSelectedWeek(event.target.value);
+    getIndiaMartLeadByFilter(event);
+  };
+
+  const handleChange = (event) => {
+    const selectedValue = event.target.value;
+    setSelectedDate(selectedValue);
+    if (selectedValue === "Today") {
+      const currentDate = new Date();
+      const nextDate = new Date();
+      nextDate.setDate(nextDate.getDate() + 1); // Set the next day from the current date
+      setStartDate(currentDate);
+      setEndDate(nextDate);
+    } else if (selectedValue === "Yesterday") {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      setEndDate(yesterday);
+      setStartDate(yesterday);
+    } else if (selectedValue === "Last 7 Days") {
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 1); // Set the next day from the current date
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 6); // Set the start date 7 days ago
+      setEndDate(endDate);
+      setStartDate(startDate);
+    } else if (selectedValue === "Last 30 Days") {
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 1); // Set the next day from the current date
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 30);
+      setEndDate(endDate);
+      setStartDate(startDate);
+    } else if (selectedValue === "This Month") {
+      const endDate = new Date();
+      endDate.setMonth(endDate.getMonth() + 1); // Set the next month from the current date
+      const startDate = new Date(
+        endDate.getFullYear(),
+        endDate.getMonth() - 1,
+        1
+      );
+      endDate.setDate(endDate.getDate() + 1); // Set the next day from the current date
+      setEndDate(endDate);
+      setStartDate(startDate);
+    } else if (selectedValue === "Last Month") {
+      const endDate = new Date();
+      endDate.setDate(0); // Set the last day of the previous month
+      const startDate = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
+      endDate.setDate(endDate.getDate() + 1); // Set the next day from the current date
+      setEndDate(endDate);
+      setStartDate(startDate);
+    } else if (selectedValue === "Custom Date") {
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 1); // Set the next day from the current date
+      setStartDate(startDate);
+      setEndDate(endDate);
+      setOpenPopup3(true);
+    }
+  };
+
+  const getResetData = () => {
+    setStartDate(new Date());
+    setEndDate(new Date());
+    setAssign(null);
+  };
+
+  const getAllTaskDetails = async () => {
+    try {
+      setOpen(true);
+      const response = await DashboardService.getLeadDashboard();
+      const Data = [
+        { name: "new", label: "New", value: response.data.new },
+        { name: "open", label: "Open", value: response.data.open },
+        {
+          name: "opportunity",
+          label: "Opportunity",
+          value: response.data.opportunity,
+        },
+        {
+          name: "potential",
+          label: "Potential",
+          value: response.data.potential,
+        },
+        {
+          name: "not_interested",
+          label: "Not Interested",
+          value: response.data.not_interested,
+        },
+        {
+          name: "converted",
+          label: "Converted",
+          value: response.data.converted,
+        },
+      ];
+
+      setFunnelData(Data);
+
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("err", err);
+    }
+  };
+
+  const getCustomerDetails = async () => {
+    try {
+      setOpen(true);
+      const response = await DashboardService.getCustomerDashboard();
+      const Total =
+        response.data.active_customers +
+        response.data.dead_customers +
+        response.data.new_customers;
+      setTotal(Total);
+      const Data = [
+        {
+          label: "Active Customers",
+          value: response.data.active_customers,
+        },
+        {
+          label: "Dead Customers",
+          value: response.data.dead_customers,
+        },
+        {
+          label: "New Customers",
+          value: response.data.new_customers,
+        },
+        {
+          label: "Total",
+          value: Total,
+        },
+      ];
+
+      setPieChartData(Data);
+
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("err", err);
+    }
+  };
+
+  const getForecastDetails = async () => {
+    try {
+      setOpen(true);
+      const forecastResponse =
+        await DashboardService.getLastThreeMonthForecastData();
+      const columnKeys = Object.keys(forecastResponse.data);
+      const isAllColumnsEmpty = columnKeys.every(
+        (key) => forecastResponse.data[key].length === 0
+      );
+
+      let Data = [];
+
+      if (!isAllColumnsEmpty) {
+        Data = columnKeys.flatMap((key) =>
+          forecastResponse.data[key].map((item) => ({
+            combination: `${shortMonths[item.month - 1]}-${item.year}`,
+            actual: item.actual || 0,
+            forecast: item.total_forecast || 0,
+          }))
+        );
+
+        Data.forEach((item) => {
+          item.combination = String(item.combination); // Convert combination to string explicitly
+        });
+      }
+
+      setBarChartData(Data);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("Error:", err);
+    }
+  };
+
+  const getAllDispatchData = async () => {
+    try {
+      setOpen(true);
+      const response = await InvoiceServices.getDispatchDashboardData();
+      const Data = [
+        { name: "LR-M1", value: response.data.LR_M1, unit: "M1", type: "LR" },
+        { name: "LR-M2", value: response.data.LR_M2, unit: "M2", type: "LR" },
+        { name: "LR-D1", value: response.data.LR_D1, unit: "D1", type: "LR" },
+        {
+          name: "POD-M1",
+          value: response.data.POD_M1,
+          unit: "M1",
+          type: "POD",
+        },
+        {
+          name: "POD-M2",
+          value: response.data.POD_M2,
+          unit: "M2",
+          type: "POD",
+        },
+        {
+          name: "POD-D1",
+          value: response.data.POD_D1,
+          unit: "D1",
+          type: "POD",
+        },
+      ];
+      setHorizontalBarData(Data);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("err", err);
+    }
+  };
+
+  const getNewCustomerDetails = async () => {
+    try {
+      setOpen(true);
+      const newcustomerResponse = await DashboardService.getNewCustomerData();
+      const Data = Object.keys(newcustomerResponse.data).flatMap((key) => {
+        return newcustomerResponse.data[key].map((item) => {
+          return {
+            combination: `${shortMonths[item.month - 1]}-${item.year}`,
+            count: item.count,
+          };
+        });
+      });
+      setNewCustomerData(Data);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("Error:", err);
+    }
+  };
+
+  const getPendingTaskDetails = async () => {
+    try {
+      setOpen(true);
+      const response = await DashboardService.getPendingTaskData();
+
+      const Data = [
+        {
+          label: "Activity",
+          value: response.data.atleast_one_activity,
+        },
+        {
+          label: "No Activity",
+          value: response.data.no_activity,
+        },
+        {
+          label: "Overdue Tasks",
+          value: response.data.overdue_tasks,
+        },
+      ];
+      setPendingTask(Data);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("err", err);
+    }
+  };
+
+  const getPendingFollowupDetails = async () => {
+    try {
+      setOpen(true);
+      const response = await DashboardService.getPendingFollowupData();
+
+      const Data = [
+        {
+          label: "Upcoming FollowUp",
+          value: response.data.upcoming_followups,
+        },
+        {
+          label: "Today FollowUp",
+          value: response.data.todays_follow_ups,
+        },
+        {
+          label: "Overdue FollowUp",
+          value: response.data.overdue_follow_ups,
+        },
+      ];
+
+      setPendingFollowup(Data);
+
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("err", err);
+    }
+  };
+
+  const getPIDetails = async () => {
+    try {
+      setOpen(true);
+      const response = await DashboardService.getPIData();
+      const Data = [
+        {
+          label: "Paid PI",
+          value: response.data.paid_pi,
+        },
+        {
+          label: "Unpaid PI",
+          value: response.data.unpaid_pi,
+        },
+        {
+          label: "Dropped PI",
+          value: response.data.dropped_pi,
+        },
+      ];
+
+      setPiData(Data);
+
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("err", err);
+    }
+  };
+
+  const getIndiaMartLeadDetails = async () => {
+    try {
+      setOpen(true);
+      const indiaMartLeadResponse =
+        await DashboardService.getIndiaMartLeadData();
+      const formattedData = indiaMartLeadResponse.data.map((item) => {
+        return {
+          day: item.day,
+          totalLeads: item.total_leads,
+        };
+      });
+      setIndiaMartLeadData(formattedData);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.error("Error:", err);
+    }
+  };
+
+  const getPendingDescriptionDetails = async () => {
+    try {
+      setOpen(true);
+      const response =
+        await DashboardService.getDescriptionWisePendingQuantityData();
+      const Data = response.data.map((item) => {
+        return {
+          name: item.product__description__name,
+          value: item.total_pending_quantity,
+        };
+      });
+      setPendingDescription(Data);
+
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("err", err);
+    }
+  };
+
+  const getMonthlyCallStatusDetails = async () => {
+    try {
+      setOpen(true);
+
+      const response = await DashboardService.getMonthlyCallStatusData();
+      const Data = Object.keys(response.data).flatMap((key) => {
+        return response.data[key].map((item) => {
+          return {
+            combination: `${shortMonths[item.month - 1]}-${item.year}`,
+            existing_lead: item.existing_lead,
+            new_lead: item.new_lead,
+            customer: item.customer,
+          };
+        });
+      });
+
+      setMonthlyStatus(Data);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("Error:", err);
+    }
+  };
+
+  const getWeeklyCallStatusDetails = async () => {
+    try {
+      setOpen(true);
+
+      const response = await DashboardService.getWeeklyCallStatusData();
+      const Data = response.data.map((dayObject) => {
+        const week = Object.keys(dayObject)[0];
+        const weekData = dayObject[week][0];
+        return {
+          combination: week,
+          existing_lead: weekData.existing_lead,
+          new_lead: weekData.new_lead,
+          customer: weekData.customer,
+        };
+      });
+      setWeeklyStatus(Data);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("Error:", err);
+    }
+  };
+
+  const getDailyCallStatusDetails = async () => {
+    try {
+      setOpen(true);
+
+      const response = await DashboardService.getDailyCallStatusData();
+      const Data = response.data.map((dayObject) => {
+        const day = Object.keys(dayObject)[0];
+        const dayData = dayObject[day][0];
+
+        // Convert full day name to abbreviated form
+        const abbreviatedDay = getAbbreviatedDay(day);
+
+        return {
+          combination: abbreviatedDay,
+          existing_lead: dayData.existing_lead,
+          new_lead: dayData.new_lead,
+          customer: dayData.customer,
+        };
+      });
+
+      setDailyStatus(Data);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("Error:", err);
+    }
+  };
+
+  const getAbbreviatedDay = (fullDay) => {
+    const fullDayNames = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    const abbreviatedDayNames = [
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
     ];
 
-    const groupOrderA = order.indexOf(a.primaryGroup);
-    const groupOrderB = order.indexOf(b.primaryGroup);
+    const index = fullDayNames.indexOf(fullDay);
+    if (index !== -1) {
+      return abbreviatedDayNames[index];
+    }
 
-    if (groupOrderA < groupOrderB) return -1;
-    if (groupOrderA > groupOrderB) return 1;
-
-    // If groups are the same, sort by email
-    const emailA = a.email || ""; // Use empty string if a.email is undefined or falsy
-    const emailB = b.email || ""; // Use empty string if b.email is undefined or falsy
-
-    return emailA.localeCompare(emailB);
+    // If the full day name is not found, return the original value
+    return fullDay;
   };
 
-  // Apply sorting to the display options
-  displayOptions.sort(sortOptions);
+  const getDescriptionQuantityDetails = async () => {
+    try {
+      setOpen(true);
+      const response = await DashboardService.getDescriptionWiseQuantityData();
+      const Data = response.data.map((item) => {
+        return {
+          name: item.product__description__name,
+          value: item.total_quantity,
+        };
+      });
+      setDescriptionQuantity(Data);
 
-  // Handler function for button clicks
-  const handleButtonClick = (buttonType) => {
-    setActiveButton(buttonType);
-  };
-
-  // UseEffect hook to set initial data state for DIQDATA and DOBQDATA
-  useEffect(() => {
-    if (dailyInvoiceQuantity.length) {
-      const firstKey = Object.keys(dailyInvoiceQuantity[0])[0];
-      setSelectedDIQData(firstKey); // Set the first option as selected
-      setDIQData(dailyInvoiceQuantity[0][firstKey]);
-    }
-    if (dailyOrderBookQuantity.length) {
-      const firstKey = Object.keys(dailyOrderBookQuantity[0])[0];
-      setSelectedDOBQData(firstKey); // Set the first option as selected
-      setDOBQData(dailyOrderBookQuantity[0][firstKey]);
-    }
-  }, [dailyInvoiceQuantity, dailyOrderBookQuantity]);
-
-  // Map the dailyInvoiceQuantity to get description options
-  const descriptionOptionsForInvoice = dailyInvoiceQuantity.map(
-    (entry) => Object.keys(entry)[0]
-  );
-
-  // Map the dailyOrderBookQuantity to get description options
-  const descriptionOptionsForOrderBook = dailyOrderBookQuantity.map(
-    (entry) => Object.keys(entry)[0]
-  );
-
-  // Handler function to set data for invoice
-  const handleDataForInvoice = (value) => {
-    setSelectedDIQData(value); // Update the selected option
-
-    const filteredData = dailyInvoiceQuantity.find((entry) =>
-      entry.hasOwnProperty(value)
-    );
-
-    if (filteredData && filteredData[value]) {
-      setDIQData(filteredData[value]);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("err", err);
     }
   };
 
-  // Handler function to set data for order book
-  const handleDataForOrderBook = (value) => {
-    setSelectedDOBQData(value); // Update the selected option
+  const getCallPerformanceDetails = async () => {
+    try {
+      setOpen(true);
+      const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
+      const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
+      const response = await DashboardService.getCallPerformanceData(
+        StartDate,
+        EndDate
+      );
+      const Data = [
+        {
+          name: "Order",
+          value: response.data.order,
+        },
+        {
+          name: "Followup",
+          value: response.data.followup,
+        },
+        {
+          name: "Credit",
+          value: response.data.credit,
+        },
+        {
+          name: "Issue",
+          value: response.data.issue,
+        },
+        {
+          name: "Not Connect",
+          value: response.data.not_connect,
+        },
+        {
+          name: "OEM",
+          value: response.data.oem,
+        },
+        {
+          name: "One Time",
+          value: response.data.one_time,
+        },
+        {
+          name: "Passed",
+          value: response.data.passed,
+        },
+        {
+          name: "Potential",
+          value: response.data.potential,
+        },
+        {
+          name: "Sample",
+          value: response.data.sample,
+        },
+        {
+          name: "Dropped",
+          value: response.data.dropped,
+        },
+        // Add more data for other categories if needed
+      ];
 
-    const filteredData = dailyOrderBookQuantity.find((entry) =>
-      entry.hasOwnProperty(value)
-    );
+      setCallPerformance(Data);
 
-    if (filteredData && filteredData[value]) {
-      setDOBQData(filteredData[value]);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("err", err);
     }
   };
 
-  // Define color palette for charts
-  const paletteColors = [
-    "#f14c14",
-    "#f39c35",
-    "#68BC00",
-    "#1d7b63",
-    "#4e97a8",
-    "#4466a3",
-  ];
-
-  // Define additional color palette
-  const COLORS = [
-    "#8884d8",
-    "#83a6ed",
-    "#8dd1e1",
-    "#82ca9d",
-    "#ffbb00",
-    "#ff7f50",
-    "#ff69b4",
-    "#ba55d3",
-    "#cd5c5c",
-    "#ffa500",
-    "#adff2f",
-    "#008080",
-  ];
-
-  // Define styles for chart containers
-  const chartContainerStyle = {
-    margin: "20px",
-    borderRadius: "10px",
-    boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-    backgroundColor: "#fff",
-    paddingTop: "20px",
-    width: "100%",
-    minHeight: "300px",
+  const getDailyInvoiceQuantityDetails = async () => {
+    try {
+      setOpen(true);
+      const response = await DashboardService.getDailyInvoiceQuantityData();
+      setDailyInvoiceQuantity(response.data);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("Error:", err);
+    }
   };
 
-  // Define text style
-  const textStyle = {
-    color: "#fff",
-    fontWeight: "bold",
+  const getDailyOrderBookQuantityDetails = async () => {
+    try {
+      setOpen(true);
+      const response = await DashboardService.getDailyOrderBookQuantityData();
+      setDailyOrderBookQuantity(response.data);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("Error:", err);
+    }
+  };
+  const handleAutocompleteChange = (value) => {
+    // Check if value is not null before accessing its properties
+    if (value) {
+      setFilterValue(value.email);
+      setAssign(value.email);
+      getDataByFilter(value.email);
+      getNewCustomerByFilter(value.email);
+      getPendingTaskByFilter(value.email);
+      getPendingFollowupByFilter(value.email);
+      getPIByFilter(value.email);
+      getCustomerByFilter(value.email);
+      geTaskByFilter(value.email);
+      getPendingDescriptionByFilter(value.email);
+      getMonthlyCallStatusByFilter(value.email);
+      getWeeklyCallStatusByFilter(value.email);
+      getDailyCallStatusByFilter(value.email);
+      getDescriptionQuantityByFilter(value.email);
+      getCallPerformanceByFilter(value.email, startDate, endDate);
+      getDailyInvoiceQuantityByFilter(value.email);
+      getDailyOrderBookQuantityByFilter(value.email);
+    } else {
+      // Handle the case when value is null (i.e., when the Autocomplete is reset)
+      getForecastDetails();
+      getNewCustomerDetails();
+      getPendingTaskDetails();
+      getPendingFollowupDetails();
+      getCustomerDetails();
+      getPIDetails();
+      getAllTaskDetails();
+      setAssign(null);
+      getPendingDescriptionDetails();
+      setFilterValue(null);
+      getMonthlyCallStatusDetails();
+      getWeeklyCallStatusDetails();
+      getDailyCallStatusDetails();
+      getDescriptionQuantityDetails();
+      getCallPerformanceDetails();
+      getDailyInvoiceQuantityDetails();
+      getDailyOrderBookQuantityDetails();
+    }
   };
 
-  // Define style for funnel graphic
-  const funnelStyle = {
-    width: "100%",
-    minHeight: "1px",
-    fontSize: "12px",
-    padding: "10px 0",
-    margin: "2px 0",
-    color: "black",
-    clipPath: "polygon(0 0, 100% 0, 60% 78%, 60% 90%, 40% 100%, 40% 78%)",
-    WebkitClipPath: "polygon(0 0, 100% 0, 60% 78%, 60% 90%, 40% 100%, 40% 78%)",
-    textAlign: "center",
+  const getDataByFilter = async (value) => {
+    try {
+      const FilterData = value;
+      setOpen(true);
+      const forecastResponse =
+        await DashboardService.getLastThreeMonthForecastDataByFilter(
+          FilterData
+        );
+
+      const columnKeys = Object.keys(forecastResponse.data);
+      const isAllColumnsEmpty = columnKeys.every(
+        (key) => forecastResponse.data[key].length === 0
+      );
+
+      let Data = [];
+
+      if (!isAllColumnsEmpty) {
+        Data = columnKeys.flatMap((key) =>
+          forecastResponse.data[key].map((item) => ({
+            combination: `${shortMonths[item.month - 1]}-${item.year}`,
+            actual: item.actual || 0,
+            forecast: item.total_forecast || 0,
+          }))
+        );
+
+        Data.forEach((item) => {
+          item.combination = String(item.combination); // Convert combination to string explicitly
+        });
+      }
+
+      setBarChartData(Data);
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
+  const getNewCustomerByFilter = async (value) => {
+    try {
+      const FilterData = value;
+      setOpen(true);
+      const newcustomerResponse =
+        await DashboardService.getNewCustomerDataByFilter(FilterData);
+      const Data = Object.keys(newcustomerResponse.data).flatMap((key) => {
+        return newcustomerResponse.data[key].map((item) => {
+          return {
+            combination: `${shortMonths[item.month - 1]}-${item.year}`,
+            count: item.count,
+          };
+        });
+      });
+
+      setNewCustomerData(Data);
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
+  const getPendingTaskByFilter = async (value) => {
+    try {
+      const FilterData = value;
+      setOpen(true);
+      const response = await DashboardService.getPendingTaskDataByFilter(
+        FilterData
+      );
+      const Data = [
+        {
+          label: "Activity",
+          value: response.data.atleast_one_activity,
+        },
+        {
+          label: "No Activity",
+          value: response.data.no_activity,
+        },
+        {
+          label: "Overdue Tasks",
+          value: response.data.overdue_tasks,
+        },
+      ];
+
+      setPendingTask(Data);
+
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
+  const getPendingFollowupByFilter = async (value) => {
+    try {
+      const FilterData = value;
+      setOpen(true);
+      const response = await DashboardService.getPendingFollowupDataByFilter(
+        FilterData
+      );
+      const Data = [
+        {
+          label: "Upcoming FollowUp",
+          value: response.data.upcoming_followups,
+        },
+        {
+          label: "Today FollowUp",
+          value: response.data.todays_follow_ups,
+        },
+        {
+          label: "Overdue FollowUp",
+          value: response.data.overdue_follow_ups,
+        },
+      ];
+
+      setPendingFollowup(Data);
+
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
+  const getPIByFilter = async (value) => {
+    try {
+      const FilterData = value;
+      setOpen(true);
+      const response = await DashboardService.getPIDataByFilter(FilterData);
+      const Data = [
+        {
+          label: "Paid PI",
+          value: response.data.paid_pi,
+        },
+        {
+          label: "Unpaid PI",
+          value: response.data.unpaid_pi,
+        },
+        {
+          label: "Dropped PI",
+          value: response.data.dropped_pi,
+        },
+      ];
+
+      setPiData(Data);
+
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
+  const getIndiaMartLeadByFilter = async (event) => {
+    try {
+      setOpen(true);
+      const FilterData = event.target.value;
+      const indiaMartLeadResponse =
+        await DashboardService.getIndiaMartLeadDataByFilter(FilterData);
+      const formattedData = indiaMartLeadResponse.data.map((item) => {
+        return {
+          day: item.day,
+          totalLeads: item.total_leads,
+        };
+      });
+      setIndiaMartLeadData(formattedData);
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
+  const getCustomerByFilter = async (value) => {
+    try {
+      const FilterData = value;
+      setOpen(true);
+      const response = await DashboardService.getCustomerDataByFilter(
+        FilterData
+      );
+      const Total =
+        response.data.active_customers +
+        response.data.dead_customers +
+        response.data.new_customers;
+      setTotal(Total);
+      const Data = [
+        {
+          label: "Active Customers",
+          value: response.data.active_customers,
+        },
+        {
+          label: "Dead Customers",
+          value: response.data.dead_customers,
+        },
+        {
+          label: "New Customers",
+          value: response.data.new_customers,
+        },
+        {
+          label: "Total",
+          value: Total,
+        },
+      ];
+
+      setPieChartData(Data);
+
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
+  const geTaskByFilter = async (value) => {
+    try {
+      const FilterData = value;
+      setOpen(true);
+      const response = await DashboardService.getLeadDataByFilter(FilterData);
+      const Data = [
+        { name: "new", label: "New", value: response.data.new },
+        { name: "open", label: "Open", value: response.data.open },
+        {
+          name: "opportunity",
+          label: "Opportunity",
+          value: response.data.opportunity,
+        },
+        {
+          name: "potential",
+          label: "Potential",
+          value: response.data.potential,
+        },
+        {
+          name: "not_interested",
+          label: "Not Interested",
+          value: response.data.not_interested,
+        },
+        {
+          name: "converted",
+          label: "Converted",
+          value: response.data.converted,
+        },
+      ];
+
+      setFunnelData(Data);
+
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
+  const getPendingDescriptionByFilter = async (value) => {
+    try {
+      const FilterData = value;
+      setOpen(true);
+      const response =
+        await DashboardService.getDescriptionWisePendingQuantityDataByFilter(
+          FilterData
+        );
+      const Data = response.data.map((item) => {
+        return {
+          name: item.product__description__name,
+          value: item.total_pending_quantity,
+        };
+      });
+      setPendingDescription(Data);
+
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
+  const getMonthlyCallStatusByFilter = async (value) => {
+    try {
+      const FilterData = value;
+      setOpen(true);
+      const response = await DashboardService.getMonthlyCallStatusDataByFilter(
+        FilterData
+      );
+      const Data = Object.keys(response.data).flatMap((key) => {
+        return response.data[key].map((item) => {
+          return {
+            combination: `${shortMonths[item.month - 1]}-${item.year}`,
+            existing_lead: item.existing_lead,
+            new_lead: item.new_lead,
+            customer: item.customer,
+          };
+        });
+      });
+
+      setMonthlyStatus(Data);
+
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
+  const getWeeklyCallStatusByFilter = async (value) => {
+    try {
+      const FilterData = value;
+      setOpen(true);
+      const response = await DashboardService.getWeeklyCallStatusDataByFilter(
+        FilterData
+      );
+      const Data = response.data.map((dayObject) => {
+        const week = Object.keys(dayObject)[0];
+        const weekData = dayObject[week][0];
+
+        return {
+          combination: week,
+          existing_lead: weekData.existing_lead,
+          new_lead: weekData.new_lead,
+          customer: weekData.customer,
+        };
+      });
+
+      setWeeklyStatus(Data);
+
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
+  const getDailyCallStatusByFilter = async (value) => {
+    try {
+      const FilterData = value;
+      setOpen(true);
+      const response = await DashboardService.getDailyCallStatusDataByFilter(
+        FilterData
+      );
+      const Data = response.data.map((dayObject) => {
+        const day = Object.keys(dayObject)[0];
+        const dayData = dayObject[day][0];
+
+        // Convert full day name to abbreviated form
+        const abbreviatedDay = getAbbreviatedDay(day);
+
+        return {
+          combination: abbreviatedDay,
+          existing_lead: dayData.existing_lead,
+          new_lead: dayData.new_lead,
+          customer: dayData.customer,
+        };
+      });
+
+      setDailyStatus(Data);
+
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
+  const getDescriptionQuantityByFilter = async (value) => {
+    try {
+      const FilterData = value;
+      setOpen(true);
+      const response =
+        await DashboardService.getDescriptionWiseQuantityDataByFilter(
+          FilterData
+        );
+      const Data = response.data.map((item) => {
+        return {
+          name: item.product__description__name,
+          value: item.total_quantity,
+        };
+      });
+      setDescriptionQuantity(Data);
+
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
+  const getCallPerformanceByFilter = async (value, startDate, endDate) => {
+    try {
+      setOpen(true);
+      const FilterData = value;
+      const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
+      const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
+      const response = await DashboardService.getCallPerformanceDataByFilter(
+        FilterData,
+        StartDate,
+        EndDate
+      );
+      const Data = [
+        {
+          name: "Order",
+          value: response.data.order,
+        },
+        {
+          name: "Followup",
+          value: response.data.followup,
+        },
+        {
+          name: "Credit",
+          value: response.data.credit,
+        },
+        {
+          name: "Issue",
+          value: response.data.issue,
+        },
+        {
+          name: "Not Connect",
+          value: response.data.not_connect,
+        },
+        {
+          name: "OEM",
+          value: response.data.oem,
+        },
+        {
+          name: "One Time",
+          value: response.data.one_time,
+        },
+        {
+          name: "Passed",
+          value: response.data.passed,
+        },
+        {
+          name: "Potential",
+          value: response.data.potential,
+        },
+        {
+          name: "Sample",
+          value: response.data.sample,
+        },
+        {
+          name: "Dropped",
+          value: response.data.dropped,
+        },
+        // Add more data for other categories if needed
+      ];
+
+      setCallPerformance(Data);
+      setOpen(false);
+    } catch (error) {
+      console.log("error", error);
+      setOpen(false);
+    }
+  };
+
+  const getDailyInvoiceQuantityByFilter = async (value) => {
+    try {
+      setOpen(true);
+      const FilterData = value;
+      const response =
+        await DashboardService.getDailyInvoiceQuantityDataByFilter(FilterData);
+      setDailyInvoiceQuantity(response.data);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("Error:", err);
+    }
+  };
+
+  const getDailyOrderBookQuantityByFilter = async (value) => {
+    try {
+      setOpen(true);
+      const FilterData = value;
+      const response =
+        await DashboardService.getDailyOrderBookQuantityDataByFilter(
+          FilterData
+        );
+      setDailyOrderBookQuantity(response.data);
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.log("Error:", err);
+    }
+  };
+
+  const handleSegmentHover = (segment) => {
+    setHoveredSegment(segment);
+  };
+
+  const handleSegmentLeave = () => {
+    setHoveredSegment(null);
+  };
+
+  const handleRowClick = (row) => {
+    if (row.label === "New") {
+      navigate("/leads/new-lead");
+    }
+    if (row.label === "Open") {
+      navigate("/leads/open-lead");
+    }
   };
 
   return (
-    <Box sx={{ margin: "20px" }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
-          <FormControlLabel
-            control={<Switch checked={privacy} disabled />}
-            label="Privacy"
-          />
-        </Grid>
-      </Grid>
-      {privacy ? (
-        <div style={{ filter: "blur(4px)" }}>
-          {/* Customer Stats */}
-          <Grid
-            container
-            spacing={{ xs: 2, md: 3 }}
-            columns={{ xs: 4, sm: 8, md: 12 }}
-            sx={{ margin: "20px" }}
-          >
-            {pieChartData.map((data, index) => {
-              let percentage = 0;
-              if (total !== 0) {
-                percentage = (data.value / total) * 100;
-              }
-
-              return (
-                <Grid
-                  item
-                  xs={1}
-                  sm={2}
-                  md={3}
-                  lg={3}
-                  key={index}
-                  sx={{ marginTop: "20px" }}
-                >
-                  <Box
-                    sx={{
-                      backgroundColor: COLORS[index % COLORS.length],
-                      textAlign: "center",
-                    }}
-                  >
-                    <Box
-                      display="flex"
-                      flexDirection="row"
-                      justifyContent="space-around"
-                    >
-                      <Box sx={{ marginTop: "10px" }}>
-                        <CircularProgressWithLabel
-                          variant="determinate"
-                          value={percentage}
-                          // sx={{ backgroundColor: "#ccc" }}
-                        />
-                      </Box>
-                      <Box sx={{ marginTop: "10px" }}>
-                        <Typography
-                          variant="subtitle1"
-                          sx={{ color: "white", fontWeight: "bold" }}
-                        >
-                          {data.label}
-                        </Typography>
-                        <Typography
-                          variant="h6"
-                          sx={{ color: "white", fontWeight: "bold" }}
-                        >
-                          {data.value}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-                </Grid>
-              );
-            })}
-          </Grid>
-
-          {/* Filter By Sales Person */}
-          <Grid container spacing={1} sx={{ my: "20px" }}>
-            {(!userData.groups.includes("Sales Executive") ||
-              !userData.groups.includes("Sales Manager Without Leads")) && (
-              <Paper sx={{ width: "100%", padding: "20px" }}>
-                <Grid container alignItems="center" spacing={1}>
-                  <Grid item xs={9} sm={9} md={9} lg={9}>
-                    <Autocomplete
-                      size="small"
-                      onChange={(event, value) =>
-                        handleAutocompleteChange(value)
-                      }
-                      value={selectedOption}
-                      options={displayOptions}
-                      groupBy={(option) => option.primaryGroup || ""}
-                      getOptionLabel={(option) => option.email}
-                      renderInput={(params) => (
-                        <CustomTextField
-                          {...params}
-                          label="Filter By Sales Person"
-                        />
-                      )}
-                    />
-                  </Grid>
-                </Grid>
-              </Paper>
-            )}
-          </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <CustomChart
-                chartType="ColumnChart"
-                data={[
-                  ["Combination", "Actual", "Forecast"],
-                  ...barChartData.map((item) => [
-                    item.combination,
-                    item.actual,
-                    item.forecast,
-                  ]),
-                ]}
-                options={{
-                  title: "Actual vs Forecast(Quantity)",
-                  width: "100%",
-                  height: "300px",
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomChart
-                chartType="LineChart"
-                data={[
-                  ["Combination", "Count"],
-                  ...newCustomerData.map((item) => [
-                    item.combination,
-                    item.count,
-                  ]),
-                ]}
-                options={{
-                  title: "New Customer Data",
-                  width: "100%",
-                  height: "300px",
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-          </Grid>
-          <Grid container spacing={2}>
-            {userData.groups.includes("Director") && (
-              <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
-                <CustomChart
-                  chartType="BarChart"
-                  data={[
-                    ["Name", "Value", { role: "style" }],
-                    ...horizontalBarData.map((item) => [
-                      item.name,
-                      item.value,
-                      item.type === "LR" ? "blue" : "green",
-                    ]),
-                  ]}
-                  options={{
-                    title: "Dispatch Data",
-                    width: "100%",
-                    height: "300px",
-                    legend: { position: "none" },
-                    hAxis: { title: "Value" },
-                  }}
-                  widthStyle={"100%"}
-                  heightStyle={"300px"}
-                />
-              </Grid>
-            )}
-            <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
-              <CustomChart
-                chartType="PieChart"
-                data={[
-                  ["Label", "Value"],
-                  ...pendingTask.map((item) => [item.label, item.value]),
-                ]}
-                options={{
-                  title: "Pending Task Data",
-                  width: "100%",
-                  height: "300px",
-                  pieHole: 0.4,
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-            <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
-              <CustomChart
-                chartType="BarChart"
-                data={[
-                  ["Label", "Value"],
-                  ...pendingFollowup.map((item) => [item.label, item.value]),
-                ]}
-                options={{
-                  title: "Pending Follow-Up Data",
-                  width: "100%",
-                  height: "300px",
-                  legend: { position: "none" },
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-          </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
-              <CustomChart
-                chartType={"PieChart"}
-                data={[
-                  ["Label", "Value"],
-                  ...piData.map((item) => [item.label, item.value]),
-                ]}
-                options={{
-                  title: "PI Data",
-                  width: "100%",
-                  height: "300px",
-                  pieHole: 0.4,
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={4}
-              sx={{ margin: "2rem 2rem 0 4rem", backgroundColor: "#ffffff" }}
-            >
-              <div className="funnelChart" style={funnelStyle}>
-                <h2 style={{ textAlign: "center", color: "#333" }}>
-                  Sales Funnel
-                </h2>
-                {funnelData.map((data, index) => (
-                  <div
-                    key={index}
-                    className="chartSegment"
-                    style={{
-                      backgroundColor:
-                        paletteColors[index % paletteColors.length],
-                      opacity: hoveredSegment === data ? 0.7 : 1,
-                    }}
-                    onMouseEnter={() => handleSegmentHover(data)}
-                    // onMouseLeave={handleSegmentLeave}
-                    onClick={() => handleRowClick(data)}
-                  >
-                    <div
-                    // className="segmentTitle"
-                    >
-                      <span style={textStyle}>{data.label}</span>&nbsp;
-                      <span style={textStyle}>{data.value}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Grid>
-            <Grid item xs={12} sm={12} sx={{ marginTop: "20px" }}>
-              <Button
-                variant={activeButton === "monthly" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
-                sx={{ margin: "0 10px 10px 0" }}
-                color="primary"
-                onClick={() => handleButtonClick("monthly")}
-              >
-                Monthly Call Status
-              </Button>
-              <Button
-                variant={activeButton === "weekly" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
-                sx={{ margin: "0 10px 10px 0" }}
-                color="primary"
-                onClick={() => handleButtonClick("weekly")}
-              >
-                Weekly Call Status
-              </Button>
-              <Button
-                variant={activeButton === "daily" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
-                sx={{ margin: "0 10px 10px 0" }}
-                color="primary"
-                onClick={() => handleButtonClick("daily")}
-              >
-                Daily Call Status
-              </Button>
-              {activeButton === "monthly" && (
-                <CustomChart
-                  chartType="ColumnChart"
-                  data={[
-                    ["Month", "Existing Lead", "New Lead", "Customer"],
-                    ...monthlyStatus.map((item) => [
-                      item.combination,
-                      item.existing_lead,
-                      item.new_lead,
-                      item.customer,
-                    ]),
-                  ]}
-                  options={{
-                    title: "Monthly Call Status",
-                    width: "100%",
-                    height: "400px",
-                    isStacked: true,
-                    legend: { position: "top" },
-                  }}
-                  widthStyle={"100%"}
-                  heightStyle={"300px"}
-                />
-              )}
-              {activeButton === "weekly" && (
-                <CustomChart
-                  chartType="ColumnChart"
-                  data={[
-                    ["Week", "Existing Lead", "New Lead", "Customer"],
-                    ...weeklyStatus.map((item) => [
-                      item.combination,
-                      item.existing_lead,
-                      item.new_lead,
-                      item.customer,
-                    ]),
-                  ]}
-                  options={{
-                    title: "Weekly Call Status",
-                    width: "100%",
-                    height: "400px",
-                    curveType: "function",
-                    legend: { position: "top" },
-                  }}
-                  widthStyle={"100%"}
-                  heightStyle={"300px"}
-                />
-              )}
-              {activeButton === "daily" && (
-                <CustomChart
-                  chartType="ColumnChart"
-                  data={[
-                    ["Day", "Existing Lead", "New Lead", "Customer"],
-                    ...dailyStatus.map((item) => [
-                      item.combination,
-                      item.existing_lead,
-                      item.new_lead,
-                      item.customer,
-                    ]),
-                  ]}
-                  options={{
-                    title: "Daily Call Status",
-                    width: "100%",
-                    height: "400px",
-                    legend: { position: "top" },
-                  }}
-                  widthStyle={"100%"}
-                  heightStyle={"300px"}
-                />
-              )}
-            </Grid>
-          </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
-              <CustomChart
-                chartType="BarChart"
-                data={[
-                  ["Product Description", "Pending Quantity"],
-                  ...pendingDescription.map((item) => [item.name, item.value]),
-                ]}
-                options={{
-                  title: "OrderBook Pending Quantity by Description",
-                  width: "100%",
-                  height: "400px",
-                  legend: { position: "none" },
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
-              <CustomChart
-                chartType="PieChart"
-                data={[
-                  ["Product Description", "Quantity"],
-                  ...descriptionQuantity.map((item) => [item.name, item.value]),
-                ]}
-                options={{
-                  title: "Description Wise Sales Quantity",
-                  width: "100%",
-                  height: "400px",
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-          </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} sx={{ marginTop: "20px" }}>
-              <FormControl
-                sx={{ width: "300px", marginBottom: "10px" }}
-                size="small"
-              >
-                <InputLabel id="demo-select-small">Date</InputLabel>
-                <Select
-                  labelId="demo-select-small"
-                  id="demo-select-small"
-                  label="Date"
-                  value={selectedDate}
-                  onChange={(event) => handleChange(event)}
-                >
-                  {DateOptions.map((option, i) => (
-                    <MenuItem key={i} value={option.value}>
-                      {option.value}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <CustomChart
-                chartType="BarChart"
-                data={[
-                  ["Call Category", "Value"],
-                  ...callPerformance.map((item) => [item.name, item.value]),
-                ]}
-                options={{
-                  title: "Call Performance",
-                  width: "100%",
-                  height: "400px",
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-          </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
-              <Autocomplete
-                sx={{}}
-                size="small"
-                defaultValue={dailyInvoiceQuantity[0]}
-                onChange={(event, value) => handleDataForInvoice(value)}
-                options={descriptionOptionsForInvoice.map((option) => option)}
-                getOptionLabel={(option) => option}
-                renderInput={(params) => (
-                  <CustomTextField {...params} label="Filter By Description" />
-                )}
-              />
-              <CustomChart
-                chartType="LineChart"
-                data={[
-                  ["Date", "Total"],
-                  ...((dIQdata &&
-                    dIQdata.map((entry) => [
-                      entry.sales_invoice__generation_date,
-                      entry.total,
-                    ])) ||
-                    []),
-                ]}
-                options={{
-                  title: "Daily Sales Invoice Quantity",
-                  width: "100%",
-                  height: "400px",
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
-              <Autocomplete
-                sx={{}}
-                size="small"
-                defaultValue={dailyOrderBookQuantity[0]}
-                onChange={(event, value) => handleDataForOrderBook(value)}
-                options={descriptionOptionsForOrderBook.map((option) => option)}
-                getOptionLabel={(option) => option}
-                renderInput={(params) => (
-                  <CustomTextField {...params} label="Filter By Description" />
-                )}
-              />
-              <CustomChart
-                chartType="LineChart"
-                data={[
-                  ["Date", "Total"],
-                  ...((dOBQdata &&
-                    dOBQdata.map((entry) => [
-                      entry.orderbook__proforma_invoice__generation_date,
-                      entry.total,
-                    ])) ||
-                    []),
-                ]}
-                options={{
-                  title: "Daily Sales OrderBook Quantity",
-                  width: "100%",
-                  height: "400px",
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-          </Grid>
-        </div>
-      ) : (
-        <div>
-          <Grid
-            container
-            spacing={{ xs: 2, md: 3 }}
-            columns={{ xs: 4, sm: 8, md: 12 }}
-            sx={{ margin: "20px" }}
-          >
-            {pieChartData.map((data, index) => {
-              let percentage = 0;
-              if (total !== 0) {
-                percentage = (data.value / total) * 100;
-              }
-
-              return (
-                <Grid
-                  item
-                  xs={1}
-                  sm={2}
-                  md={3}
-                  lg={3}
-                  key={index}
-                  sx={{ marginTop: "20px" }}
-                >
-                  <Box
-                    sx={{
-                      backgroundColor: COLORS[index % COLORS.length],
-                      textAlign: "center",
-                    }}
-                  >
-                    <Box
-                      display="flex"
-                      flexDirection="row"
-                      justifyContent="space-around"
-                    >
-                      <Box sx={{ marginTop: "10px" }}>
-                        <CircularProgressWithLabel
-                          variant="determinate"
-                          value={percentage}
-                          // sx={{ backgroundColor: "#ccc" }}
-                        />
-                      </Box>
-                      <Box sx={{ marginTop: "10px" }}>
-                        <Typography
-                          variant="subtitle1"
-                          sx={{ color: "white", fontWeight: "bold" }}
-                        >
-                          {data.label}
-                        </Typography>
-                        <Typography
-                          variant="h6"
-                          sx={{ color: "white", fontWeight: "bold" }}
-                        >
-                          {data.value}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-                </Grid>
-              );
-            })}
-          </Grid>
-
-          {/* Filter By Sales Person */}
-          <Grid container spacing={1} sx={{ my: "20px" }}>
-            {!userData.groups.includes("Sales Executive") && (
-              <Paper sx={{ width: "100%", padding: "20px" }}>
-                <Grid container alignItems="center" spacing={1}>
-                  <Grid item xs={9} sm={9} md={9} lg={9}>
-                    <Autocomplete
-                      size="small"
-                      onChange={(event, value) =>
-                        handleAutocompleteChange(value)
-                      }
-                      value={selectedOption}
-                      options={displayOptions}
-                      groupBy={(option) => option.primaryGroup || ""}
-                      getOptionLabel={(option) => option.email}
-                      renderInput={(params) => (
-                        <CustomTextField
-                          {...params}
-                          label="Filter By Sales Person"
-                        />
-                      )}
-                    />
-                  </Grid>
-                </Grid>
-              </Paper>
-            )}
-          </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <CustomChart
-                chartType="ColumnChart"
-                data={[
-                  ["Combination", "Actual", "Forecast"],
-                  ...barChartData.map((item) => [
-                    item.combination,
-                    item.actual,
-                    item.forecast,
-                  ]),
-                ]}
-                options={{
-                  title: "Actual vs Forecast(Quantity)",
-                  width: "100%",
-                  height: "300px",
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomChart
-                chartType="LineChart"
-                data={[
-                  ["Combination", "Count"],
-                  ...newCustomerData.map((item) => [
-                    item.combination,
-                    item.count,
-                  ]),
-                ]}
-                options={{
-                  title: "New Customer Data",
-                  width: "100%",
-                  height: "300px",
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-          </Grid>
-          <Grid container spacing={2}>
-            {userData.groups.includes("Director") && (
-              <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
-                <CustomChart
-                  chartType="BarChart"
-                  data={[
-                    ["Name", "Value", { role: "style" }],
-                    ...horizontalBarData.map((item) => [
-                      item.name,
-                      item.value,
-                      item.type === "LR" ? "blue" : "green",
-                    ]),
-                  ]}
-                  options={{
-                    title: "Dispatch Data",
-                    width: "100%",
-                    height: "300px",
-                    legend: { position: "none" },
-                    hAxis: { title: "Value" },
-                  }}
-                  widthStyle={"100%"}
-                  heightStyle={"300px"}
-                />
-              </Grid>
-            )}
-            <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
-              <CustomChart
-                chartType="PieChart"
-                data={[
-                  ["Label", "Value"],
-                  ...pendingTask.map((item) => [item.label, item.value]),
-                ]}
-                options={{
-                  title: "Pending Task Data",
-                  width: "100%",
-                  height: "300px",
-                  pieHole: 0.4,
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-            <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
-              <CustomChart
-                chartType="BarChart"
-                data={[
-                  ["Label", "Value"],
-                  ...pendingFollowup.map((item) => [item.label, item.value]),
-                ]}
-                options={{
-                  title: "Pending Follow-Up Data",
-                  width: "100%",
-                  height: "300px",
-                  legend: { position: "none" },
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-          </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
-              <CustomChart
-                chartType={"PieChart"}
-                data={[
-                  ["Label", "Value"],
-                  ...piData.map((item) => [item.label, item.value]),
-                ]}
-                options={{
-                  title: "PI Data",
-                  width: "100%",
-                  height: "300px",
-                  pieHole: 0.4,
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={4}
-              sx={{ margin: "2rem 2rem 0 4rem", backgroundColor: "#ffffff" }}
-            >
-              <div className="funnelChart" style={funnelStyle}>
-                <h2 style={{ textAlign: "center", color: "#333" }}>
-                  Sales Funnel
-                </h2>
-                {funnelData.map((data, index) => (
-                  <div
-                    key={index}
-                    className="chartSegment"
-                    style={{
-                      backgroundColor:
-                        paletteColors[index % paletteColors.length],
-                      opacity: hoveredSegment === data ? 0.7 : 1,
-                    }}
-                    onMouseEnter={() => handleSegmentHover(data)}
-                    // onMouseLeave={handleSegmentLeave}
-                    onClick={() => handleRowClick(data)}
-                  >
-                    <div
-                    // className="segmentTitle"
-                    >
-                      <span style={textStyle}>{data.label}</span>&nbsp;
-                      <span style={textStyle}>{data.value}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Grid>
-            <Grid item xs={12} sm={12} sx={{ marginTop: "20px" }}>
-              <Button
-                variant={activeButton === "monthly" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
-                sx={{ margin: "0 10px 10px 0" }}
-                color="primary"
-                onClick={() => handleButtonClick("monthly")}
-              >
-                Monthly Call Status
-              </Button>
-              <Button
-                variant={activeButton === "weekly" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
-                sx={{ margin: "0 10px 10px 0" }}
-                color="primary"
-                onClick={() => handleButtonClick("weekly")}
-              >
-                Weekly Call Status
-              </Button>
-              <Button
-                variant={activeButton === "daily" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
-                sx={{ margin: "0 10px 10px 0" }}
-                color="primary"
-                onClick={() => handleButtonClick("daily")}
-              >
-                Daily Call Status
-              </Button>
-              {activeButton === "monthly" && (
-                <CustomChart
-                  chartType="ColumnChart"
-                  data={[
-                    ["Month", "Existing Lead", "New Lead", "Customer"],
-                    ...monthlyStatus.map((item) => [
-                      item.combination,
-                      item.existing_lead,
-                      item.new_lead,
-                      item.customer,
-                    ]),
-                  ]}
-                  options={{
-                    title: "Monthly Call Status",
-                    width: "100%",
-                    height: "400px",
-                    isStacked: true,
-                    legend: { position: "top" },
-                  }}
-                  widthStyle={"100%"}
-                  heightStyle={"300px"}
-                />
-              )}
-              {activeButton === "weekly" && (
-                <CustomChart
-                  chartType="ColumnChart"
-                  data={[
-                    ["Week", "Existing Lead", "New Lead", "Customer"],
-                    ...weeklyStatus.map((item) => [
-                      item.combination,
-                      item.existing_lead,
-                      item.new_lead,
-                      item.customer,
-                    ]),
-                  ]}
-                  options={{
-                    title: "Weekly Call Status",
-                    width: "100%",
-                    height: "400px",
-                    curveType: "function",
-                    legend: { position: "top" },
-                  }}
-                  widthStyle={"100%"}
-                  heightStyle={"300px"}
-                />
-              )}
-              {activeButton === "daily" && (
-                <CustomChart
-                  chartType="ColumnChart"
-                  data={[
-                    ["Day", "Existing Lead", "New Lead", "Customer"],
-                    ...dailyStatus.map((item) => [
-                      item.combination,
-                      item.existing_lead,
-                      item.new_lead,
-                      item.customer,
-                    ]),
-                  ]}
-                  options={{
-                    title: "Daily Call Status",
-                    width: "100%",
-                    height: "400px",
-                    legend: { position: "top" },
-                  }}
-                  widthStyle={"100%"}
-                  heightStyle={"300px"}
-                />
-              )}
-            </Grid>
-          </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
-              <CustomChart
-                chartType="BarChart"
-                data={[
-                  ["Product Description", "Pending Quantity"],
-                  ...pendingDescription.map((item) => [item.name, item.value]),
-                ]}
-                options={{
-                  title: "OrderBook Pending Quantity by Description",
-                  width: "100%",
-                  height: "400px",
-                  legend: { position: "none" },
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
-              <CustomChart
-                chartType="PieChart"
-                data={[
-                  ["Product Description", "Quantity"],
-                  ...descriptionQuantity.map((item) => [item.name, item.value]),
-                ]}
-                options={{
-                  title: "Description Wise Sales Quantity",
-                  width: "100%",
-                  height: "400px",
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-          </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} sx={{ marginTop: "20px" }}>
-              <FormControl
-                sx={{ width: "300px", marginBottom: "10px" }}
-                size="small"
-              >
-                <InputLabel id="demo-select-small">Date</InputLabel>
-                <Select
-                  labelId="demo-select-small"
-                  id="demo-select-small"
-                  label="Date"
-                  value={selectedDate}
-                  onChange={(event) => handleChange(event)}
-                >
-                  {DateOptions.map((option, i) => (
-                    <MenuItem key={i} value={option.value}>
-                      {option.value}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <CustomChart
-                chartType="BarChart"
-                data={[
-                  ["Call Category", "Value"],
-                  ...callPerformance.map((item) => [item.name, item.value]),
-                ]}
-                options={{
-                  title: "Call Performance",
-                  width: "100%",
-                  height: "400px",
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-          </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
-              <Autocomplete
-                sx={{}}
-                size="small"
-                value={selectedDIQData}
-                onChange={(event, value) => handleDataForInvoice(value)}
-                options={descriptionOptionsForInvoice}
-                getOptionLabel={(option) => option}
-                renderInput={(params) => (
-                  <CustomTextField {...params} label="Filter By Description" />
-                )}
-              />
-
-              <CustomChart
-                chartType="LineChart"
-                data={[
-                  ["Date", "Total"],
-                  ...dIQdata.map((entry) => [
-                    entry.sales_invoice__generation_date,
-                    entry.total,
-                  ]),
-                ]}
-                options={{
-                  title: "Daily Sales Invoice Quantity",
-                  width: "100%",
-                  height: "400px",
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
-              <Autocomplete
-                sx={{}}
-                size="small"
-                value={selectedDOBQData}
-                onChange={(event, value) => handleDataForOrderBook(value)}
-                options={descriptionOptionsForOrderBook}
-                getOptionLabel={(option) => option}
-                renderInput={(params) => (
-                  <CustomTextField {...params} label="Filter By Description" />
-                )}
-              />
-              <CustomChart
-                chartType="LineChart"
-                data={[
-                  ["Date", "Total"],
-                  ...((dOBQdata &&
-                    dOBQdata.map((entry) => [
-                      entry.orderbook__proforma_invoice__generation_date,
-                      entry.total,
-                    ])) ||
-                    []),
-                ]}
-                options={{
-                  title: "Daily Sales OrderBook Quantity",
-                  width: "100%",
-                  height: "400px",
-                }}
-                widthStyle={"100%"}
-                heightStyle={"300px"}
-              />
-            </Grid>
-          </Grid>
-        </div>
-      )}
+    <>
+      <CustomLoader open={open} />
+      <SalesPersonAnalytics
+        barChartData={barChartData}
+        pieChartData={pieChartData}
+        horizontalBarData={horizontalBarData}
+        newCustomerData={newCustomerData}
+        pendingTask={pendingTask}
+        pendingFollowup={pendingFollowup}
+        pendingDescription={pendingDescription}
+        piData={piData}
+        indiaMartLeadData={indiaMartLeadData}
+        monthlyStatus={monthlyStatus}
+        weeklyStatus={weeklyStatus}
+        dailyStatus={dailyStatus}
+        handleSegmentHover={handleSegmentHover}
+        handleAutocompleteChange={handleAutocompleteChange}
+        assign={assign}
+        total={total}
+        assigned={assigned}
+        getResetData={getResetData}
+        funnelData={funnelData}
+        hoveredSegment={hoveredSegment}
+        handleRowClick={handleRowClick}
+        descriptionQuantity={descriptionQuantity}
+        callPerformance={callPerformance}
+        dailyInvoiceQuantity={dailyInvoiceQuantity}
+        dailyOrderBookQuantity={dailyOrderBookQuantity}
+        handleChange={handleChange}
+        selectedDate={selectedDate}
+        handleStartDateChange={handleStartDateChange}
+        handleEndDateChange={handleEndDateChange}
+        startDate={startDate}
+        endDate={endDate}
+        maxDate={maxDate}
+        minDate={minDate}
+        openPopup3={openPopup3}
+        setOpenPopup3={setOpenPopup3}
+        team={false}
+        selectedWeek={selectedWeek}
+        handleDateChange={handleDateChange}
+      />
       <Popup
-        openPopup={openPopup3}
-        setOpenPopup={setOpenPopup3}
-        title="Date Filter"
-        maxWidth="md"
+        maxWidth={"xl"}
+        title={`View ${dispatchDataByID && dispatchDataByID.type} dashboard`}
+        openPopup={openPopup2}
+        setOpenPopup={setOpenPopup2}
       >
-        <Box
-          sx={{
-            backgroundColor: "white",
-            borderRadius: "8px",
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-            margin: "10px",
-            padding: "20px",
-          }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={5} sm={5} md={5} lg={5}>
-              <CustomTextField
-                fullWidth
-                label="Start Date"
-                variant="outlined"
-                size="small"
-                type="date"
-                id="start-date"
-                value={startDate ? startDate.toISOString().split("T")[0] : ""}
-                min={minDate}
-                max={maxDate}
-                onChange={handleStartDateChange}
-              />
-            </Grid>
-            <Grid item xs={5} sm={5} md={5} lg={5}>
-              <CustomTextField
-                fullWidth
-                label="End Date"
-                variant="outlined"
-                size="small"
-                type="date"
-                id="end-date"
-                value={endDate ? endDate.toISOString().split("T")[0] : ""}
-                min={
-                  startDate ? startDate.toISOString().split("T")[0] : minDate
-                }
-                max={maxDate}
-                onChange={handleEndDateChange}
-                disabled={!startDate}
-              />
-            </Grid>
-            <Grid item xs={2} sm={2} md={2} lg={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={getResetDate}
-              >
-                Reset
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
+        <DispatchData
+          dispatchDataByID={dispatchDataByID}
+          setOpenPopup={setOpenPopup2}
+        />
       </Popup>
-    </Box>
+    </>
   );
 };
 
-function CircularProgressWithLabel(props) {
-  return (
-    <Box sx={{ position: "relative", display: "inline-flex" }}>
-      <CircularProgress variant="indeterminate" {...props} size={60} />
-      <Box
-        sx={{
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
-          position: "absolute",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Typography variant="caption" component="div" color="#ffffff">
-          {`${Math.round(props.value)}%`}
-        </Typography>
-      </Box>
-    </Box>
-  );
-}
+const shortMonths = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 
-CircularProgressWithLabel.propTypes = {
-  /**
-   * The value of the progress indicator for the determinate variant.
-   * Value between 0 and 100.
-   * @default 0
-   */
-  value: PropTypes.number.isRequired,
-};
-
-const DateOptions = [
-  {
-    value: "Today",
-  },
-  {
-    value: "Yesterday",
-  },
-  {
-    value: "Last 7 Days",
-  },
-  {
-    value: "Last 30 Days",
-  },
-  {
-    value: "This Month",
-  },
-  {
-    value: "Last Month",
-  },
-  {
-    value: "Custom Date",
-  },
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
