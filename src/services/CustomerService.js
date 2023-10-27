@@ -35,7 +35,7 @@ const getCompanyDataByIdWithType = (id, typeValue) => {
 
 const getSalesHistoryDataByIdWithType = (id, typeValue, filterValue) => {
   return CustomAxios.get(
-    `/api/customer/list-company/${id}?type=${typeValue}&month_year=${filterValue}`
+    `/api/customer/list-company/${id}?type=${typeValue}&year_month=${filterValue}`
   );
 };
 
