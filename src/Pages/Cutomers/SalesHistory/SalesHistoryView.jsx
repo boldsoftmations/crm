@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Grid,
   Paper,
   Box,
-  Typography,
   TextField,
   Autocomplete,
   Snackbar,
@@ -11,7 +10,6 @@ import {
 } from "@mui/material";
 import { CustomTable } from "../../../Components/CustomTable";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 import CustomerServices from "../../../services/CustomerService";
 
 export const SalesHistoryView = ({ recordForEdit }) => {
@@ -19,9 +17,8 @@ export const SalesHistoryView = ({ recordForEdit }) => {
   const [noOfPiDropped, setNoOfPiDropped] = useState(69);
   const [totalSales, setTotalSales] = useState(7);
   const [open, setOpen] = useState(false);
-  const errRef = useRef();
-  const [errMsg, setErrMsg] = useState("");
-  const [filterMonth, setFilterMonth] = useState("");
+  const currentMonth = new Date().getMonth() + 1; // Current month
+  const [filterMonth, setFilterMonth] = useState(`${currentMonth}`); // Set default to current month
   const [errorMessages, setErrorMessages] = useState([]);
   const [currentErrorIndex, setCurrentErrorIndex] = useState(0);
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -109,18 +106,20 @@ export const SalesHistoryView = ({ recordForEdit }) => {
     "Total Amount",
   ];
 
-  const TableData = salesHistory.map((value) => ({
-    date: value.date,
-    invoiceNumber: value.invoice_number,
-    description: value.description,
-    product: value.product,
-    quantity: value.quantity,
-    unit: value.unit,
-    rate: value.rate,
-    amount: value.amount,
-    totalGst: value.total_gst,
-    totalAmount: value.total_amount,
-  }));
+  const TableData =
+    salesHistory &&
+    salesHistory.map((value) => ({
+      date: value.date,
+      invoiceNumber: value.invoice_number,
+      description: value.description,
+      product: value.product,
+      quantity: value.quantity,
+      unit: value.unit,
+      rate: value.rate,
+      amount: value.amount,
+      totalGst: value.total_gst,
+      totalAmount: value.total_amount,
+    }));
 
   return (
     <>
@@ -135,29 +134,7 @@ export const SalesHistoryView = ({ recordForEdit }) => {
         </Alert>
       </Snackbar>
       <Grid item xs={12}>
-        <ErrorMessage errRef={errRef} errMsg={errMsg} />
         <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
-          <Box sx={{ marginBottom: "1em" }}>
-            <Autocomplete
-              options={monthOptions}
-              getOptionLabel={(option) => option.label}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Filter by Month"
-                  sx={{ width: "160px", marginLeft: "10px", height: "32px" }}
-                />
-              )}
-              onChange={(event, newValue) => {
-                setFilterMonth(newValue ? newValue.value : "");
-              }}
-              value={
-                monthOptions.find((month) => month.value === filterMonth) ||
-                null
-              }
-            />
-          </Box>
-
           <Box
             display="flex"
             flexDirection="row"
@@ -165,40 +142,81 @@ export const SalesHistoryView = ({ recordForEdit }) => {
             alignItems="center"
             marginBottom="1em"
           >
-            <Box flexGrow={1}></Box>
+            {/* Autocomplete */}
+            <Autocomplete
+              size="small"
+              options={monthOptions}
+              getOptionLabel={(option) => option.label}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Filter by Month"
+                  sx={{ width: 160, mr: 2 }}
+                />
+              )}
+              onChange={(event, newValue) => {
+                setFilterMonth(newValue ? newValue.value : "");
+              }}
+              value={monthOptions.find((month) => month.value === filterMonth)}
+              sx={{ flexGrow: 1 }}
+            />
 
-            <Typography
-              variant="h6"
-              sx={{
-                textAlign: "center",
+            {/* Spacer for Center Alignment */}
+            <Box flexGrow={1} />
+
+            {/* Typography - Align Center */}
+            <h3
+              style={{
+                textAlign: "left",
+                marginBottom: "1em",
                 fontSize: "24px",
                 color: "rgb(34, 34, 34)",
                 fontWeight: 800,
-                flexGrow: 0,
               }}
             >
               Sales History
-            </Typography>
+            </h3>
 
-            <Box flexGrow={1} textAlign="right">
-              <Typography variant="subtitle1" gutterBottom>
+            {/* Spacer for Right Alignment */}
+            <Box flexGrow={1} />
+
+            {/* Other Typography - Align Right */}
+            <Box>
+              <h5
+                style={{
+                  textAlign: "left",
+                  marginBottom: "1em",
+                  fontSize: "16px",
+                  color: "rgb(34, 34, 34)",
+                  fontWeight: 800,
+                }}
+              >
                 No of PI Dropped: {noOfPiDropped}
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
+              </h5>
+
+              <h5
+                style={{
+                  textAlign: "left",
+                  marginBottom: "1em",
+                  fontSize: "16px",
+                  color: "rgb(34, 34, 34)",
+                  fontWeight: 800,
+                }}
+              >
                 Total Sales for the Month: {totalSales}
-              </Typography>
+              </h5>
             </Box>
           </Box>
-
-          <CustomTable
-            headers={TableHeader}
-            data={TableData}
-            openInPopup={null}
-          />
+          {/* Custom Table */}
+          {TableData && TableData.length > 0 && (
+            <CustomTable
+              headers={TableHeader}
+              data={TableData}
+              openInPopup={null}
+            />
+          )}
         </Paper>
       </Grid>
     </>
   );
 };
-
-export default SalesHistoryView;
