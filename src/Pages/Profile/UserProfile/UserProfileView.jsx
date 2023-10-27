@@ -194,64 +194,124 @@ export const UserProfileView = () => {
   };
 
   const getCsvHeaders = () => {
-    const user = filteredUserProfiles[0]; // Assuming there's at least one user in the array
+    // Get the first user in the filteredUserProfiles array
+    const user = filteredUserProfiles[0];
+
+    // Initialize an array to store the headers
     const headers = [];
 
     if (user) {
+      // Loop through the keys in the user object
       for (const key in user) {
-        if (user.hasOwnProperty(key) && typeof user[key] !== "object") {
-          // Exclude nested objects (e.g., personal, address, etc.)
-          headers.push(key);
+        if (user.hasOwnProperty(key)) {
+          // Check if the value of the key is an object or an array, and exclude it if so
+          if (
+            typeof user[key] !== "object" &&
+            !Array.isArray(user[key]) &&
+            key !== "id" // Exclude 'id' if it's present
+          ) {
+            headers.push(key); // Add the key to the headers array
+          }
         }
       }
-
-      // Add headers for education properties
-      const educationKeys = [
-        "school_name",
-        "school_board",
-        "school_passout",
-        "college_name",
-        "college_board",
-        "college_passout",
-        "diploma_type",
-        "diploma_uni_name",
-        "diploma_passout",
-        "graduation_type",
-        "graduation_university",
-        "graduation_passout",
-        "pg_masters",
-        "pg_passout",
-        "additional_qualification",
-      ];
-
-      headers.push(...educationKeys);
-
-      // Add headers for medical properties
-      const medicalKeys = [
-        "surgery_type",
-        "pregnancy",
-        "previous_surgeries",
-        "known_allergies",
-        "diabetic",
-        "hyper_tension",
-        "heart_issues",
-        "cancer",
-        "high_blood_pressure",
-        "low_blood_pressure",
-        "asthama_respiratory",
-        "vision",
-        "hearing",
-      ];
-
-      headers.push(...medicalKeys);
     }
+
+    // Add headers for personal properties
+    headers.push(
+      "user",
+      "first_name",
+      "middle_name",
+      "last_name",
+      "email",
+      "contact",
+      "date_of_birth",
+      "place_of_birth",
+      "nationality",
+      "marital_status",
+      "marriage_date",
+      "date_of_joining",
+      "blood_group"
+    );
+
+    // Add headers for kyc properties
+    headers.push(
+      "kyc_name",
+      "account_number",
+      "ifsc_code",
+      "branch",
+      "kyc_city",
+      "kyc_state",
+      "kyc_address",
+      "pan_card_number",
+      "aadhar_card_number",
+      "passport_number",
+      "dl_number"
+    );
+
+    // Add headers for docter properties
+    headers.push("doctor_name", "doctor_phone_number");
+
+    // Add headers for addiction properties
+    headers.push("tobacco", "cigarettes", "alcohol");
+
+    // Add headers for emergency_contacts properties
+    headers.push(
+      "emergency_contact_name",
+      "emergency_contact_relationship",
+      "emergency_contact_number"
+    );
+
+    // Add headers for employment properties
+    headers.push(
+      "employment_company_name",
+      "employment_post_held",
+      "employment_workedFrom",
+      "employment_workedTill"
+    );
+
+    // Add headers for education properties
+    headers.push(
+      "school_name",
+      "school_board",
+      "school_passout",
+      "college_name",
+      "college_board",
+      "college_passout",
+      "diploma_type",
+      "diploma_uni_name",
+      "diploma_passout",
+      "graduation_type",
+      "graduation_university",
+      "graduation_passout",
+      "pg_masters",
+      "pg_passout",
+      "additional_qualification"
+    );
+
+    // Add headers for medical properties
+    headers.push(
+      "surgery_type",
+      "pregnancy",
+      "previous_surgeries",
+      "known_allergies",
+      "diabetic",
+      "hyper_tension",
+      "heart_issues",
+      "cancer",
+      "high_blood_pressure",
+      "low_blood_pressure",
+      "asthama_respiratory",
+      "vision",
+      "hearing"
+    );
 
     return headers;
   };
 
+  // Usage
   const csvHeaders = getCsvHeaders();
-
   const csvData = getCsvData();
+
   const data = filteredUserProfiles.map((user) => ({
     id: user.id,
     first_name: user.personal.first_name || "-",
