@@ -1,98 +1,56 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Grid,
-  Paper,
-  Box,
-  TextField,
-  Autocomplete,
-  Snackbar,
-  Alert,
-} from "@mui/material";
+import { Grid, Paper, Box, Snackbar, Alert } from "@mui/material";
 import { CustomTable } from "../../../Components/CustomTable";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomerServices from "../../../services/CustomerService";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const SalesHistoryView = ({ recordForEdit }) => {
   const [salesHistory, setSalesHistory] = useState([]);
   const [noOfPiDropped, setNoOfPiDropped] = useState(69);
   const [totalSales, setTotalSales] = useState(7);
-  const [open, setOpen] = useState(false);
-  const currentMonth = new Date().getMonth() + 1; // Current month
-  const [filterMonth, setFilterMonth] = useState(`${currentMonth}`); // Set default to current month
+  const [isLoading, setIsLoading] = useState(false);
+  const [filterDate, setFilterDate] = useState(
+    `${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}`
+  );
   const [errorMessages, setErrorMessages] = useState([]);
   const [currentErrorIndex, setCurrentErrorIndex] = useState(0);
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  const extractErrorMessages = (data) => {
-    let messages = [];
-    if (data.errors) {
-      for (const [key, value] of Object.entries(data.errors)) {
-        value.forEach((msg) => {
-          messages.push(`${key}: ${msg}`);
-        });
-      }
-    }
-    return messages;
-  };
+  console.log("filterDate", filterDate);
   useEffect(() => {
-    getSalesHistoryServiceData();
-  }, [filterMonth]);
+    fetchSalesHistory();
+  }, [filterDate]);
 
-  const handleMonthChange = (event) => {
-    setFilterMonth(event.target.value);
-  };
-
-  const getSalesHistoryServiceData = async () => {
+  const fetchSalesHistory = async () => {
     try {
-      setOpen(true);
+      setIsLoading(true);
       const response = await CustomerServices.getCompanyDataByIdWithType(
         recordForEdit,
         "sales_history"
       );
+      // Process and set data here...
       setSalesHistory(response.data.sales_history);
+      setIsLoading(false);
     } catch (error) {
-      console.log("Getting Sales History API error", error);
-      setOpen(false);
-
-      if (error.response && error.response.data) {
-        const newErrors = extractErrorMessages(error.response.data);
-        setErrorMessages(newErrors);
-      } else {
-        setErrorMessages([
-          "An unexpected error occurred. Please try again later.",
-        ]);
-      }
-
-      setCurrentErrorIndex(0);
+      console.error("Error fetching sales history:", error);
+      setErrorMessages(["Error fetching data. Please try again."]);
       setOpenSnackbar(true);
-    } finally {
-      setOpen(false);
+      setIsLoading(false);
     }
   };
 
   const handleCloseSnackbar = useCallback(() => {
     if (currentErrorIndex < errorMessages.length - 1) {
-      setCurrentErrorIndex((prevIndex) => prevIndex + 1);
+      setCurrentErrorIndex(currentErrorIndex + 1);
     } else {
       setOpenSnackbar(false);
       setCurrentErrorIndex(0);
     }
   }, [currentErrorIndex, errorMessages.length]);
 
-  const monthOptions = [
-    { value: "1", label: "January" },
-    { value: "2", label: "February" },
-    { value: "3", label: "March" },
-    { value: "4", label: "April" },
-    { value: "5", label: "May" },
-    { value: "6", label: "June" },
-    { value: "7", label: "July" },
-    { value: "8", label: "August" },
-    { value: "9", label: "September" },
-    { value: "10", label: "October" },
-    { value: "11", label: "November" },
-    { value: "12", label: "December" },
-  ];
   const TableHeader = [
     "Date",
     "Invoice Number",
@@ -111,19 +69,12 @@ export const SalesHistoryView = ({ recordForEdit }) => {
     salesHistory.map((value) => ({
       date: value.date,
       invoiceNumber: value.invoice_number,
-      description: value.description,
-      product: value.product,
-      quantity: value.quantity,
-      unit: value.unit,
-      rate: value.rate,
-      amount: value.amount,
-      totalGst: value.total_gst,
-      totalAmount: value.total_amount,
+      // ... other fields
     }));
 
   return (
     <>
-      <CustomLoader open={open} />
+      <CustomLoader open={isLoading} />
       <Snackbar
         open={openSnackbar}
         onClose={handleCloseSnackbar}
@@ -142,29 +93,14 @@ export const SalesHistoryView = ({ recordForEdit }) => {
             alignItems="center"
             marginBottom="1em"
           >
-            {/* Autocomplete */}
-            <Autocomplete
+            <CustomTextField
               size="small"
-              options={monthOptions}
-              getOptionLabel={(option) => option.label}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Filter by Month"
-                  sx={{ width: 160, mr: 2 }}
-                />
-              )}
-              onChange={(event, newValue) => {
-                setFilterMonth(newValue ? newValue.value : "");
-              }}
-              value={monthOptions.find((month) => month.value === filterMonth)}
-              sx={{ flexGrow: 1 }}
+              type="month"
+              label="Filter by Month and Year"
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+              sx={{ width: 200, mr: 2 }}
             />
-
-            {/* Spacer for Center Alignment */}
-            <Box flexGrow={1} />
-
-            {/* Typography - Align Center */}
             <h3
               style={{
                 textAlign: "left",
@@ -176,11 +112,6 @@ export const SalesHistoryView = ({ recordForEdit }) => {
             >
               Sales History
             </h3>
-
-            {/* Spacer for Right Alignment */}
-            <Box flexGrow={1} />
-
-            {/* Other Typography - Align Right */}
             <Box>
               <h5
                 style={{
@@ -193,7 +124,6 @@ export const SalesHistoryView = ({ recordForEdit }) => {
               >
                 No of PI Dropped: {noOfPiDropped}
               </h5>
-
               <h5
                 style={{
                   textAlign: "left",
@@ -207,8 +137,7 @@ export const SalesHistoryView = ({ recordForEdit }) => {
               </h5>
             </Box>
           </Box>
-          {/* Custom Table */}
-          {TableData && TableData.length > 0 && (
+          {TableData && (
             <CustomTable
               headers={TableHeader}
               data={TableData}
