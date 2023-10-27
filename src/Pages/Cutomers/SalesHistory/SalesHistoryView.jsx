@@ -12,7 +12,8 @@ import {
 import { CustomTable } from "../../../Components/CustomTable";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
-import SalesHistory from "../../../services/SalesHistory";
+import CustomerServices from "../../../services/CustomerService";
+
 export const SalesHistoryView = ({ recordForEdit }) => {
   const [salesHistory, setSalesHistory] = useState([]);
   const [noOfPiDropped, setNoOfPiDropped] = useState(69);
@@ -47,7 +48,7 @@ export const SalesHistoryView = ({ recordForEdit }) => {
   const getSalesHistoryServiceData = async () => {
     try {
       setOpen(true);
-      const response = await SalesHistory.SalesHistory(
+      const response = await CustomerServices.getCompanyDataByIdWithType(
         recordForEdit,
         "sales_history"
       );
