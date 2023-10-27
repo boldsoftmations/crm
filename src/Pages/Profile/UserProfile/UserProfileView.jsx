@@ -86,7 +86,7 @@ export const UserProfileView = () => {
       const additional_qualification = education.additional_qualifiction || {};
 
       return {
-        user: personal.user || "-",
+        id: personal.id || "-",
         first_name: personal.first_name || "-",
         middle_name: personal.middle_name || "-",
         last_name: personal.last_name || "-",
@@ -218,7 +218,7 @@ export const UserProfileView = () => {
 
     // Add headers for personal properties
     headers.push(
-      "user",
+      "id",
       "first_name",
       "middle_name",
       "last_name",
