@@ -33,6 +33,12 @@ const getCompanyDataByIdWithType = (id, typeValue) => {
   return CustomAxios.get(`/api/customer/list-company/${id}?type=${typeValue}`);
 };
 
+const getSalesHistoryDataByIdWithType = (id, typeValue, filterValue) => {
+  return CustomAxios.get(
+    `/api/customer/list-company/${id}?type=${typeValue}&month_year=${filterValue}`
+  );
+};
+
 const updateCompanyData = (id, data) => {
   return CustomAxios.patch(`/api/customer/list-company/${id}`, data);
 };
@@ -321,6 +327,7 @@ const CustomerServices = {
   createCompanyData,
   getCompanyDataById,
   getCompanyDataByIdWithType,
+  getSalesHistoryDataByIdWithType,
   updateCompanyData,
   getUnassignedData,
   getSearchByUnassignedData,

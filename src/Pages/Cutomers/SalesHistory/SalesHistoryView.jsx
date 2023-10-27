@@ -27,9 +27,10 @@ export const SalesHistoryView = ({ recordForEdit }) => {
   const fetchSalesHistory = async () => {
     try {
       setIsLoading(true);
-      const response = await CustomerServices.getCompanyDataByIdWithType(
+      const response = await CustomerServices.getSalesHistoryDataByIdWithType(
         recordForEdit,
-        "sales_history"
+        "sales_history",
+        filterDate
       );
       // Process and set data here...
       setSalesHistory(response.data.sales_history);
@@ -89,7 +90,7 @@ export const SalesHistoryView = ({ recordForEdit }) => {
           <Box
             display="flex"
             flexDirection="row"
-            justifyContent="center"
+            justifyContent="space-between"
             alignItems="center"
             marginBottom="1em"
           >
