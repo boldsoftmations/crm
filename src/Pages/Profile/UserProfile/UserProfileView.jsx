@@ -6,6 +6,7 @@ import { CustomSearch } from "../../../Components/CustomSearch";
 import { Popup } from "../../../Components/Popup";
 import { UserProfileUpdate } from "./UserProfileUpdate";
 import { CSVLink } from "react-csv";
+import { Button } from "@mui/material";
 
 export const UserProfileView = () => {
   const [openPopup, setOpenPopup] = useState(false);
@@ -65,247 +66,134 @@ export const UserProfileView = () => {
 
   const getCsvData = () => {
     return filteredUserProfiles.map((user) => {
+      console.log("user", user);
+      const ID = user.id || "-";
       const personal = user.personal || {};
-      const addressCurrent = user.address.current || {};
-      const addressPermanent = user.address.permanent || {};
       const kyc = user.kyc || {};
       const pfEsiDetails = user.pf_esi_details || {};
       const employmentHistory = user.employment_history || [{}];
       const education = user.education || {};
       const emergencyContacts = user.emergency_contacts || [{}];
-      const familyDetails = user.family_details || [{}];
-      const medical = user.medical || {};
-      const addiction = user.addiction || {};
-      const doctor = user.docter || {};
-      // Check if education.diploma exists before accessing its properties
+
       const school = education.school || {};
       const college = education.college || {};
       const diploma = education.diploma || {};
       const graduation = education.graduation || {};
       const pg = education.pg || {};
-      const additional_qualification = education.additional_qualifiction || {};
+      const additional_qualification = education.additional_qualifiction || "-";
 
       return {
-        id: personal.id || "-",
-        first_name: personal.first_name || "-",
-        middle_name: personal.middle_name || "-",
-        last_name: personal.last_name || "-",
-        email: personal.email || "-",
-        contact: personal.contact || "-",
-        date_of_birth: personal.date_of_birth || "-",
-        place_of_birth: personal.place_of_birth || "-",
-        nationality: personal.nationality || "-",
-        marital_status: personal.marital_status || "-",
-        marriage_date: personal.marriage_date || "-",
-        date_of_joining: personal.date_of_joining || "-",
-        blood_group: personal.blood_group || "-",
-
-        // Current Address
-        current_address: addressCurrent.address || "-",
-        current_city: addressCurrent.city || "-",
-        current_state: addressCurrent.state || "-",
-        current_pin: addressCurrent.pin || "-",
-
-        // Permanent Address
-        permanent_address: addressPermanent.address || "-",
-        permanent_city: addressPermanent.city || "-",
-        permanent_state: addressPermanent.state || "-",
-        permanent_pin: addressPermanent.pin || "-",
-
-        // KYC
-        kyc_name: kyc.name || "-",
-        account_number: kyc.account_number || "-",
-        ifsc_code: kyc.ifsc_code || "-",
-        branch: kyc.branch || "-",
-        kyc_city: kyc.city || "-",
-        kyc_state: kyc.state || "-",
-        kyc_address: kyc.address || "-",
-        pan_card_number: kyc.pan_card_number || "-",
-        aadhar_card_number: kyc.aadhar_card_number || "-",
-        passport_number: kyc.passport_number || "-",
-        dl_number: kyc.dl_number || "-",
-
-        // Emergency Contacts
-        emergency_contact_name: emergencyContacts[0].name || "-",
-        emergency_contact_relationship:
+        ID: ID || "-",
+        "First Name": personal.first_name || "-",
+        "Middle Name": personal.middle_name || "-",
+        "Last Name": personal.last_name || "-",
+        Email: personal.email || "-",
+        Contact: personal.contact || "-",
+        "Date of Birth": personal.date_of_birth || "-",
+        "Place of Birth": personal.place_of_birth || "-",
+        Nationality: personal.nationality || "-",
+        "Marital Status": personal.marital_status || "-",
+        "Marriage Date": personal.marriage_date || "-",
+        "Date of Joining": personal.date_of_joining || "-",
+        "Blood Group": personal.blood_group || "-",
+        "Bank Name": kyc.name || "-",
+        "Account Number": kyc.account_number || "-",
+        "IFSC Code": kyc.ifsc_code || "-",
+        Branch: kyc.branch || "-",
+        "Bank City": kyc.city || "-",
+        "Bank State": kyc.state || "-",
+        "Bank Address": kyc.address || "-",
+        "PAN Card Number": kyc.pan_card_number || "-",
+        "Aadhar Card Number": kyc.aadhar_card_number || "-",
+        "Passport Number": kyc.passport_number || "-",
+        "DL Number": kyc.dl_number || "-",
+        "Emergency Contact Name": emergencyContacts[0].name || "-",
+        "Emergency Contact Relationship":
           emergencyContacts[0].relationship || "-",
-        emergency_contact_number: emergencyContacts[0].number || "-",
-
-        // PF/ESI Details
-        has_pf_esi_account: pfEsiDetails.has_pf_esi_account || "-",
-        uan_number: pfEsiDetails.uan_number || "-",
-        pf_number: pfEsiDetails.pf_number || "-",
-        esi_number: pfEsiDetails.esi_number || "-",
-
-        // Employment History
-        employment_company_name: employmentHistory[0].company_name || "-",
-        employment_post_held: employmentHistory[0].post_held || "-",
-        employment_workedFrom: employmentHistory[0].workedFrom || "-",
-        employment_workedTill: employmentHistory[0].workedTill || "-",
-
-        // Education
-        school_name: school.name || "-",
-        school_board: school.board || "-",
-        school_passout: school.passout || "-",
-        college_name: college.name || "-",
-        college_board: college.board || "-",
-        college_passout: college.passout || "-",
-        diploma_type: diploma.type || "-",
-        diploma_uni_name: diploma.uni_name || "-",
-        diploma_passout: diploma.passout || "-",
-        graduation_type: graduation.type || "-",
-        graduation_university: graduation.university || "-",
-        graduation_passout: graduation.passout || "-",
-        pg_masters: pg.masters || "-",
-        pg_passout: pg.passout || "-",
-        additional_qualification: additional_qualification || "-",
-
-        // Medical
-        surgery_type: medical.surgery_type || "-",
-        pregnancy: medical.pregnancy || "-",
-        previous_surgeries: medical.previous_surgeries || "-",
-        known_allergies: medical.known_allergies || "-",
-        diabetic: medical.diabetic || "-",
-        hyper_tension: medical.hyper_tension || "-",
-        heart_issues: medical.heart_issues || "-",
-        cancer: medical.cancer || "-",
-        high_blood_pressure: medical.high_blood_pressure || "-",
-        low_blood_pressure: medical.low_blood_pressure || "-",
-        asthama_respiratory: medical.asthama_respiratory || "-",
-        vision: medical.vision || "-",
-        hearing: medical.hearing || "-",
-
-        // Addiction
-        tobacco: addiction.tobacco || "-",
-        cigarettes: addiction.cigarettes || "-",
-        alcohol: addiction.alcohol || "-",
-
-        // Doctor
-        doctor_name: doctor.name || "-",
-        doctor_phone_number: doctor.phone_number || "-",
-
-        // Family Details
-        family_member_name: familyDetails[0].name || "-",
-        family_member_relationship: familyDetails[0].relationship || "-",
-        family_member_blood_group: familyDetails[0].blood_group || "-",
-        family_member_contact_number: familyDetails[0].contact_number || "-",
+        "Emergency Contact Number": emergencyContacts[0].number || "-",
+        "Has PF ESI Account": pfEsiDetails.has_pf_esi_account || "-",
+        "UAN Number": pfEsiDetails.uan_number || "-",
+        "PF Number": pfEsiDetails.pf_number || "-",
+        "ESI Number": pfEsiDetails.esi_number || "-",
+        "Employment Company Name": employmentHistory[0].company_name || "-",
+        "Employment Post Held": employmentHistory[0].post_held || "-",
+        "Employment Worked From": employmentHistory[0].workedFrom || "-",
+        "Employment Worked Till": employmentHistory[0].workedTill || "-",
+        "School Name": school.name || "-",
+        "School Board": school.board || "-",
+        "School Passout": school.passout || "-",
+        "College Name": college.name || "-",
+        "College Board": college.board || "-",
+        "College Passout": college.passout || "-",
+        "Diploma Type": diploma.type || "-",
+        "Diploma Uni Name": diploma.uni_name || "-",
+        "Diploma Passout": diploma.passout || "-",
+        "Graduation Type": graduation.type || "-",
+        "Graduation University": graduation.university || "-",
+        "Graduation Passout": graduation.passout || "-",
+        "PG Masters": pg.masters || "-",
+        "PG Passout": pg.passout || "-",
+        "Additional Qualification": additional_qualification || "-",
       };
     });
   };
 
   const getCsvHeaders = () => {
-    // Get the first user in the filteredUserProfiles array
-    const user = filteredUserProfiles[0];
-
-    // Initialize an array to store the headers
-    const headers = [];
-
-    if (user) {
-      // Loop through the keys in the user object
-      for (const key in user) {
-        if (user.hasOwnProperty(key)) {
-          // Check if the value of the key is an object or an array, and exclude it if so
-          if (
-            typeof user[key] !== "object" &&
-            !Array.isArray(user[key]) &&
-            key !== "id" // Exclude 'id' if it's present
-          ) {
-            headers.push(key); // Add the key to the headers array
-          }
-        }
-      }
-    }
-
-    // Add headers for personal properties
-    headers.push(
-      "id",
-      "first_name",
-      "middle_name",
-      "last_name",
-      "email",
-      "contact",
-      "date_of_birth",
-      "place_of_birth",
-      "nationality",
-      "marital_status",
-      "marriage_date",
-      "date_of_joining",
-      "blood_group"
-    );
-
-    // Add headers for kyc properties
-    headers.push(
-      "kyc_name",
-      "account_number",
-      "ifsc_code",
-      "branch",
-      "kyc_city",
-      "kyc_state",
-      "kyc_address",
-      "pan_card_number",
-      "aadhar_card_number",
-      "passport_number",
-      "dl_number"
-    );
-
-    // Add headers for docter properties
-    headers.push("doctor_name", "doctor_phone_number");
-
-    // Add headers for addiction properties
-    headers.push("tobacco", "cigarettes", "alcohol");
-
-    // Add headers for emergency_contacts properties
-    headers.push(
-      "emergency_contact_name",
-      "emergency_contact_relationship",
-      "emergency_contact_number"
-    );
-
-    // Add headers for employment properties
-    headers.push(
-      "employment_company_name",
-      "employment_post_held",
-      "employment_workedFrom",
-      "employment_workedTill"
-    );
-
-    // Add headers for education properties
-    headers.push(
-      "school_name",
-      "school_board",
-      "school_passout",
-      "college_name",
-      "college_board",
-      "college_passout",
-      "diploma_type",
-      "diploma_uni_name",
-      "diploma_passout",
-      "graduation_type",
-      "graduation_university",
-      "graduation_passout",
-      "pg_masters",
-      "pg_passout",
-      "additional_qualification"
-    );
-
-    // Add headers for medical properties
-    headers.push(
-      "surgery_type",
-      "pregnancy",
-      "previous_surgeries",
-      "known_allergies",
-      "diabetic",
-      "hyper_tension",
-      "heart_issues",
-      "cancer",
-      "high_blood_pressure",
-      "low_blood_pressure",
-      "asthama_respiratory",
-      "vision",
-      "hearing"
-    );
-
-    return headers;
+    return [
+      { label: "ID", key: "ID" },
+      { label: "First Name", key: "First Name" },
+      { label: "Middle Name", key: "Middle Name" },
+      { label: "Last Name", key: "Last Name" },
+      { label: "Email", key: "Email" },
+      { label: "Contact", key: "Contact" },
+      { label: "Date of Birth", key: "Date of Birth" },
+      { label: "Place of Birth", key: "Place of Birth" },
+      { label: "Nationality", key: "Nationality" },
+      { label: "Marital Status", key: "Marital Status" },
+      { label: "Marriage Date", key: "Marriage Date" },
+      { label: "Date of Joining", key: "Date of Joining" },
+      { label: "Blood Group", key: "Blood Group" },
+      { label: "Bank Name", key: "Bank Name" },
+      { label: "Account Number", key: "Account Number" },
+      { label: "IFSC Code", key: "IFSC Code" },
+      { label: "Branch", key: "Branch" },
+      { label: "Bank City", key: "Bank City" },
+      { label: "Bank State", key: "Bank State" },
+      { label: "Bank Address", key: "Bank Address" },
+      { label: "PAN Card Number", key: "PAN Card Number" },
+      { label: "Aadhar Card Number", key: "Aadhar Card Number" },
+      { label: "Passport Number", key: "Passport Number" },
+      { label: "DL Number", key: "DL Number" },
+      { label: "Emergency Contact Name", key: "Emergency Contact Name" },
+      {
+        label: "Emergency Contact Relationship",
+        key: "Emergency Contact Relationship",
+      },
+      { label: "Emergency Contact Number", key: "Emergency Contact Number" },
+      { label: "Has PF ESI Account", key: "Has PF ESI Account" },
+      { label: "UAN Number", key: "UAN Number" },
+      { label: "PF Number", key: "PF Number" },
+      { label: "ESI Number", key: "ESI Number" },
+      { label: "Employment Company Name", key: "Employment Company Name" },
+      { label: "Employment Post Held", key: "Employment Post Held" },
+      { label: "Employment Worked From", key: "Employment Worked From" },
+      { label: "Employment Worked Till", key: "Employment Worked Till" },
+      { label: "School Name", key: "School Name" },
+      { label: "School Board", key: "School Board" },
+      { label: "School Passout", key: "School Passout" },
+      { label: "College Name", key: "College Name" },
+      { label: "College Board", key: "College Board" },
+      { label: "College Passout", key: "College Passout" },
+      { label: "Diploma Type", key: "Diploma Type" },
+      { label: "Diploma Uni Name", key: "Diploma Uni Name" },
+      { label: "Diploma Passout", key: "Diploma Passout" },
+      { label: "Graduation Type", key: "Graduation Type" },
+      { label: "Graduation University", key: "Graduation University" },
+      { label: "Graduation Passout", key: "Graduation Passout" },
+      { label: "PG Masters", key: "PG Masters" },
+      { label: "PG Passout", key: "PG Passout" },
+      { label: "Additional Qualification", key: "Additional Qualification" },
+    ];
   };
 
   // Usage
@@ -348,13 +236,16 @@ export const UserProfileView = () => {
             <h3 style={styles.header}>User Profile</h3>
           </div>
           <div style={{ flexGrow: 1 }}>
-            <CSVLink
-              data={csvData}
-              headers={csvHeaders}
-              filename={"user_profiles.csv"}
-            >
-              Download CSV
-            </CSVLink>
+            <Button variant="contained" color="primary">
+              <CSVLink
+                data={csvData}
+                headers={csvHeaders}
+                filename="user_profiles.csv"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                Download CSV
+              </CSVLink>
+            </Button>
           </div>
         </div>
         {filteredUserProfiles.length > 0 ? (
