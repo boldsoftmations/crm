@@ -66,6 +66,7 @@ import { PriceApprovalPI } from "../Pages/Invoice/ProformaInvoice/PriceApprovalP
 import { TeamWiseDashboard } from "../Pages/TeamWiseDashboard";
 import { UserProfileView } from "../Pages/Profile/UserProfile/UserProfileView";
 import IndiaMartLeads from "../Pages/Leads/IndiaMartLeads";
+import { InActiveCustomer } from "../Pages/Cutomers/CompanyDetails/InActiveCustomer";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -157,7 +158,10 @@ export const RouteScreen = () => {
               path="/customers/unassigned-company-details"
               element={<UnassignedCustomer />}
             />
-
+<Route
+              path="/customers/inactive-company-details"
+              element={<InActiveCustomer />}
+            />
             <Route path="/followp/view-followup" element={<Followup />} />
             {/* Invoice - Seller Account Route */}
             <Route path="/invoice/seller-account" element={<SellerAccount />} />

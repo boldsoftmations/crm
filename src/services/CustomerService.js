@@ -21,6 +21,17 @@ const getIncompleteKycCustomerData = ({
   return CustomAxios.get(url);
 };
 
+// Inactive customer api
+const getInActiveCustomerData = () => ({
+  page,
+  searchValue,
+}) => {
+  let url = `/api/customer/list-company/??is_active=false&`;
+  if (page) url += `page=${page}&`;
+  if (searchValue) url += `search=${searchValue}&`;
+  return CustomAxios.get(url);
+};
+
 const createCompanyData = (data) => {
   return CustomAxios.post("/api/customer/list-company/", data);
 };
@@ -324,6 +335,7 @@ const updateCompetitors = (id, data) => {
 const CustomerServices = {
   getAllCustomerData,
   getIncompleteKycCustomerData,
+  getInActiveCustomerData,
   createCompanyData,
   getCompanyDataById,
   getCompanyDataByIdWithType,
