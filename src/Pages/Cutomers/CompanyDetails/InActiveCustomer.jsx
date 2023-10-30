@@ -159,6 +159,7 @@ export const InActiveCustomer = () => {
     "GST NO.",
     "CITY",
     "STATE",
+    "Assigned To",
     "ACTION",
   ];
 
@@ -169,6 +170,7 @@ export const InActiveCustomer = () => {
     gst_number: value.gst_number,
     city: value.city,
     state: value.state,
+    assigned_to: value.assigned_to,
   }));
   return (
     <>
