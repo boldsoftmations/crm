@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { CustomLoader } from "../../Components/CustomLoader";
 import { Autocomplete, Box, Button, Grid } from "@mui/material";
-import LeadServices from "../../services/LeadService";
-import CustomTextField from "../../Components/CustomTextField";
-import ProductService from "../../services/ProductService";
+import { CustomLoader } from "../../../Components/CustomLoader";
+import CustomTextField from "../../../Components/CustomTextField";
+import ProductService from "../../../services/ProductService";
+import LeadServices from "../../../services/LeadService";
 
-export const PotentialCreate = (props) => {
+export const LeadPotentialCreate = (props) => {
   const { leadsByID, getLeadByID, setOpenModal } = props;
   const [open, setOpen] = useState(false);
   const [potential, setPotential] = useState([]);

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { CustomLoader } from "../../Components/CustomLoader";
 import { Autocomplete, Box, Button, Grid } from "@mui/material";
-import CustomerServices from "../../services/CustomerService";
-import CustomTextField from "../../Components/CustomTextField";
-import ProductService from "../../services/ProductService";
+import { CustomLoader } from "../../../Components/CustomLoader";
+import CustomTextField from "../../../Components/CustomTextField";
+import ProductService from "../../../services/ProductService";
+import CustomerServices from "../../../services/CustomerService";
 
 export const CustomerPotentialCreate = (props) => {
   const { recordForEdit, getCompanyDetailsByID, setOpenModal } = props;

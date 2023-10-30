@@ -25,9 +25,9 @@ import LeadServices from "../../../services/LeadService";
 import { styled } from "@mui/material/styles";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { ViewCustomerFollowUp } from "../../FollowUp/ViewCustomerFollowUp";
-import { CustomerAllPotential } from "../../Potential/CustomerAllPotential";
 import Option from "../../../Options/Options";
 import CustomTextField from "../../../Components/CustomTextField";
+import { CustomerPotentialView } from "../CustomerPotential/CustomerPotentialView";
 
 export const UpdateCompanyDetails = (props) => {
   const { setOpenPopup, getAllCompanyDetails, recordForEdit } = props;
@@ -434,7 +434,7 @@ export const UpdateCompanyDetails = (props) => {
 
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <CustomerAllPotential recordForEdit={recordForEdit} />
+          <CustomerPotentialView recordForEdit={recordForEdit} />
         </Grid>
       </Grid>
     </>
