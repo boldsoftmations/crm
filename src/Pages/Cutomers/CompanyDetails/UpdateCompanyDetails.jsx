@@ -157,6 +157,7 @@ export const UpdateCompanyDetails = (props) => {
         pan_number: inputValue.pan_number || null,
         business_type: inputValue.business_type || null,
         assigned_to: inputValue.assigned_to || null,
+        status: inputValue.status || null,
         type_of_customer: inputValue.type_of_customer || null,
         website: inputValue.website || null,
         estd_year: inputValue.estd_year || null,
@@ -356,13 +357,6 @@ export const UpdateCompanyDetails = (props) => {
           <Grid item xs={12} sm={4}>
             <Autocomplete
               size="small"
-              disabled={
-                !(
-                  userData.groups.includes("Director") ||
-                  userData.groups.includes("Accounts") ||
-                  userData.groups.includes("Sales Manager")
-                )
-              }
               value={inputValue.assigned_to || []}
               onChange={(event, newValue) => {
                 handleSelectChange("assigned_to", newValue);
@@ -390,7 +384,20 @@ export const UpdateCompanyDetails = (props) => {
               )}
             />
           </Grid>
-
+          <Grid item xs={12} sm={4}>
+            <Autocomplete
+              size="small"
+              id="controllable-states-demo"
+              value={inputValue.status || ""}
+              onChange={(event, newValue) => {
+                handleSelectChange("status", newValue);
+              }}
+              options={Option.CustomerStatusData}
+              renderInput={(params) => (
+                <CustomTextField {...params} label="Status" />
+              )}
+            />
+          </Grid>
           <Grid item xs={12}>
             <CustomTextField
               fullWidth
