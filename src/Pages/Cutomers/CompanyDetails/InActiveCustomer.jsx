@@ -1,14 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, Button, Autocomplete, Chip } from "@mui/material";
 import { Popup } from "./../../../Components/Popup";
 import CustomerServices from "../../../services/CustomerService";
-import { ErrorMessage } from "./../../../Components/ErrorMessage/ErrorMessage";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { CustomSearchWithButton } from "../../../Components/CustomSearchWithButton";
 import { CustomTable } from "./../../../Components/CustomTable";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import LeadServices from "../../../services/LeadService";
-import { useSelector } from "react-redux";
 import Option from "../../../Options/Options";
 import CustomTextField from "../../../Components/CustomTextField";
 
@@ -16,12 +14,10 @@ export const InActiveCustomer = () => {
   const [openPopup, setOpenPopup] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [open, setOpen] = useState(false);
-  const errRef = useRef();
-  const [errMsg, setErrMsg] = useState("");
   const [inActiveCustomerData, setInActiveCustomerData] = useState([]);
   const [recordForEdit, setRecordForEdit] = useState();
   const [pageCount, setpageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
   const [assigned, setAssigned] = useState([]);
   const [assign, setAssign] = useState([]);
@@ -74,87 +70,58 @@ export const InActiveCustomer = () => {
   const getInActiveCustomerDetails = async () => {
     try {
       setOpen(true);
-      let response;
-      if (currentPage) {
-        response = await CustomerServices.getInActiveCustomerData(currentPage);
-      } else {
-        response = await CustomerServices.getInActiveCustomerData();
-      }
+      console.log("api calling started");
+      let response = await CustomerServices.getInActiveCustomerData({
+        page: currentPage,
+      });
+      console.log("response inactive", response);
+      console.log("api calling ended after response");
       setInActiveCustomerData(response.data.results);
-      const total = response.data.count;
-      setpageCount(Math.ceil(total / 25));
-
+      setpageCount(Math.ceil(response.data.count / 25));
+    } catch (error) {
       setOpen(false);
-    } catch (err) {
+      console.log("error InActive Customer Api", error);
+    } finally {
       setOpen(false);
-      if (!err.response) {
-        setErrMsg(
-          "“Sorry, You Are Not Allowed to Access This Page” Please contact to admin"
-        );
-      } else if (err.response.status === 400) {
-        setErrMsg(
-          err.response.data.errors.name
-            ? err.response.data.errors.name
-            : err.response.data.errors.non_field_errors
-        );
-      } else if (err.response.status === 401) {
-        setErrMsg(err.response.data.errors.code);
-      } else {
-        setErrMsg("Server Error");
-      }
-      errRef.current.focus();
     }
   };
 
   const getSearchData = async (value) => {
     try {
       setOpen(true);
-      const filterSearch = value;
-      if (filterSearch !== "") {
-        const response = await CustomerServices.getInActiveCustomerData(
-          filterSearch
-        );
+      if (value !== "") {
+        const response = await CustomerServices.getInActiveCustomerData({
+          searchValue: value,
+        });
         setInActiveCustomerData(response.data.results);
-        const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
+        setpageCount(Math.ceil(response.data.count / 25));
       } else {
         getInActiveCustomerDetails();
-        setFilterSelectedQuery("");
       }
-      setOpen(false);
     } catch (error) {
       console.log("error Search leads", error);
+    } finally {
       setOpen(false);
     }
   };
+
   const handlePageClick = async (event, value) => {
     try {
-      const page = value;
-      setCurrentPage(page);
       setOpen(true);
-      let response;
-      if (filterSelectedQuery) {
-        response = await CustomerServices.getInActiveCustomerData(
-          page,
-          filterSelectedQuery
-        );
-      } else {
-        response = await CustomerServices.getInActiveCustomerData(page);
-      }
-      if (response) {
-        setInActiveCustomerData(response.data.results);
-        const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
-      } else {
-        getInActiveCustomerDetails();
-        setFilterSelectedQuery("");
-      }
-      setOpen(false);
+      setCurrentPage(value);
+      let response = await CustomerServices.getInActiveCustomerData({
+        page: value,
+        searchValue: filterSelectedQuery,
+      });
+      setInActiveCustomerData(response.data.results);
+      setpageCount(Math.ceil(response.data.count / 25));
     } catch (error) {
       console.log("error", error);
+    } finally {
       setOpen(false);
     }
   };
+
   console.log("recordForEdit", recordForEdit);
   const UpdateCompanyDetails = async (e) => {
     try {
@@ -206,104 +173,102 @@ export const InActiveCustomer = () => {
   return (
     <>
       <CustomLoader open={open} />
-      <div>
-        <ErrorMessage errRef={errRef} errMsg={errMsg} />
-        <div
-          style={{
-            padding: "16px",
-            margin: "16px",
-            boxShadow: "0px 3px 6px #00000029",
-            borderRadius: "4px",
-            display: "flex",
-            flexDirection: "column",
-            backgroundColor: "rgb(255, 255, 255)", // set background color to default Paper color
-          }}
-        >
-          <div style={{ display: "flex" }}>
-            <div style={{ flexGrow: 0.9 }}>
-              <CustomSearchWithButton
-                filterSelectedQuery={filterSelectedQuery}
-                setFilterSelectedQuery={setFilterSelectedQuery}
-                handleInputChange={handleInputChange}
-                getResetData={getResetData}
-              />
-            </div>
-            <div style={{ flexGrow: 2 }}>
-              <h3
-                style={{
-                  textAlign: "left",
-                  marginBottom: "1em",
-                  fontSize: "24px",
-                  color: "rgb(34, 34, 34)",
-                  fontWeight: 800,
-                }}
-              >
-                InActive Customer
-              </h3>
-            </div>
-            <div style={{ flexGrow: 0.5 }} align="right"></div>
-          </div>
-          <div
-            style={{
-              position: "fixed",
-              top: "20px",
-              left: "50%",
-              transform: "translateX(-50%)",
-              backgroundColor: "green",
-              color: "white",
-              padding: "10px",
-              borderRadius: "4px",
-              display: openSnackbar ? "block" : "none",
-              zIndex: 9999,
-            }}
-          >
-            <span style={{ marginRight: "10px" }}>
-              Bulk Customer Assigned Successfully!
-            </span>
-            <button
-              style={{
-                backgroundColor: "transparent",
-                border: "none",
-                color: "white",
-                cursor: "pointer",
-                padding: "0",
-              }}
-              onClick={handleSnackbarClose}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M8 7.293l2.146-2.147a.5.5 0 11.708.708L8.707 8l2.147 2.146a.5.5 0 01-.708.708L8 8.707l-2.146 2.147a.5.5 0 01-.708-.708L7.293 8 5.146 5.854a.5.5 0 01.708-.708L8 7.293z"
-                />
-              </svg>
-            </button>
-          </div>
 
-          <CustomTable
-            headers={Tableheaders}
-            data={Tabledata}
-            openInPopup={openInPopup}
-          />
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              // marginTop: "2em",
-            }}
-          >
-            <CustomPagination
-              currentPage={currentPage}
-              pageCount={pageCount}
-              handlePageClick={handlePageClick}
+      <div
+        style={{
+          padding: "16px",
+          margin: "16px",
+          boxShadow: "0px 3px 6px #00000029",
+          borderRadius: "4px",
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "rgb(255, 255, 255)", // set background color to default Paper color
+        }}
+      >
+        <div style={{ display: "flex" }}>
+          <div style={{ flexGrow: 0.9 }}>
+            <CustomSearchWithButton
+              filterSelectedQuery={filterSelectedQuery}
+              setFilterSelectedQuery={setFilterSelectedQuery}
+              handleInputChange={handleInputChange}
+              getResetData={getResetData}
             />
           </div>
+          <div style={{ flexGrow: 2 }}>
+            <h3
+              style={{
+                textAlign: "left",
+                marginBottom: "1em",
+                fontSize: "24px",
+                color: "rgb(34, 34, 34)",
+                fontWeight: 800,
+              }}
+            >
+              InActive Customer
+            </h3>
+          </div>
+          <div style={{ flexGrow: 0.5 }} align="right"></div>
+        </div>
+        <div
+          style={{
+            position: "fixed",
+            top: "20px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            backgroundColor: "green",
+            color: "white",
+            padding: "10px",
+            borderRadius: "4px",
+            display: openSnackbar ? "block" : "none",
+            zIndex: 9999,
+          }}
+        >
+          <span style={{ marginRight: "10px" }}>
+            Bulk Customer Assigned Successfully!
+          </span>
+          <button
+            style={{
+              backgroundColor: "transparent",
+              border: "none",
+              color: "white",
+              cursor: "pointer",
+              padding: "0",
+            }}
+            onClick={handleSnackbarClose}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fillRule="evenodd"
+                d="M8 7.293l2.146-2.147a.5.5 0 11.708.708L8.707 8l2.147 2.146a.5.5 0 01-.708.708L8 8.707l-2.146 2.147a.5.5 0 01-.708-.708L7.293 8 5.146 5.854a.5.5 0 01.708-.708L8 7.293z"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <CustomTable
+          headers={Tableheaders}
+          data={Tabledata}
+          openInPopup={openInPopup}
+        />
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            // marginTop: "2em",
+          }}
+        >
+          <CustomPagination
+            currentPage={currentPage}
+            pageCount={pageCount}
+            handlePageClick={handlePageClick}
+          />
         </div>
       </div>
 

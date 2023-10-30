@@ -158,7 +158,7 @@ export const RouteScreen = () => {
               path="/customers/unassigned-company-details"
               element={<UnassignedCustomer />}
             />
-<Route
+            <Route
               path="/customers/inactive-company-details"
               element={<InActiveCustomer />}
             />
