@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Divider, Grid, Paper, Typography } from "@mui/material";
+import { Box, Button, Grid, Paper } from "@mui/material";
 import { CustomerPotentialCreate } from "./CustomerPotentialCreate";
 import { Popup } from "../../../Components/Popup";
 import CustomerServices from "../../../services/CustomerService";
-
-const PotentialDetail = ({ label, value }) => (
-  <Grid item xs={24} sm={4}>
-    {label} : {value || ""}
-  </Grid>
-);
+import { CustomTable } from "../../../Components/CustomTable";
 
 export const CustomerPotentialView = ({ recordForEdit }) => {
-  const [openModal, setOpenModal] = useState(false);
   const [open, setOpen] = useState(false);
   const [potential, setPotential] = useState([]);
+  const [openPopupCreate, setOpenPopupCreate] = useState(false);
+  const [openPopupUpdate, setOpenPopupUpdate] = useState(false);
   useEffect(() => {
     getCompanyDetailsByID();
   }, []);
@@ -35,85 +31,80 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
     }
   };
 
+  const openInPopup = (item) => {
+    // setRecordForEdit(item.id);
+    setOpenPopupUpdate(true);
+  };
+
+  const TableHeader = [
+    "Date",
+    "Description",
+    "Product",
+    "Current Buying Quantity(Monthly)",
+    "Remark",
+    "Action",
+  ];
+
+  const TableData =
+    potential &&
+    potential.map((value) => ({
+      date: value.date,
+      description: value.description,
+      product: value.product,
+      quantity: value.current_buying_quantity,
+    }));
   return (
     <>
-      <Box component="form" noValidate sx={{ mt: 1 }}>
-        <Paper
-          sx={{
-            p: 2,
-            m: 4,
-            display: "flex",
-            flexDirection: "column",
-            backgroundColor: "#F5F5F5",
-          }}
-        >
-          <Box display="flex" justifyContent="space-around">
-            <Typography variant="h5" align="center">
-              View Customer Potential
-            </Typography>
-            <Button
-              variant="contained"
-              color="success"
-              onClick={() => setOpenModal(true)}
-            >
-              Create Potential
-            </Button>
-          </Box>
-
-          {potential && (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                height: 260,
-                overflow: "auto",
+      <Grid item xs={12}>
+        <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="space-between"
+            alignItems="center"
+            marginBottom="1em"
+          >
+            <h3
+              style={{
+                textAlign: "left",
+                marginBottom: "1em",
+                fontSize: "24px",
+                color: "rgb(34, 34, 34)",
+                fontWeight: 800,
               }}
             >
-              {potential.map((potentialInput, index) => (
-                <Box key={index}>
-                  <Grid container spacing={2}>
-                    <PotentialDetail
-                      label="ProductName"
-                      value={potentialInput.product}
-                    />
-                    <PotentialDetail
-                      label="Current Brand"
-                      value={potentialInput.current_brand}
-                    />
-                    <PotentialDetail
-                      label="Current Buying Price"
-                      value={potentialInput.current_buying_price}
-                    />
-                    <PotentialDetail
-                      label="Current Buying Quantity"
-                      value={potentialInput.current_buying_quantity}
-                    />
-                    <PotentialDetail
-                      label="Target Price"
-                      value={potentialInput.target_price}
-                    />
-                    <PotentialDetail
-                      label="Quantity"
-                      value={potentialInput.quantity}
-                    />
-                  </Grid>
-                  <Divider sx={{ my: 1 }} />
-                </Box>
-              ))}
+              Customer Potential
+            </h3>
+            <Box>
+              <Button
+                variant="contained"
+                onClick={() => setOpenPopupCreate(true)}
+                sx={{ marginLeft: "10px", marginRight: "10px" }}
+                size="small"
+              >
+                Add
+              </Button>
             </Box>
+          </Box>
+          {TableData && (
+            <CustomTable
+              headers={TableHeader}
+              data={TableData}
+              openInPopup={openInPopup}
+            />
           )}
         </Paper>
-      </Box>
+      </Grid>
       <Popup
         maxWidth="xl"
         title="Create Potential"
-        openPopup={openModal}
-        setOpenPopup={setOpenModal}
+        openPopup={openPopupCreate}
+        setOpenPopup={setOpenPopupCreate}
       >
         <CustomerPotentialCreate
           getCompanyDetailsByID={getCompanyDetailsByID}
           recordForEdit={recordForEdit}
-          setOpenModal={setOpenModal}
+          setOpenModal={setOpenPopupCreate}
         />
       </Popup>
     </>
