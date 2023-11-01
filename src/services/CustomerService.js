@@ -8,7 +8,13 @@ const getAllCustomerData = ({ page, assignToFilter, searchValue }) => {
   if (searchValue) url += `search=${searchValue}&`;
   return CustomAxios.get(url);
 };
-
+const getClosedOrBlacklistedCustomers = ({ page,searchValue }) => {
+  let url = `/api/customer/list-company/?`;
+  url += `status=closed,blacklisted&`;
+  if (page) url += `page=${page}&`;
+  if (searchValue) url += `search=${searchValue}&`;
+  return CustomAxios.get(url);
+};
 const getIncompleteKycCustomerData = ({
   page,
   assignToFilter,
@@ -331,6 +337,7 @@ const updateCompetitors = (id, data) => {
 
 const CustomerServices = {
   getAllCustomerData,
+  getClosedOrBlacklistedCustomers,
   getIncompleteKycCustomerData,
   getInActiveCustomerData,
   createCompanyData,
