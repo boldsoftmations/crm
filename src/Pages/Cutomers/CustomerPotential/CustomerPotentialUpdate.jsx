@@ -25,7 +25,12 @@ export const CustomerPotentialUpdate = ({
     e.preventDefault();
     try {
       setOpen(true);
-      const data = { company: idForEdit, ...potential };
+      const data = {
+        company: potential.company,
+        product: potential.product,
+        current_buying_quantity: potential.current_buying_quantity,
+        remark: potential.remark,
+      };
       await CustomerServices.createPotentialCustomer(data);
       setOpenModal(false);
       await getCompanyDetailsByID();

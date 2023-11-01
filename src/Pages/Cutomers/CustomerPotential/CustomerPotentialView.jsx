@@ -5,6 +5,7 @@ import { CustomerPotentialUpdate } from "./CustomerPotentialUpdate";
 import { Popup } from "../../../Components/Popup";
 import CustomerServices from "../../../services/CustomerService";
 import { CustomTable } from "../../../Components/CustomTable";
+import { CustomLoader } from "../../../Components/CustomLoader";
 
 export const CustomerPotentialView = ({ recordForEdit }) => {
   const [open, setOpen] = useState(false);
@@ -14,7 +15,7 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
   const [idForEdit, setIdForEdit] = useState(null);
   useEffect(() => {
     getCompanyDetailsByID();
-  }, []);
+  }, [recordForEdit]);
 
   // API call to fetch company details based on type
   const getCompanyDetailsByID = async () => {
@@ -25,6 +26,7 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
           recordForEdit,
           "potential"
         );
+      console.log("potentialResponse", potentialResponse);
       setPotential(potentialResponse.data.potential);
       setOpen(false);
     } catch (err) {
@@ -40,6 +42,7 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
   };
 
   const TableHeader = [
+    "Company ID",
     "Date",
     "Description",
     "Product",
@@ -51,6 +54,7 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
   const TableData =
     potential &&
     potential.map((value) => ({
+      company: value.company,
       date: value.date,
       description: value.description,
       product: value.product,
@@ -59,6 +63,7 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
     }));
   return (
     <>
+      <CustomLoader open={open} />
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
           <Box
