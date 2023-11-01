@@ -20,7 +20,7 @@ export const CustomerPotentialUpdate = ({
   const handleAutocompleteChange = (_, value) => {
     setPotential({ ...potential, product: value });
   };
-
+  console.log("potential", potential);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -31,7 +31,7 @@ export const CustomerPotentialUpdate = ({
         current_buying_quantity: potential.current_buying_quantity,
         remark: potential.remark,
       };
-      await CustomerServices.createPotentialCustomer(data);
+      await CustomerServices.updatePotentialCustomer(potential.id, data);
       setOpenModal(false);
       await getCompanyDetailsByID();
     } catch (error) {

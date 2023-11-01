@@ -8,7 +8,7 @@ const getAllCustomerData = ({ page, assignToFilter, searchValue }) => {
   if (searchValue) url += `search=${searchValue}&`;
   return CustomAxios.get(url);
 };
-const getClosedOrBlacklistedCustomers = ({ page,searchValue }) => {
+const getClosedOrBlacklistedCustomers = ({ page, searchValue }) => {
   let url = `/api/customer/list-company/?`;
   url += `status=closed,blacklisted&`;
   if (page) url += `page=${page}&`;
@@ -168,6 +168,10 @@ const DoneFollowup = (id, data) => {
 // Potential Customer endpoints
 const createPotentialCustomer = (data) => {
   return CustomAxios.post("/api/customer/list-company-potential/", data);
+};
+
+const updatePotentialCustomer = (id, data) => {
+  return CustomAxios.patch(`/api/customer/list-company-potential/${id}`, data);
 };
 
 // Product Forecast
@@ -371,6 +375,7 @@ const CustomerServices = {
   getCustomerFollowUp,
   DoneFollowup,
   createPotentialCustomer,
+  updatePotentialCustomer,
   getProductForecast,
   getByFilterProductForecast,
   getAllPaginateProductForecast,

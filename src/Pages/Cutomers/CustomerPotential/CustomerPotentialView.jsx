@@ -13,6 +13,19 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
   const [openPopupCreate, setOpenPopupCreate] = useState(false);
   const [openPopupUpdate, setOpenPopupUpdate] = useState(false);
   const [idForEdit, setIdForEdit] = useState(null);
+
+  const formatDate = (dateString) => {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    };
+    return new Date(dateString).toLocaleDateString("en-GB", options);
+  };
+
   useEffect(() => {
     getCompanyDetailsByID();
   }, [recordForEdit]);
@@ -37,13 +50,15 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
 
   const openInPopup = (item) => {
     console.log("item", item);
-    setIdForEdit(item);
+    const fullData = potential.find((p) => p.company === item.company);
+    setIdForEdit(fullData);
     setOpenPopupUpdate(true);
   };
 
   const TableHeader = [
     "Company ID",
-    "Date",
+    "Created Date",
+    "created By",
     "Description",
     "Product",
     "Current Buying Quantity(Monthly)",
@@ -55,11 +70,12 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
     potential &&
     potential.map((value) => ({
       company: value.company,
-      date: value.date,
+      date: formatDate(value.created_date), // Format the date here
+      created_by: value.created_by,
       description: value.description,
       product: value.product,
       current_buying_quantity: value.current_buying_quantity,
-      remark: value.remark,
+      remark: value.is_remark,
     }));
   return (
     <>
