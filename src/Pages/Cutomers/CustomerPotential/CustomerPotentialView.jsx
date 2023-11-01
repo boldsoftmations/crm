@@ -39,7 +39,6 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
           recordForEdit,
           "potential"
         );
-      console.log("potentialResponse", potentialResponse);
       setPotential(potentialResponse.data.potential);
       setOpen(false);
     } catch (err) {
@@ -49,14 +48,13 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
   };
 
   const openInPopup = (item) => {
-    console.log("item", item);
-    const fullData = potential.find((p) => p.company === item.company);
+    const fullData = potential.find((p) => p.id === item.id);
     setIdForEdit(fullData);
     setOpenPopupUpdate(true);
   };
 
   const TableHeader = [
-    "Company ID",
+    "ID",
     "Created Date",
     "created By",
     "Description",
@@ -69,8 +67,8 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
   const TableData =
     potential &&
     potential.map((value) => ({
-      company: value.company,
-      date: formatDate(value.created_date), // Format the date here
+      id: value.id,
+      date: formatDate(value.created_date || ""), // Format the date here
       created_by: value.created_by,
       description: value.description,
       product: value.product,
