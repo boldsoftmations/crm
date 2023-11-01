@@ -5,57 +5,68 @@ import CustomTextField from "../../../Components/CustomTextField";
 import ProductService from "../../../services/ProductService";
 import CustomerServices from "../../../services/CustomerService";
 
-export const CustomerPotentialCreate = (props) => {
-  const { recordForEdit, getCompanyDetailsByID, setOpenModal } = props;
+const ProductAutocomplete = ({ products, onChange, potential }) => (
+  <Autocomplete
+    style={{ minWidth: 180 }}
+    size="small"
+    onChange={onChange}
+    value={potential.product}
+    options={products.map((option) => option.name)}
+    getOptionLabel={(option) => `${option ? option : "No Options"}`}
+    renderInput={(params) => (
+      <CustomTextField {...params} label="Product Name" />
+    )}
+  />
+);
+
+export const CustomerPotentialCreate = ({
+  recordForEdit,
+  getCompanyDetailsByID,
+  setOpenModal,
+}) => {
   const [open, setOpen] = useState(false);
-  const [potential, setPotential] = useState([]);
+  const [potential, setPotential] = useState({});
   const [product, setProduct] = useState([]);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setOpen(true);
+        const res = await ProductService.getAllProduct();
+        setProduct(res.data);
+      } catch (err) {
+        console.error("error potential", err);
+      } finally {
+        setOpen(false);
+      }
+    };
+
+    fetchProduct();
+  }, []);
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setPotential({ ...potential, [name]: value });
   };
 
-  useEffect(() => {
-    getProduct();
-  }, []);
-
-  const getProduct = async () => {
-    try {
-      setOpen(true);
-      const res = await ProductService.getAllProduct();
-      setProduct(res.data);
-      setOpen(false);
-    } catch (err) {
-      console.error("error potential", err);
-      setOpen(false);
-    }
+  const handleAutocompleteChange = (_, value) => {
+    setPotential({ ...potential, product: value });
   };
 
-  const handleAutocompleteChange = (value) => {
-    setPotential({ ...potential, ["product"]: value });
-  };
-
-  let handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       setOpen(true);
       const data = {
         company: recordForEdit,
-        product: potential.product,
-        current_brand: potential.current_brand,
-        current_buying_price: potential.current_buying_price,
-        current_buying_quantity: potential.current_buying_quantity,
-        target_price: potential.target_price,
-        quantity: potential.quantity,
+        ...potential,
       };
-
       await CustomerServices.createPotentialCustomer(data);
       setOpenModal(false);
       await getCompanyDetailsByID();
-      setOpen(false);
     } catch (error) {
-      console.log("error:", error);
+      console.error("error:", error);
+    } finally {
       setOpen(false);
     }
   };
@@ -63,68 +74,39 @@ export const CustomerPotentialCreate = (props) => {
   return (
     <>
       <CustomLoader open={open} />
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Box
-          component="form"
-          noValidate
-          sx={{ mt: 1 }}
-          onSubmit={(e) => handleSubmit(e)}
-        >
-          <Grid container spacing={3}>
-            <Grid item xs={24} sm={4} sx={{ mr: 2 }}>
-              <Autocomplete
-                style={{
-                  minWidth: 180,
-                }}
-                size="small"
-                onChange={(e, value) => handleAutocompleteChange(value)}
-                options={product.map((option) => option.name)}
-                getOptionLabel={(option) => `${option ? option : "No Options"}`}
-                renderInput={(params) => (
-                  <CustomTextField {...params} label="Product Name" />
-                )}
-              />
-            </Grid>
-            <Grid item xs={24} sm={6} sx={{ ml: 2 }}>
-              <CustomTextField
-                fullWidth
-                name="current_buying_quantity"
-                size="small"
-                label="Current Buying Quantity Monthly"
-                variant="outlined"
-                value={
-                  potential.current_buying_quantity
-                    ? potential.current_buying_quantity
-                    : ""
-                }
-                onChange={handleInputChange}
-              />
-            </Grid>
+      <Box component="form" noValidate onSubmit={handleSubmit}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <ProductAutocomplete
+              products={product}
+              potential={potential}
+              onChange={handleAutocompleteChange}
+            />
           </Grid>
-          {/* <Grid item xs={24} sm={4}>
-              <CustomTextField
-                fullWidth
-                name="quantity"
-                size="small"
-                label="Quantity"
-                variant="outlined"
-                value={potential.quantity ? potential.quantity : ""}
-                onChange={handleInputChange}
-              />
-            </Grid> */}
-
-          <Grid container justifyContent={"flex-end"}>
-            <Button type="submit" variant="contained">
+          <Grid item xs={12} sm={6}>
+            <CustomTextField
+              fullWidth
+              name="current_buying_quantity"
+              size="small"
+              label="Current Buying Quantity Monthly"
+              variant="outlined"
+              value={potential.current_buying_quantity || ""}
+              onChange={handleInputChange}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Button
+              sx={{ marginTop: "20px" }}
+              fullWidth
+              type="submit"
+              variant="contained"
+            >
               Submit
             </Button>
           </Grid>
-        </Box>
+        </Grid>
       </Box>
     </>
   );

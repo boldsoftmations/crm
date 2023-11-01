@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Grid, Paper } from "@mui/material";
 import { CustomerPotentialCreate } from "./CustomerPotentialCreate";
+import { CustomerPotentialUpdate } from "./CustomerPotentialUpdate";
 import { Popup } from "../../../Components/Popup";
 import CustomerServices from "../../../services/CustomerService";
 import { CustomTable } from "../../../Components/CustomTable";
@@ -10,6 +11,7 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
   const [potential, setPotential] = useState([]);
   const [openPopupCreate, setOpenPopupCreate] = useState(false);
   const [openPopupUpdate, setOpenPopupUpdate] = useState(false);
+  const [idForEdit, setIdForEdit] = useState(null);
   useEffect(() => {
     getCompanyDetailsByID();
   }, []);
@@ -32,7 +34,8 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
   };
 
   const openInPopup = (item) => {
-    // setRecordForEdit(item.id);
+    console.log("item", item);
+    setIdForEdit(item);
     setOpenPopupUpdate(true);
   };
 
@@ -51,7 +54,8 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
       date: value.date,
       description: value.description,
       product: value.product,
-      quantity: value.current_buying_quantity,
+      current_buying_quantity: value.current_buying_quantity,
+      remark: value.remark,
     }));
   return (
     <>
@@ -105,6 +109,18 @@ export const CustomerPotentialView = ({ recordForEdit }) => {
           getCompanyDetailsByID={getCompanyDetailsByID}
           recordForEdit={recordForEdit}
           setOpenModal={setOpenPopupCreate}
+        />
+      </Popup>
+      <Popup
+        maxWidth="xl"
+        title="Update Potential"
+        openPopup={openPopupUpdate}
+        setOpenPopup={setOpenPopupUpdate}
+      >
+        <CustomerPotentialUpdate
+          getCompanyDetailsByID={getCompanyDetailsByID}
+          idForEdit={idForEdit}
+          setOpenModal={setOpenPopupUpdate}
         />
       </Popup>
     </>

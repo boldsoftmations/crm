@@ -27,7 +27,6 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import { ViewCustomerFollowUp } from "../../FollowUp/ViewCustomerFollowUp";
 import Option from "../../../Options/Options";
 import CustomTextField from "../../../Components/CustomTextField";
-import { CustomerPotentialView } from "../CustomerPotential/CustomerPotentialView";
 
 export const UpdateCompanyDetails = (props) => {
   const { setOpenPopup, getAllCompanyDetails, recordForEdit } = props;
@@ -429,12 +428,6 @@ export const UpdateCompanyDetails = (props) => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <ViewCustomerFollowUp recordForEdit={recordForEdit} />
-        </Grid>
-      </Grid>
-
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <CustomerPotentialView recordForEdit={recordForEdit} />
         </Grid>
       </Grid>
     </>
