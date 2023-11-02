@@ -44,6 +44,7 @@ export const ListItems = (props) => {
   const [expandTask, setExpandTask] = useState(false);
   const [expandUser, setExpandUser] = useState(false);
   const [expandCompetitor, setExpandCompetitor] = useState(false);
+  const [expandFaq, setExpandFaq] = useState(false);
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
 
@@ -1123,6 +1124,37 @@ export const ListItems = (props) => {
               </ListItem>
             </List>
           </Collapse>
+
+          {/* FAQ */}
+          <ListItem
+            button
+            onClick={() => setExpandFaq(!expandFaq)}
+            style={{ width: 300 }}
+          >
+            <ListItemIcon>
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="FAQ" />
+            {expandFaq ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </ListItem>
+          <Collapse in={expandFaq} timeout="auto" unmountOnExit>
+            <Divider />
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/faq"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="FAQ"
+                />
+              </ListItem>
+            </List>
+          </Collapse>
         </>
       ) : (
         <>
@@ -1672,6 +1704,7 @@ export const ListItems = (props) => {
                 </List>
               </Collapse>
 
+              {/* Task */}
               <ListItem
                 button
                 onClick={() => setExpandTask(!expandTask)}
@@ -1683,7 +1716,6 @@ export const ListItems = (props) => {
                 <ListItemText primary="Task" />
                 {expandTask ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-
               <Collapse in={expandTask} timeout="auto" unmountOnExit>
                 <Divider />
                 <List component="div" disablePadding>
@@ -1698,6 +1730,37 @@ export const ListItems = (props) => {
                       onClick={() => setOpen(false)}
                       inset
                       primary="Task"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              {/* FAQ */}
+              <ListItem
+                button
+                onClick={() => setExpandFaq(!expandFaq)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText primary="FAQ" />
+                {expandFaq ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={expandFaq} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/faq"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="FAQ"
                     />
                   </ListItem>
                 </List>
@@ -2820,6 +2883,37 @@ export const ListItems = (props) => {
                   </ListItem>
                 </List>
               </Collapse>
+
+              {/* FAQ */}
+              <ListItem
+                button
+                onClick={() => setExpandFaq(!expandFaq)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText primary="FAQ" />
+                {expandFaq ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={expandFaq} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/faq"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="FAQ"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
             </>
           )}
 
@@ -3220,6 +3314,36 @@ export const ListItems = (props) => {
                   </ListItem>
                 </List>
               </Collapse>
+              {/* FAQ */}
+              <ListItem
+                button
+                onClick={() => setExpandFaq(!expandFaq)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText primary="FAQ" />
+                {expandFaq ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={expandFaq} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/faq"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="FAQ"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
             </>
           )}
 
@@ -3595,6 +3719,37 @@ export const ListItems = (props) => {
                   </ListItem>
                 </List>
               </Collapse>
+
+              {/* FAQ */}
+              <ListItem
+                button
+                onClick={() => setExpandFaq(!expandFaq)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText primary="FAQ" />
+                {expandFaq ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={expandFaq} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/faq"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="FAQ"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
             </>
           )}
 
@@ -3931,6 +4086,37 @@ export const ListItems = (props) => {
                   </ListItem>
                 </List>
               </Collapse>
+
+              {/* FAQ */}
+              <ListItem
+                button
+                onClick={() => setExpandFaq(!expandFaq)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText primary="FAQ" />
+                {expandFaq ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={expandFaq} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/faq"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="FAQ"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
             </>
           )}
           {/* Sales Manager without Leads  */}
@@ -4262,6 +4448,37 @@ export const ListItems = (props) => {
                       onClick={() => setOpen(false)}
                       inset
                       primary="Task"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              {/* FAQ */}
+              <ListItem
+                button
+                onClick={() => setExpandFaq(!expandFaq)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText primary="FAQ" />
+                {expandFaq ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+              <Collapse in={expandFaq} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/faq"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="FAQ"
                     />
                   </ListItem>
                 </List>
