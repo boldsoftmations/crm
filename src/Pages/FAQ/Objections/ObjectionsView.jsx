@@ -1,13 +1,22 @@
 import React, { useCallback, useEffect, useState } from "react";
 import UserProfileService from "../../../services/UserProfileService";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import { Box, Typography, Grid, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Grid,
+  Button,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+} from "@mui/material";
 import { Popup } from "../../../Components/Popup";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import CustomTextField from "../../../Components/CustomTextField";
 import { useSelector } from "react-redux";
 import { ObjectionsCreate } from "./ObjectionsCreate";
 import { ObjectionsUpdate } from "./ObjectionsUpdate";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export const ObjectionsView = () => {
   const [objection, setObjection] = useState([]);
@@ -133,61 +142,62 @@ export const ObjectionsView = () => {
         </Grid>
       </Box>
 
-      {objection.map((item, index) => (
-        <Box
-          key={item.id}
-          sx={{
-            marginBottom: 4,
-            padding: 2,
-            backgroundColor: "#ffffff",
-            border: "1px solid #e0e0e0",
-            borderRadius: "4px",
-            marginLeft: 5,
-            marginRight: 5,
-          }}
-        >
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={6}>
+      <Box sx={{ maxHeight: "500px", overflow: "auto" }}>
+        {objection.map((item, index) => (
+          <Accordion key={item.id} sx={{ margin: 1 }}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls={`panel${index}a-content`}
+              id={`panel${index}a-header`}
+            >
               <Typography>
-                {index + 1}) Author: {item.created_by || "N/A"}
+                {index + 1}) Question: {item.question}
               </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography>
-                Updated Author: {item.updated_by || "N/A"}
-              </Typography>
-            </Grid>
-          </Grid>
-          <Typography sx={{ mt: 2 }}>Question: {item.question}</Typography>
-          <Typography sx={{ my: 2 }}>Answer: {item.answer}</Typography>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={6}>
-              <Typography>
-                Creation Date: {formatDate(item.creation_date)}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={5}>
-              <Typography>
-                Updation Date: {formatDate(item.updation_date)}
-              </Typography>
-            </Grid>
-            {(userData.groups.includes("Sales Manager") ||
-              userData.groups.includes("Sales Deputy Manager") ||
-              userData.groups.includes("Sales Assistant Deputy Manager") ||
-              userData.groups.includes("Director")) && (
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleEditClick(item)}
-                >
-                  Edit
-                </Button>
-              </Grid>
-            )}
-          </Grid>
-        </Box>
-      ))}
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box sx={{ marginBottom: 4 }}>
+                <Typography sx={{ my: 2 }}>Answer: {item.answer}</Typography>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={12} sm={6}>
+                    <Typography>Author: {item.created_by || "N/A"}</Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography>
+                      Updated Author: {item.updated_by || "N/A"}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography>
+                      Creation Date: {formatDate(item.creation_date)}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={5}>
+                    <Typography>
+                      Updation Date: {formatDate(item.updation_date)}
+                    </Typography>
+                  </Grid>
+                  {(userData.groups.includes("Sales Manager") ||
+                    userData.groups.includes("Sales Deputy Manager") ||
+                    userData.groups.includes(
+                      "Sales Assistant Deputy Manager"
+                    ) ||
+                    userData.groups.includes("Director")) && (
+                    <Grid item xs={12} sm={1}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleEditClick(item)}
+                      >
+                        Edit
+                      </Button>
+                    </Grid>
+                  )}
+                </Grid>
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+        ))}
+      </Box>
       <Box sx={{ marginBottom: 4 }}>
         <CustomPagination
           currentPage={currentPage}

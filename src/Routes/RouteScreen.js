@@ -99,7 +99,7 @@ export const RouteScreen = () => {
             <Route path="/user/dashoard" element={<Dashboard />} />
             <Route path="/user/profile" exact element={<Profile />} />
             <Route
-              path="/user/user-profile"
+              path="/user/personal-profile"
               exact
               element={<UserProfileView />}
             />
