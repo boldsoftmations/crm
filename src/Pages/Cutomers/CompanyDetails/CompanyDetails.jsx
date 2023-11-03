@@ -1,4 +1,18 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Grid,
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableCell,
+} from "@mui/material";
+import { tableCellClasses } from "@mui/material/TableCell";
+import { styled } from "@mui/material/styles";
 import { UpdateAllCompanyDetails } from "./UpdateAllCompanyDetails";
 import { CreateCompanyDetails } from "./CreateCompanyDetails";
 import { Popup } from "./../../../Components/Popup";
@@ -14,7 +28,6 @@ import { CustomerActivityCreate } from "../../FollowUp/CustomerActivityCreate";
 import ProductService from "../../../services/ProductService";
 import { CreateCustomerProformaInvoice } from "./../../Invoice/ProformaInvoice/CreateCustomerProformaInvoice";
 import { CSVLink } from "react-csv";
-import { Autocomplete, Box, Button, Grid } from "@mui/material";
 import { Helmet } from "react-helmet";
 import CustomTextField from "../../../Components/CustomTextField";
 import { CustomerPotentialCreate } from "../CustomerPotential/CustomerPotentialCreate";
@@ -250,7 +263,6 @@ export const CompanyDetails = () => {
   };
 
   const Tableheaders = [
-    "ID",
     "NAME",
     "Assigned To",
     "PAN NO.",
@@ -493,21 +505,102 @@ export const CompanyDetails = () => {
               </svg>
             </button>
           </div>
-          <CustomTable
-            headers={Tableheaders}
-            data={Tabledata}
-            openInPopup={openInPopup}
-            openInPopup2={openInPopup2}
-            openInPopup3={openInPopup3}
-            openInPopup4={openInPopup4}
-            ButtonText={
-              !userData.groups.includes("Accounts Billing Department")
-                ? "PI"
-                : null
-            }
-            ButtonText1={"Activity"}
-            ButtonText2={"Potential"}
-          />
+          <TableContainer
+            sx={{
+              maxHeight: 400,
+              "&::-webkit-scrollbar": {
+                width: 15,
+              },
+              "&::-webkit-scrollbar-track": {
+                backgroundColor: "#f2f2f2",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "#aaa9ac",
+              },
+            }}
+          >
+            <Table
+              sx={{ minWidth: 1200 }}
+              stickyHeader
+              aria-label="sticky table"
+            >
+              <TableHead>
+                <StyledTableRow>
+                  {Tableheaders.map((header) => (
+                    <StyledTableCell key={header} align="center">
+                      {header}
+                    </StyledTableCell>
+                  ))}
+                </StyledTableRow>
+              </TableHead>
+              <TableBody>
+                {companyData.map((row, i) => (
+                  <StyledTableRow key={row.i}>
+                    <StyledTableCell align="center">{row.name}</StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.assigned_to.map((assignee, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            border: "1px solid #4caf50",
+                            borderRadius: "20px",
+                            color: "#4caf50",
+                          }}
+                        >
+                          {assignee}
+                        </div>
+                      ))}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.pan_number}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.gst_number}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">{row.city}</StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.state}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.status}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Button
+                        sx={{ color: "#1976d2" }}
+                        onClick={() => openInPopup(row)}
+                      >
+                        View,
+                      </Button>
+                      {!userData.groups.includes(
+                        "Accounts Billing Department"
+                      ) && (
+                        <Button
+                          sx={{ color: "#28a745" }}
+                          onClick={() => openInPopup2(row)}
+                        >
+                          PI,
+                        </Button>
+                      )}
+                      <Button
+                        sx={{ color: "#5e35b1" }}
+                        onClick={() => openInPopup3(row)}
+                      >
+                        Activity,
+                      </Button>
+                      {row.is_potential_completed === false && (
+                        <Button
+                          sx={{ color: "#eb5042" }}
+                          onClick={() => openInPopup4(row)}
+                        >
+                          Potential
+                        </Button>
+                      )}
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
           <div
             style={{
@@ -598,3 +691,27 @@ export const CompanyDetails = () => {
     </>
   );
 };
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+    padding: 1, // adjust padding as needed
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+    padding: 1, // adjust padding as needed
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+  "& > td, & > th": {
+    padding: 0, // adjust padding as needed
+  },
+}));
