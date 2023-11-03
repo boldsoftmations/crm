@@ -68,7 +68,7 @@ import { UserProfileView } from "../Pages/Profile/UserProfile/UserProfileView";
 import { IndiaMartLeads } from "../Pages/Leads/IndiaMartLeads";
 import { InActiveCustomer } from "../Pages/Cutomers/CompanyDetails/InActiveCustomer";
 import { FaqAllTab } from "../Pages/Faq/FaqAllTab/FaqAllTab";
-import {HrTabs} from "../Pages/HrReqModel/HrTabs"
+
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
   const token = tokenData.user;
@@ -275,10 +275,7 @@ export const RouteScreen = () => {
             // FAQ Routes
             <Route path="/user/faq" element={<FaqAllTab />} />
             <Route path="*" element={<Home />} />
-            <Route
-              path="/hr-recruitment-model"
-              element={<HrTabs />}
-            />
+           
           </>
         )}
         <Route path="*" element={<Auths />} />
