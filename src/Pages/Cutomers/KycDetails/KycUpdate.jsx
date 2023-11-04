@@ -275,7 +275,7 @@ const KycUpdate = ({
               label="Established Year"
               placeholder="YYYY"
               value={inputValue.estd_year || ""}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange("estd_year", e.target.value)}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
