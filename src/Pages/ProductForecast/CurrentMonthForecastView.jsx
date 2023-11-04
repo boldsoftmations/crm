@@ -27,11 +27,10 @@ import { ErrorMessage } from "../../Components/ErrorMessage/ErrorMessage";
 import { CustomLoader } from "../../Components/CustomLoader";
 import ProductForecastService from "../../services/ProductForecastService";
 import { CustomSearchWithButton } from "../../Components/CustomSearchWithButton";
-import { CustomTable } from "../../Components/CustomTable";
 import { Helmet } from "react-helmet";
 import { useSelector } from "react-redux";
 import { Popup } from "../../Components/Popup";
-import CustomTextField from "../../Components/CustomTextField";
+import { AnticipatedDateUpdate } from "./AnticipatedDateUpdate";
 
 export const CurrentMonthForecastView = () => {
   const [open, setOpen] = useState(false);
@@ -286,24 +285,20 @@ export const CurrentMonthForecastView = () => {
     }
   };
 
-  const Tabledata = currentMonthForecast.map((row) => {
-    const sumValue = row.orderbook_value + row.actual;
-    const forecast_achieved = row.forecast - sumValue;
-    return {
-      id: row.id,
-      company: row.company,
-      sales_person: row.sales_person,
-      product: row.product,
-      forecast: row.forecast,
-      actual: row.actual,
-      orderbook_value: row.orderbook_value,
-      forecast_achieved: forecast_achieved > 0 ? forecast_achieved : 0,
-    };
-  });
+  const formatDate = (dateString) => {
+    return dateString
+      ? new Intl.DateTimeFormat("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }).format(new Date(dateString))
+      : "-";
+  };
 
   const getColorForDate = (anticipatedDate) => {
     // If anticipatedDate is null, return an empty string or a default color
     if (!anticipatedDate) {
+      console.log("No anticipated date provided.");
       return ""; // No color
     }
 
@@ -312,23 +307,34 @@ export const CurrentMonthForecastView = () => {
 
     // You can also check if anticipated is an Invalid Date
     if (isNaN(anticipated.getTime())) {
+      console.log("Invalid date provided.");
       return ""; // No color
     }
 
     today.setHours(0, 0, 0, 0);
     anticipated.setHours(0, 0, 0, 0);
 
+    console.log(
+      `Today: ${today.toISOString()}, Anticipated: ${anticipated.toISOString()}`
+    );
+
     if (anticipated.getTime() === today.getTime()) {
       // Date is today
-      return "#ffcccc";
+      console.log("Date is today.");
+      return "#ccccff";
     } else if (anticipated < today) {
       // Date is in the past
-      return "#ccccff";
+      console.log("Date is in the past.");
+      return "#ffcccc";
     } else {
       // Date is in the future
+      console.log("Date is in the future.");
       return "#ffffcc";
     }
   };
+
+  // Example use:
+  console.log(getColorForDate("2023-12-25")); // Future date example
 
   const Tableheaders = [
     "Company",
@@ -525,9 +531,11 @@ export const CurrentMonthForecastView = () => {
                         {row.forecast_achieved}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {row.anticipated_date}
+                        {formatDate(row.anticipated_date)}
                       </StyledTableCell>
-                      <Button onClick={() => openInPopup(row)}>View</Button>
+                      <StyledTableCell align="center">
+                        <Button onClick={() => openInPopup(row)}>View</Button>
+                      </StyledTableCell>
                     </StyledTableRow>
                   );
                 })}
@@ -546,11 +554,10 @@ export const CurrentMonthForecastView = () => {
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
       >
-        <AnticipatedDate
+        <AnticipatedDateUpdate
           idForEdit={idForEdit}
           setOpenPopup={setOpenPopup}
           getAllProductionForecastDetails={getAllProductionForecastDetails}
-          setOpen={setOpen}
         />
       </Popup>
     </div>
@@ -595,82 +602,3 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     paddingRight: 4,
   },
 }));
-
-const AnticipatedDate = ({
-  idForEdit,
-  setOpenPopup,
-  getAllProductionForecastDetails,
-  setOpen,
-}) => {
-  // Initialize anticipatedDate with the correct structure
-  const [anticipatedDate, setAnticipatedDate] = useState({
-    id: idForEdit.id,
-    anticipated_date: idForEdit.anticipated_date || "",
-    month: idForEdit.month || "",
-    product_forecast: idForEdit.product_forecast || "",
-    year: idForEdit.year || "",
-  });
-
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setAnticipatedDate((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleUpdate = async (event) => {
-    event.preventDefault(); // Prevent the default form submission
-    try {
-      setOpen(true);
-      const data = {
-        anticipated_date: anticipatedDate.anticipated_date,
-        month: anticipatedDate.month,
-        product_forecast: anticipatedDate.product_forecast,
-        year: anticipatedDate.year,
-      };
-      const response = await ProductForecastService.updateAnticipatedDate(
-        anticipatedDate.id,
-        data
-      );
-
-      if (response) {
-        setOpenPopup(false);
-        getAllProductionForecastDetails();
-      }
-      setOpen(false);
-    } catch (error) {
-      setOpen(false);
-      console.error("Error updating anticipated date:", error);
-      // You can set an error message state here and display it to the user
-    }
-  };
-
-  return (
-    <>
-      <Box component="form" noValidate onSubmit={handleUpdate} sx={{ mt: 1 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              type="date"
-              label="Estimated Date"
-              name="anticipated_date"
-              value={anticipatedDate.anticipated_date}
-              onChange={handleInputChange}
-            />
-          </Grid>
-        </Grid>
-        <Button
-          fullWidth
-          type="submit"
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          Update
-        </Button>
-      </Box>
-    </>
-  );
-};
