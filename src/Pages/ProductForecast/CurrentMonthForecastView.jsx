@@ -10,6 +10,16 @@ import {
   IconButton,
   MenuItem,
 } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
+import { tableCellClasses } from "@mui/material/TableCell";
+import { styled } from "@mui/material/styles";
 import ClearIcon from "@mui/icons-material/Clear";
 import { CSVLink } from "react-csv";
 import { CustomPagination } from "../../Components/CustomPagination";
@@ -20,6 +30,8 @@ import { CustomSearchWithButton } from "../../Components/CustomSearchWithButton"
 import { CustomTable } from "../../Components/CustomTable";
 import { Helmet } from "react-helmet";
 import { useSelector } from "react-redux";
+import { Popup } from "../../Components/Popup";
+import CustomTextField from "../../Components/CustomTextField";
 
 export const CurrentMonthForecastView = () => {
   const [open, setOpen] = useState(false);
@@ -32,6 +44,8 @@ export const CurrentMonthForecastView = () => {
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
   const [currentMonthForecast, setCurrentMonthForecast] = useState([]);
   const [exportData, setExportData] = useState([]);
+  const [openPopup, setOpenPopup] = useState(false);
+  const [idForEdit, setIdForEdit] = useState("");
   const csvLinkRef = useRef(null);
   const [isPrinting, setIsPrinting] = useState(false);
   const UserData = useSelector((state) => state.auth.profile);
@@ -77,6 +91,12 @@ export const CurrentMonthForecastView = () => {
       window.removeEventListener("afterprint", afterPrint);
     };
   }, []);
+
+  const openInPopup = (item) => {
+    console.log("item", item);
+    setIdForEdit(item);
+    setOpenPopup(true);
+  };
 
   const getResetData = () => {
     setSearchQuery("");
@@ -281,8 +301,36 @@ export const CurrentMonthForecastView = () => {
     };
   });
 
+  const getColorForDate = (anticipatedDate) => {
+    // If anticipatedDate is null, return an empty string or a default color
+    if (!anticipatedDate) {
+      return ""; // No color
+    }
+
+    const today = new Date();
+    const anticipated = new Date(anticipatedDate);
+
+    // You can also check if anticipated is an Invalid Date
+    if (isNaN(anticipated.getTime())) {
+      return ""; // No color
+    }
+
+    today.setHours(0, 0, 0, 0);
+    anticipated.setHours(0, 0, 0, 0);
+
+    if (anticipated.getTime() === today.getTime()) {
+      // Date is today
+      return "#ffcccc";
+    } else if (anticipated < today) {
+      // Date is in the past
+      return "#ccccff";
+    } else {
+      // Date is in the future
+      return "#ffffcc";
+    }
+  };
+
   const Tableheaders = [
-    "ID",
     "Company",
     "Sales Person",
     "Product",
@@ -290,6 +338,8 @@ export const CurrentMonthForecastView = () => {
     "Actual",
     "Orderbook Value",
     "Shortfall",
+    "Estimate Date",
+    "Action",
   ];
 
   return (
@@ -415,20 +465,212 @@ export const CurrentMonthForecastView = () => {
               )}
             </Box>
           </Box>
-          <CustomTable
-            headers={Tableheaders}
-            data={Tabledata}
-            openInPopup={null}
-            openInPopup2={null}
-            openInPopup3={null}
-            openInPopup4={null}
-          />
+          <TableContainer
+            sx={{
+              maxHeight: 440,
+              "&::-webkit-scrollbar": {
+                width: 15,
+              },
+              "&::-webkit-scrollbar-track": {
+                backgroundColor: "#f2f2f2",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "#aaa9ac",
+              },
+            }}
+          >
+            <Table
+              sx={{ minWidth: 1200 }}
+              stickyHeader
+              aria-label="sticky table"
+            >
+              <TableHead>
+                <StyledTableRow>
+                  {Tableheaders.map((header) => (
+                    <StyledTableCell key={header} align="center">
+                      {header}
+                    </StyledTableCell>
+                  ))}
+                </StyledTableRow>
+              </TableHead>
+              <TableBody>
+                {currentMonthForecast.map((row, i) => {
+                  const rowColor = getColorForDate(row.anticipated_date); // Get the color for the date
+                  return (
+                    <StyledTableRow
+                      key={row.id}
+                      sx={{
+                        backgroundColor: rowColor,
+                      }}
+                    >
+                      <StyledTableCell align="center">
+                        {row.company}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.sales_person}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.product}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.forecast}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.actual}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.orderbook_value}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.forecast_achieved}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.anticipated_date}
+                      </StyledTableCell>
+                      <Button onClick={() => openInPopup(row)}>View</Button>
+                    </StyledTableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
           <CustomPagination
             pageCount={pageCount}
             handlePageClick={handlePageClick}
           />
         </Paper>
       </Grid>
+      <Popup
+        maxWidth="md"
+        title={"Update Current Month Forecast"}
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
+      >
+        <AnticipatedDate
+          idForEdit={idForEdit}
+          setOpenPopup={setOpenPopup}
+          getAllProductionForecastDetails={getAllProductionForecastDetails}
+          setOpen={setOpen}
+        />
+      </Popup>
     </div>
+  );
+};
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+  // remove space between rows
+  "& > td, & > th": {
+    padding: 4,
+  },
+  // Add padding and margin styles
+  // padding: 0,
+  // paddingLeft: 4,
+  // paddingRight: 4,
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+  // remove space between rows
+  "& > td, & > th": {
+    padding: 4,
+  },
+  // remove margin on left and right sides
+  "& > td:first-child, & > th:first-child": {
+    paddingLeft: 4,
+  },
+  "& > td:last-child, & > th:last-child": {
+    paddingRight: 4,
+  },
+}));
+
+const AnticipatedDate = ({
+  idForEdit,
+  setOpenPopup,
+  getAllProductionForecastDetails,
+  setOpen,
+}) => {
+  // Initialize anticipatedDate with the correct structure
+  const [anticipatedDate, setAnticipatedDate] = useState({
+    id: idForEdit.id,
+    anticipated_date: idForEdit.anticipated_date || "",
+    month: idForEdit.month || "",
+    product_forecast: idForEdit.product_forecast || "",
+    year: idForEdit.year || "",
+  });
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setAnticipatedDate((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleUpdate = async (event) => {
+    event.preventDefault(); // Prevent the default form submission
+    try {
+      setOpen(true);
+      const data = {
+        anticipated_date: anticipatedDate.anticipated_date,
+        month: anticipatedDate.month,
+        product_forecast: anticipatedDate.product_forecast,
+        year: anticipatedDate.year,
+      };
+      const response = await ProductForecastService.updateAnticipatedDate(
+        anticipatedDate.id,
+        data
+      );
+
+      if (response) {
+        setOpenPopup(false);
+        getAllProductionForecastDetails();
+      }
+      setOpen(false);
+    } catch (error) {
+      setOpen(false);
+      console.error("Error updating anticipated date:", error);
+      // You can set an error message state here and display it to the user
+    }
+  };
+
+  return (
+    <>
+      <Box component="form" noValidate onSubmit={handleUpdate} sx={{ mt: 1 }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              type="date"
+              label="Estimated Date"
+              name="anticipated_date"
+              value={anticipatedDate.anticipated_date}
+              onChange={handleInputChange}
+            />
+          </Grid>
+        </Grid>
+        <Button
+          fullWidth
+          type="submit"
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
+        >
+          Update
+        </Button>
+      </Box>
+    </>
   );
 };
