@@ -213,6 +213,7 @@ const KycUpdate = ({
         whatsapp_url: inputValue.whatsapp_url || null,
       };
       await CustomerServices.updateCompanyData(recordForEdit, req);
+      UpdateContactDetails();
       setOpenPopup(false);
       getIncompleteKycCustomerData();
     } finally {
