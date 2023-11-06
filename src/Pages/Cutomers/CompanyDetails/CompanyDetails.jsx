@@ -696,11 +696,11 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
-    padding: 1, // adjust padding as needed
+    padding: 0, // Remove padding from header cells
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
-    padding: 1, // adjust padding as needed
+    padding: 0, // Remove padding from body cells
   },
 }));
 
@@ -708,10 +708,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
   },
+  // hide last border
   "&:last-child td, &:last-child th": {
     border: 0,
-  },
-  "& > td, & > th": {
-    padding: 0, // adjust padding as needed
   },
 }));

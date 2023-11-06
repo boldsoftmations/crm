@@ -27,6 +27,7 @@ import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import FollowTheSignsIcon from "@mui/icons-material/FollowTheSigns";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import AnalyticsIcon from "@mui/icons-material/Analytics";
 
 export const ListItems = (props) => {
   const { setOpen } = props;
@@ -1001,6 +1002,20 @@ export const ListItems = (props) => {
               <HelpOutlineIcon />
             </ListItemIcon>
             <ListItemText primary="Script" />
+          </ListItem>
+
+          {/* Daily Sale Review */}
+          <ListItem
+            button
+            component={RouterLink}
+            to="/user/daily-sale-review"
+            style={{ width: 300 }}
+            onClick={() => setOpen(false)}
+          >
+            <ListItemIcon>
+              <AnalyticsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Daily Sale Review" />
           </ListItem>
         </>
       ) : (
@@ -2435,6 +2450,20 @@ export const ListItems = (props) => {
                 </ListItemIcon>
                 <ListItemText primary="Script" />
               </ListItem>
+
+              {/* Daily Sale Review */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/daily-sale-review"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+              >
+                <ListItemIcon>
+                  <AnalyticsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Daily Sale Review" />
+              </ListItem>
             </>
           )}
 
@@ -2797,6 +2826,19 @@ export const ListItems = (props) => {
                 </ListItemIcon>
                 <ListItemText primary="Script" />
               </ListItem>
+              {/* Daily Sale Review */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/daily-sale-review"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+              >
+                <ListItemIcon>
+                  <AnalyticsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Daily Sale Review" />
+              </ListItem>
             </>
           )}
 
@@ -3135,6 +3177,20 @@ export const ListItems = (props) => {
                 </ListItemIcon>
                 <ListItemText primary="Script" />
               </ListItem>
+
+              {/* Daily Sale Review */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/daily-sale-review"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+              >
+                <ListItemIcon>
+                  <AnalyticsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Daily Sale Review" />
+              </ListItem>
             </>
           )}
 
@@ -3434,6 +3490,20 @@ export const ListItems = (props) => {
                 </ListItemIcon>
                 <ListItemText primary="Script" />
               </ListItem>
+
+              {/* Daily Sale Review */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/daily-sale-review"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+              >
+                <ListItemIcon>
+                  <AnalyticsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Daily Sale Review" />
+              </ListItem>
             </>
           )}
           {/* Sales Manager without Leads  */}
@@ -3731,6 +3801,20 @@ export const ListItems = (props) => {
                   <HelpOutlineIcon />
                 </ListItemIcon>
                 <ListItemText primary="Script" />
+              </ListItem>
+
+              {/* Daily Sale Review */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/daily-sale-review"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+              >
+                <ListItemIcon>
+                  <AnalyticsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Daily Sale Review" />
               </ListItem>
             </>
           )}

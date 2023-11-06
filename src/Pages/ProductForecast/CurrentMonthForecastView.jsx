@@ -568,18 +568,12 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
+    padding: 0, // Remove padding from header cells
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
+    padding: 0, // Remove padding from body cells
   },
-  // remove space between rows
-  "& > td, & > th": {
-    padding: 4,
-  },
-  // Add padding and margin styles
-  // padding: 0,
-  // paddingLeft: 4,
-  // paddingRight: 4,
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -589,16 +583,5 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   // hide last border
   "&:last-child td, &:last-child th": {
     border: 0,
-  },
-  // remove space between rows
-  "& > td, & > th": {
-    padding: 4,
-  },
-  // remove margin on left and right sides
-  "& > td:first-child, & > th:first-child": {
-    paddingLeft: 4,
-  },
-  "& > td:last-child, & > th:last-child": {
-    paddingRight: 4,
   },
 }));
