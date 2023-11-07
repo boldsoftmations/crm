@@ -280,7 +280,7 @@ export const RouteScreen = () => {
               path="/user/daily-sale-review"
               element={<DailySaleReviewView />}
             />
-            <Route path="*" element={<Home />} />
+            {/* <Route path="*" element={<Home />} /> */}
           </>
         )}
         <Route path="*" element={<Auths />} />
