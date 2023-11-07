@@ -96,7 +96,9 @@ const createProductObjectionData = (data) => {
 const updateProductObjectionData = (id, data) => {
   return CustomAxios.patch(`/api/user/product-objection/${id}/`, data);
 };
-
+const getDailySaleReviewData = () =>{
+  return CustomAxios.get("api/user/daily-sales-review/?email=sales_executive@glutape.com");
+}
 const UserProfileService = {
   getProfile,
   getAllUserProfileData,
@@ -112,6 +114,7 @@ const UserProfileService = {
   getAllProductObjectionData,
   createProductObjectionData,
   updateProductObjectionData,
+  getDailySaleReviewData,
 };
 
 export default UserProfileService;

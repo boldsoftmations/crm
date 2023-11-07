@@ -1,143 +1,77 @@
-import React from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { styled } from "@mui/material/styles";
-import { tableCellClasses } from "@mui/material/TableCell";
+import React, { useEffect, useState } from "react";
+import { CustomLoader } from "../../Components/CustomLoader";
+import { CustomTable } from "../../Components/CustomTable";
+import { CustomSearch } from "../../Components/CustomSearch";
+import UserProfileService from "../../services/UserProfileService";
+
 export const DailySaleReviewView = () => {
-  const theme = useTheme();
+  const [isLoading, setIsLoading] = useState(false);
+  const [dailySalesReviews, setDailySalesReviews] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Helper function to create a row of data
-  function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-  }
+  useEffect(() => {
+    getDailySaleReviewData();
+  }, []);
 
-  // This data array could be dynamic, fetched from an API, for instance
-  const rows = [
-    createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-    createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-    createData("Eclair", 262, 16.0, 24, 6.0),
-    // ...more rows
-  ];
+  const getDailySaleReviewData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await UserProfileService.getDailySaleReviewData();
+      console.log(response); // Add this line to log the response
+      if (Array.isArray(response.data)) {
+        // Check if the response.data is an array
+        setDailySalesReviews(response.data);
+      } else {
+        console.error("Data is not an array", response.data);
+        setDailySalesReviews([]); // Set to empty array if not an array
+      }
+    } catch (err) {
+      console.error("Error fetching daily sales review data", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleInputChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const Tableheaders = ["SALES PERSON", "LAST NAME", "EMAIL", "ACTION"];
+
+  const filteredDailySalesReviews = dailySalesReviews.filter((review) =>
+    review.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const data = filteredDailySalesReviews.map((review) => ({
+    first_name: review.sales_person_name || "-",
+    last_name: review.total_answer_count || "-",
+    email: review.email || "-",
+  }));
 
   return (
     <>
+      <CustomLoader open={isLoading} />
       <div style={styles.container}>
-        <div style={{ display: "flex" }}>
-          <div style={{ flexGrow: 0.9 }}>
-            {/* <CustomSearch
-              filterSelectedQuery={searchQuery}
-              handleInputChange={handleInputChange}
-              getResetData={() => setSearchQuery("")}
-            /> */}
-          </div>
-          <div style={{ flexGrow: 2 }}>
-            <h3 style={styles.header}>Daily Sale Review</h3>
-          </div>
-          <div style={{ flexGrow: 1 }}></div>
-        </div>
-        <TableContainer
-          component={Paper}
-          sx={{
-            maxHeight: 440, // Ensures that there's a scrolling area
-            "&::-webkit-scrollbar": {
-              width: 15,
-            },
-            "&::-webkit-scrollbar-track": {
-              backgroundColor: "#f2f2f2",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "#aaa9ac",
-            },
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "1em",
           }}
         >
-          <Table sx={{ minWidth: 1200 }} stickyHeader aria-label="sticky table">
-            <TableHead sx={{ backgroundColor: theme.palette.common.black }}>
-              <TableRow>
-                <StyledTableCell sx={{ color: theme.palette.common.white }}>
-                  Dessert (100g serving)
-                </StyledTableCell>
-                <StyledTableCell
-                  sx={{ color: theme.palette.common.white }}
-                  align="center"
-                >
-                  Calories
-                </StyledTableCell>
-                <StyledTableCell
-                  sx={{ color: theme.palette.common.white }}
-                  align="center"
-                >
-                  Fat&nbsp;(g)
-                </StyledTableCell>
-                <StyledTableCell
-                  sx={{ color: theme.palette.common.white }}
-                  align="center"
-                >
-                  Carbs&nbsp;(g)
-                </StyledTableCell>
-                <StyledTableCell
-                  sx={{ color: theme.palette.common.white }}
-                  align="center"
-                >
-                  Protein&nbsp;(g)
-                </StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <StyledTableRow
-                  key={row.name}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <StyledTableCell component="th" scope="row">
-                    {row.name}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    {row.calories}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">{row.fat}</StyledTableCell>
-                  <StyledTableCell align="center">{row.carbs}</StyledTableCell>
-                  <StyledTableCell align="center">
-                    {row.protein}
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+          <CustomSearch
+            filterSelectedQuery={searchQuery}
+            handleInputChange={handleInputChange}
+            getResetData={() => setSearchQuery("")}
+          />
+        </div>
+        {/* {filteredDailySalesReviews.length > 0 ? ( */}
+        <CustomTable headers={Tableheaders} data={data} />
+
+        {/* )} */}
       </div>
     </>
   );
 };
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-    padding: 0, // Remove padding from header cells
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-    padding: 0, // Remove padding from body cells
-  },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}));
 
 const styles = {
   container: {
@@ -149,11 +83,5 @@ const styles = {
     flexDirection: "column",
     backgroundColor: "rgb(255, 255, 255)",
   },
-  header: {
-    textAlign: "left",
-    marginBottom: "1em",
-    fontSize: "24px",
-    color: "rgb(34, 34, 34)",
-    fontWeight: 800,
-  },
+  // Add any other styles you need here
 };
