@@ -3,12 +3,15 @@ import { CustomLoader } from "../../Components/CustomLoader";
 import { CustomTable } from "../../Components/CustomTable";
 import { CustomSearch } from "../../Components/CustomSearch";
 import UserProfileService from "../../services/UserProfileService";
+import { DailySaleReviewUpdate } from "./DailySaleReviewUpdate";
+import { Popup } from "../../Components/Popup";
 
 export const DailySaleReviewView = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [dailySalesReviews, setDailySalesReviews] = useState([]);
+  const [dailySalesReviewData, setDailySalesReviewData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [openPopup, setOpenPopup] = useState(false);
+  const [recordForEdit, setRecordForEdit] = useState();
   useEffect(() => {
     getDailySaleReviewData();
   }, []);
@@ -17,13 +20,9 @@ export const DailySaleReviewView = () => {
     setIsLoading(true);
     try {
       const response = await UserProfileService.getDailySaleReviewData();
-      console.log(response); // Add this line to log the response
-      if (Array.isArray(response.data)) {
-        // Check if the response.data is an array
-        setDailySalesReviews(response.data);
-      } else {
-        console.error("Data is not an array", response.data);
-        setDailySalesReviews([]); // Set to empty array if not an array
+      console.log(response);
+      if (response && response.data) {
+        setDailySalesReviewData(response.data);
       }
     } catch (err) {
       console.error("Error fetching daily sales review data", err);
@@ -31,48 +30,52 @@ export const DailySaleReviewView = () => {
       setIsLoading(false);
     }
   };
-  const handleInputChange = (event) => {
-    setSearchQuery(event.target.value);
+  const openInPopup = (item) => {
+    setRecordForEdit(item.id);
+    setOpenPopup(true);
   };
+  const Tableheaders = ["Sales Person", "Reporting Manager", "Action"];
 
-  const Tableheaders = ["SALES PERSON", "LAST NAME", "EMAIL", "ACTION"];
-
-  const filteredDailySalesReviews = dailySalesReviews.filter((review) =>
-    review.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const data = filteredDailySalesReviews.map((review) => ({
-    first_name: review.sales_person_name || "-",
-    last_name: review.total_answer_count || "-",
-    email: review.email || "-",
-  }));
+  const tableData = dailySalesReviewData
+    ? [
+        {
+          "Sales Person": dailySalesReviewData.sales_person_name || "-",
+          "Reporting Manager": dailySalesReviewData.reporting_manager || "-",
+        },
+      ]
+    : [];
 
   return (
     <>
       <CustomLoader open={isLoading} />
       <div style={styles.container}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "1em",
-          }}
-        >
-          <CustomSearch
-            filterSelectedQuery={searchQuery}
-            handleInputChange={handleInputChange}
-            getResetData={() => setSearchQuery("")}
+        <CustomSearch
+          filterSelectedQuery={searchQuery}
+          handleInputChange={(event) => setSearchQuery(event.target.value)}
+          getResetData={() => setSearchQuery("")}
+        />
+        {dailySalesReviewData && (
+          <CustomTable
+            headers={Tableheaders}
+            data={tableData}
+            openInPopup={openInPopup}
           />
-        </div>
-        {/* {filteredDailySalesReviews.length > 0 ? ( */}
-        <CustomTable headers={Tableheaders} data={data} />
-
-        {/* )} */}
+        )}
       </div>
+      <Popup
+        fullScreen={true}
+        title={"Update Review"}
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
+      >
+        <DailySaleReviewUpdate
+          setOpenPopup={setOpenPopup}
+          recordForEdit={recordForEdit}
+        />
+      </Popup>
     </>
   );
 };
-
 const styles = {
   container: {
     padding: "16px",
@@ -83,5 +86,4 @@ const styles = {
     flexDirection: "column",
     backgroundColor: "rgb(255, 255, 255)",
   },
-  // Add any other styles you need here
 };
