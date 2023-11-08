@@ -93,11 +93,10 @@ export const DailySaleReviewUpdate = ({ recordForEdit, setOpenPopup }) => {
       </div>
       <div>
         <strong>7. Total call (Answered):</strong>{" "}
-        {dailySalesReviewData.total_answer_count}
+        {recordForEdit.total_answer_count}
       </div>
       <div>
-        <strong>8. Follow Up Call :</strong>{" "}
-        {dailySalesReviewData.total_answer_count}
+        <strong>8. Follow Up Call :</strong> {recordForEdit.total_answer_count}
       </div>
       <div>
         <strong>9. Forecast achieved till now:</strong>
