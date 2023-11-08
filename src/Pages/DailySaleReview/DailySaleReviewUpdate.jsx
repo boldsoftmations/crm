@@ -1,29 +1,32 @@
 import React, { useState, useEffect } from "react";
-import CustomAxios from "../../services/api";
+import UserProfileService from "../../services/UserProfileService";
 
 export const DailySaleReviewUpdate = () => {
   const [dailySalesReviewData, setDailySalesReviewData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchDailySaleReviewData = async () => {
-      try {
-        const response = await CustomAxios.get(
-          "api/user/daily-sales-review/?email=sales_executive@glutape.com"
-        );
-        setDailySalesReviewData(response.data);
-      } catch (error) {
-        setError("Error fetching daily sales review data: " + error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDailySaleReviewData();
+    getDailySaleReviewData();
   }, []);
 
-  if (loading) {
+  const getDailySaleReviewData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await UserProfileService.getDailySaleReviewData();
+      console.log(response);
+      if (response && response.data) {
+        setDailySalesReviewData(response.data);
+      }
+    } catch (err) {
+      console.error("Error fetching daily sales review data", err);
+      setError("Error fetching daily sales review data: " + err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
@@ -31,7 +34,6 @@ export const DailySaleReviewUpdate = () => {
     return <div>Error: {error}</div>;
   }
 
-  // Function to render forecast data
   const renderForecast = () => {
     return dailySalesReviewData.forecast.map((item, index) => (
       <div key={index}>
@@ -41,7 +43,6 @@ export const DailySaleReviewUpdate = () => {
     ));
   };
 
-  // Function to render pending orders
   const renderPendingOrders = () => {
     return dailySalesReviewData.pending_order.map((order, index) => (
       <div key={index}>
@@ -50,7 +51,6 @@ export const DailySaleReviewUpdate = () => {
       </div>
     ));
   };
-
   return (
     <div>
       <h1>Daily Sales Review Update</h1>
@@ -58,63 +58,63 @@ export const DailySaleReviewUpdate = () => {
         <strong>Sales Person:</strong> {dailySalesReviewData.sales_person_name}
       </div>
       <div>
-        <strong>1. Total call (Answered):</strong>{" "}
-        {dailySalesReviewData.total_answer_count}
-      </div>
-      <div>
-        <strong>2. Follow Up Call :</strong>{" "}
-      </div>
-      <div>
-        <strong>3. Today billing in Qty Product wise (nos.):</strong>{" "}
-        {/* Map through invoice_product_quantity if available */}
-      </div>
-      <div>
-        <strong>4. Today PI given in Qty Product wise (nos.):</strong>{" "}
-        {/* Map through today_product_pi if available */}
-      </div>
-      <div>
-        <strong>5. Total PI pending for payment with Details:</strong>{" "}
-        {/* Map through approved_pi if available */}
-      </div>
-      <div>
-        <strong>6. Total billing till today in Qty Product wise (nos.):</strong>{" "}
-        {/* Render billing details here */}
-      </div>
-      <div>
         <strong>
-          7. No. of new customer till from the start of the month:
+          1. No. of new customer till from the start of the month:
         </strong>{" "}
         {dailySalesReviewData.new_customer}
       </div>
       <div>
-        <strong>8. No. of new customers added today:</strong>{" "}
+        <strong>2. No. of new customers added today:</strong>{" "}
         {dailySalesReviewData.today_new_customer}
       </div>
       <div>
-        <strong>9. No of customer assign:</strong>{" "}
+        <strong>3. No of customer assign:</strong>{" "}
         {dailySalesReviewData.assigned_customer}
       </div>
       <div>
-        <strong>10. No of dead customer:</strong>{" "}
+        <strong>4. No of dead customer:</strong>{" "}
         {dailySalesReviewData.dead_customer}
       </div>
       <div>
-        <strong>11. Forecast achieved till now:</strong>
-        {renderForecast()}
-      </div>
-      <div>
-        <strong>12. Kyc pending – no of customer where kyc pending:</strong>{" "}
+        <strong>5. Kyc pending – no of customer where kyc pending:</strong>{" "}
         {dailySalesReviewData.incomplete_kyc}
       </div>
       <div>
         <strong>
-          13. Potential pending - no of customer where potential pending:
+          6. Potential pending - no of customer where potential pending:
         </strong>{" "}
         {dailySalesReviewData.incomplete_potential}
       </div>
       <div>
-        <strong>14. Pending orders (orderbook):</strong>
+        <strong>7. Total call (Answered):</strong>{" "}
+        {dailySalesReviewData.total_answer_count}
+      </div>
+      <div>
+        <strong>8. Follow Up Call :</strong>{" "}
+        {dailySalesReviewData.total_answer_count}
+      </div>
+      <div>
+        <strong>9. Forecast achieved till now:</strong>
+
+        {renderForecast()}
+      </div>
+      <div>
+        <strong>10. Pending orders (orderbook):</strong>
         {renderPendingOrders()}
+      </div>
+      <div>
+        <strong>11. Today billing in Qty Product wise (nos.):</strong>{" "}
+      </div>
+      <div>
+        <strong>12. Today PI given in Qty Product wise (nos.):</strong>{" "}
+      </div>
+      <div>
+        <strong>13. Total PI pending for payment with Details:</strong>{" "}
+      </div>
+      <div>
+        <strong>
+          14. Total billing till today in Qty Product wise (nos.):
+        </strong>{" "}
       </div>
       <div className="review-footer">
         <div>
