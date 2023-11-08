@@ -96,9 +96,33 @@ const createProductObjectionData = (data) => {
 const updateProductObjectionData = (id, data) => {
   return CustomAxios.patch(`/api/user/product-objection/${id}/`, data);
 };
-const getDailySaleReviewData = () =>{
-  return CustomAxios.get("api/user/daily-sales-review/?email=sales_executive@glutape.com");
-}
+
+// Daily sales Review routes
+const getDailySaleReviewData = (
+  selectedYearMonth,
+  salesPersonByFilter,
+  searchQuery
+) => {
+  console.log("selectedYearMonth user service", selectedYearMonth);
+  // Constructing the query parameters
+  const params = new URLSearchParams();
+
+  if (selectedYearMonth) {
+    params.append("year_month", selectedYearMonth);
+  }
+
+  if (salesPersonByFilter) {
+    params.append("email", salesPersonByFilter);
+  }
+
+  if (searchQuery) {
+    params.append("search", searchQuery);
+  }
+
+  // Sending a GET request with query parameters
+  return CustomAxios.get(`api/user/daily-sales-review/?${params.toString()}`);
+};
+
 const UserProfileService = {
   getProfile,
   getAllUserProfileData,
