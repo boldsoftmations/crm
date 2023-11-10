@@ -1,134 +1,238 @@
-import React, { useState, useEffect } from "react";
-import UserProfileService from "../../services/UserProfileService";
+import React, { useMemo } from "react";
+import {
+  Card,
+  CardContent,
+  Divider,
+  Grid,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemText,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { CustomChart } from "../../Components/CustomChart";
+import {
+  prepareTodayProductPiChartData,
+  prepareApprovePiChartData,
+  preparePendingOrdersChartData,
+  prepareForecastChartData,
+  prepareInvoiceGroupedBarChartData,
+  approvePiChartOptions,
+  forecastChartOptions,
+  pendingOrdersChartOptions,
+  todayProductPiChartOptions,
+  InvoiceChartOptions,
+} from "./chartDataPreparers";
+import { G } from "@react-pdf/renderer";
 
-export const DailySaleReviewUpdate = ({ recordForEdit, setOpenPopup }) => {
-  // Function to render forecast data
-  const renderForecast = () => {
-    // Check if recordForEdit and recordForEdit.forecast are defined and is an array
-    if (recordForEdit && Array.isArray(recordForEdit.forecast)) {
-      return recordForEdit.forecast.map((item, index) => (
-        <div key={index}>
-          {item.description} - Forecast: {item.forecast}, Actual: {item.actual},
-          Percentage: {item.percentage}%
-        </div>
-      ));
-    }
-    return <div>No forecast data available.</div>; // Return this if forecast data is not available
-  };
-
-  const renderPendingOrders = () => {
-    // Check if recordForEdit.pending_order is defined and is an array before mapping
-    if (
-      recordForEdit.pending_order &&
-      Array.isArray(recordForEdit.pending_order)
-    ) {
-      return recordForEdit.pending_order.map((order, index) => (
-        <div key={index}>
-          {order.product__description__name} - Pending Quantity:{" "}
-          {order.total_pending_quantity}
-        </div>
-      ));
-    }
-    return <div>No pending orders.</div>; // Return this if pending orders data is not available
-  };
+function generateListItem(primaryText, value, theme) {
   return (
-    <div>
-      <h1>Daily Sales Review Update</h1>
-      <div>
-        <strong>Sales Person:</strong> {recordForEdit.sales_person_name}
-      </div>
-      <div>
-        <strong>1. Total call (Answered):</strong>{" "}
-        {recordForEdit.total_answer_count}
-      </div>
-      <div>
-        <strong>2. Follow Up Call :</strong>{" "}
-      </div>
-      <div>
-        <strong>3. Today billing in Qty Product wise (nos.):</strong>{" "}
-        {/* Map through invoice_product_quantity if available */}
-      </div>
-      <div>
-        <strong>4. Today PI given in Qty Product wise (nos.):</strong>{" "}
-        {/* Map through today_product_pi if available */}
-      </div>
-      <div>
-        <strong>5. Total PI pending for payment with Details:</strong>{" "}
-        {/* Map through approved_pi if available */}
-      </div>
-      <div>
-        <strong>6. Total billing till today in Qty Product wise (nos.):</strong>{" "}
-        {/* Render billing details here */}
-      </div>
-      <div>
-        <strong>
-          1. No. of new customer till from the start of the month:
-        </strong>{" "}
-        {recordForEdit.new_customer}
-      </div>
-      <div>
-        <strong>8. No. of new customers added today:</strong>{" "}
-        {recordForEdit.today_new_customer}
-      </div>
-      <div>
-        <strong>9. No of customer assign:</strong>{" "}
-        {recordForEdit.assigned_customer}
-      </div>
-      <div>
-        <strong>10. No of dead customer:</strong> {recordForEdit.dead_customer}
-      </div>
-      <div>
-        <strong>11. Forecast achieved till now:</strong>
-        {renderForecast()}
-      </div>
-      <div>
-        <strong>12. Kyc pending – no of customer where kyc pending:</strong>{" "}
-        {recordForEdit.incomplete_kyc}
-      </div>
-      <div>
-        <strong>
-          6. Potential pending - no of customer where potential pending:
-        </strong>{" "}
-        {recordForEdit.incomplete_potential}
-      </div>
-      <div>
-        <strong>7. Total call (Answered):</strong>{" "}
-        {recordForEdit.total_answer_count}
-      </div>
-      <div>
-        <strong>8. Follow Up Call :</strong> {recordForEdit.total_answer_count}
-      </div>
-      <div>
-        <strong>9. Forecast achieved till now:</strong>
+    <ListItem>
+      <ListItemText primary={primaryText} />
+      <ListItemSecondaryAction>
+        <LinearProgress
+          variant="determinate"
+          value={100}
+          size={20}
+          color="primary"
+        />
+        <Typography variant="caption" style={{ marginLeft: theme.spacing(1) }}>
+          {value}
+        </Typography>
+      </ListItemSecondaryAction>
+    </ListItem>
+  );
+}
 
-        {renderForecast()}
-      </div>
-      <div>
-        <strong>10. Pending orders (orderbook):</strong>
-        {renderPendingOrders()}
-      </div>
-      <div>
-        <strong>11. Today billing in Qty Product wise (nos.):</strong>{" "}
-      </div>
-      <div>
-        <strong>12. Today PI given in Qty Product wise (nos.):</strong>{" "}
-      </div>
-      <div>
-        <strong>13. Total PI pending for payment with Details:</strong>{" "}
-      </div>
-      <div>
-        <strong>
-          14. Total billing till today in Qty Product wise (nos.):
-        </strong>{" "}
-      </div>
-      <div className="review-footer">
-        <div>
-          <strong>Sales person:</strong> {recordForEdit.sales_person_name}
-        </div>
-        <div>
-          <strong>Reporting manager:</strong> {recordForEdit.reporting_manager}
-        </div>
-      </div>
+export const DailySaleReviewUpdate = ({ recordForEdit }) => {
+  const theme = useTheme();
+
+  // useMemo hooks for chart data preparation
+  const todayProductPiChartData = useMemo(
+    () => prepareTodayProductPiChartData(recordForEdit),
+    [recordForEdit]
+  );
+  const approvePiChartData = useMemo(
+    () => prepareApprovePiChartData(recordForEdit),
+    [recordForEdit]
+  );
+  const pendingOrdersChartData = useMemo(
+    () => preparePendingOrdersChartData(recordForEdit),
+    [recordForEdit]
+  );
+  const forecastChartData = useMemo(
+    () => prepareForecastChartData(recordForEdit),
+    [recordForEdit]
+  );
+  const invoiceGroupedBarChartData = useMemo(
+    () => prepareInvoiceGroupedBarChartData(recordForEdit),
+    [recordForEdit]
+  );
+
+  return (
+    <div style={{ padding: theme.spacing(3) }}>
+      <Grid container spacing={2} alignItems="flex-start">
+        <Grid item xs={12}>
+          <Typography variant="h4">
+            Daily Sales Review - {recordForEdit.date}
+          </Typography>
+        </Grid>
+        <Grid container spacing={2}>
+          {/* Call and Customer Overview */}
+          <Grid item xs={12} md={6} lg={4}>
+            <Card>
+              <CardContent style={{ height: "450px" }}>
+                <Typography variant="h6" color="primary">
+                  Call and Customer Overview
+                </Typography>
+                <Divider />
+                <List>
+                  {generateListItem(
+                    "Total Calls Answered",
+                    recordForEdit.total_answer_count,
+                    theme
+                  )}
+                  {generateListItem(
+                    "Assigned Customers",
+                    recordForEdit.assigned_customer,
+                    theme
+                  )}
+                  {generateListItem(
+                    "Dead Customers",
+                    recordForEdit.dead_customer,
+                    theme
+                  )}
+                  {generateListItem(
+                    "New Customers This Month",
+                    recordForEdit.new_customer,
+                    theme
+                  )}
+                  {generateListItem(
+                    "Today's New Customers",
+                    recordForEdit.today_new_customer,
+                    theme
+                  )}
+                  {generateListItem(
+                    "KYC Incomplete",
+                    recordForEdit.incomplete_kyc,
+                    theme
+                  )}
+                  {generateListItem(
+                    "Potential Incomplete",
+                    recordForEdit.incomplete_potential,
+                    theme
+                  )}
+                </List>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Forecast vs Actual Sales  (in Rs.) */}
+
+          <Grid item xs={12} md={6} lg={8}>
+            <Card>
+              <CardContent style={{ height: "450px" }}>
+                <Typography variant="h6" color="primary">
+                  Forecast vs Actual Sales (in Rs.)
+                </Typography>
+                <Divider />
+                <CustomChart
+                  chartType="ComboChart"
+                  data={forecastChartData}
+                  options={forecastChartOptions}
+                  heightStyle="350px"
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Invoice Quantity Overview */}
+          <Grid item xs={12} lg={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" color="primary">
+                  Invoice Quantity Overview
+                </Typography>
+                <Divider />
+                <CustomChart
+                  chartType="BarChart"
+                  data={invoiceGroupedBarChartData}
+                  options={InvoiceChartOptions}
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/*Today's Product PI Financial Overview */}
+          <Grid item xs={12} lg={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" color="primary">
+                  Today's Product PI Financial Overview
+                </Typography>
+                <Divider />
+                <CustomChart
+                  chartType="ColumnChart"
+                  data={todayProductPiChartData}
+                  options={todayProductPiChartOptions}
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Pending Orders */}
+          <Grid item xs={12} lg={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" color="primary">
+                  Pending Orders
+                </Typography>
+                <Divider />
+                <CustomChart
+                  chartType="BarChart"
+                  data={pendingOrdersChartData}
+                  options={pendingOrdersChartOptions}
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/*  Approved PI Financial Overview */}
+          <Grid item xs={12} lg={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" color="primary">
+                  Approved PI Financial Overview
+                </Typography>
+                <Divider />
+                <CustomChart
+                  chartType="ColumnChart"
+                  data={approvePiChartData}
+                  options={approvePiChartOptions}
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Reporting Manager and Sales Person */}
+          <Grid item xs={12}>
+            <Grid container justifyContent="space-between">
+              <Grid item xs={6}>
+                <Typography variant="subtitle1">
+                  Salesperson: {recordForEdit.sales_person_name}
+                </Typography>
+              </Grid>
+              <Grid item xs={6} style={{ textAlign: "right" }}>
+                <Typography variant="subtitle1">
+                  Reporting Manager: {recordForEdit.reporting_manager}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
     </div>
   );
 };

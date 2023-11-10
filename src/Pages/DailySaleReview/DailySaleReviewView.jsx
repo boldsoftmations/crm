@@ -39,9 +39,19 @@ export const DailySaleReviewView = () => {
     UsersData.groups.includes("Director") ? assignedOption[0].email : null
   );
 
+  const formatDate = (dateString) => {
+    return dateString
+      ? new Intl.DateTimeFormat("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }).format(new Date(dateString))
+      : "-";
+  };
+
   const handleFilterChange = (value) => {
     setSalesPersonByFilter(value);
-    getDailySaleReviewData(value, searchQuery);
+    getDailySaleReviewData(selectedYearMonth, value, searchQuery);
   };
 
   useEffect(() => {
@@ -76,6 +86,7 @@ export const DailySaleReviewView = () => {
   );
 
   const openInPopup = (item) => {
+    console.log("item", item);
     setRecordForEdit(item);
     setOpenPopup(true);
   };
@@ -129,7 +140,11 @@ export const DailySaleReviewView = () => {
               variant="contained"
               color="primary"
               onClick={() =>
-                getDailySaleReviewData(salesPersonByFilter, searchQuery)
+                getDailySaleReviewData(
+                  selectedYearMonth,
+                  salesPersonByFilter,
+                  searchQuery
+                )
               }
               sx={{ marginRight: "10px" }}
             >
@@ -140,7 +155,11 @@ export const DailySaleReviewView = () => {
               color="secondary"
               onClick={() => {
                 setSearchQuery("");
-                getDailySaleReviewData(salesPersonByFilter, "");
+                getDailySaleReviewData(
+                  selectedYearMonth,
+                  salesPersonByFilter,
+                  ""
+                );
               }}
             >
               Reset
@@ -156,7 +175,7 @@ export const DailySaleReviewView = () => {
                 textAlign: "center",
               }}
             >
-              Daily Sales Review
+              Sales Review
             </h3>
           </Box>
           <TableContainer component={Paper}>
@@ -183,10 +202,10 @@ export const DailySaleReviewView = () => {
                       {data.reporting_manager || "-"}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {data.date || "-"}
+                      {formatDate(data.date) || "-"}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      <Button onClick={() => openInPopup(data)}>Update</Button>
+                      <Button onClick={() => openInPopup(data)}>View</Button>
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
@@ -195,7 +214,7 @@ export const DailySaleReviewView = () => {
           </TableContainer>
           <Popup
             fullScreen={true}
-            title="Update Review"
+            title="View Sale Review"
             openPopup={openPopup}
             setOpenPopup={setOpenPopup}
           >

@@ -1014,14 +1014,14 @@ export const ListItems = (props) => {
           <ListItem
             button
             component={RouterLink}
-            to="/user/daily-sale-review"
+            to="/user/sale-review"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
           >
             <ListItemIcon>
               <AnalyticsIcon />
             </ListItemIcon>
-            <ListItemText primary="Daily Sale Review" />
+            <ListItemText primary="Sales Review" />
           </ListItem>
         </>
       ) : (
@@ -2517,14 +2517,14 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/user/daily-sale-review"
+                to="/user/sale-review"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <AnalyticsIcon />
                 </ListItemIcon>
-                <ListItemText primary="Daily Sale Review" />
+                <ListItemText primary="Sales Review" />
               </ListItem>
             </>
           )}
@@ -2892,14 +2892,14 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/user/daily-sale-review"
+                to="/user/sale-review"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <AnalyticsIcon />
                 </ListItemIcon>
-                <ListItemText primary="Daily Sale Review" />
+                <ListItemText primary="Sales Review" />
               </ListItem>
             </>
           )}
@@ -3244,14 +3244,14 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/user/daily-sale-review"
+                to="/user/sale-review"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <AnalyticsIcon />
                 </ListItemIcon>
-                <ListItemText primary="Daily Sale Review" />
+                <ListItemText primary="Sales Review" />
               </ListItem>
             </>
           )}
@@ -3557,14 +3557,14 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/user/daily-sale-review"
+                to="/user/sale-review"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <AnalyticsIcon />
                 </ListItemIcon>
-                <ListItemText primary="Daily Sale Review" />
+                <ListItemText primary="Sales Review" />
               </ListItem>
             </>
           )}
@@ -3869,14 +3869,14 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/user/daily-sale-review"
+                to="/user/sale-review"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <AnalyticsIcon />
                 </ListItemIcon>
-                <ListItemText primary="Daily Sale Review" />
+                <ListItemText primary="Sales Review" />
               </ListItem>
             </>
           )}

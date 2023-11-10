@@ -103,7 +103,6 @@ const getDailySaleReviewData = (
   salesPersonByFilter,
   searchQuery
 ) => {
-  console.log("selectedYearMonth user service", selectedYearMonth);
   // Constructing the query parameters
   const params = new URLSearchParams();
 
