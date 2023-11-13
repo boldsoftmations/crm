@@ -40,6 +40,7 @@ export const ListItems = (props) => {
   const [dispatchDetails, setDispatchDetails] = useState(false);
   const [expandInventory, setExpandInventory] = useState(false);
   const [expandUser, setExpandUser] = useState(false);
+  const [expandHr, setExpandHr] = useState(false);
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
 
@@ -1027,16 +1028,34 @@ export const ListItems = (props) => {
           {/* Hr Recruitment Model */}
           <ListItem
             button
-            component={RouterLink}
-            to="/user/hr-model"
+            onClick={() => setExpandHr(!expandHr)}
             style={{ width: 300 }}
-            onClick={() => setOpen(false)}
           >
             <ListItemIcon>
               <WorkIcon />
             </ListItemIcon>
-            <ListItemText primary="Hr Model" />
+            <ListItemText primary="Recruitment" />
+            {expandHr ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItem>
+
+          <Collapse in={expandHr} timeout="auto" unmountOnExit>
+            <Divider />
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/hr-model"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Hr Model"
+                />
+              </ListItem>
+            </List>
+          </Collapse>
         </>
       ) : (
         <>
