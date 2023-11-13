@@ -28,7 +28,7 @@ import FollowTheSignsIcon from "@mui/icons-material/FollowTheSigns";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
-
+import WorkIcon from "@mui/icons-material/Work";
 export const ListItems = (props) => {
   const { setOpen } = props;
   const [expand, setExpand] = useState(false);
@@ -1022,6 +1022,20 @@ export const ListItems = (props) => {
               <AnalyticsIcon />
             </ListItemIcon>
             <ListItemText primary="Sales Review" />
+          </ListItem>
+
+          {/* Hr Recruitment Model */}
+          <ListItem
+            button
+            component={RouterLink}
+            to="/user/hr-model"
+            style={{ width: 300 }}
+            onClick={() => setOpen(false)}
+          >
+            <ListItemIcon>
+              <WorkIcon />
+            </ListItemIcon>
+            <ListItemText primary="Hr Model" />
           </ListItem>
         </>
       ) : (
