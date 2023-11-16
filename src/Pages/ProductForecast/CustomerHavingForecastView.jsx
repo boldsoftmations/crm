@@ -281,22 +281,24 @@ export const CustomerHavingForecastView = () => {
               alignItems="center"
               sx={{ marginRight: 5, marginLeft: 5 }}
             >
-              <Grid item xs={12} sm={3}>
-                <Autocomplete
-                  size="small"
-                  sx={{ minWidth: 150 }}
-                  onChange={(event, value) => handleFilterChange(value)}
-                  value={salesPersonByFilter}
-                  options={assignedOption.map((option) => option.email)}
-                  getOptionLabel={(option) => option}
-                  renderInput={(params) => (
-                    <CustomTextField
-                      {...params}
-                      label="Filter By Sales Person"
-                    />
-                  )}
-                />
-              </Grid>
+              {!UserData.groups.includes("Sales Executive") && (
+                <Grid item xs={12} sm={3}>
+                  <Autocomplete
+                    size="small"
+                    sx={{ minWidth: 150 }}
+                    onChange={(event, value) => handleFilterChange(value)}
+                    value={salesPersonByFilter}
+                    options={assignedOption.map((option) => option.email)}
+                    getOptionLabel={(option) => option}
+                    renderInput={(params) => (
+                      <CustomTextField
+                        {...params}
+                        label="Filter By Sales Person"
+                      />
+                    )}
+                  />
+                </Grid>
+              )}
               <Grid item xs={12} sm={3}>
                 <CustomTextField
                   size="small"
