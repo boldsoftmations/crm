@@ -5,7 +5,7 @@ import Hr from "../../../services/Hr";
 export const DesignationUpdate = ({
   designationId,
   setOpenUpdatePopup,
-  fetchDesignations,
+  getDesignationsDetails,
 }) => {
   const [designation, setDesignation] = useState(designationId.name);
 
@@ -13,7 +13,7 @@ export const DesignationUpdate = ({
     e.preventDefault();
     try {
       await Hr.updateDesignations(designationId.id, { designation });
-      fetchDesignations();
+      getDesignationsDetails();
       setOpenUpdatePopup(false);
     } catch (error) {}
   };
