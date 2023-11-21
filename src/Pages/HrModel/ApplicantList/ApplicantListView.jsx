@@ -1,123 +1,127 @@
-import React, { useState } from "react";
-import {
-  Grid,
-  Paper,
-  Box,
-  Table,
-  TableContainer,
-  TableHead,
-  TableCell,
-  TableRow,
-  TableBody,
-} from "@mui/material";
-import { styled } from "@mui/material/styles";
-import { tableCellClasses } from "@mui/material/TableCell";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Grid, Button, Paper } from "@mui/material";
+import { Popup } from "../../../Components/Popup";
 import { ApplicantListCreate } from "./ApplicantListCreate";
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
+import { ApplicantListUpdate } from "./ApplicantListUpdate";
+import { CustomTable } from "../../../Components/CustomTable";
+import Hr from "./../../../services/Hr";
 
 export const ApplicantListView = () => {
-  const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
-  const [candidates, setCandidates] = useState([]);
+  const [applicants, setApplicants] = useState([]);
+  const [openCreatePopup, setOpenCreatePopup] = useState(false);
+  const [openUpdatePopup, setOpenUpdatePopup] = useState(false);
+  const [recordForEdit, setRecordForEdit] = useState(null);
 
-  const handleCandidateCreated = (newCandidate) => {
-    setCandidates([...candidates, newCandidate]);
-    setIsCreatePopupOpen(false);
-  };
-  const fullPagePopupStyle = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    zIndex: 1000, // Ensure it's above other items
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+  const openInPopup = (item) => {
+    setRecordForEdit(item);
+    setOpenUpdatePopup(true);
   };
 
-  const popupContentStyle = {
-    backgroundColor: "#fff",
-    padding: "20px",
-    borderRadius: "5px",
-    width: "80%",
-    maxWidth: "500px",
-    height: "auto",
-    zIndex: 1001,
+  const fetchApplicants = async () => {
+    try {
+      const response = await Hr.getApplicants();
+      setApplicants(response.data);
+    } catch (error) {
+      console.error("Error fetching applicants:", error);
+    }
   };
+
+  useEffect(() => {
+    fetchApplicants();
+  }, []);
+
+  const addNewApplicant = async (newApplicant) => {
+    try {
+      await Hr.addApplicant(newApplicant);
+      fetchApplicants();
+      setOpenCreatePopup(false);
+    } catch (error) {
+      console.error("Error adding applicant:", error);
+    }
+  };
+
+  const updateApplicant = async (id, updates) => {
+    try {
+      await Hr.updateApplicant(id, updates);
+      fetchApplicants();
+      setOpenUpdatePopup(false);
+    } catch (error) {
+      console.error("Error updating applicant:", error);
+    }
+  };
+
+  const handleAddApplicantClick = () => setOpenCreatePopup(true);
+
+  const handleApplicantAdded = () => {
+    fetchApplicants();
+    setOpenCreatePopup(false);
+  };
+  const handleApplicantUpdated = () => {
+    fetchApplicants();
+    setOpenUpdatePopup(false);
+  };
+  const TableHeader = [
+    "ID",
+    "Name of Candidate",
+    "Phone Number",
+    "Current Location",
+    "Current Salary",
+    "Shortlisted",
+    "Action",
+  ];
+  const TableData = applicants.map((applicant) => ({
+    id: applicant.id,
+    name: applicant.name,
+    phone: applicant.contact,
+    location: applicant.current_location,
+    current_salary: applicant.current_salary,
+    shortlisted: applicant.shortlisted,
+  }));
 
   return (
-    <Grid item xs={12}>
-      <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          marginBottom="10px"
-        >
-          <Box flexGrow={1} display="flex" justifyContent="center">
-            <h3
-              style={{
-                marginBottom: "1em",
-                fontSize: "24px",
-                color: "rgb(34, 34, 34)",
-                fontWeight: 800,
-              }}
-            >
-              Applicant List
-            </h3>
-          </Box>
-          <button
-            style={{
-              padding: "10px 20px",
-              fontSize: "16px",
-              backgroundColor: "#1976d2",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-            onClick={() => setIsCreatePopupOpen(true)}
+    <Box sx={{ p: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Job Applicants
+      </Typography>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddApplicantClick}
           >
-            Add Candidate
-          </button>
-        </Box>
-
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 700 }} aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell align="center">
-                  Name Of Candidate
-                </StyledTableCell>
-                <StyledTableCell align="center">Email Address</StyledTableCell>
-                <StyledTableCell align="center">Action</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {/* The candidates mapping will be removed since we're not using static data */}
-            </TableBody>
-          </Table>
-        </TableContainer>
+            Add Applicant
+          </Button>
+        </Grid>
+      </Grid>
+      <Paper sx={{ p: 2, m: 3 }}>
+        <CustomTable
+          headers={TableHeader}
+          data={TableData}
+          openInPopup={openInPopup}
+        />
       </Paper>
-      {isCreatePopupOpen && (
-        <div style={fullPagePopupStyle}>
-          <div style={popupContentStyle}>
-            <button onClick={() => setIsCreatePopupOpen(false)}>X</button>
-            {/* Pass the callback function to the ApplicantListCreate component */}
-            <ApplicantListCreate onCandidateCreated={handleCandidateCreated} />
-          </div>
-        </div>
-      )}
-    </Grid>
+      <Popup
+        title="Add New Applicant"
+        openPopup={openCreatePopup}
+        setOpenPopup={setOpenCreatePopup}
+      >
+        <ApplicantListCreate
+          addNewApplicant={addNewApplicant}
+          onApplicantAdded={handleApplicantAdded}
+        />
+      </Popup>
+      <Popup
+        title="Edit Applicant"
+        openPopup={openUpdatePopup}
+        setOpenPopup={setOpenUpdatePopup}
+      >
+        <ApplicantListUpdate
+          recordForEdit={recordForEdit}
+          updateApplicant={updateApplicant}
+          onApplicantUpdated={handleApplicantUpdated}
+        />
+      </Popup>
+    </Box>
   );
 };

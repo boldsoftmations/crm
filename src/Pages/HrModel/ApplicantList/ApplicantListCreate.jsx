@@ -6,30 +6,24 @@ import {
   Button,
   TextField,
   Autocomplete,
-  Checkbox,
-  FormControlLabel,
   Container,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
+import Hr from "../../../services/Hr";
 
-export const ApplicantListCreate = () => {
+export const ApplicantListCreate = ({ addNewApplicant, onApplicantAdded }) => {
   const [formData, setFormData] = useState({
     name: "",
-    phoneNumber: "",
-    emailAddress: "",
-    highestEducation: "",
-    candidateSource: "",
-    interested: "",
-    noReason: "",
-    interestedDesignation: "",
-    noticePeriod: "",
-    currentLocation: "",
-    willingToRelocate: false,
-    currentSalary: "",
-    expectedSalary: "",
-    latestCompany: "",
-    spokenEnglish: "",
-    stage: "",
-    rejectionComment: "",
+    contact: "",
+    email: "",
+    qualification: "",
+    candidate_source: "",
+    current_location: "",
+    current_salary: "",
+    expected_salary: "",
+    spoken_english: "",
+    shortlisted: false,
   });
 
   const handleInputChange = (event, newValue) => {
@@ -41,18 +35,18 @@ export const ApplicantListCreate = () => {
     }));
   };
 
-  const handleCheckboxChange = (event) => {
-    setFormData({ ...formData, [event.target.name]: event.target.checked });
-  };
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    try {
+      const response = await Hr.addApplicant(formData);
+      console.log("Applicant created:", response.data);
+      onApplicantAdded(); // Call the callback function after successful creation
+    } catch (error) {
+      console.error("Error creating applicant:", error);
+    }
   };
-
-  const reasonsForNoOptions = ["Reason 1", "Reason 2", "Reason 3"];
 
   const spokenEnglishOptions = ["Bad", "Average", "Good"];
-  const stageOptions = ["Shortlisted", "Rejected"];
 
   return (
     <Container
@@ -82,27 +76,27 @@ export const ApplicantListCreate = () => {
           <Grid item xs={12}>
             <TextField
               label="Phone Number"
-              name="phoneNumber"
+              name="contact"
               fullWidth
-              value={formData.phoneNumber}
+              value={formData.contact}
               onChange={handleInputChange}
             />
           </Grid>
           <Grid item xs={12}>
             <TextField
               label="Email Address"
-              name="emailAddress"
+              name="email"
               fullWidth
-              value={formData.emailAddress}
+              value={formData.email}
               onChange={handleInputChange}
             />
           </Grid>
           <Grid item xs={12}>
             <TextField
               label="Highest Education Qualification"
-              name="highestEducation"
+              name="qualification"
               fullWidth
-              value={formData.highestEducation}
+              value={formData.qualification}
               onChange={handleInputChange}
             />
           </Grid>
@@ -110,12 +104,39 @@ export const ApplicantListCreate = () => {
             <TextField
               required
               fullWidth
-              id="candidateSource"
+              id="candidate_source"
               label="Candidate Source"
-              name="candidateSource"
-              value={formData.candidateSource}
-              onChange={handleInputChange} // Use the updated function here
+              name="candidate_source"
+              value={formData.candidate_source}
+              onChange={handleInputChange}
               margin="normal"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Current Location"
+              name="current_location"
+              value={formData.current_location}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Current Salary"
+              name="current_salary"
+              fullWidth
+              value={formData.current_salary}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Expected Salary"
+              name="expected_salary"
+              fullWidth
+              value={formData.expected_salary}
+              onChange={handleInputChange}
             />
           </Grid>
 
@@ -127,87 +148,51 @@ export const ApplicantListCreate = () => {
               renderInput={(params) => (
                 <TextField {...params} label="Interested" />
               )}
-              value={formData.interested}
+              value={formData.is_interested}
               onChange={(event, newValue) => {
                 handleInputChange(event, newValue);
                 if (newValue === "No") {
                   setFormData({
                     ...formData,
-                    noReason: "", // Clear the "noReason" field when "No" is selected
+                    noReason: "",
                   });
                 }
               }}
             />
           </Grid>
 
-          {formData.interested === "No" && (
-            <Grid item xs={12}>
-              <Autocomplete
-                id="noReason"
-                options={reasonsForNoOptions}
-                fullWidth
-                renderInput={(params) => (
-                  <TextField {...params} label="Reason" />
-                )}
-                value={formData.noReason}
-                onChange={(event, newValue) => {
-                  handleInputChange(event, newValue);
-                }}
-              />
-            </Grid>
-          )}
-          {formData.noReason ===
-            "Not Looking to work in this profile, can consider for other type of profile" && (
-            <Grid item xs={12}>
-              <TextField
-                id="interestedDesignation"
-                label="Interested Designation"
-                fullWidth
-                value={formData.interestedDesignation}
-                onChange={(event) => {
-                  handleInputChange(event);
-                }}
-              />
-            </Grid>
-          )}
-          <Grid item xs={12}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formData.willingToRelocate}
-                  onChange={handleCheckboxChange}
-                  name="willingToRelocate"
-                />
-              }
-              label="Willing to Relocate"
-            />
-          </Grid>
           <Grid item xs={12}>
             <Autocomplete
-              id="spokenEnglish"
+              id="spoken_english"
               options={spokenEnglishOptions}
               fullWidth
               renderInput={(params) => (
                 <TextField {...params} label="Spoken English" />
               )}
-              value={formData.spokenEnglish}
+              value={formData.spoken_english}
               onChange={(event, newValue) => {
                 handleInputChange(event, newValue);
               }}
             />
           </Grid>
           <Grid item xs={12}>
-            <Autocomplete
-              id="stage"
-              options={stageOptions}
-              fullWidth
-              renderInput={(params) => <TextField {...params} label="Stage" />}
-              value={formData.stage}
-              onChange={(event, newValue) => {
-                handleInputChange(event, newValue);
-              }}
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={formData.shortlisted}
+                  onChange={(event) => {
+                    setFormData({
+                      ...formData,
+                      shortlisted: event.target.checked,
+                    });
+                  }}
+                  name="shortlisted"
+                />
+              }
+              label="Shortlisted"
             />
           </Grid>
+
           <Grid item xs={12}>
             <Button variant="contained" color="primary" onClick={handleSubmit}>
               Create Applicant
