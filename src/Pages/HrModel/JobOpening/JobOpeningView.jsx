@@ -1,58 +1,78 @@
-import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Grid,
-  Button,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  TextField,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Grid, Button, Paper } from "@mui/material";
 import { Popup } from "../../../Components/Popup";
 import { JobOpeningCreate } from "./JobOpeningCreate";
 import { JobOpeningUpdate } from "./JobOpeningUpdate";
+import { CustomTable } from "../../../Components/CustomTable";
+import Hr from "./../../../services/Hr";
 
 export const JobOpeningView = () => {
-  const [openCreatePopup, setOpenCreatePopup] = useState(false);
   const [jobOpenings, setJobOpenings] = useState([]);
-  const [openPopup, setOpenPopup] = useState(false);
-  const [recordForEdit, setRecordForEdit] = useState(null);
+  const [openCreatePopup, setOpenCreatePopup] = useState(false);
   const [openUpdatePopup, setOpenUpdatePopup] = useState(false);
+  const [editJobOpening, setEditJobOpening] = useState({});
+  const [openEditPopup, setOpenEditPopup] = useState(false);
+  const [recordForEdit, setRecordForEdit] = useState(false);
 
-  const updateJobOpening = (updatedRecord) => {
-    setJobOpenings((prevJobOpenings) =>
-      prevJobOpenings.map((job) =>
-        job.id === updatedRecord.id ? updatedRecord : job
-      )
-    );
-    closeUpdatePopup();
-  };
-  const handleEditClick = (item) => {
+  const openInPopup = (item) => {
     setRecordForEdit(item);
-    setOpenUpdatePopup(true); // Open the update popup
-  };
-  const closeUpdatePopup = () => {
-    setOpenUpdatePopup(false);
+    setOpenUpdatePopup(true);
   };
 
-  const handleAddJobOpeningClick = () => {
-    setRecordForEdit(null); // Clear any previous records for editing
-    setOpenCreatePopup(true);
+  const fetchJobOpenings = async () => {
+    try {
+      const response = await Hr.getJobOpening();
+      setJobOpenings(response.data);
+    } catch (error) {
+      console.error("Error fetching job openings:", error);
+    }
   };
 
-  const closeCreatePopup = () => {
-    setOpenCreatePopup(false);
+  useEffect(() => {
+    fetchJobOpenings();
+  }, []);
+
+  const addNewJobOpening = async (newJob) => {
+    try {
+      await Hr.addJobOpening(newJob);
+      fetchJobOpenings();
+      setOpenCreatePopup(false);
+    } catch (error) {
+      console.error("Error adding job opening:", error);
+    }
   };
 
-  const addNewJobOpening = (newJobOpening) => {
-    setJobOpenings((prevJobOpenings) => [
-      ...prevJobOpenings,
-      { ...newJobOpening, id: Date.now() }, // Use Date.now() to generate a unique id
-    ]);
-    closeCreatePopup();
+  const updateJobOpening = async (id, updates) => {
+    try {
+      await Hr.updateJobOpening(id, updates);
+      fetchJobOpenings();
+      setOpenEditPopup(false);
+    } catch (error) {
+      console.error("Error updating job opening:", error);
+    }
   };
+
+  const handleAddJobOpeningClick = () => setOpenCreatePopup(true);
+  const handleEditJobOpeningClick = (job) => {
+    setEditJobOpening(job);
+    setOpenUpdatePopup(true);
+  };
+
+  const TableHeader = [
+    "ID",
+    "Designation",
+    "Department",
+    "Location",
+    "Salary Range",
+    "Action",
+  ];
+  const TableData = jobOpenings.map((job) => ({
+    id: job.id,
+    designation: job.designation,
+    department: job.department,
+    location: job.location,
+    salary_ranges: job.salary_ranges,
+  }));
 
   return (
     <Box sx={{ p: 4 }}>
@@ -60,52 +80,31 @@ export const JobOpeningView = () => {
         Job Openings
       </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
-          <TextField size="small" label="Search" variant="outlined" fullWidth />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <Button variant="contained" color="primary" fullWidth>
-            Search
-          </Button>
-        </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12}>
           <Button
             variant="contained"
             color="primary"
-            onClick={handleAddJobOpeningClick} // Open popup on click
+            onClick={handleAddJobOpeningClick}
           >
             Add Job Opening
           </Button>
         </Grid>
       </Grid>
-
-      {jobOpenings.map((job, index) => (
-        <Accordion key={job.id} sx={{ mt: 2 }}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls={`panel${index}a-content`}
-            id={`panel${index}a-header`}
-          >
-            <Typography>
-              {index + 1}) {job.designation} - {job.department}
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography>Location: {job.location}</Typography>
-            <Typography>Position: {job.position}</Typography>
-            <Typography>Salary Range: {job.salaryRange}</Typography>
-            <Typography>Notes: {job.notes}</Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleEditClick(job)}
-              sx={{ mt: 2 }}
-            >
-              Edit
-            </Button>
-          </AccordionDetails>
-        </Accordion>
-      ))}
+      <Paper sx={{ p: 2, m: 3 }}>
+        <CustomTable
+          headers={TableHeader}
+          data={TableData}
+          openInPopup={openInPopup}
+          onEdit={handleEditJobOpeningClick}
+        />
+      </Paper>
+      <Popup
+        title="Add New Job Opening"
+        openPopup={openCreatePopup}
+        setOpenPopup={setOpenCreatePopup}
+      >
+        <JobOpeningCreate addNewJobOpening={addNewJobOpening} />
+      </Popup>
       <Popup
         title="Edit Job Opening"
         openPopup={openUpdatePopup}
@@ -114,17 +113,8 @@ export const JobOpeningView = () => {
         <JobOpeningUpdate
           recordForEdit={recordForEdit}
           updateJobOpening={updateJobOpening}
-          closePopup={closeUpdatePopup}
-        />
-      </Popup>
-      <Popup
-        title="Add New Job Opening"
-        openPopup={openCreatePopup}
-        setOpenPopup={setOpenCreatePopup}
-      >
-        <JobOpeningCreate
-          addNewJobOpening={addNewJobOpening}
-          closePopup={closeCreatePopup}
+          setOpenUpdatePopup={setOpenUpdatePopup}
+          fetchJobOpenings={fetchJobOpenings}
         />
       </Popup>
     </Box>

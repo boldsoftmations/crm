@@ -2,24 +2,24 @@ import React, { useState } from "react";
 import { Box, Typography, Grid, Button, TextField } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 
-export const JobOpeningCreate = ({ addNewJobOpening, closePopup }) => {
+export const JobOpeningCreate = ({ addNewJobOpening }) => {
   const [newJobOpening, setNewJobOpening] = useState({
     designation: "",
     department: "",
     location: "",
     position: "",
-    salaryRange: "",
+    salary_ranges: "",
     notes: "",
   });
 
   const locations = [
     "Andheri Head Office",
     "Andheri Sales Office",
-    "Bhivandi Factory",
+    "Bhiwandi Factory",
     "Delhi Factory",
   ];
 
-  const salaryRanges = [
+  const salaryRange = [
     "60,000.00 - 1,20,000.00",
     "1,20,000.00 - 1,80,000.00",
     "1,80,000.00 - 2,40,000.00",
@@ -44,8 +44,8 @@ export const JobOpeningCreate = ({ addNewJobOpening, closePopup }) => {
 
   const handleSubmit = () => {
     addNewJobOpening(newJobOpening);
-    closePopup();
   };
+
   return (
     <Box>
       <Typography variant="h6" gutterBottom>
@@ -91,15 +91,16 @@ export const JobOpeningCreate = ({ addNewJobOpening, closePopup }) => {
             onChange={handleInputChange}
           />
         </Grid>
+
         <Grid item xs={12}>
           <Autocomplete
-            id="salaryRange"
-            options={salaryRanges}
+            id="salary_ranges"
+            options={salaryRange}
             fullWidth
             renderInput={(params) => (
               <TextField {...params} label="Salary Range" />
             )}
-            value={newJobOpening.salaryRange}
+            value={newJobOpening.salary_ranges}
             onChange={(event, newValue) => {
               handleInputChange(event, newValue);
             }}
@@ -119,9 +120,6 @@ export const JobOpeningCreate = ({ addNewJobOpening, closePopup }) => {
         <Grid item xs={12}>
           <Button variant="contained" color="primary" onClick={handleSubmit}>
             Add Job Opening
-          </Button>
-          <Button variant="text" onClick={closePopup} sx={{ ml: 2 }}>
-            Cancel
           </Button>
         </Grid>
       </Grid>
