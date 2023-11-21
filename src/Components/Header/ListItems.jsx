@@ -1054,6 +1054,32 @@ export const ListItems = (props) => {
                   primary="Hr Model"
                 />
               </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/hr-model/designation"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Designation"
+                />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/hr-model/department"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Department"
+                />
+              </ListItem>
             </List>
           </Collapse>
         </>

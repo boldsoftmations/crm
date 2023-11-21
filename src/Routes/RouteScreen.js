@@ -70,6 +70,8 @@ import { InActiveCustomer } from "../Pages/Cutomers/CompanyDetails/InActiveCusto
 import { FaqAllTab } from "../Pages/Faq/FaqAllTab/FaqAllTab";
 import { DailySaleReviewView } from "../Pages/DailySaleReview/DailySaleReviewView";
 import { HrModelTabs } from "../Pages/HrModel/HrModelTabs";
+import { DesignationView } from "../Pages/HrModel/Designation/DesignationView";
+import { DepartmentView } from "../Pages/HrModel/Department/DepartmentView";
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
   const token = tokenData.user;
@@ -280,6 +282,10 @@ export const RouteScreen = () => {
             <Route path="/" element={<Home />} />
             <Route path="/user/hr-model"
             element={<HrModelTabs />} />
+             <Route path="/user/hr-model/designation"
+            element={<DesignationView />} />
+             <Route path="/user/hr-model/department"
+            element={<DepartmentView />} />
           </>
         )}
         <Route path="*" element={<Auths />} />
