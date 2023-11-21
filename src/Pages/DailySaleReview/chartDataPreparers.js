@@ -39,7 +39,7 @@ export const prepareNoOrderCustomerChartData = (record) => {
 };
 
 export const noOrderCustomerChartOptions = {
-  title: "No Order Customer Overview",
+  // title: "No Order Customer Overview",
   chartArea: { width: "50%" },
   hAxis: { title: "Days Range", minValue: 0 },
   vAxis: { title: "Count" },
@@ -76,7 +76,7 @@ export const prepareNewCustomerSummaryChartData = (newCustomerData) => {
 };
 
 export const chartOptions = {
-  title: "Chart Title",
+  // title: "Chart Title",
   chartArea: { width: "70%" },
   hAxis: { title: "Category" },
   vAxis: { title: "Value" },
