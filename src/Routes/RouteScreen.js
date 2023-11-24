@@ -72,6 +72,7 @@ import { DailySaleReviewView } from "../Pages/DailySaleReview/DailySaleReviewVie
 import { HrModelTabs } from "../Pages/HrModel/HrModelTabs";
 import { DesignationView } from "../Pages/HrModel/Designation/DesignationView";
 import { DepartmentView } from "../Pages/HrModel/Department/DepartmentView";
+import { SourceView } from "../Pages/HrModel/CandidateSource/SourceView";
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
   const token = tokenData.user;
@@ -286,6 +287,8 @@ export const RouteScreen = () => {
             element={<DesignationView />} />
              <Route path="/user/hr-model/department"
             element={<DepartmentView />} />
+             <Route path="/user/hr-model/source"
+            element={<SourceView />} />
           </>
         )}
         <Route path="*" element={<Auths />} />

@@ -43,6 +43,25 @@ const updateDepartment = (id, data) => {
   return CustomAxios.patch(`/api/hr/department/${id}/`, data);
 };
 
+//Source API
+const getSource = () => {
+  return CustomAxios.get("/api/hr/source/");
+}
+
+const getSourceById = (id) => {
+  return CustomAxios.get(`/api/hr/source/${id}/`);
+}
+const addSource = (sourceName) => { 
+  return CustomAxios.post("/api/hr/source/", {
+    name: sourceName.name,
+  });
+}
+
+const updateSource = (id, data) => {
+  console.log("data", data);
+  return CustomAxios.patch(`/api/hr/source/${id}/`, {name:data.name});
+}
+
 //Job-Opening API
 const getJobOpening = () => {
   return CustomAxios.get(`/api/hr/job-opening/`);
@@ -68,6 +87,20 @@ const addApplicant = (newApplicantData) => {
 const updateApplicant = (id, updatedApplicantData) => {
   return CustomAxios.patch(`/api/hr/applicant/${id}/`, updatedApplicantData);
 };
+
+//Interview Status API
+const getInterviewStatus = () => {
+  return CustomAxios.get(`/api/hr/applicant/?is_shortlisted=True`);
+};
+
+const addInterviewStatus = (newInterviewStatus) => {
+  return CustomAxios.post(`/api/hr/applicant/`, newInterviewStatus);
+}
+const updateInterviewStatus = (id, updatedInterviewStatus) => {
+  return CustomAxios.patch(`/api/hr/applicant/${id}/`, updatedInterviewStatus);
+}
+
+
 const Hr = {
   getDesignationsData,
   addDesignation,
@@ -75,6 +108,10 @@ const Hr = {
   getDepartment,
   addDepartment,
   updateDepartment,
+  getSource,
+  getSourceById,
+  addSource,
+  updateSource,
   getJobOpening,
   addJobOpening,
   updateJobOpening,
