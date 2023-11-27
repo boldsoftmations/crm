@@ -93,7 +93,7 @@ export const DailySaleReviewView = () => {
   };
 
   const Tableheaders = [
-    // "Sales Person",
+    "Sales Person",
     "Reviewd By",
     "Reporting Manager",
     "Date",
@@ -193,6 +193,9 @@ export const DailySaleReviewView = () => {
               <TableBody>
                 {dailySalesReviewData.map((data, index) => (
                   <StyledTableRow key={data.id || index}>
+                    <StyledTableCell align="center">
+                      {data.sales_person}
+                    </StyledTableCell>
                     <StyledTableCell align="center">
                       {data.reviewed_by}
                     </StyledTableCell>
