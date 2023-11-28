@@ -21,16 +21,12 @@ export const JobOpeningUpdate = ({ recordForEdit, updateJobOpening }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Ensure you have a valid ID and data to update
       if (values && values.id) {
         const response = await updateJobOpening(values.id, values);
-        // Handle the response here, e.g., show a success message or update local state
       } else {
-        // Handle the error case when ID or values are not available
       }
     } catch (error) {
       console.error("Error updating job opening:", error);
-      // Handle the error here, e.g., show an error message
     }
   };
 
@@ -58,9 +54,23 @@ export const JobOpeningUpdate = ({ recordForEdit, updateJobOpening }) => {
     "24,00,000.00 - Above",
   ];
 
+  const positions = ["New", "Replacement", "Backup"];
   return (
     <form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <TextField
+            label="Date Of Closing"
+            name="closing_date"
+            fullWidth
+            type="date"
+            value={values.closing_date}
+            onChange={handleInputChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+        </Grid>
         <Grid item xs={12}>
           <TextField
             name="designation"
@@ -92,12 +102,15 @@ export const JobOpeningUpdate = ({ recordForEdit, updateJobOpening }) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <TextField
-            name="position"
-            label="Position"
-            value={values.position || ""}
-            onChange={handleInputChange}
+          <Autocomplete
+            id="Position"
+            options={positions}
             fullWidth
+            renderInput={(params) => <TextField {...params} label="Position" />}
+            value={values.position || ""}
+            onChange={(event, newValue) => {
+              setValues({ ...values, position: newValue });
+            }}
           />
         </Grid>
         <Grid item xs={12}>

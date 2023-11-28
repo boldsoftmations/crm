@@ -4,6 +4,8 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 export const JobOpeningCreate = ({ addNewJobOpening }) => {
   const [newJobOpening, setNewJobOpening] = useState({
+    jobId: "",
+    closing_date: "",
     designation: "",
     department: "",
     location: "",
@@ -20,7 +22,7 @@ export const JobOpeningCreate = ({ addNewJobOpening }) => {
   ];
 
   const salaryRange = [
-    "60,000.00 - 1,20,000.00",
+    "60,000 - 1,20,000.00",
     "1,20,000.00 - 1,80,000.00",
     "1,80,000.00 - 2,40,000.00",
     "2,40,000.00 - 3,00,000.00",
@@ -54,6 +56,20 @@ export const JobOpeningCreate = ({ addNewJobOpening }) => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField
+            label="Date Of Closing"
+            name="closing_date"
+            fullWidth
+            type="date"
+            value={newJobOpening.closing_date}
+            onChange={handleInputChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
             label="Designation"
             name="designation"
             fullWidth
@@ -83,12 +99,22 @@ export const JobOpeningCreate = ({ addNewJobOpening }) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <TextField
-            label="Position"
-            name="position"
-            fullWidth
+          <Autocomplete
             value={newJobOpening.position}
-            onChange={handleInputChange}
+            onChange={(event, newValue) => {
+              handleInputChange({
+                target: { name: "position", value: newValue },
+              });
+            }}
+            options={["New", "Replacement", "Backup"]}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                name="position"
+                label="Position"
+                fullWidth
+              />
+            )}
           />
         </Grid>
 
