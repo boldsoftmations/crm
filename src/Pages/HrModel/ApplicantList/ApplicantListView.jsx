@@ -50,8 +50,6 @@ export const ApplicantListView = () => {
     }
   };
 
-  const handleAddApplicantClick = () => setOpenCreatePopup(true);
-
   const handleApplicantAdded = () => {
     fetchApplicants();
     setOpenCreatePopup(false);
@@ -60,68 +58,85 @@ export const ApplicantListView = () => {
     fetchApplicants();
     setOpenUpdatePopup(false);
   };
+
   const TableHeader = [
     "ID",
-    "Name of Candidate",
+    "Candidate Name",
     "Phone Number",
-    "Current Location",
-    "Current Salary",
+    "Email",
+    "Designation",
+    "Source",
     "Shortlisted",
     "Action",
   ];
   const TableData = applicants.map((applicant) => ({
     id: applicant.id,
     name: applicant.name,
-    phone: applicant.contact,
-    location: applicant.current_location,
-    current_salary: applicant.current_salary,
+    contact: applicant.contact,
+    email: applicant.email,
+    designation: applicant.designation,
+    source: applicant.source,
     shortlisted: applicant.shortlisted,
   }));
 
   return (
-    <Box sx={{ p: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Job Applicants
-      </Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddApplicantClick}
+    <Grid item xs={12}>
+      <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
+        <Box sx={{ p: 4 }}>
+          <Box display="flex" justifyContent="center" marginBottom="10px">
+            <h3
+              style={{
+                marginBottom: "1em",
+                fontSize: "24px",
+                color: "rgb(34, 34, 34)",
+                fontWeight: 800,
+                textAlign: "center",
+              }}
+            >
+              Applicant List
+            </h3>
+          </Box>
+          {/* <Grid container spacing={2}>
+            <Grid item xs={12} sm={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleAddApplicantClick}
+              >
+                Add
+              </Button>
+            </Grid>
+          </Grid> */}
+          <Paper sx={{ p: 2, m: 3 }}>
+            <CustomTable
+              headers={TableHeader}
+              data={TableData}
+              openInPopup={openInPopup}
+            />
+          </Paper>
+          <Popup
+            title="Add New Applicant"
+            openPopup={openCreatePopup}
+            setOpenPopup={setOpenCreatePopup}
           >
-            Add Applicant
-          </Button>
-        </Grid>
-      </Grid>
-      <Paper sx={{ p: 2, m: 3 }}>
-        <CustomTable
-          headers={TableHeader}
-          data={TableData}
-          openInPopup={openInPopup}
-        />
+            <ApplicantListCreate
+              addNewApplicant={addNewApplicant}
+              onApplicantAdded={handleApplicantAdded}
+            />
+          </Popup>
+          <Popup
+            title="Edit Applicant"
+            openPopup={openUpdatePopup}
+            setOpenPopup={setOpenUpdatePopup}
+          >
+            <ApplicantListUpdate
+              recordForEdit={recordForEdit}
+              updateApplicant={updateApplicant}
+              onApplicantUpdated={handleApplicantUpdated}
+            />
+          </Popup>
+        </Box>
       </Paper>
-      <Popup
-        title="Add New Applicant"
-        openPopup={openCreatePopup}
-        setOpenPopup={setOpenCreatePopup}
-      >
-        <ApplicantListCreate
-          addNewApplicant={addNewApplicant}
-          onApplicantAdded={handleApplicantAdded}
-        />
-      </Popup>
-      <Popup
-        title="Edit Applicant"
-        openPopup={openUpdatePopup}
-        setOpenPopup={setOpenUpdatePopup}
-      >
-        <ApplicantListUpdate
-          recordForEdit={recordForEdit}
-          updateApplicant={updateApplicant}
-          onApplicantUpdated={handleApplicantUpdated}
-        />
-      </Popup>
-    </Box>
+    </Grid>
   );
 };

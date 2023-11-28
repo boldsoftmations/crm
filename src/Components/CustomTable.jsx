@@ -190,7 +190,7 @@ export const CustomTable = ({
                       }}
                       onClick={() => openInPopup7(row)}
                     >
-                      Update
+                      Add Applicant
                     </div>
                   )}
                   {openInPopup2 && (

@@ -12,17 +12,20 @@ import {
 } from "@mui/material";
 import Hr from "../../../services/Hr";
 
-export const ApplicantListCreate = ({ addNewApplicant, onApplicantAdded }) => {
+export const ApplicantListCreate = ({ jobOpeningId, onSuccess }) => {
+  console.log("jobOpeningId:", jobOpeningId);
   const [formData, setFormData] = useState({
+    job: jobOpeningId,
     name: "",
     contact: "",
     email: "",
     qualification: "",
-    candidate_source: "",
     current_location: "",
     current_salary: "",
     expected_salary: "",
     spoken_english: "",
+    source: "",
+    interested: "",
     shortlisted: false,
   });
 
@@ -38,9 +41,12 @@ export const ApplicantListCreate = ({ addNewApplicant, onApplicantAdded }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await Hr.addApplicant(formData);
+      const response = await Hr.addApplicant({
+        ...formData,
+        // job: formData.jobOpeningId,
+      });
       console.log("Applicant created:", response.data);
-      onApplicantAdded(); // Call the callback function after successful creation
+      onSuccess();
     } catch (error) {
       console.error("Error creating applicant:", error);
     }
@@ -104,10 +110,10 @@ export const ApplicantListCreate = ({ addNewApplicant, onApplicantAdded }) => {
             <TextField
               required
               fullWidth
-              id="candidate_source"
+              id="source"
               label="Candidate Source"
-              name="candidate_source"
-              value={formData.candidate_source}
+              name="source"
+              value={formData.source}
               onChange={handleInputChange}
               margin="normal"
             />
@@ -171,7 +177,10 @@ export const ApplicantListCreate = ({ addNewApplicant, onApplicantAdded }) => {
               )}
               value={formData.spoken_english}
               onChange={(event, newValue) => {
-                handleInputChange(event, newValue);
+                setFormData((prevData) => ({
+                  ...prevData,
+                  spoken_english: newValue,
+                }));
               }}
             />
           </Grid>

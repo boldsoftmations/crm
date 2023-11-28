@@ -16,8 +16,9 @@ export const HrModelTabs = () => {
   const tabs = [
     { label: "Job Opening" },
     { label: "Applicant List" },
-    { label: "Interview Status" },
     { label: "Shortlisted Candidate" },
+    { label: "Interview Status" },
+
     { label: "Offer Status" },
     { label: "MIS Report" },
   ];
