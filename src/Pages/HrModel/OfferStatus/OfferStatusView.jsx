@@ -1,81 +1,92 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Paper,
   Box,
-  Table,
-  TableContainer,
-  TableHead,
-  TableCell,
-  TableRow,
-  TableBody,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import { tableCellClasses } from "@mui/material/TableCell";
+import { CustomTable } from "../../../Components/CustomTable";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
+import Hr from "../../../services/Hr";
+import { OfferStatusUpdate } from "./OfferStatusUpdate";
 
 export const OfferStatusView = () => {
-  // Static data for the table
-  const rows = [
-    {
-      candidateName: "John Doe",
-      offerStatus: "Accepted",
-      joiningDate: "2023-12-01",
-    },
-    {
-      candidateName: "Jane Smith",
-      offerStatus: "Not Accepted",
-      joiningDate: null, // No joining date for not accepted status
-    },
-    // Add more rows as needed
+  const [open, setOpen] = useState(false);
+  const [offers, setOffers] = useState([]);
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const fetchOffers = async () => {
+    try {
+      const response = await Hr.getOfferStatus();
+      setOffers(response.data);
+    } catch (error) {
+      console.error("Error fetching offers:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchOffers();
+  }, []);
+
+  const handleClickOpen = (row) => {
+    setSelectedRow(row);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const TableHeader = [
+    "Id",
+    "Candidate Name",
+    "Designation",
+    "Offer Status",
+    "Joining Date",
+    "Action",
   ];
+  const TableData = offers.map((offer) => ({
+    id: offer.id,
+    name: offer.name,
+    designation: offer.designation,
+    status: offer.offer_status,
+    joining_date: offer.joining_date || "",
+  }));
 
   return (
     <Grid item xs={12}>
-      <Box flexGrow={1} display="flex" justifyContent="center">
-        <h3
-          style={{
-            marginBottom: "1em",
-            fontSize: "24px",
-            color: "rgb(34, 34, 34)",
-            fontWeight: 800,
-          }}
-        >
-          Offer Status
-        </h3>
-      </Box>
       <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 700 }} aria-label="offer status table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell align="center">Candidate Name</StyledTableCell>
-                <StyledTableCell align="center">Offer Status</StyledTableCell>
-                <StyledTableCell align="center">Joining Date</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow key={row.candidateName}>
-                  <TableCell align="center">{row.candidateName}</TableCell>
-                  <TableCell align="center">{row.offerStatus}</TableCell>
-                  <TableCell align="center">
-                    {row.offerStatus === "Accepted" ? row.joiningDate : "N/A"}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <Box flexGrow={1} display="flex" justifyContent="center">
+          <h3
+            style={{
+              marginBottom: "1em",
+              fontSize: "24px",
+              color: "rgb(34, 34, 34)",
+              fontWeight: 800,
+            }}
+          >
+            Offer Status
+          </h3>
+        </Box>
+        <Paper sx={{ p: 2, m: 3 }}>
+          <CustomTable
+            headers={TableHeader}
+            data={TableData}
+            openInPopup={handleClickOpen}
+          />
+        </Paper>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogTitle id="form-dialog-title">Offer Status Update</DialogTitle>
+          <DialogContent>
+            <OfferStatusUpdate row={selectedRow} closeDialog={handleClose} />
+          </DialogContent>
+        </Dialog>
       </Paper>
     </Grid>
   );
