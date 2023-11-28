@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Box, TextField, Button } from "@mui/material";
 import Hr from "../../../services/Hr";
 
@@ -15,32 +15,24 @@ export const DepartmentUpdate = ({
       await Hr.updateDepartment(departmentId.id, { department });
       fetchDepartments();
       setOpenUpdatePopup(false);
-    } catch (error) {}
+    } catch (error) {
+      console.error("Failed to update department", error);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <Box
-        component="form"
-        sx={{
-          "& .MuiTextField-root": { m: 1, width: "25ch" },
-        }}
-        noValidate
-        autoComplete="off"
-      >
-        <div>
-          <TextField
-            label="Department Name"
-            variant="outlined"
-            value={department}
-            onChange={(e) => setDepartment(e.target.value)}
-          />
-        </div>
-        <div>
-          <Button type="submit" variant="contained" color="primary">
-            Update Department
-          </Button>
-        </div>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <TextField
+          label="Department Name"
+          variant="outlined"
+          value={department}
+          onChange={(e) => setDepartment(e.target.value)}
+          required
+        />
+        <Button type="submit" variant="contained" color="primary">
+          Update Department
+        </Button>
       </Box>
     </form>
   );

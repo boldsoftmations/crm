@@ -28,9 +28,9 @@ export const DesignationView = () => {
       try {
         setOpen(true);
         const response = await Hr.getDesignationsData(page, query);
-        setDesignations(response.data);
-        // const total = response.data.count;
-        // setPageCount(Math.ceil(total / 25));
+        setDesignations(response.data.results);
+        const total = response.data.count;
+        setPageCount(Math.ceil(total / 25));
         setOpen(false);
       } catch (error) {
         console.error("Error fetching scripts", error);
@@ -54,10 +54,14 @@ export const DesignationView = () => {
   };
 
   const TableHeader = ["ID", "Designation", "Action"];
-  const TableData = designations.map((designation) => ({
-    id: designation.id,
-    name: designation.designation,
-  }));
+  let TableData = [];
+
+  if (Array.isArray(designations)) {
+    TableData = designations.map((designation) => ({
+      id: designation.id,
+      name: designation.designation,
+    }));
+  }
 
   return (
     <>
