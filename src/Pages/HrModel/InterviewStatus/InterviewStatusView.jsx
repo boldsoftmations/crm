@@ -1,120 +1,98 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Paper,
   Box,
-  Table,
-  TableContainer,
-  TableHead,
-  TableCell,
-  TableRow,
-  TableBody,
-  Button,
   Dialog,
   DialogTitle,
   DialogContent,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import { tableCellClasses } from "@mui/material/TableCell";
+import { CustomTable } from "../../../Components/CustomTable";
 import { InterviewStatusUpdate } from "./InterviewStatusUpdate";
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
+import Hr from "../../../services/Hr";
 
 export const InterviewStatusView = () => {
   const [open, setOpen] = useState(false);
+  const [interviews, setInterviews] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
 
+  const getInterviewData = async () => {
+    try {
+      const response = await Hr.getInterviewStatus();
+      setInterviews(response.data);
+    } catch (error) {
+      console.error("Error fetching interviews:", error);
+    }
+  };
+
+  useEffect(() => {
+    getInterviewData();
+  }, []);
+
   const handleClickOpen = (row) => {
-    setOpen(true);
     setSelectedRow(row);
+    setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
   };
-  // Static data for the table
-  const rows = [
-    {
-      date: "2023-01-01",
-      designation: "Software Engineer",
-      location: "New York",
-    },
-    {
-      date: "2023-02-15",
-      designation: "Product Manager",
-      location: "San Francisco",
-    },
-    // Add more rows as needed
+
+  const TableHeader = [
+    "Candidate Name",
+    "Department",
+    "Designation",
+    "Contact",
+    "Location",
+    // "Interview Schedule",
+    "Interview Schedule",
   ];
+  const TableData = interviews.map((interview) => ({
+    name: interview.name,
+    department: interview.department,
+    designation: interview.designation,
+    contact: interview.contact,
+    location: interview.location,
+  }));
 
   return (
     <Grid item xs={12}>
-      <Box flexGrow={1} display="flex" justifyContent="center">
-        <h3
-          style={{
-            marginBottom: "1em",
-            fontSize: "24px",
-            color: "rgb(34, 34, 34)",
-            fontWeight: 800,
-          }}
-        >
-          Interview Status
-        </h3>
-      </Box>
       <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 700 }} aria-label="interview status table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell align="center">
-                  Date of Opening
-                </StyledTableCell>
-                <StyledTableCell align="center">Designation</StyledTableCell>
-                <StyledTableCell align="center">Location</StyledTableCell>
-                <StyledTableCell align="center">Action</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow key={row.date}>
-                  <TableCell align="center">{row.date}</TableCell>
-                  <TableCell align="center">{row.designation}</TableCell>
-                  <TableCell align="center">{row.location}</TableCell>
-                  <TableCell align="center">
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handleClickOpen(row)}
-                    >
-                      View
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <Box flexGrow={1} display="flex" justifyContent="center">
+          <h3
+            style={{
+              marginBottom: "1em",
+              fontSize: "24px",
+              color: "rgb(34, 34, 34)",
+              fontWeight: 800,
+            }}
+          >
+            Shortlisted Candidate
+          </h3>
+        </Box>
+        <Paper sx={{ p: 2, m: 3 }}>
+          <CustomTable
+            headers={TableHeader}
+            data={TableData}
+            openInPopup={handleClickOpen}
+          />
+        </Paper>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogTitle id="form-dialog-title">
+            Interview Status Update
+          </DialogTitle>
+          <DialogContent>
+            <InterviewStatusUpdate
+              row={selectedRow}
+              closeDialog={handleClose}
+            />
+          </DialogContent>
+        </Dialog>
       </Paper>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="form-dialog-title"
-      >
-        <DialogTitle id="form-dialog-title">
-          Interview Status Update
-        </DialogTitle>
-        <DialogContent>
-          <InterviewStatusUpdate row={selectedRow} closeDialog={handleClose} />
-        </DialogContent>
-      </Dialog>
     </Grid>
   );
 };
