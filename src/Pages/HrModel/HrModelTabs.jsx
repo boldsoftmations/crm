@@ -20,7 +20,7 @@ export const HrModelTabs = () => {
     { label: "Interview Status" },
 
     { label: "Offer Status" },
-    { label: "MIS Report" },
+    // { label: "MIS Report" },
   ];
 
   return (
@@ -57,11 +57,11 @@ export const HrModelTabs = () => {
               <OfferStatusView />
             </div>
           )}
-          {activeTab === 5 && (
+          {/* {activeTab === 5 && (
             <div>
               <MisReportView />
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </div>
