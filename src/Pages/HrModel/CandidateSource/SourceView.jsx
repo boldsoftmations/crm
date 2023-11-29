@@ -66,31 +66,53 @@ export const SourceView = () => {
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
-            <Grid item xs={12} sm={2}>
-              <CustomTextField
-                size="small"
-                label="Search"
-                variant="outlined"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                fullWidth
-              />
-
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSearch}
-              >
-                Search
-              </Button>
-
-              <Button
-                onClick={handleAddNew}
-                variant="contained"
-                color="success"
-              >
-                Add
-              </Button>
+            <Grid
+              container
+              spacing={2}
+              alignItems="center"
+              sx={{ marginRight: 5, marginLeft: 5 }}
+            >
+              <Grid item xs={12} sm={6}>
+                <CustomTextField
+                  size="small"
+                  label="Search"
+                  variant="outlined"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={2}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSearch}
+                >
+                  Search
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={2}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => {
+                    setSearchQuery("");
+                    getSourcesDetails("");
+                  }}
+                  fullWidth
+                >
+                  Reset
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={2}>
+                <Button
+                  onClick={handleAddNew}
+                  variant="contained"
+                  color="success"
+                >
+                  Add
+                </Button>
+              </Grid>
             </Grid>
           </Box>
           <Box display="flex" justifyContent="center" marginBottom="10px">
