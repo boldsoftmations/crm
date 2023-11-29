@@ -1172,6 +1172,76 @@ export const ListItems = (props) => {
                 </ListItemIcon>
                 <ListItemText primary="Task" />
               </ListItem>
+              {/* Hr Recruitment Model */}
+              <ListItem
+                button
+                onClick={() => setExpandHr(!expandHr)}
+                style={{ width: 300 }}
+              >
+                <ListItemIcon>
+                  <WorkIcon />
+                </ListItemIcon>
+                <ListItemText primary="Recruitment" />
+                {expandHr ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </ListItem>
+
+              <Collapse in={expandHr} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/hr-model"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Hr Model"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/hr-model/designation"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Designation"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/hr-model/department"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Department"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/hr-model/source"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Source"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
             </>
           )}
           {/* Factory orderbook */}
