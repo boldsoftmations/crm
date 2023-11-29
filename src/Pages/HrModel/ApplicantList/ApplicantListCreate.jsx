@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -11,6 +11,8 @@ import {
   Switch,
 } from "@mui/material";
 import Hr from "../../../services/Hr";
+import CustomAxios from "../../../services/api";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const ApplicantListCreate = ({ jobOpeningId, onSuccess }) => {
   console.log("jobOpeningId:", jobOpeningId);
@@ -28,6 +30,22 @@ export const ApplicantListCreate = ({ jobOpeningId, onSuccess }) => {
     interested: "",
     shortlisted: false,
   });
+
+  const [source, setSource] = useState([]);
+
+  useEffect(() => {
+    const fetchSource = async () => {
+      try {
+        const response = await CustomAxios.get("/api/hr/source/");
+        console.log("API Response:", response.data);
+        setSource(response.data);
+      } catch (error) {
+        console.error("Error fetching designations:", error);
+      }
+    };
+
+    fetchSource();
+  }, []);
 
   const handleInputChange = (event, newValue) => {
     let { name, value } = event.target || {};
@@ -110,15 +128,18 @@ export const ApplicantListCreate = ({ jobOpeningId, onSuccess }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <TextField
-              required
-              fullWidth
-              id="source"
-              label="Candidate Source"
+            <Autocomplete
+              style={{
+                minWidth: 220,
+              }}
+              size="small"
+              onChange={(event, value) => setSource(value)}
               name="source"
-              value={formData.source}
-              onChange={handleInputChange}
-              margin="normal"
+              options={source.map((option) => option.name)}
+              getOptionLabel={(option) => `${option}`}
+              renderInput={(params) => (
+                <CustomTextField {...params} label="Cnadidate Source" />
+              )}
             />
           </Grid>
           <Grid item xs={12}>
