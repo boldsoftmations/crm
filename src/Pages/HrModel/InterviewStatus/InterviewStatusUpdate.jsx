@@ -1,92 +1,67 @@
 import React, { useState } from "react";
-import { Button, TextField, Grid, Box } from "@mui/material";
+import { TextField, Button, Grid } from "@mui/material";
 import Hr from "../../../services/Hr";
 
-export const InterviewStatusUpdate = ({ closeDialog, id }) => {
-  const [interviewDetails, setInterviewDetails] = useState({
-    id: id,
-    date: "",
-    time: "",
-    interviewer: "",
-  });
+export const InterviewStatusCreate = ({ row, closeDialog }) => {
+  const [interviewDate, setInterviewDate] = useState("");
+  const [interviewTime, setInterviewTime] = useState("");
+  const [interviewerName, setInterviewerName] = useState("");
+  console.log("row", row);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    const updatedInterviewDate = {
-      date: interviewDetails.date,
-      time: interviewDetails.time,
-      interviewer: interviewDetails.interviewer,
+    const newInterviewDetails = {
+      applicant: row.email,
+      date: interviewDate,
+      time: interviewTime,
+      interviewer: interviewerName,
     };
 
     try {
-      await Hr.updateInterviewDate(id, updatedInterviewDate);
-      console.log("Interview details updated successfully");
+      await Hr.addInterviewDate(newInterviewDetails);
+      closeDialog();
     } catch (error) {
-      console.error("Error updating interview details:", error);
+      console.error("Error scheduling interview:", error);
     }
-
-    closeDialog();
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <Box>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Interview Date"
-              type="date"
-              InputLabelProps={{ shrink: true }}
-              name="date"
-              value={interviewDetails.date}
-              onChange={(e) =>
-                setInterviewDetails({
-                  ...interviewDetails,
-                  date: e.target.value,
-                })
-              }
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Interview Time"
-              type="time"
-              InputLabelProps={{ shrink: true }}
-              name="time"
-              value={interviewDetails.time}
-              onChange={(e) =>
-                setInterviewDetails({
-                  ...interviewDetails,
-                  time: e.target.value,
-                })
-              }
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Interviewer's Name"
-              name="interviewer"
-              value={interviewDetails.interviewer}
-              onChange={(e) =>
-                setInterviewDetails({
-                  ...interviewDetails,
-                  interviewer: e.target.value,
-                })
-              }
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <Button type="submit" variant="contained" color="primary">
-              Update Interview Status
-            </Button>
-          </Grid>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <TextField
+            label="Interview Date"
+            type="date"
+            fullWidth
+            value={interviewDate}
+            onChange={(e) => setInterviewDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+          />
         </Grid>
-      </Box>
+        <Grid item xs={12}>
+          <TextField
+            label="Interview Time"
+            type="time"
+            fullWidth
+            value={interviewTime}
+            onChange={(e) => setInterviewTime(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            label="Interviewer Name"
+            fullWidth
+            value={interviewerName}
+            onChange={(e) => setInterviewerName(e.target.value)}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Button type="submit" variant="contained" color="primary">
+            Schedule Interview
+          </Button>
+        </Grid>
+      </Grid>
     </form>
   );
 };

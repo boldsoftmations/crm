@@ -8,7 +8,7 @@ import {
   DialogContent,
 } from "@mui/material";
 import { CustomTable } from "../../../Components/CustomTable";
-import { InterviewStatusUpdate } from "./InterviewStatusUpdate";
+import { InterviewStatusCreate } from "./InterviewStatusUpdate";
 import Hr from "../../../services/Hr";
 
 export const InterviewStatusView = () => {
@@ -39,8 +39,9 @@ export const InterviewStatusView = () => {
   };
 
   const TableHeader = [
+    "Id",
     "Candidate Name",
-    "Department",
+    "Email",
     "Designation",
     "Contact",
     "Location",
@@ -48,8 +49,9 @@ export const InterviewStatusView = () => {
     "Interview Schedule",
   ];
   const TableData = interviews.map((interview) => ({
+    id: interview.id,
     name: interview.name,
-    department: interview.department,
+    email: interview.email,
     designation: interview.designation,
     contact: interview.contact,
     location: interview.location,
@@ -86,7 +88,7 @@ export const InterviewStatusView = () => {
             Interview Status Update
           </DialogTitle>
           <DialogContent>
-            <InterviewStatusUpdate
+            <InterviewStatusCreate
               row={selectedRow}
               closeDialog={handleClose}
             />
