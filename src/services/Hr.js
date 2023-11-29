@@ -2,7 +2,7 @@ import CustomAxios from "./api";
 
 //Designation API
 const getDesignationsData = (page, searchQuery) => {
-  // Constructing the query parameters
+
   const params = new URLSearchParams();
 
   if (page) {
@@ -13,7 +13,6 @@ const getDesignationsData = (page, searchQuery) => {
     params.append("search", searchQuery);
   }
 
-  // Sending a GET request with query parameters
   return CustomAxios.get(`api/hr/designation/?${params.toString()}`);
 };
 
@@ -48,9 +47,6 @@ const getSource = () => {
   return CustomAxios.get("/api/hr/source/");
 }
 
-const getSourceById = (id) => {
-  return CustomAxios.get(`/api/hr/source/${id}/`);
-}
 const addSource = (sourceName) => { 
   return CustomAxios.post("/api/hr/source/", {
     name: sourceName.name,
@@ -66,6 +62,10 @@ const updateSource = (id, data) => {
 const getJobOpening = () => {
   return CustomAxios.get(`/api/hr/job-opening/`);
 };
+
+const getJobOpeningById = (id) => {
+  return CustomAxios.get(`/api/hr/job-opening/${id}/`);
+}
 
 const addJobOpening = (newJobData) => {
   return CustomAxios.post(`/api/hr/job-opening/`, newJobData);
@@ -88,16 +88,31 @@ const updateApplicant = (id, updatedApplicantData) => {
   return CustomAxios.patch(`/api/hr/applicant/${id}/`, updatedApplicantData);
 };
 
-//Interview Status API
+//Shortlisted Cnadidate API
 const getInterviewStatus = () => {
   return CustomAxios.get(`/api/hr/applicant/?is_shortlisted=True`);
 };
 
-const addInterviewStatus = (newInterviewStatus) => {
-  return CustomAxios.post(`/api/hr/applicant/`, newInterviewStatus);
+const getInterviewDate = () => {
+  return CustomAxios.get(`/api/hr/interview-details/`);
 }
-const updateInterviewStatus = (id, updatedInterviewStatus) => {
-  return CustomAxios.patch(`/api/hr/applicant/${id}/`, updatedInterviewStatus);
+
+const addInterviewDate = (newInterviewDate) => {
+  return CustomAxios.post(`/api/hr/interview-details/`, newInterviewDate);
+}
+const updateInterviewDate =(id,updatedInterviewDate) =>{
+  return CustomAxios.patch(`/api/hr/interview-details/${id}/`,updatedInterviewDate)
+}
+
+
+//Offer Status API
+
+const getOfferStatus = () => {
+  return CustomAxios.get(`/api/hr/interview-details/?stage=Selected`);
+}
+
+const updateOfferStatus = (id, updatedOfferStatus) => {
+  return CustomAxios.patch(`/api/hr/interview-details/${id}/`, updatedOfferStatus);
 }
 
 
@@ -109,15 +124,21 @@ const Hr = {
   addDepartment,
   updateDepartment,
   getSource,
-  getSourceById,
   addSource,
   updateSource,
   getJobOpening,
+  getJobOpeningById,
   addJobOpening,
   updateJobOpening,
   getApplicants,
   addApplicant,
   updateApplicant,
+  getInterviewStatus,
+  addInterviewDate,
+  getInterviewDate,
+  updateInterviewDate,
+  getOfferStatus,
+  updateOfferStatus
 };
 
 export default Hr;

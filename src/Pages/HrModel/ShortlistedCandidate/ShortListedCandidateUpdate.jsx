@@ -1,48 +1,78 @@
 import React, { useState } from "react";
-import {
-  DialogContentText,
-  TextField,
-  Button,
-  DialogActions,
-} from "@mui/material";
+import { Button, TextField, DialogActions, Autocomplete } from "@mui/material";
+import Hr from "../../../services/Hr";
 
 export const ShortListedCandidateUpdate = ({ row, closeDialog }) => {
-  const [offerStatus, setOfferStatus] = useState(row.status);
+  const [interviewDate, setInterviewDate] = useState(row.interview_date || "");
+  const [interviewTime, setInterviewTime] = useState(row.interview_time || "");
+  const [interviewerName, setInterviewerName] = useState(
+    row.interviewer_name || ""
+  );
+  const [stage, setStage] = useState(row.stage || "");
+  const handleUpdate = async () => {
+    const updatedInterviewDetails = {
+      date: interviewDate,
+      time: interviewTime,
+      interviewer_name: interviewerName,
+      stage: stage,
+    };
 
-  const handleStatusChange = (event) => {
-    setOfferStatus(event.target.value);
+    try {
+      await Hr.updateInterviewDate(row.id, updatedInterviewDetails);
+      closeDialog();
+    } catch (error) {
+      console.error("Error updating interview details:", error);
+    }
   };
 
-  const handleUpdate = () => {
-    // Here you can add logic to update the status in your backend or state
-    console.log(`Status updated for ${row.candidateName} to ${offerStatus}`);
-    closeDialog();
-  };
-
+  const stageOptions = [
+    "Selected",
+    "Scheduled",
+    "On Hold",
+    "Rejected",
+    "Not Interested",
+    "Postponed",
+  ];
   return (
     <>
-      <DialogContentText>
-        Update the offer status for {row.candidateName}.
-      </DialogContentText>
+      <Autocomplete
+        value={stage}
+        onChange={(event, newValue) => {
+          setStage(newValue);
+        }}
+        options={stageOptions}
+        renderInput={(params) => (
+          <TextField {...params} label="Stage" margin="dense" fullWidth />
+        )}
+      />
       <TextField
-        autoFocus
         margin="dense"
-        id="status"
-        label="Offer Status"
+        label="Interview Date"
+        type="date"
+        fullWidth
+        value={interviewDate}
+        onChange={(e) => setInterviewDate(e.target.value)}
+      />
+      <TextField
+        margin="dense"
+        label="Interview Time"
+        type="time"
+        fullWidth
+        value={interviewTime}
+        onChange={(e) => setInterviewTime(e.target.value)}
+      />
+      <TextField
+        margin="dense"
+        label="Interviewer Name"
         type="text"
         fullWidth
-        select
-        SelectProps={{
-          native: true,
-        }}
-        value={offerStatus}
-        onChange={handleStatusChange}
-      >
-        <option value="Offer Sent">Offer Sent</option>
-        <option value="Offer Not Sent">Offer Not Sent</option>
-      </TextField>
+        value={interviewerName}
+        onChange={(e) => setInterviewerName(e.target.value)}
+      />
       <DialogActions>
-        <Button onClick={closeDialog}>Cancel</Button>
+        <Button onClick={closeDialog} color="primary">
+          Cancel
+        </Button>
         <Button onClick={handleUpdate} color="primary">
           Update
         </Button>
