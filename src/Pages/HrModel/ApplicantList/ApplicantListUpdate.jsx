@@ -28,8 +28,11 @@ export const ApplicantListUpdate = ({ recordForEdit, onApplicantUpdated }) => {
   }, [recordForEdit]);
 
   const handleInputChange = (event, newValue) => {
-    console.log("newValue", newValue);
-    const { name, value } = event.target || {};
+    let { name, value } = event.target || {};
+
+    if (name === "contact" && !value.startsWith("+91")) {
+      value = `+91${value}`;
+    }
 
     setFormData((prevData) => ({
       ...prevData,
