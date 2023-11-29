@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import Hr from "../../../services/Hr";
 
-export const OfferStatusUpdate = ({ row, closeDialog }) => {
+export const OfferStatusUpdate = ({ row, closeDialog, onUpdateComplete }) => {
   const [status, setStatus] = useState(row ? row.status : "");
   const [joiningDate, setJoiningDate] = useState(row ? row.joining_date : "");
 
@@ -27,9 +27,9 @@ export const OfferStatusUpdate = ({ row, closeDialog }) => {
       offer_status: status,
       joining_date: joiningDate,
     };
-
     try {
       await Hr.updateOfferStatus(row.id, updatedOfferStatus);
+      onUpdateComplete();
       closeDialog();
     } catch (error) {
       console.error("Error updating offer status:", error);

@@ -39,6 +39,10 @@ export const OfferStatusView = () => {
     setOpen(false);
   };
 
+  const handleUpdateComplete = () => {
+    fetchOffers();
+  };
+
   const TableHeader = [
     "Id",
     "Candidate Name",
@@ -84,7 +88,11 @@ export const OfferStatusView = () => {
         >
           <DialogTitle id="form-dialog-title">Offer Status Update</DialogTitle>
           <DialogContent>
-            <OfferStatusUpdate row={selectedRow} closeDialog={handleClose} />
+            <OfferStatusUpdate
+              row={selectedRow}
+              closeDialog={handleClose}
+              onUpdateComplete={handleUpdateComplete}
+            />
           </DialogContent>
         </Dialog>
       </Paper>
