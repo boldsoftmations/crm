@@ -32,13 +32,15 @@ export const ApplicantListCreate = ({ jobOpeningId, onSuccess }) => {
   });
 
   const [source, setSource] = useState([]);
+  const [selectedSource, setSelectedSource] = useState(null);
 
   useEffect(() => {
     const fetchSource = async () => {
       try {
         const response = await CustomAxios.get("/api/hr/source/");
-        console.log("API Response:", response.data);
-        setSource(response.data);
+        if (Array.isArray(response.data)) {
+          setSource(response.data);
+        }
       } catch (error) {
         console.error("Error fetching designations:", error);
       }
@@ -53,10 +55,17 @@ export const ApplicantListCreate = ({ jobOpeningId, onSuccess }) => {
       value = `+91${value}`;
     }
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: newValue !== undefined ? newValue : value,
-    }));
+    if (newValue !== undefined) {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: newValue,
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -129,16 +138,19 @@ export const ApplicantListCreate = ({ jobOpeningId, onSuccess }) => {
           </Grid>
           <Grid item xs={12}>
             <Autocomplete
-              style={{
-                minWidth: 220,
-              }}
+              style={{ minWidth: 220 }}
               size="small"
-              onChange={(event, value) => setSource(value)}
+              onChange={(event, newValue) =>
+                handleInputChange(
+                  { target: { name: "source", value: newValue } },
+                  newValue
+                )
+              }
               name="source"
               options={source.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               renderInput={(params) => (
-                <CustomTextField {...params} label="Cnadidate Source" />
+                <CustomTextField {...params} label="Candidate Source" />
               )}
             />
           </Grid>

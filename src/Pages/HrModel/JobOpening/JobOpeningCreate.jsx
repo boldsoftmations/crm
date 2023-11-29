@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, Grid, Button, TextField } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
+import CustomAxios from "../../../services/api";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const JobOpeningCreate = ({ addNewJobOpening }) => {
   const [newJobOpening, setNewJobOpening] = useState({
-    jobId: "",
-    closing_date: "",
+    closing_date: null,
     designation: "",
     department: "",
     location: "",
@@ -13,6 +14,37 @@ export const JobOpeningCreate = ({ addNewJobOpening }) => {
     salary_ranges: "",
     notes: "",
   });
+  const [designations, setDesignations] = useState([]);
+  const [department, setDepartment] = useState([]);
+
+  useEffect(() => {
+    const fetchDesignations = async () => {
+      try {
+        const response = await CustomAxios.get(
+          "/api/hr/designation/?type=list"
+        );
+        console.log("API Response:", response.data);
+        setDesignations(response.data);
+      } catch (error) {
+        console.error("Error fetching designations:", error);
+      }
+    };
+
+    const fetchDepartments = async () => {
+      try {
+        const response = await CustomAxios.get("/api/hr/department/");
+        const validDepartments = response.data.filter(
+          (d) => d.department != null
+        );
+        setDepartment(validDepartments);
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+      }
+    };
+
+    fetchDesignations();
+    fetchDepartments();
+  }, []);
 
   const locations = [
     "Andheri Head Office",
@@ -69,23 +101,41 @@ export const JobOpeningCreate = ({ addNewJobOpening }) => {
         </Grid>
 
         <Grid item xs={12}>
-          <TextField
-            label="Designation"
+          <Autocomplete
+            style={{ minWidth: 220 }}
+            size="small"
+            onChange={(event, value) => {
+              setNewJobOpening({ ...newJobOpening, designation: value });
+            }}
             name="designation"
-            fullWidth
+            options={designations.map((option) => option.designation)}
+            getOptionLabel={(option) => option || ""}
+            renderInput={(params) => (
+              <CustomTextField {...params} label="Designation" />
+            )}
             value={newJobOpening.designation}
-            onChange={handleInputChange}
           />
         </Grid>
+
         <Grid item xs={12}>
-          <TextField
-            label="Department"
-            name="department"
-            fullWidth
-            value={newJobOpening.department}
-            onChange={handleInputChange}
-          />
+          {Array.isArray(department) && (
+            <Autocomplete
+              style={{ minWidth: 220 }}
+              size="small"
+              onChange={(event, value) => {
+                setNewJobOpening({ ...newJobOpening, department: value });
+              }}
+              name="department"
+              options={department.map((option) => option.department)}
+              getOptionLabel={(option) => option || ""}
+              renderInput={(params) => (
+                <CustomTextField {...params} label="Department" />
+              )}
+              value={newJobOpening.department}
+            />
+          )}
         </Grid>
+
         <Grid item xs={12}>
           <Autocomplete
             id="location"
