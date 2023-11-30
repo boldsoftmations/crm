@@ -6,6 +6,7 @@ import { OfferStatusView } from "./OfferStatus/OfferStatusView.jsx";
 import { MisReportView } from "./MisReport/MisReportView.jsx";
 import { ApplicantListView } from "./ApplicantList/ApplicantListView.jsx";
 import { ShortListedCandidateView } from "./ShortlistedCandidate/ShortListedCandidateView.jsx";
+import { HrDashboard } from "./HrDashboard.jsx";
 export const HrModelTabs = () => {
   const [activeTab, setActiveTab] = useState(0);
 
@@ -18,9 +19,9 @@ export const HrModelTabs = () => {
     { label: "Applicant List" },
     { label: "Shortlisted Candidate" },
     { label: "Interview Status" },
-
     { label: "Offer Status" },
     { label: "MIS Report" },
+    { label: "Dashboard" },
   ];
 
   return (
@@ -60,6 +61,11 @@ export const HrModelTabs = () => {
           {activeTab === 5 && (
             <div>
               <MisReportView />
+            </div>
+          )}
+          {activeTab === 6 && (
+            <div>
+              <HrDashboard />
             </div>
           )}
         </div>
