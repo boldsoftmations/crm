@@ -56,7 +56,7 @@ export const OfferStatusView = () => {
     name: offer.name,
     designation: offer.designation,
     status: offer.offer_status,
-    joining_date: offer.joining_date || "",
+    joining_date: offer.joining_date || null,
   }));
 
   return (

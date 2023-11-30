@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   DialogActions,
   Button,
@@ -10,9 +10,17 @@ import Hr from "../../../services/Hr";
 
 export const OfferStatusUpdate = ({ row, closeDialog, onUpdateComplete }) => {
   const [status, setStatus] = useState(row ? row.status : "");
-  const [joiningDate, setJoiningDate] = useState(row ? row.joining_date : "");
+  const [joiningDate, setJoiningDate] = useState(
+    row && row.joining_date ? row.joining_date : null
+  );
 
   const offerStatusOptions = ["Accepted", "Rejected", "Sent"];
+
+  useEffect(() => {
+    if (status === "Rejected") {
+      setJoiningDate("");
+    }
+  }, [status]);
 
   const handleStatusChange = (event, newValue) => {
     setStatus(newValue);
@@ -25,7 +33,7 @@ export const OfferStatusUpdate = ({ row, closeDialog, onUpdateComplete }) => {
   const handleUpdate = async () => {
     const updatedOfferStatus = {
       offer_status: status,
-      joining_date: joiningDate,
+      joining_date: joiningDate || null,
     };
     try {
       await Hr.updateOfferStatus(row.id, updatedOfferStatus);
@@ -57,6 +65,7 @@ export const OfferStatusUpdate = ({ row, closeDialog, onUpdateComplete }) => {
           InputLabelProps={{ shrink: true }}
           value={joiningDate}
           onChange={handleDateChange}
+          disabled={status === "Rejected"} // Disable date input if status is "Rejected"
         />
       </Grid>
       <Grid item xs={12}>
