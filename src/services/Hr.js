@@ -115,6 +115,11 @@ const updateOfferStatus = (id, updatedOfferStatus) => {
   return CustomAxios.patch(`/api/hr/interview-details/${id}/`, updatedOfferStatus);
 }
 
+//Mis Report API
+
+const getMisReport = () => {
+  return CustomAxios.get(`/api/hr/mis-report/`);
+}
 
 const Hr = {
   getDesignationsData,
@@ -138,7 +143,8 @@ const Hr = {
   getInterviewDate,
   updateInterviewDate,
   getOfferStatus,
-  updateOfferStatus
+  updateOfferStatus,
+  getMisReport
 };
 
 export default Hr;
