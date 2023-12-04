@@ -14,7 +14,15 @@ export const OfferStatusUpdate = ({ row, closeDialog, onUpdateComplete }) => {
     row && row.joining_date ? row.joining_date : null
   );
 
+  const [rejectionReason, setRejectionReason] = useState("");
+
   const offerStatusOptions = ["Accepted", "Rejected", "Sent"];
+
+  const rejectionReasonOptions = [
+    "Candidate is not interested in the offer want higher offer.",
+    "Candidate had a negative reference.",
+    "Candidate didn’t give correct last salary.",
+  ];
 
   useEffect(() => {
     if (status === "Rejected") {
@@ -30,10 +38,15 @@ export const OfferStatusUpdate = ({ row, closeDialog, onUpdateComplete }) => {
     setJoiningDate(event.target.value);
   };
 
+  const handleRejectionReasonChange = (event, newValue) => {
+    setRejectionReason(newValue);
+  };
+
   const handleUpdate = async () => {
     const updatedOfferStatus = {
       offer_status: status,
       joining_date: joiningDate || null,
+      rejection_reason: status === "Rejected" ? rejectionReason : null,
     };
     try {
       await Hr.updateOfferStatus(row.id, updatedOfferStatus);
@@ -57,6 +70,20 @@ export const OfferStatusUpdate = ({ row, closeDialog, onUpdateComplete }) => {
           fullWidth
         />
       </Grid>
+      {status === "Rejected" && (
+        <Grid item xs={12}>
+          <Autocomplete
+            value={rejectionReason}
+            onChange={handleRejectionReasonChange}
+            options={rejectionReasonOptions}
+            renderInput={(params) => (
+              <TextField {...params} label="Rejection Reason" />
+            )}
+            fullWidth
+          />
+        </Grid>
+      )}
+
       <Grid item xs={12}>
         <TextField
           label="Joining Date"

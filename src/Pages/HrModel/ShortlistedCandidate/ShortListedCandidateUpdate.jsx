@@ -1,20 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, TextField, DialogActions, Autocomplete } from "@mui/material";
 import Hr from "../../../services/Hr";
 
 export const ShortListedCandidateUpdate = ({ row, closeDialog }) => {
   const [interviewDate, setInterviewDate] = useState(row.interview_date || "");
   const [interviewTime, setInterviewTime] = useState(row.interview_time || "");
+  const [rejectedReason, setRejectedReason] = useState(
+    row.rejection_reason || ""
+  );
+
   const [interviewerName, setInterviewerName] = useState(
     row.interviewer_name || ""
   );
   const [stage, setStage] = useState(row.stage || "");
+
+  useEffect(() => {
+    setInterviewDate(row.interview_date || "");
+    setInterviewTime(row.interview_time || "");
+    setRejectedReason(row.rejection_reason || "");
+    setInterviewerName(row.interviewer_name || "");
+    setStage(row.stage || "");
+  }, [row]);
+  console.log("row", row);
   const handleUpdate = async () => {
     const updatedInterviewDetails = {
       date: interviewDate,
       time: interviewTime,
       interviewer_name: interviewerName,
       stage: stage,
+      ...(stage === "Rejected" && { rejection_reason: rejectedReason }),
     };
 
     try {
@@ -33,6 +47,7 @@ export const ShortListedCandidateUpdate = ({ row, closeDialog }) => {
     "Not Interested",
     "Postponed",
   ];
+
   return (
     <>
       <Autocomplete
@@ -45,6 +60,23 @@ export const ShortListedCandidateUpdate = ({ row, closeDialog }) => {
           <TextField {...params} label="Stage" margin="dense" fullWidth />
         )}
       />
+      {stage === "Rejected" && (
+        <Autocomplete
+          value={rejectedReason}
+          onChange={(event, newValue) => {
+            setRejectedReason(newValue);
+          }}
+          options={["Salary", "Technical", "Experience", "Language", "Others"]}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Rejected Reason"
+              margin="dense"
+              fullWidth
+            />
+          )}
+        />
+      )}
       <TextField
         margin="dense"
         label="Interview Date"
