@@ -86,7 +86,7 @@ export const JobOpeningCreate = ({ addNewJobOpening }) => {
         Add New Job Opening
       </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <TextField
             label="Date Of Closing"
             name="closing_date"
@@ -98,7 +98,7 @@ export const JobOpeningCreate = ({ addNewJobOpening }) => {
               shrink: true,
             }}
           />
-        </Grid>
+        </Grid> */}
 
         <Grid item xs={12}>
           <Autocomplete
