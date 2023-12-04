@@ -121,6 +121,12 @@ const getMisReport = () => {
   return CustomAxios.get(`/api/hr/mis-report/`);
 }
 
+//Rejected Candaiate List API
+
+const getRejectedCandidates = () => {  
+  return CustomAxios.get(`/api/hr/interview-details/?stage=Rejected`);
+}
+
 const Hr = {
   getDesignationsData,
   addDesignation,
@@ -144,7 +150,8 @@ const Hr = {
   updateInterviewDate,
   getOfferStatus,
   updateOfferStatus,
-  getMisReport
+  getMisReport,
+  getRejectedCandidates
 };
 
 export default Hr;
