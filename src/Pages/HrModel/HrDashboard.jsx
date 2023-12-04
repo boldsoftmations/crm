@@ -9,6 +9,7 @@ export const HrDashboard = () => {
   const [applicationSourcesData, setApplicationSourcesData] = useState([]);
   const [averageDaysToHire, setAverageDaysToHire] = useState(0);
   const [placementRate, setPlacementRate] = useState(0);
+  const [rejectionReasons, setRejectionReasons] = useState([]);
 
   useEffect(() => {
     CustomAxios.get("/api/hr/mis-report/")
@@ -40,12 +41,21 @@ export const HrDashboard = () => {
 
     setAverageDaysToHire(data.average_days_to_hire.avg_days_to_hire);
     setPlacementRate(data.placement_rate);
+    setRejectionReasons(data.rejection_reasons);
 
     const appSources = [["Source", "Total"]];
     data.application_sources.forEach((source) => {
       appSources.push([source.source__name, source.total]);
     });
     setApplicationSourcesData(appSources);
+  };
+
+  const getRejectionReasonsChartData = () => {
+    const chartData = [["Rejection Reason", "Number of Candidates"]];
+    rejectionReasons.forEach((reason) => {
+      chartData.push([reason.rejection_reason, reason.num_candidates]);
+    });
+    return chartData;
   };
 
   const getBarChartData = (data) => {
@@ -119,6 +129,17 @@ export const HrDashboard = () => {
                 chartType="BarChart"
                 data={getBarChartData(pipelineSummary)}
                 options={{ title: "Recruitment Pipeline" }}
+                width="100%"
+                height="400px"
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Box boxShadow={3} p={2} component={Paper}>
+              <Chart
+                chartType="ColumnChart"
+                data={getRejectionReasonsChartData()}
+                options={{ title: "Rejection Reasons" }}
                 width="100%"
                 height="400px"
               />
