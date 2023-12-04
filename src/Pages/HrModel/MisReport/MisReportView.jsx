@@ -11,12 +11,14 @@ export const MisReportView = () => {
   const [placementRate, setPlacementRate] = useState([]);
   const [ctcChartData, setCtcChartData] = useState([]);
   const [costAnalysisData, setCostAnalysisData] = useState([]);
+  const [rejectionReasonsData, setRejectionReasonsData] = useState([]);
 
   useEffect(() => {
     getMisReport()
       .then((response) => {
         const data = response.data;
         transformData(data);
+        transformRejectionReasonsData(data.rejection_reasons);
       })
       .catch((error) => {
         console.error("Error fetching MIS report data:", error);
@@ -79,8 +81,8 @@ export const MisReportView = () => {
     setPipelineData(pipeline);
 
     const avgHireData = [
-      ["Metric", "Days"],
-      ["Average Days to Hire", parseFloat(data.avg_days_to_hire) / 86400],
+      ["Label", "Value"],
+      ["Average Days to Hire", data.average_days_to_hire.avg_days_to_hire],
     ];
     setAvgDaysToHire(avgHireData);
 
@@ -122,6 +124,14 @@ export const MisReportView = () => {
     ];
     return funnelData;
   };
+  const transformRejectionReasonsData = (data) => {
+    const chartData = [["Rejection Reason", "Number of Candidates"]];
+    data.forEach((item) => {
+      chartData.push([item.rejection_reason, item.num_candidates]);
+    });
+    setRejectionReasonsData(chartData);
+  };
+
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
@@ -244,21 +254,42 @@ export const MisReportView = () => {
             />
           </Box>
         </Grid>
-        {/* Average Days to Hire Chart */}
-        {/* <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6}>
           <Box boxShadow={3}>
             <Chart
               chartType="BarChart"
-              data={avgDaysToHire}
+              data={rejectionReasonsData}
               options={{
-                title: "Average Days to Hire",
-                legend: "none",
+                title: "Rejection Reasons",
+                is3D: true,
               }}
               width="100%"
               height="400px"
             />
           </Box>
-        </Grid> */}
+        </Grid>
+
+        {/* Average Days to Hire Chart */}
+        <Grid item xs={12} md={6}>
+          <Box boxShadow={3}>
+            <Chart
+              chartType="LineChart"
+              data={avgDaysToHire}
+              options={{
+                title: "Average Days to Hire",
+                redFrom: 0,
+                redTo: 5,
+                yellowFrom: 5,
+                yellowTo: 10,
+                greenFrom: 10,
+                greenTo: 20,
+                minorTicks: 1,
+              }}
+              width="100%"
+              height="400px"
+            />
+          </Box>
+        </Grid>
       </Grid>
     </Container>
   );
