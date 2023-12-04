@@ -38,13 +38,43 @@ export const MisReportView = () => {
     setJobOpeningData(jobData);
 
     const pipeline = [
-      ["Stage", "Number"],
-      ["Total Applicants", data.total_applicants],
-      ["Shortlisted Applicants", data.shortlisted_applicants],
-      ["Active Candidates", data.active_candidates_count],
-      ["Interviewed Candidates", data.interviewed_candidates_count],
-      ["Offered Candidates", data.offered_candidates_count],
-      ["Applicants Joined", data.applicant_joined_count],
+      ["Stage", "Value", { role: "style" }, { role: "annotation" }],
+      [
+        "Applicants Joined",
+        data.applicant_joined_count,
+        "stroke-color: #4374E0; stroke-opacity: 0.6; stroke-width: 2; fill-color: #4374E0; fill-opacity: 0.2",
+        "",
+      ],
+      [
+        "Offered Candidates",
+        data.offered_candidates_count,
+        "stroke-color: #4374E0; stroke-opacity: 0.6; stroke-width: 4; fill-color: #4374E0; fill-opacity: 0.4",
+        "",
+      ],
+      [
+        "Interviewed Candidates",
+        data.interviewed_candidates_count,
+        "stroke-color: #4374E0; stroke-opacity: 0.6; stroke-width: 6; fill-color: #4374E0; fill-opacity: 0.6",
+        "",
+      ],
+      [
+        "Active Candidates",
+        data.active_candidates_count,
+        "stroke-color: #4374E0; stroke-opacity: 0.6; stroke-width: 8; fill-color: #4374E0; fill-opacity: 0.8",
+        "",
+      ],
+      [
+        "Shortlisted Applicants",
+        data.shortlisted_applicants,
+        "stroke-color: #4374E0; stroke-opacity: 0.6; stroke-width: 10; fill-color: #4374E0; fill-opacity: 1",
+        "Total Applicants",
+      ],
+      [
+        "Total Applicants",
+        data.total_applicants,
+        "stroke-color: #4374E0; stroke-opacity: 0.6; stroke-width: 12; fill-color: #4374E0; fill-opacity: 1",
+        "Shortlisted Applicants",
+      ],
     ];
     setPipelineData(pipeline);
 
@@ -80,7 +110,18 @@ export const MisReportView = () => {
     });
     setApplicationSourcesData(appSources);
   };
-
+  const funnelChartData = () => {
+    const sortedData = pipelineData.slice(1).sort((a, b) => b[1] - a[1]);
+    const funnelData = [
+      ["Stage", "Value", { role: "style" }],
+      ...sortedData.map((item, index) => [
+        item[0],
+        item[1],
+        `opacity: ${1 - index * 0.1}; color: ${item[2]};`,
+      ]),
+    ];
+    return funnelData;
+  };
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
@@ -109,18 +150,29 @@ export const MisReportView = () => {
         <Grid item xs={12} md={6}>
           <Box boxShadow={3}>
             <Chart
-              chartType="LineChart"
-              data={pipelineData}
-              options={{
-                title: "Recruitment Pipeline",
-                is3D: true,
-              }}
+              chartType="BarChart"
               width="100%"
               height="400px"
+              data={funnelChartData()}
+              options={{
+                title: "Recruitment Pipeline",
+                legend: { position: "none" },
+                hAxis: { minValue: 0 },
+                chartArea: { width: "50%", height: "80%" },
+                bar: { groupWidth: "95%" },
+                isStacked: true,
+                annotations: {
+                  textStyle: {
+                    fontSize: 14,
+                    bold: true,
+                    auraColor: "none",
+                  },
+                  alwaysOutside: true,
+                },
+              }}
             />
           </Box>
         </Grid>
-
         {/* Application Sources Data Chart */}
         <Grid item xs={12} md={6}>
           <Box boxShadow={3}>
