@@ -39,6 +39,9 @@ export const ShortListedCandidateUpdate = ({ row, closeDialog }) => {
     }
   };
 
+  const disableFields =
+    stage === "Rejected" || stage === "On Hold" || stage === "Not Interested";
+
   const stageOptions = [
     "Selected",
     "Scheduled",
@@ -84,6 +87,7 @@ export const ShortListedCandidateUpdate = ({ row, closeDialog }) => {
         fullWidth
         value={interviewDate}
         onChange={(e) => setInterviewDate(e.target.value)}
+        disabled={disableFields}
       />
       <TextField
         margin="dense"
@@ -92,6 +96,7 @@ export const ShortListedCandidateUpdate = ({ row, closeDialog }) => {
         fullWidth
         value={interviewTime}
         onChange={(e) => setInterviewTime(e.target.value)}
+        disabled={disableFields}
       />
       <TextField
         margin="dense"
@@ -100,6 +105,7 @@ export const ShortListedCandidateUpdate = ({ row, closeDialog }) => {
         fullWidth
         value={interviewerName}
         onChange={(e) => setInterviewerName(e.target.value)}
+        disabled={disableFields}
       />
       <DialogActions>
         <Button onClick={closeDialog} color="primary">
