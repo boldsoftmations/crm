@@ -32,8 +32,8 @@ export const HrDashboard = () => {
 
     setPipelineSummary({
       TotalApplicants: data.total_applicants,
-      ActiveCandidates: data.active_candidates_count,
       Shortlisted: data.shortlisted_applicants,
+      ActiveCandidates: data.active_candidates_count,
       Interviewed: data.interviewed_candidates_count,
       Offered: data.offered_candidates_count,
       Joined: data.applicant_joined_count,
