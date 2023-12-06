@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Container, Typography, Grid, Box } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Grid,
+  Box,
+  Autocomplete,
+  TextField,
+} from "@mui/material";
 import { Chart } from "react-google-charts";
 import CustomAxios from "../../../services/api";
 
@@ -13,8 +20,26 @@ export const MisReportView = () => {
   const [costAnalysisData, setCostAnalysisData] = useState([]);
   const [rejectionReasonsData, setRejectionReasonsData] = useState([]);
 
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const currentMonthName = months[new Date().getMonth()];
+  const [selectedMonth, setSelectedMonth] = useState(currentMonthName);
   useEffect(() => {
-    getMisReport()
+    let monthNumber = months.indexOf(selectedMonth) + 1;
+    getMisReport(monthNumber)
       .then((response) => {
         const data = response.data;
         transformData(data);
@@ -23,10 +48,10 @@ export const MisReportView = () => {
       .catch((error) => {
         console.error("Error fetching MIS report data:", error);
       });
-  }, []);
+  }, [selectedMonth]);
 
-  const getMisReport = async () => {
-    return CustomAxios.get(`/api/hr/mis-report/`);
+  const getMisReport = async (month) => {
+    return CustomAxios.get(`/api/hr/mis-report/?month=${month}`);
   };
 
   const transformData = (data) => {
@@ -137,6 +162,23 @@ export const MisReportView = () => {
       <Typography variant="h4" gutterBottom>
         MIS Report
       </Typography>
+      <Box marginBottom={2}>
+        <Autocomplete
+          value={selectedMonth}
+          onChange={(event, newValue) => {
+            setSelectedMonth(newValue);
+          }}
+          options={months}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Select Month"
+              variant="outlined"
+              fullWidth
+            />
+          )}
+        />
+      </Box>
       <Grid container spacing={3}>
         {/* Job Opening Data Chart */}
         <Grid item xs={12} md={6}>
@@ -257,7 +299,7 @@ export const MisReportView = () => {
         <Grid item xs={12} md={6}>
           <Box boxShadow={3}>
             <Chart
-              chartType="BarChart"
+              chartType="ColumnChart"
               data={rejectionReasonsData}
               options={{
                 title: "Rejection Reasons",
