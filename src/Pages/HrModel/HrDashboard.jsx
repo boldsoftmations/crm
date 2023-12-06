@@ -12,7 +12,7 @@ export const HrDashboard = () => {
   const [rejectionReasons, setRejectionReasons] = useState([]);
 
   useEffect(() => {
-    CustomAxios.get("/api/hr/mis-report/")
+    CustomAxios.get("/api/hr/dashboard/")
       .then((response) => {
         const data = response.data;
         transformData(data);
@@ -24,19 +24,19 @@ export const HrDashboard = () => {
 
   const transformData = (data) => {
     setJobOpeningSummary({
-      TotalJobOpenings: data.jobopening_count,
-      OpenJobOpenings: data.open_job_count,
-      ClosedJobOpenings: data.close_job_count,
-      NewJobOpenings: data.new_jobopening_count,
+      TotalJobOpenings: data.jobopening,
+      OpenJobOpenings: data.open_job,
+      ClosedJobOpenings: data.close_job,
+      NewJobOpenings: data.new_jobopening,
     });
 
     setPipelineSummary({
       TotalApplicants: data.total_applicants,
       Shortlisted: data.shortlisted_applicants,
-      Interviewed: data.interviewed_candidates_count,
-      Offered: data.offered_candidates_count,
-      ActiveCandidates: data.active_candidates_count,
-      Joined: data.applicant_joined_count,
+      Interviewed: data.interviewed_candidates,
+      Offered: data.offered_candidates,
+      ActiveCandidates: data.active_candidates,
+      Joined: data.applicant_joined,
     });
 
     setAverageDaysToHire(data.average_days_to_hire.avg_days_to_hire);
