@@ -24,18 +24,18 @@ export const HrDashboard = () => {
 
   const transformData = (data) => {
     setJobOpeningSummary({
-      TotalOpenings: data.jobopening_count,
-      OpenOpenings: data.open_job_count,
-      ClosedOpenings: data.close_job_count,
-      NewOpenings: data.new_jobopening_count,
+      TotalJobOpenings: data.jobopening_count,
+      OpenJobOpenings: data.open_job_count,
+      ClosedJobOpenings: data.close_job_count,
+      NewJobOpenings: data.new_jobopening_count,
     });
 
     setPipelineSummary({
       TotalApplicants: data.total_applicants,
       Shortlisted: data.shortlisted_applicants,
-      ActiveCandidates: data.active_candidates_count,
       Interviewed: data.interviewed_candidates_count,
       Offered: data.offered_candidates_count,
+      ActiveCandidates: data.active_candidates_count,
       Joined: data.applicant_joined_count,
     });
 
@@ -68,10 +68,6 @@ export const HrDashboard = () => {
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>
-        HR Dashboard
-      </Typography>
-
       {/* Summary Panels */}
       <Box>
         <Grid container spacing={3}>

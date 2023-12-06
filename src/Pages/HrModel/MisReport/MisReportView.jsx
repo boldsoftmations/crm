@@ -159,9 +159,6 @@ export const MisReportView = () => {
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>
-        MIS Report
-      </Typography>
       <Box marginBottom={2}>
         <Autocomplete
           value={selectedMonth}
