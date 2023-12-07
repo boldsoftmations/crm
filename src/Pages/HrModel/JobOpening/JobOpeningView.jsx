@@ -6,6 +6,7 @@ import { JobOpeningUpdate } from "./JobOpeningUpdate";
 import { CustomTable } from "../../../Components/CustomTable";
 import Hr from "./../../../services/Hr";
 import { ApplicantListCreate } from "../ApplicantList/ApplicantListCreate";
+import { useSelector } from "react-redux";
 
 export const JobOpeningView = () => {
   const [jobOpenings, setJobOpenings] = useState([]);
@@ -16,6 +17,9 @@ export const JobOpeningView = () => {
   const [recordForEdit, setRecordForEdit] = useState(false);
   const [openUpdatePopup7, setOpenUpdatePopup7] = useState(false);
   const [openApplicantListPopup, setOpenApplicantListPopup] = useState(false);
+  const data = useSelector((state) => state.auth);
+  const users = data.profile;
+  const isSalesManager = users.groups.includes("Sales Manager");
 
   const openInPopup = (item) => {
     setRecordForEdit(item);
@@ -131,20 +135,22 @@ export const JobOpeningView = () => {
             headers={TableHeader}
             data={TableData}
             openInPopup={openInPopup}
-            openInPopup7={openInPopup7}
+            openInPopup7={!isSalesManager ? openInPopup7 : null}
             onEdit={handleEditJobOpeningClick}
           />
         </Paper>
-        <Popup
-          title="Add New Applicant"
-          openPopup={openApplicantListPopup}
-          setOpenPopup={setOpenApplicantListPopup}
-        >
-          <ApplicantListCreate
-            jobOpeningId={recordForEdit.id}
-            onSuccess={handleSuccess}
-          />
-        </Popup>
+        {!isSalesManager && (
+          <Popup
+            title="Add New Applicant"
+            openPopup={openApplicantListPopup}
+            setOpenPopup={setOpenApplicantListPopup}
+          >
+            <ApplicantListCreate
+              jobOpeningId={recordForEdit.id}
+              onSuccess={handleSuccess}
+            />
+          </Popup>
+        )}
 
         <Popup
           title="Add New Job Opening"
