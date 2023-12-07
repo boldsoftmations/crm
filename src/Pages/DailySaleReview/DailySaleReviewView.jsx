@@ -242,12 +242,14 @@ export const DailySaleReviewView = () => {
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       <Button onClick={() => openInPopup(data)}>View</Button>
-                      <Button
-                        color="secondary"
-                        onClick={() => openInPopup2(data)}
-                      >
-                        Edit
-                      </Button>
+                      {!UsersData.groups.includes("Sales Executive") && (
+                        <Button
+                          color="secondary"
+                          onClick={() => openInPopup2(data)}
+                        >
+                          Edit
+                        </Button>
+                      )}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
