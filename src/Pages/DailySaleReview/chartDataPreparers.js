@@ -1,15 +1,17 @@
 // Call Performance
 export const prepareCallPerformanceChartData = (record) => {
   const categories = ["Today", "Month", "Last 7 Days"];
-  return [
-    ["Category", "Existing Customer", "New Leads", "Existing Leads"],
-    ...categories.map((category) => [
-      category,
-      record.call_performance.existing_customer[category.toLowerCase()],
-      record.call_performance.new_leads[category.toLowerCase()],
-      record.call_performance.existing_leads[category.toLowerCase()],
-    ]),
-  ];
+  if (!record || !record.call_performance) {
+    return [
+      ["Category", "Existing Customer", "New Leads", "Existing Leads"],
+      ...categories.map((category) => [
+        category,
+        record.call_performance.existing_customer[category.toLowerCase()] || 0,
+        record.call_performance.new_leads[category.toLowerCase()] || 0,
+        record.call_performance.existing_leads[category.toLowerCase()] || 0,
+      ]),
+    ];
+  }
 };
 
 // Define Chart Options for Call Performance Overview

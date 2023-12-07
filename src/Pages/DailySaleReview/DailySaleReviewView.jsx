@@ -20,13 +20,16 @@ import { CustomLoader } from "../../Components/CustomLoader";
 import { Popup } from "./../../Components/Popup";
 import { DailySaleReviewUpdate } from "./DailySaleReviewUpdate";
 import UserProfileService from "./../../services/UserProfileService";
+import { DailySaleReviewCreate } from "./DailySaleReviewCreate";
+import { PerformanceUpdate } from "./PerformanceUpdate";
 
 export const DailySaleReviewView = () => {
   const UsersData = useSelector((state) => state.auth.profile);
   const assignedOption = UsersData.sales_users || [];
   const [isLoading, setIsLoading] = useState(false);
   const [dailySalesReviewData, setDailySalesReviewData] = useState([]);
-
+  const [openCreatePopup, setOpenCreatePopup] = useState(false);
+  const [openEditPopup, setOpenEditPopup] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [openPopup, setOpenPopup] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(null);
@@ -86,10 +89,26 @@ export const DailySaleReviewView = () => {
     [salesPersonByFilter, searchQuery]
   );
 
-  const openInPopup = (item) => {
-    console.log("item", item);
+  const openInPopup = async (item) => {
+    try {
+      setIsLoading(true);
+      const response = await UserProfileService.getDailySaleReviewById(item.id);
+      console.log("response", response);
+      if (response && response.data) {
+        setRecordForEdit(response.data.daily_sales_review);
+      }
+      setOpenPopup(true);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const openInPopup2 = (item) => {
+    console.log("item", item.id);
     setRecordForEdit(item);
-    setOpenPopup(true);
+    setOpenEditPopup(true);
   };
 
   const Tableheaders = [
@@ -167,6 +186,16 @@ export const DailySaleReviewView = () => {
             >
               Reset
             </Button>
+            {!UsersData.groups.includes("Sales Executive") && (
+              <Button
+                variant="contained"
+                color="success"
+                onClick={() => setOpenCreatePopup(true)}
+                sx={{ marginLeft: "10px" }}
+              >
+                Add
+              </Button>
+            )}
           </Box>
           <Box display="flex" justifyContent="center" marginBottom="10px">
             <h3
@@ -213,12 +242,29 @@ export const DailySaleReviewView = () => {
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       <Button onClick={() => openInPopup(data)}>View</Button>
+                      <Button
+                        color="secondary"
+                        onClick={() => openInPopup2(data)}
+                      >
+                        Edit
+                      </Button>
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
+          <Popup
+            maxwidth={"xl"}
+            title="Create Sale Review"
+            openPopup={openCreatePopup}
+            setOpenPopup={setOpenCreatePopup}
+          >
+            <DailySaleReviewCreate
+              setOpenPopup={setOpenCreatePopup}
+              getDailySaleReviewData={getDailySaleReviewData}
+            />
+          </Popup>
           <Popup
             fullScreen={true}
             title="View Sale Review"
@@ -228,6 +274,18 @@ export const DailySaleReviewView = () => {
             <DailySaleReviewUpdate
               setOpenPopup={setOpenPopup}
               recordForEdit={recordForEdit}
+            />
+          </Popup>
+          <Popup
+            maxwidth={"xl"}
+            title="Update Performace"
+            openPopup={openEditPopup}
+            setOpenPopup={setOpenEditPopup}
+          >
+            <PerformanceUpdate
+              setOpenPopup={setOpenEditPopup}
+              recordForEdit={recordForEdit}
+              getDailySaleReviewData={getDailySaleReviewData}
             />
           </Popup>
         </Paper>
