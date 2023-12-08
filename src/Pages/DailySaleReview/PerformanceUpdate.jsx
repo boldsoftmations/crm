@@ -37,7 +37,11 @@ export const PerformanceUpdate = ({
     }
   };
 
-  const performanceOptions = ["OT", "UP", "OP"]; // Replace with actual options
+  const performanceOptions = [
+    "On Track",
+    "Under Performing",
+    "Over Performing",
+  ];
 
   return (
     <>
