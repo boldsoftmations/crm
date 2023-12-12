@@ -1037,7 +1037,7 @@ export const ListItems = (props) => {
             </ListItemIcon>
             <ListItemText primary="Sales Review" />
           </ListItem>
-          {/* <ListItem
+          <ListItem
             button
             component={RouterLink}
             to="/user/sales-history"
@@ -1048,7 +1048,7 @@ export const ListItems = (props) => {
               <AnalyticsIcon />
             </ListItemIcon>
             <ListItemText primary="Sales History" />
-          </ListItem> */}
+          </ListItem>
 
           {/* Hr Recruitment Model */}
           <ListItem
