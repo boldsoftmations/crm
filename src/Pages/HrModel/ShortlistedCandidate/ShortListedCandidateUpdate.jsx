@@ -40,7 +40,10 @@ export const ShortListedCandidateUpdate = ({ row, closeDialog }) => {
   };
 
   const disableFields =
-    stage === "Rejected" || stage === "On Hold" || stage === "Not Interested";
+    stage === "Rejected" ||
+    stage === "On Hold" ||
+    stage === "Not Interested" ||
+    stage === "Selected";
 
   const stageOptions = [
     "Selected",
