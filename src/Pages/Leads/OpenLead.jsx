@@ -40,6 +40,7 @@ import { CreateLeadsProformaInvoice } from "./../Invoice/ProformaInvoice/CreateL
 import { Helmet } from "react-helmet";
 import CustomTextField from "../../Components/CustomTextField";
 import { LeadPotentialCreate } from "./LeadPotential/LeadPotentialCreate";
+import { LeadForecastCreate } from "./LeadForecast/LeadForecastCreate";
 
 export const OpenLead = () => {
   const [leads, setLeads] = useState([]);
@@ -121,6 +122,10 @@ export const OpenLead = () => {
     setOpenModalPI(true);
   };
 
+  const openInPopup5 = (item) => {
+    setLeadsByID(item.lead_id);
+    setOpenModalPI(true);
+  };
   const getResetSearchData = () => {
     setSearchQuery("");
     getSearchData(filterQuery, filterSelectedQuery, null); // Pass an empty string as the second parameter
@@ -604,7 +609,10 @@ export const OpenLead = () => {
                       <Button onClick={() => openInPopup3(row)}>
                         Potential
                       </Button>
-                      ,<Button onClick={() => openInPopup4(row)}>PI</Button>
+                      ,<Button onClick={() => openInPopup4(row)}>PI</Button>,{" "}
+                      <Button onClick={() => openInPopup5(row)}>
+                        Forecast
+                      </Button>
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
@@ -669,6 +677,17 @@ export const OpenLead = () => {
         setOpenPopup={setOpenModalPI}
       >
         <CreateLeadsProformaInvoice
+          leadsByID={leadsByID}
+          setOpenPopup={setOpenModalPI}
+        />
+      </Popup>
+      <Popup
+        // fullScreen={true}
+        title={"Create Lead Forecast"}
+        openPopup={openModalPI}
+        setOpenPopup={setOpenModalPI}
+      >
+        <LeadForecastCreate
           leadsByID={leadsByID}
           setOpenPopup={setOpenModalPI}
         />

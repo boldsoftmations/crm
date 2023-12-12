@@ -224,6 +224,16 @@ const getIndiaMartLeads = (data) => {
   return CustomAxios.get(`/api/lead/indiamart-leads-list/?year_month=${data}`);
 };
 
+const getLeadForecast= (data) => {
+  return CustomAxios.get(`/api/forecast/lead-forecast/`,data);
+}
+const createLeadForecast = (data) => {
+  return CustomAxios.post("/api/forecast/lead-forecast/", data);
+}
+const updateLeadForecast = (id, data) => {
+  return CustomAxios.patch(`/api/forecast/lead-forecast/${id}/`, data);
+}
+
 const LeadServices = {
   getAllLeads,
   getAllAssignedUser,
@@ -259,6 +269,9 @@ const LeadServices = {
   AssignMultipleLeads,
   getAllFollowup,
   getIndiaMartLeads,
+  createLeadForecast,
+  getLeadForecast,
+  updateLeadForecast
 };
 
 export default LeadServices;

@@ -40,6 +40,7 @@ import { Helmet } from "react-helmet";
 import CustomTextField from "../../Components/CustomTextField";
 import { CreateLeads } from "./CreateLeads";
 import { LeadPotentialCreate } from "./LeadPotential/LeadPotentialCreate";
+import { LeadForecastCreate } from "./LeadForecast/LeadForecastCreate";
 
 export const HotLeads = () => {
   const [leads, setLeads] = useState([]);
@@ -115,6 +116,11 @@ export const HotLeads = () => {
   };
 
   const openInPopup4 = (item) => {
+    setLeadsByID(item.lead_id);
+    setOpenModalPI(true);
+  };
+
+  const openInPopup5 = (item) => {
     setLeadsByID(item.lead_id);
     setOpenModalPI(true);
   };
@@ -589,7 +595,10 @@ export const HotLeads = () => {
                       <Button onClick={() => openInPopup3(row)}>
                         Potential
                       </Button>
-                      ,<Button onClick={() => openInPopup4(row)}>PI</Button>
+                      ,<Button onClick={() => openInPopup4(row)}>PI</Button>,{" "}
+                      <Button onClick={() => openInPopup5(row)}>
+                        Forecast
+                      </Button>
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
@@ -654,6 +663,17 @@ export const HotLeads = () => {
         setOpenPopup={setOpenModalPI}
       >
         <CreateLeadsProformaInvoice
+          leadsByID={leadsByID}
+          setOpenPopup={setOpenModalPI}
+        />
+      </Popup>
+      <Popup
+        // fullScreen={true}
+        title={"Create Lead Forecast"}
+        openPopup={openModalPI}
+        setOpenPopup={setOpenModalPI}
+      >
+        <LeadForecastCreate
           leadsByID={leadsByID}
           setOpenPopup={setOpenModalPI}
         />

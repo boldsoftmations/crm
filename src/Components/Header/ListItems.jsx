@@ -374,6 +374,19 @@ export const ListItems = (props) => {
                   primary="Indiamart Leads"
                 />
               </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/leads/forecast-list"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Forecast List"
+                />
+              </ListItem>
             </List>
           </Collapse>
 
@@ -1024,6 +1037,18 @@ export const ListItems = (props) => {
             </ListItemIcon>
             <ListItemText primary="Sales Review" />
           </ListItem>
+          {/* <ListItem
+            button
+            component={RouterLink}
+            to="/user/sales-history"
+            style={{ width: 300 }}
+            onClick={() => setOpen(false)}
+          >
+            <ListItemIcon>
+              <AnalyticsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Sales History" />
+          </ListItem> */}
 
           {/* Hr Recruitment Model */}
           <ListItem

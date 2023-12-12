@@ -73,6 +73,8 @@ import { HrModelTabs } from "../Pages/HrModel/HrModelTabs";
 import { DesignationView } from "../Pages/HrModel/Designation/DesignationView";
 import { DepartmentView } from "../Pages/HrModel/Department/DepartmentView";
 import { SourceView } from "../Pages/HrModel/CandidateSource/SourceView";
+// import { DailySalesHistory } from "../Pages/DailySaleReview/DailySalesHistory";
+import { LeadForecastView } from "../Pages/Leads/LeadForecast/LeadForecastView";
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
   const token = tokenData.user;
@@ -113,6 +115,7 @@ export const RouteScreen = () => {
             <Route path="/leads/open-lead" element={<OpenLead />} />
             <Route path="/leads/closed-lead" element={<ClosedLead />} />
             <Route path="/leads/duplicate-lead" element={<DuplicateLead />} />
+            <Route path="/leads/forecast-list" element={<LeadForecastView />} />
             <Route
               path="/leads/view-unassigned-lead"
               element={<UnassignedLead />}
@@ -280,6 +283,7 @@ export const RouteScreen = () => {
             <Route path="/user/faq" element={<FaqAllTab />} />
             {/* Daily sale review */}
             <Route path="/user/sale-review" element={<DailySaleReviewView />} />
+            {/* <Route path="/user/sales-history" element={<DailySalesHistory />} /> */}
             <Route path="/" element={<Home />} />
             <Route path="/user/hr-model"
             element={<HrModelTabs />} />
