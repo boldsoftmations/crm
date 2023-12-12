@@ -16,7 +16,7 @@ export const JobOpeningCreate = ({ addNewJobOpening }) => {
   });
   const [designations, setDesignations] = useState([]);
   const [department, setDepartment] = useState([]);
-
+  const [emails, setEmails] = useState([]);
   useEffect(() => {
     const fetchDesignations = async () => {
       try {
@@ -42,8 +42,21 @@ export const JobOpeningCreate = ({ addNewJobOpening }) => {
       }
     };
 
+    const fetchEmails = async () => {
+      try {
+        const response = await CustomAxios.get(
+          `/api/user/users/?is_active=True`
+        );
+        if (Array.isArray(response.data.users)) {
+          setEmails(response.data.users.map((user) => user.email));
+        }
+      } catch (error) {
+        console.error("Error fetching Emails:", error);
+      }
+    };
     fetchDesignations();
     fetchDepartments();
+    fetchEmails();
   }, []);
 
   const locations = [
@@ -167,7 +180,34 @@ export const JobOpeningCreate = ({ addNewJobOpening }) => {
             )}
           />
         </Grid>
-
+        {newJobOpening.position === "Replacement" && (
+          <Grid item xs={12}>
+            <Autocomplete
+              id="replacement_user"
+              options={emails}
+              fullWidth
+              renderInput={(params) => (
+                <TextField {...params} label="Replacement Email" />
+              )}
+              value={newJobOpening.replacement_user}
+              onChange={(event, newValue) => {
+                setNewJobOpening({
+                  ...newJobOpening,
+                  replacement_email: newValue,
+                });
+              }}
+            />
+          </Grid>
+        )}
+        <Grid item xs={12}>
+          <TextField
+            name="no_of_openings"
+            label="No Of Openings"
+            value={newJobOpening.no_of_openings || ""}
+            onChange={handleInputChange}
+            fullWidth
+          />
+        </Grid>
         <Grid item xs={12}>
           <Autocomplete
             id="salary_ranges"

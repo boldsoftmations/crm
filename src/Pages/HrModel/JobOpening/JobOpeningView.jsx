@@ -80,8 +80,9 @@ export const JobOpeningView = () => {
     // "Department",
     "Location",
     "Salary Range",
-    // "Date of Closing",
+    "Date of Closing",
     "Open Duration",
+    "No Of Positions",
     // "Position",
     "Action",
   ];
@@ -98,8 +99,9 @@ export const JobOpeningView = () => {
     // department: job.department,
     location: job.location,
     salary_ranges: job.salary_ranges,
-    // closing_date: job.closing_date,
+    closing_date: job.closing_date,
     days_open: job.days_open,
+    no_of_positions: job.no_of_openings,
     // position: job.position,
   }));
 
