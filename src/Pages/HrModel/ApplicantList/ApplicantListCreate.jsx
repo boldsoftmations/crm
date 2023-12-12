@@ -49,18 +49,17 @@ export const ApplicantListCreate = ({ jobOpeningId, onSuccess }) => {
     fetchSource();
   }, []);
 
-  const handleInputChange = (event, newValue) => {
-    let { name, value } = event.target || {};
-    if (name === "contact" && !value.startsWith("+91")) {
-      value = `+91${value}`;
-    }
-
-    if (newValue !== undefined) {
+  const handleInputChange = (event, newValue, name) => {
+    if (name) {
       setFormData((prevData) => ({
         ...prevData,
         [name]: newValue,
       }));
     } else {
+      let { name, value } = event.target;
+      if (name === "contact" && !value.startsWith("+91")) {
+        value = `+91${value}`;
+      }
       setFormData((prevData) => ({
         ...prevData,
         [name]: value,
@@ -71,19 +70,31 @@ export const ApplicantListCreate = ({ jobOpeningId, onSuccess }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await Hr.addApplicant({
-        ...formData,
-        // job: formData.jobOpeningId,
-      });
+      const response = await Hr.addApplicant(formData);
       console.log("Applicant created:", response.data);
       onSuccess();
     } catch (error) {
       console.error("Error creating applicant:", error);
     }
   };
-
   const spokenEnglishOptions = ["Bad", "Average", "Good"];
 
+  const salaryRange = [
+    "0.6 LPA - 1.2 LPA",
+    "1.2 LPA - 1.8 LPA",
+    "1.8 LPA - 2.4 LPA",
+    "2.4 LPA - 3.0 LPA",
+    "3.0 LPA - 3.6 LPA",
+    "3.6 LPA - 4.8 LPA",
+    "4.8 LPA - 6.0 LPA",
+    "7.2 LPA - 9.6 LPA",
+    "9.6 LPA - 12 LPA",
+    "12 LPA - 15 LPA",
+    "15 LPA - 18 LPA",
+    "18 LPA - 21 LPA",
+    "21 LPA - 24 LPA",
+    "24 LPA - Above",
+  ];
   return (
     <Container
       component="form"
@@ -172,13 +183,19 @@ export const ApplicantListCreate = ({ jobOpeningId, onSuccess }) => {
               onChange={handleInputChange}
             />
           </Grid>
+
           <Grid item xs={12}>
-            <TextField
-              label="Expected Salary"
-              name="expected_salary"
+            <Autocomplete
+              id="expected_salary"
+              options={salaryRange}
               fullWidth
+              renderInput={(params) => (
+                <TextField {...params} label="Expected Salary" />
+              )}
               value={formData.expected_salary}
-              onChange={handleInputChange}
+              onChange={(event, newValue) => {
+                handleInputChange(event, newValue, "expected_salary");
+              }}
             />
           </Grid>
 
