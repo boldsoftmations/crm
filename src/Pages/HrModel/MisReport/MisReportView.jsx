@@ -157,6 +157,10 @@ export const MisReportView = () => {
   };
   const transformRejectionReasonsData = (data) => {
     const chartData = [["Rejection Reason", "Number of Candidates"]];
+    if (data.length === 0) {
+      setRejectionReasonsData([]);
+      return;
+    }
     data.forEach((item) => {
       chartData.push([item.rejection_reason, item.num_candidates]);
     });
@@ -292,18 +296,21 @@ export const MisReportView = () => {
             />
           </Box>
         </Grid>
+
         <Grid item xs={12} md={6}>
           <Box boxShadow={3}>
-            <Chart
-              chartType="ColumnChart"
-              data={rejectionReasonsData}
-              options={{
-                title: "Rejection Reasons",
-                is3D: true,
-              }}
-              width="100%"
-              height="400px"
-            />
+            {rejectionReasonsData.length > 1 && (
+              <Chart
+                chartType="ColumnChart"
+                data={rejectionReasonsData}
+                options={{
+                  title: "Rejection Reasons",
+                  is3D: true,
+                }}
+                width="100%"
+                height="400px"
+              />
+            )}
           </Box>
         </Grid>
 
