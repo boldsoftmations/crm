@@ -35,11 +35,14 @@ export const MisReportView = () => {
     "December",
   ];
 
-  const currentMonthName = months[new Date().getMonth()];
-  const [selectedMonth, setSelectedMonth] = useState(currentMonthName);
+  const currentYearMonth = `${new Date().getFullYear()}-${(
+    new Date().getMonth() + 1
+  )
+    .toString()
+    .padStart(2, "0")}`;
+  const [selectedYearMonth, setSelectedYearMonth] = useState(currentYearMonth);
   useEffect(() => {
-    let monthNumber = months.indexOf(selectedMonth) + 1;
-    getMisReport(monthNumber)
+    getMisReport(selectedYearMonth)
       .then((response) => {
         const data = response.data;
         transformData(data);
@@ -48,10 +51,10 @@ export const MisReportView = () => {
       .catch((error) => {
         console.error("Error fetching MIS report data:", error);
       });
-  }, [selectedMonth]);
+  }, [selectedYearMonth]);
 
-  const getMisReport = async (month) => {
-    return CustomAxios.get(`/api/hr/mis-report/?month=${month}`);
+  const getMisReport = async (year_month) => {
+    return CustomAxios.get(`/api/hr/mis-report/?year_month=${year_month}`);
   };
 
   const transformData = (data) => {
@@ -163,20 +166,13 @@ export const MisReportView = () => {
   return (
     <Container>
       <Box marginBottom={2}>
-        <Autocomplete
-          value={selectedMonth}
-          onChange={(event, newValue) => {
-            setSelectedMonth(newValue);
-          }}
-          options={months}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Select Month"
-              variant="outlined"
-              fullWidth
-            />
-          )}
+        <TextField
+          size="small"
+          type="month"
+          label="Filter By Month and Year"
+          value={selectedYearMonth}
+          onChange={(e) => setSelectedYearMonth(e.target.value)}
+          sx={{ width: 200, marginRight: "15rem" }}
         />
       </Box>
       <Grid container spacing={3}>
