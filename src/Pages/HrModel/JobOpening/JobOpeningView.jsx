@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Grid,
-  Button,
-  Paper,
-  Typography,
-  Snackbar,
-  Alert,
-} from "@mui/material";
+import { Box, Grid, Button, Paper, Snackbar, Alert } from "@mui/material";
 import { Popup } from "../../../Components/Popup";
 import { JobOpeningCreate } from "./JobOpeningCreate";
 import { JobOpeningUpdate } from "./JobOpeningUpdate";
@@ -82,11 +74,10 @@ export const JobOpeningView = () => {
   };
 
   const TableHeader = [
-    "ID",
+    "Sr.No",
+    "Job Id",
     "Date of Opening",
-    // "Created By",
     "Designation",
-    // "Department",
     "Location",
     "Salary Range",
     "Date of Closing",
@@ -101,16 +92,15 @@ export const JobOpeningView = () => {
     fetchJobOpenings();
   };
   const TableData = jobOpenings.map((job) => ({
-    id: job.job_id,
+    id: job.id,
+    job: job.job_id,
     opening_date: job.opening_date,
-    // created_by: job.created_by,
     designation: job.designation,
-    // department: job.department,
     location: job.location,
     salary_ranges: job.salary_ranges,
     closing_date: job.closing_date,
     days_open: job.days_open,
-    no_of_positions: job.no_of_openings,
+    no_of_openings: job.no_of_openings,
     // position: job.position,
   }));
 
@@ -171,7 +161,7 @@ export const JobOpeningView = () => {
             setOpenPopup={setOpenApplicantListPopup}
           >
             <ApplicantListCreate
-              jobOpeningId={recordForEdit.id}
+              jobOpeningId={recordForEdit.job}
               onSuccess={handleSuccess}
             />
           </Popup>
