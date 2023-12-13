@@ -95,9 +95,9 @@ export const JobOpeningCreate = ({ addNewJobOpening }) => {
 
   return (
     <Box>
-      <Typography variant="h6" gutterBottom>
+      {/* <Typography variant="h6" gutterBottom>
         Add New Job Opening
-      </Typography>
+      </Typography> */}
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Autocomplete

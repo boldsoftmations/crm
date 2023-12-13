@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Box, Grid, Button, Paper } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Button,
+  Paper,
+  Typography,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { Popup } from "../../../Components/Popup";
 import { JobOpeningCreate } from "./JobOpeningCreate";
 import { JobOpeningUpdate } from "./JobOpeningUpdate";
@@ -15,11 +23,11 @@ export const JobOpeningView = () => {
   const [editJobOpening, setEditJobOpening] = useState({});
   const [openEditPopup, setOpenEditPopup] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(false);
-  const [openUpdatePopup7, setOpenUpdatePopup7] = useState(false);
   const [openApplicantListPopup, setOpenApplicantListPopup] = useState(false);
   const data = useSelector((state) => state.auth);
   const users = data.profile;
   const isSalesManager = users.groups.includes("Sales Manager");
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const openInPopup = (item) => {
     setRecordForEdit(item);
@@ -47,6 +55,7 @@ export const JobOpeningView = () => {
       await Hr.addJobOpening(newJob);
       fetchJobOpenings();
       setOpenCreatePopup(false);
+      setShowSuccessMessage(true);
     } catch (error) {
       console.error("Error adding job opening:", error);
     }
@@ -121,6 +130,20 @@ export const JobOpeningView = () => {
             Job Opening
           </h3>
         </Box>
+        <Snackbar
+          open={showSuccessMessage}
+          autoHideDuration={6000}
+          onClose={() => setShowSuccessMessage(false)}
+          anchorOrigin={{ vertical: "center", horizontal: "center" }}
+        >
+          <Alert
+            onClose={() => setShowSuccessMessage(false)}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            Job opening created successfully!
+          </Alert>
+        </Snackbar>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={2}>
             <Button
@@ -161,6 +184,7 @@ export const JobOpeningView = () => {
         >
           <JobOpeningCreate addNewJobOpening={addNewJobOpening} />
         </Popup>
+
         <Popup
           title="Edit Job Opening"
           openPopup={openUpdatePopup}
