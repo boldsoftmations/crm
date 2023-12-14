@@ -6,7 +6,7 @@ import CustomTextField from "../../../Components/CustomTextField";
 export const ShortListedCandidateUpdate = ({
   row,
   closeDialog,
-  refreshData,
+  fetchCandidates,
 }) => {
   const [interviewDate, setInterviewDate] = useState(row.interview_date || "");
   const [interviewTime, setInterviewTime] = useState(row.interview_time || "");
@@ -41,7 +41,7 @@ export const ShortListedCandidateUpdate = ({
       await Hr.updateInterviewDate(row.id, updatedInterviewDetails);
 
       closeDialog();
-      refreshData();
+      fetchCandidates();
     } catch (error) {
       console.error("Error updating interview details:", error);
     }

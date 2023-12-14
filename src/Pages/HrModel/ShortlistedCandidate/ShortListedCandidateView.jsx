@@ -10,17 +10,22 @@ import {
 import { CustomTable } from "../../../Components/CustomTable";
 import { ShortListedCandidateUpdate } from "./ShortListedCandidateUpdate";
 import Hr from "../../../services/Hr";
+import { CustomLoader } from "../../../Components/CustomLoader";
 
 export const ShortListedCandidateView = () => {
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [candidates, setCandidates] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
 
   const fetchCandidates = async () => {
     try {
+      setIsLoading(true);
       const response = await Hr.getInterviewDate();
       setCandidates(response.data);
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       console.error("Error fetching candidates:", error);
     }
   };
@@ -61,43 +66,47 @@ export const ShortListedCandidateView = () => {
   }));
 
   return (
-    <Grid item xs={12}>
-      <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
-        <Box flexGrow={1} display="flex" justifyContent="center">
-          <h3
-            style={{
-              marginBottom: "1em",
-              fontSize: "24px",
-              color: "rgb(34, 34, 34)",
-              fontWeight: 800,
-            }}
-          >
-            Interview Status
-          </h3>
-        </Box>
-        <Paper sx={{ p: 2, m: 3 }}>
-          <CustomTable
-            headers={TableHeader}
-            data={TableData}
-            openInPopup={handleClickOpen}
-          />
-        </Paper>
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="form-dialog-title"
-        >
-          <DialogTitle id="form-dialog-title">
-            Candidate Status Update
-          </DialogTitle>
-          <DialogContent>
-            <ShortListedCandidateUpdate
-              row={selectedRow}
-              closeDialog={handleClose}
+    <>
+      <CustomLoader open={isLoading} />
+      <Grid item xs={12}>
+        <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
+          <Box flexGrow={1} display="flex" justifyContent="center">
+            <h3
+              style={{
+                marginBottom: "1em",
+                fontSize: "24px",
+                color: "rgb(34, 34, 34)",
+                fontWeight: 800,
+              }}
+            >
+              Interview Status
+            </h3>
+          </Box>
+          <Paper sx={{ p: 2, m: 3 }}>
+            <CustomTable
+              headers={TableHeader}
+              data={TableData}
+              openInPopup={handleClickOpen}
             />
-          </DialogContent>
-        </Dialog>
-      </Paper>
-    </Grid>
+          </Paper>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="form-dialog-title"
+          >
+            <DialogTitle id="form-dialog-title">
+              Candidate Status Update
+            </DialogTitle>
+            <DialogContent>
+              <ShortListedCandidateUpdate
+                row={selectedRow}
+                closeDialog={handleClose}
+                fetchCandidates={fetchCandidates}
+              />
+            </DialogContent>
+          </Dialog>
+        </Paper>
+      </Grid>
+    </>
   );
 };
