@@ -374,19 +374,6 @@ export const ListItems = (props) => {
                   primary="Indiamart Leads"
                 />
               </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/leads/forecast-list"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Forecast List"
-                />
-              </ListItem>
             </List>
           </Collapse>
 

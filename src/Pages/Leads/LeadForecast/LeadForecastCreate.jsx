@@ -84,15 +84,11 @@ export const LeadForecastCreate = (
       const response = await LeadServices.createLeadForecast(leadForecast);
       await getLeadByID(leadsByID);
       console.log("Lead Potential Created:", response.data);
-
+      setOpenPopup(false);
       getAllLeadDetailsByID();
-      console.log("Closing popup now");
-      setOpenPopup(false);
-      refreshData();
       setSuccessMessage("Successfully created forecast");
-      setOpenPopup(false);
     } catch (err) {
-      // Handle errors here, you might want to show an error message as well
+      alert = "This Product Forecast Already Created";
     }
   };
 
