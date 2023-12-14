@@ -58,10 +58,10 @@ export const LeadForecastView = ({ recordForEdit }) => {
     getAllLeadDetails(currentPage);
   }, [currentPage, recordForEdit]);
 
-  const getAllLeadDetails = async () => {
+  const getAllLeadDetails = async (page = 0) => {
     try {
       setOpen(true);
-      const response = await LeadServices.getLeadForecast({});
+      const response = await LeadServices.getLeadForecast({ page });
       setLeadForecastData(response.data.results);
       const total = response.data.count;
       setPageCount(Math.ceil(total / 25));
