@@ -188,7 +188,7 @@ export const JobOpeningCreate = ({ addNewJobOpening }) => {
         <Grid item xs={12}>
           <TextField
             name="no_of_openings"
-            label="No Of Openings"
+            label="No Of Vacancies"
             value={newJobOpening.no_of_openings || ""}
             onChange={handleInputChange}
             fullWidth
