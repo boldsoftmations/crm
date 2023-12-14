@@ -12,6 +12,7 @@ export const OrderBookUpdate = (props) => {
   const [estimateDate, setEstimateDate] = useState(
     recordForEdit.estimated_date
   );
+  console.log("estimateDate", estimateDate);
   const data = useSelector((state) => state.auth);
   const users = data.profile;
   const updatesCustomerOrderBook = async (e) => {
@@ -53,6 +54,7 @@ export const OrderBookUpdate = (props) => {
           <Grid item xs={12} sm={6}>
             <CustomTextField
               fullWidth
+              disabled
               size="small"
               label="Product"
               variant="outlined"
@@ -62,6 +64,7 @@ export const OrderBookUpdate = (props) => {
           <Grid item xs={12} sm={6}>
             <CustomTextField
               fullWidth
+              disabled
               size="small"
               label="Pending Quantity"
               variant="outlined"
@@ -75,6 +78,7 @@ export const OrderBookUpdate = (props) => {
           <Grid item xs={12} sm={6}>
             <CustomTextField
               fullWidth
+              disabled
               size="small"
               label="Requested Date"
               variant="outlined"
@@ -165,6 +169,7 @@ export const OrderBookPeningQuantityUpdate = (props) => {
           <Grid item xs={12} sm={6}>
             <CustomTextField
               fullWidth
+              disabled
               size="small"
               label="Product"
               variant="outlined"
@@ -184,6 +189,7 @@ export const OrderBookPeningQuantityUpdate = (props) => {
           <Grid item xs={12} sm={6}>
             <CustomTextField
               fullWidth
+              disabled
               size="small"
               label="Requested Date"
               variant="outlined"
@@ -196,7 +202,7 @@ export const OrderBookPeningQuantityUpdate = (props) => {
           <Grid item xs={12} sm={6}>
             <CustomTextField
               fullWidth
-              type="date"
+              disabled
               name="estimated_date"
               size="small"
               label="Estimated Date"
