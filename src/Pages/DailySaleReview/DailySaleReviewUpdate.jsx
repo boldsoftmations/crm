@@ -1,7 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React from "react";
 import {
+  Box,
   Card,
   CardContent,
+  Chip,
   Divider,
   Grid,
   LinearProgress,
@@ -9,7 +11,6 @@ import {
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -19,19 +20,6 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { CustomChart } from "../../Components/CustomChart";
-import {
-  callPerformanceChartOptions,
-  chartOptions,
-  noOrderCustomerChartOptions,
-  prepareCallPerformanceChartData,
-  prepareFollowupSummaryChartData,
-  prepareNewCustomerSummaryChartData,
-  prepareNoOrderCustomerChartData,
-  preparePiSummaryChartData,
-} from "./chartDataPreparers";
-import UserProfileService from "../../services/UserProfileService";
-import { CustomLoader } from "../../Components/CustomLoader";
 
 const generateListItem = (label, value, maxValue) => {
   const theme = useTheme();
@@ -41,12 +29,7 @@ const generateListItem = (label, value, maxValue) => {
     <ListItem key={label}>
       <ListItemText primary={label} />
       <ListItemSecondaryAction>
-        <LinearProgress
-          variant="determinate"
-          value={progress}
-          style={{ width: "100%", marginRight: theme.spacing(2) }}
-        />
-        <Typography variant="caption">{`${value}/${maxValue}`}</Typography>
+        <Typography variant="caption">{value}</Typography>
       </ListItemSecondaryAction>
     </ListItem>
   );
@@ -68,7 +51,7 @@ const GridItemCard = ({ title, children, xs, sm, lg }) => (
 
 const CallPerformanceTable = ({ callPerformanceData }) => {
   return (
-    <TableContainer component={Paper}>
+    <TableContainer>
       <Table>
         <TableHead>
           <TableRow>
@@ -116,41 +99,21 @@ const PendingPaymentsCard = ({ payment }) => {
 export const DailySaleReviewUpdate = ({ recordForEdit }) => {
   const theme = useTheme();
   console.log("recordForEdit", recordForEdit);
-  // useMemo hooks for preparing chart data
-  const callPerformanceChartData = useMemo(() => {
-    return recordForEdit ? prepareCallPerformanceChartData(recordForEdit) : [];
-  }, [recordForEdit]);
 
-  const noOrderCustomerChartData = useMemo(() => {
-    return recordForEdit ? prepareNoOrderCustomerChartData(recordForEdit) : [];
-  }, [recordForEdit]);
+  const noOrderCustomerData = recordForEdit
+    ? recordForEdit.no_order_customer
+    : {};
 
-  const piSummaryChartData = useMemo(() => {
-    return recordForEdit
-      ? preparePiSummaryChartData(recordForEdit.pi_summary || {})
-      : [];
-  }, [recordForEdit]);
-
-  const followupSummaryChartData = useMemo(() => {
-    return recordForEdit
-      ? prepareFollowupSummaryChartData(recordForEdit.followup_summary || {})
-      : [];
-  }, [recordForEdit]);
-
-  const newCustomerSummaryChartData = useMemo(() => {
-    return recordForEdit
-      ? prepareNewCustomerSummaryChartData(
-          recordForEdit.new_customer_summary || {}
-        )
-      : [];
-  }, [recordForEdit]);
-
-  // Helper function to convert objects to an array of objects
-  const convertObjectToArray = (obj) =>
-    Object.entries(obj).map(([key, value]) => ({
-      key,
-      value: Number(value) || 0, // Ensure values are numbers and default to 0 if not
-    }));
+  const maxCount = Math.max(...Object.values(noOrderCustomerData));
+  const todayLeadEstimateOrder = recordForEdit
+    ? recordForEdit.today_lead_estimate_order
+    : [];
+  const todayMissedCustomerOrder = recordForEdit
+    ? recordForEdit.today_missed_customer_order
+    : [];
+  const todayMissedLeadOrder = recordForEdit
+    ? recordForEdit.today_missed_lead_order
+    : [];
 
   // Safely access top_customer array from recordForEdit or default to an empty array
   const topCustomers =
@@ -169,19 +132,6 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
       ? recordForEdit.pending_payments
       : [];
 
-  // Max amounts
-  const maxTopCustomerAmount = Math.max(...topCustomers.map((c) => c.value), 0);
-  const maxTopForecastCustomerAmount = Math.max(
-    ...topForecastCustomers.map((c) => c.value),
-    0
-  );
-
-  // Assuming recordForEdit.existing_customer is an object with numeric values
-  const maxCustomerValue = Math.max(
-    0,
-    ...Object.values(recordForEdit ? recordForEdit.existing_customer : {})
-  );
-
   return (
     <div style={{ padding: theme.spacing(3) }}>
       <Grid container spacing={3}>
@@ -190,11 +140,7 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
             {recordForEdit && recordForEdit.existing_customer ? (
               Object.entries(recordForEdit.existing_customer).map(
                 ([key, value]) =>
-                  generateListItem(
-                    key.replace(/_/g, " "),
-                    value,
-                    maxCustomerValue
-                  ) // Assuming a default max value of 10
+                  generateListItem(key.replace(/_/g, " "), value) // Assuming a default max value of 10
               )
             ) : (
               <Typography>No Customer Data Available</Typography>
@@ -208,29 +154,66 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
           />
         </GridItemCard>
 
-        <GridItemCard title="No Order Customer Overview" xs={12} lg={4}>
-          <CustomChart
-            chartType="BarChart"
-            data={noOrderCustomerChartData}
-            options={noOrderCustomerChartOptions}
-            heightStyle="100%"
-          />
+        <GridItemCard title="No Order Customer Overview" xs={12} sm={6} lg={4}>
+          {Object.entries(noOrderCustomerData).map(([timeRange, count]) => (
+            <Box key={timeRange} mb={2}>
+              <Typography variant="subtitle2" color="textSecondary">
+                {timeRange.replace(/_/g, " ")}
+              </Typography>
+              <LinearProgress
+                variant="determinate"
+                value={(count / maxCount) * 100}
+                style={{ height: 10, borderRadius: 5, marginBottom: 4 }}
+              />
+              <Typography variant="caption">{`Count: ${count}`}</Typography>
+            </Box>
+          ))}
         </GridItemCard>
 
         <GridItemCard title="PI Summary" xs={12} sm={6} lg={4}>
-          <CustomChart
-            chartType="PieChart"
-            data={piSummaryChartData}
-            options={chartOptions}
-          />
+          <List>
+            <ListItem>
+              <ListItemText
+                primary="Drop"
+                secondary={recordForEdit.pi_summary.drop}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="Month Drop"
+                secondary={recordForEdit.pi_summary.month_drop}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="Raised"
+                secondary={recordForEdit.pi_summary.raised}
+              />
+            </ListItem>
+          </List>
         </GridItemCard>
 
         <GridItemCard title="Follow-up Summary" xs={12} sm={6} lg={4}>
-          <CustomChart
-            chartType="LineChart"
-            data={followupSummaryChartData}
-            options={chartOptions}
-          />
+          <List>
+            <ListItem>
+              <ListItemText
+                primary="Overdue Follow-up"
+                secondary={recordForEdit.followup_summary.overdue_followup}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="Overdue Task"
+                secondary={recordForEdit.followup_summary.overdue_task}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="Today"
+                secondary={recordForEdit.followup_summary.today}
+              />
+            </ListItem>
+          </List>
         </GridItemCard>
         {/* Pending Payments */}
         <GridItemCard title="Pending Payments" xs={12}>
@@ -239,11 +222,26 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
           ))}
         </GridItemCard>
         <GridItemCard title="New Customer Summary" xs={12} sm={6} lg={4}>
-          <CustomChart
-            chartType="ColumnChart"
-            data={newCustomerSummaryChartData}
-            options={chartOptions}
-          />
+          <List>
+            <ListItem>
+              <ListItemText
+                primary="Last Month"
+                secondary={recordForEdit.new_customer_summary.last_month}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="Month"
+                secondary={recordForEdit.new_customer_summary.month}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="Sales Invoice"
+                secondary={recordForEdit.new_customer_summary.sales_invoice}
+              />
+            </ListItem>
+          </List>
         </GridItemCard>
         <GridItemCard title="Top Customers" xs={12} sm={6} lg={4}>
           <List>
@@ -252,7 +250,15 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
                 <ListItem key={index}>
                   <ListItemText
                     primary={`Customer: ${customer.customer}`}
-                    secondary={`Amount: ${customer.amount}`}
+                    secondary={
+                      <span>
+                        {`Amount: ${customer.amount}`}
+                        <br />
+                        {`Billed This Month: ${
+                          customer.is_billed_this_month ? "Yes" : "No"
+                        }`}
+                      </span>
+                    }
                   />
                 </ListItem>
               ))
@@ -269,7 +275,15 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
                 <ListItem key={index}>
                   <ListItemText
                     primary={`Customer: ${forecastCustomer.customer}`}
-                    secondary={`Forecast Amount: ${forecastCustomer.amount}`}
+                    secondary={
+                      <span>
+                        {`Amount: ${forecastCustomer.amount}`}
+                        <br />
+                        {`Billed This Month: ${
+                          forecastCustomer.is_billed_this_month ? "Yes" : "No"
+                        }`}
+                      </span>
+                    }
                   />
                 </ListItem>
               ))
@@ -277,6 +291,78 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
               <Typography>No Top Forecast Customer Data Available</Typography>
             )}
           </List>
+        </GridItemCard>
+        <GridItemCard title="Today Missed Customer Order" xs={12} sm={8} lg={6}>
+          <TableContainer>
+            <Table aria-label="Missed Customer Orders">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Forecast</TableCell>
+                  <TableCell>Estimated Date</TableCell>
+                  <TableCell>Customer</TableCell>
+                  <TableCell>Description</TableCell>
+                  <TableCell>Product</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {todayMissedCustomerOrder.map((order, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{order.forecast}</TableCell>
+                    <TableCell>{order.estimated_date}</TableCell>
+                    <TableCell>{order.customer}</TableCell>
+                    <TableCell>{order.description}</TableCell>
+                    <TableCell>{order.product}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </GridItemCard>
+        <GridItemCard title="Today Missed Lead Order" xs={12} sm={8} lg={6}>
+          <TableContainer>
+            <Table aria-label="Missed Customer Orders">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Quantity</TableCell>
+                  <TableCell>Anticipated Date</TableCell>
+                  <TableCell>Customer</TableCell>
+                  <TableCell>Description</TableCell>
+                  <TableCell>Product</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {todayMissedLeadOrder.map((order, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{order.quantity}</TableCell>
+                    <TableCell>{order.anticipated_date}</TableCell>
+                    <TableCell>{order.customer}</TableCell>
+                    <TableCell>{order.description}</TableCell>
+                    <TableCell>{order.product}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </GridItemCard>
+        <GridItemCard title="Today Lead Estimate Order" xs={12} sm={6} lg={4}>
+          {todayLeadEstimateOrder.map((order, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <Card raised>
+                <CardContent>
+                  <Typography variant="h6" component="h2">
+                    {order.leadcompany || "No Company"}
+                  </Typography>
+                  <Chip
+                    label={order.lead_stage || "No Stage"}
+                    color="primary"
+                  />
+                  <Typography color="textSecondary">
+                    Anticipated Date: {order.anticipated_date || "Not Provided"}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
         </GridItemCard>
       </Grid>
     </div>
