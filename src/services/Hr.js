@@ -127,7 +127,7 @@ const getOfferStatus = () => {
 }
 
 const updateOfferStatus = (id, updatedOfferStatus) => {
-  return CustomAxios.patch(`/api/hr/interview-details/${id}/`, updatedOfferStatus);
+  return CustomAxios.patch(`/api/hr/interview-details/${id}/?stage=Selected`, updatedOfferStatus);
 }
 
 //Mis Report API
