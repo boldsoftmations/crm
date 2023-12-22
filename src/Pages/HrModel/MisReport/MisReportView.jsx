@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Typography,
-  Grid,
-  Box,
-  Autocomplete,
-  TextField,
-} from "@mui/material";
-import { Chart } from "react-google-charts";
+import { Container, Grid, Box, TextField } from "@mui/material";
 import CustomAxios from "../../../services/api";
+import { CustomChart } from "../../../Components/CustomChart";
 
 export const MisReportView = () => {
   const [jobOpeningData, setJobOpeningData] = useState([]);
@@ -183,7 +176,7 @@ export const MisReportView = () => {
         {/* Job Opening Data Chart */}
         <Grid item xs={12} md={6}>
           <Box boxShadow={3}>
-            <Chart
+            <CustomChart
               chartType="ColumnChart"
               data={jobOpeningData}
               options={{
@@ -192,8 +185,8 @@ export const MisReportView = () => {
                 vAxis: { title: "Count" },
                 legend: "none",
               }}
-              width="100%"
-              height="400px"
+              widthStyle="100%"
+              heightStyle="400px"
             />
           </Box>
         </Grid>
@@ -201,10 +194,10 @@ export const MisReportView = () => {
         {/* Recruitment Pipeline Data Chart */}
         <Grid item xs={12} md={6}>
           <Box boxShadow={3}>
-            <Chart
+            <CustomChart
               chartType="BarChart"
-              width="100%"
-              height="400px"
+              widthStyle="100%"
+              heightStyle="400px"
               data={funnelChartData()}
               options={{
                 title: "Recruitment Pipeline",
@@ -228,7 +221,7 @@ export const MisReportView = () => {
         {/* Application Sources Data Chart */}
         <Grid item xs={12} md={6}>
           <Box boxShadow={3}>
-            <Chart
+            <CustomChart
               chartType="PieChart"
               data={applicationSourcesData}
               options={{
@@ -237,15 +230,15 @@ export const MisReportView = () => {
                 vAxis: { title: "Source" },
                 legend: "none",
               }}
-              width="100%"
-              height="400px"
+              widthStyle="100%"
+              heightStyle="400px"
             />
           </Box>
         </Grid>
         {/* Placement Rate Chart */}
         <Grid container justifyContent="center" item xs={12} md={6}>
           <Box boxShadow={3}>
-            <Chart
+            <CustomChart
               chartType="Gauge"
               data={placementRate}
               options={{
@@ -258,8 +251,8 @@ export const MisReportView = () => {
                 greenTo: 100,
                 minorTicks: 5,
               }}
-              width="100%"
-              height="400px"
+              widthStyle="100%"
+              heightStyle="400px"
             />
           </Box>
         </Grid>
@@ -267,7 +260,7 @@ export const MisReportView = () => {
         {/* CTC Chart */}
         <Grid item xs={12} md={6}>
           <Box boxShadow={3}>
-            <Chart
+            <CustomChart
               chartType="ColumnChart"
               data={ctcChartData}
               options={{
@@ -275,15 +268,15 @@ export const MisReportView = () => {
                 vAxis: { title: "Count" },
                 legend: "none",
               }}
-              width="100%"
-              height="400px"
+              widthStyle="100%"
+              heightStyle="400px"
             />
           </Box>
         </Grid>
         {/* Cost Analysis Chart */}
         <Grid item xs={12} md={6}>
           <Box boxShadow={3}>
-            <Chart
+            <CustomChart
               chartType="ColumnChart"
               data={costAnalysisData}
               options={{
@@ -291,8 +284,8 @@ export const MisReportView = () => {
                 vAxis: { title: "Amount" },
                 legend: "none",
               }}
-              width="100%"
-              height="400px"
+              widthStyle="100%"
+              heightStyle="400px"
             />
           </Box>
         </Grid>
@@ -300,15 +293,15 @@ export const MisReportView = () => {
         <Grid item xs={12} md={6}>
           <Box boxShadow={3}>
             {rejectionReasonsData.length > 1 && (
-              <Chart
+              <CustomChart
                 chartType="ColumnChart"
                 data={rejectionReasonsData}
                 options={{
                   title: "Rejection Reasons",
                   is3D: true,
                 }}
-                width="100%"
-                height="400px"
+                widthStyle="100%"
+                heightStyle="400px"
               />
             )}
           </Box>
@@ -317,7 +310,7 @@ export const MisReportView = () => {
         {/* Average Days to Hire Chart */}
         <Grid item xs={12} md={6}>
           <Box boxShadow={3}>
-            <Chart
+            <CustomChart
               chartType="LineChart"
               data={avgDaysToHire}
               options={{
@@ -330,8 +323,8 @@ export const MisReportView = () => {
                 greenTo: 20,
                 minorTicks: 1,
               }}
-              width="100%"
-              height="400px"
+              widthStyle="100%"
+              heightStyle="400px"
             />
           </Box>
         </Grid>
