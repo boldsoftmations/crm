@@ -58,6 +58,7 @@ export const OpenLead = () => {
   const [openModalPotential, setOpenModalPotential] = useState(false);
   const [pinnedRows, setPinnedRows] = useState([]);
   const [openModalPI, setOpenModalPI] = useState(false);
+  const [openModalForecast, setOpenModalForecast] = useState(false);
   const [leadsByID, setLeadsByID] = useState(null);
   const [referenceData, setReferenceData] = useState([]);
   const [descriptionMenuData, setDescriptionMenuData] = useState([]);
@@ -124,7 +125,7 @@ export const OpenLead = () => {
 
   const openInPopup5 = (item) => {
     setLeadsByID(item.lead_id);
-    setOpenModalPI(true);
+    setOpenModalForecast(true);
   };
   const getResetSearchData = () => {
     setSearchQuery("");
@@ -684,12 +685,12 @@ export const OpenLead = () => {
       <Popup
         // fullScreen={true}
         title={"Create Lead Forecast"}
-        openPopup={openModalPI}
-        setOpenPopup={setOpenModalPI}
+        openPopup={openModalForecast}
+        setOpenPopup={setOpenModalForecast}
       >
         <LeadForecastCreate
           leadsByID={leadsByID}
-          setOpenPopup={setOpenModalPI}
+          setOpenPopup={setOpenModalForecast}
         />
       </Popup>
     </>
