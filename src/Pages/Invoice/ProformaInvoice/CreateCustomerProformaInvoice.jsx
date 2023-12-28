@@ -319,7 +319,7 @@ export const CreateCustomerProformaInvoice = (props) => {
               getOptionLabel={(option) => option.unit}
               sx={{ minWidth: 300 }}
               label="Seller Account"
-              value={selectedSellerData}
+              // value={selectedSellerData}
               style={tfStyle}
             />
           </Grid>
