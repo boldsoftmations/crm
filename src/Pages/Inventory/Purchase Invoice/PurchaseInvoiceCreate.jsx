@@ -1,9 +1,10 @@
-import { Autocomplete, Box, Button, Chip, Divider, Grid } from "@mui/material";
+import { Box, Button, Chip, Divider, Grid } from "@mui/material";
 import React, { useState } from "react";
 import CustomTextField from "../../../Components/CustomTextField";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { styled } from "@mui/material/styles";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -93,7 +94,7 @@ export const PurchaseInvoiceCreate = (props) => {
         <Grid container spacing={2}>
           {vendorOption && vendorOption.length > 0 && (
             <Grid item xs={12} sm={4}>
-              <Autocomplete
+              <CustomAutocomplete
                 size="small"
                 disablePortal
                 id="combo-box-demo"
@@ -105,9 +106,7 @@ export const PurchaseInvoiceCreate = (props) => {
                 options={vendorOption.map((option) => option)}
                 getOptionLabel={(option) => option.grn_no}
                 sx={{ minWidth: 300 }}
-                renderInput={(params) => (
-                  <CustomTextField {...params} label="GRN No" />
-                )}
+                label="GRN No"
               />
             </Grid>
           )}

@@ -1,6 +1,5 @@
 import React, { useState, useRef } from "react";
 import {
-  Autocomplete,
   Box,
   Button,
   FormControl,
@@ -17,6 +16,7 @@ import InventoryServices from "../../../services/InventoryService";
 import { CreateAllVendorDetails } from "./CreateAllVendorDetails";
 import { country } from "./../Country";
 import CustomTextField from "../../../Components/CustomTextField";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
 export const CreateVendorDetails = (props) => {
   const { getAllVendorDetails } = props;
@@ -204,7 +204,7 @@ export const CreateVendorDetails = (props) => {
             </>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Autocomplete
+            <CustomAutocomplete
               size="small"
               id="grouped-demo"
               options={typeData === "International" ? country : []}
@@ -217,14 +217,7 @@ export const CreateVendorDetails = (props) => {
                   : null
               }
               onChange={(event, value) => handleInputChange(event, value)}
-              renderInput={(params) => (
-                <CustomTextField
-                  {...params}
-                  label={"Enter Country Name"}
-                  variant="outlined"
-                  name="country" // set the name attribute to "country"
-                />
-              )}
+              label={"Enter Country Name"}
             />
           </Grid>
           <Grid item xs={12} sm={4}>

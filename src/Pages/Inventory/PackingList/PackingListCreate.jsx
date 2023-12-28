@@ -1,5 +1,4 @@
 import {
-  Autocomplete,
   Box,
   Button,
   Chip,
@@ -16,6 +15,7 @@ import InventoryServices from "../../../services/InventoryService";
 import ProductService from "../../../services/ProductService";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -195,7 +195,7 @@ export const PackingListCreate = (props) => {
           </Grid>
           {vendorOption && vendorOption.length > 0 && (
             <Grid item xs={12} sm={3}>
-              <Autocomplete
+              <CustomAutocomplete
                 name="vendor"
                 size="small"
                 disablePortal
@@ -204,14 +204,12 @@ export const PackingListCreate = (props) => {
                 options={vendorOption}
                 getOptionLabel={(option) => option.name}
                 sx={{ minWidth: 300 }}
-                renderInput={(params) => (
-                  <CustomTextField {...params} label="Vendor" />
-                )}
+                label="Vendor"
               />
             </Grid>
           )}
           <Grid item xs={12} sm={3}>
-            <Autocomplete
+            <CustomAutocomplete
               name="seller_account"
               size="small"
               disablePortal
@@ -220,9 +218,7 @@ export const PackingListCreate = (props) => {
               options={sellerData.map((option) => option.unit)}
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="Seller Account" />
-              )}
+              label="Seller Account"
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -259,7 +255,7 @@ export const PackingListCreate = (props) => {
             return (
               <>
                 <Grid key={index} item xs={12} sm={4}>
-                  <Autocomplete
+                  <CustomAutocomplete
                     name="product"
                     size="small"
                     disablePortal
@@ -271,9 +267,7 @@ export const PackingListCreate = (props) => {
                     options={productOption.map((option) => option.name)}
                     getOptionLabel={(option) => option}
                     sx={{ minWidth: 300 }}
-                    renderInput={(params) => (
-                      <CustomTextField {...params} label="Product Name" />
-                    )}
+                    label="Product Name"
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>

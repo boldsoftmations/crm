@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Grid } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 
 import React, { useRef, useState } from "react";
 
@@ -8,6 +8,7 @@ import "../../CommonStyle.css";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
 export const CreateFinishGoods = (props) => {
   const { setOpenPopup, getFinishGoods } = props;
@@ -170,8 +171,8 @@ export const CreateFinishGoods = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Autocomplete
-              style={{
+            <CustomAutocomplete
+              sx={{
                 minWidth: 220,
               }}
               size="small"
@@ -179,9 +180,7 @@ export const CreateFinishGoods = (props) => {
               name="unit"
               options={unitData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
-              renderInput={(params) => (
-                <CustomTextField fullWidth={"false"} {...params} label="Unit" />
-              )}
+              label="Unit"
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -196,8 +195,8 @@ export const CreateFinishGoods = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Autocomplete
-              style={{
+            <CustomAutocomplete
+              sx={{
                 minWidth: 220,
               }}
               size="small"
@@ -205,9 +204,7 @@ export const CreateFinishGoods = (props) => {
               name="Packing Unit"
               options={packingUnitData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="Packing Unit" />
-              )}
+              label="Packing Unit"
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -222,27 +219,20 @@ export const CreateFinishGoods = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Autocomplete
-              style={{
+            <CustomAutocomplete
+              sx={{
                 minWidth: 220,
               }}
               size="small"
               onChange={(event, value) => setBasicUnit(value)}
               options={allBasicUnit.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
-              renderInput={(params) => (
-                <CustomTextField
-                  fullWidth
-                  {...params}
-                  name="basicUnit"
-                  label="Basic Unit"
-                />
-              )}
+              label="Basic Unit"
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Autocomplete
-              style={{
+            <CustomAutocomplete
+              sx={{
                 minWidth: 220,
               }}
               size="small"
@@ -250,15 +240,13 @@ export const CreateFinishGoods = (props) => {
               name="Colour"
               options={colorData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="Colour" />
-              )}
+              label="Colour"
             />
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <Autocomplete
-              style={{
+            <CustomAutocomplete
+              sx={{
                 minWidth: 220,
               }}
               size="small"
@@ -266,14 +254,12 @@ export const CreateFinishGoods = (props) => {
               name="brand"
               options={brandData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="brand" />
-              )}
+              label="brand"
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Autocomplete
-              style={{
+            <CustomAutocomplete
+              sx={{
                 minWidth: 220,
               }}
               size="small"
@@ -281,9 +267,7 @@ export const CreateFinishGoods = (props) => {
               name="Product Code"
               options={productCodeData.map((option) => option.code)}
               getOptionLabel={(option) => `${option}`}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="Product Code" />
-              )}
+              label="Product Code"
             />
           </Grid>
           <Grid item xs={12} sm={6}>

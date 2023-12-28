@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Autocomplete,
   Box,
   Button,
   FormControl,
@@ -17,6 +16,7 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
 import { country } from "../Country";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 export const UpdateVendorDetails = (props) => {
   const { setOpenPopup, getAllVendorDetails, recordForEdit } = props;
   const [open, setOpen] = useState(false);
@@ -167,7 +167,7 @@ export const UpdateVendorDetails = (props) => {
             </>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Autocomplete
+            <CustomAutocomplete
               size="small"
               id="grouped-demo"
               options={typeData === "International" ? country : []}
@@ -180,18 +180,9 @@ export const UpdateVendorDetails = (props) => {
                   : null
               }
               onChange={(event, value) => handleInputChange(event, value)}
-              renderInput={(params) => (
-                <CustomTextField
-                  {...params}
-                  label={
-                    typeData === "International"
-                      ? "Enter Country Name"
-                      : "Country"
-                  }
-                  variant="outlined"
-                  name="country" // set the name attribute to "country"
-                />
-              )}
+              label={
+                typeData === "International" ? "Enter Country Name" : "Country"
+              }
             />
           </Grid>
           <Grid item xs={12} sm={2}>

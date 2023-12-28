@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Grid } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 
 import React, { useRef, useState } from "react";
 
@@ -8,6 +8,7 @@ import "../../CommonStyle.css";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
 export const CreateRawMaterials = (props) => {
   const { setOpenPopup, getrawMaterials } = props;
@@ -144,51 +145,45 @@ export const CreateRawMaterials = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Autocomplete
-              style={{
+            <CustomAutocomplete
+              sx={{
                 minWidth: 220,
               }}
               size="small"
               onChange={(e, value) => setUnit(value)}
               options={unitData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
-              renderInput={(params) => (
-                <CustomTextField {...params} label={"Unit"} />
-              )}
+              label={"Unit"}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Autocomplete
-              style={{
+            <CustomAutocomplete
+              sx={{
                 minWidth: 220,
               }}
               size="small"
               onChange={(event, value) => setColor(value)}
               options={colorData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="Colour" />
-              )}
+              label="Colour"
             />
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <Autocomplete
-              style={{
+            <CustomAutocomplete
+              sx={{
                 minWidth: 220,
               }}
               size="small"
               onChange={(event, value) => setBrand(value)}
               options={brandData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="brand" />
-              )}
+              label="brand"
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Autocomplete
-              style={{
+            <CustomAutocomplete
+              sx={{
                 minWidth: 220,
               }}
               size="small"
@@ -196,13 +191,7 @@ export const CreateRawMaterials = (props) => {
               name="Product Code"
               options={productCodeData.map((option) => option.code)}
               getOptionLabel={(option) => `${option}`}
-              renderInput={(params) => (
-                <CustomTextField
-                  {...params}
-                  name="Product Code"
-                  label="Product Code"
-                />
-              )}
+              label="Product Code"
             />
           </Grid>
           <Grid item xs={12} sm={6}>

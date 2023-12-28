@@ -1,12 +1,13 @@
-import { Autocomplete, Box, Button, Grid } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 
 import ProductService from "../../../services/ProductService";
 
 import "../../CommonStyle.css";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
 export const CreatePriceList = (props) => {
   const { setOpenPopup, getPriceList, product } = props;
@@ -92,8 +93,8 @@ export const CreatePriceList = (props) => {
             {errMsg}
           </p>
           <Grid item xs={12}>
-            <Autocomplete
-              style={{
+            <CustomAutocomplete
+              sx={{
                 minWidth: 180,
               }}
               size="small"
@@ -101,9 +102,7 @@ export const CreatePriceList = (props) => {
               name="productName"
               options={product.map((option) => option.name)}
               getOptionLabel={(option) => `${option ? option : "No Options"}`}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="Product Name" />
-              )}
+              label="Product Name"
             />
           </Grid>
           <Grid item xs={12} sm={6}>

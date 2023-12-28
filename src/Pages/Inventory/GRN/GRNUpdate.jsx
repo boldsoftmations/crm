@@ -1,5 +1,4 @@
 import {
-  Autocomplete,
   Box,
   Button,
   Chip,
@@ -14,6 +13,7 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { styled } from "@mui/material/styles";
 import CustomTextField from "../../../Components/CustomTextField";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -205,7 +205,7 @@ export const GRNUpdate = (props) => {
           </Grid> */}
           {vendorOption && vendorOption.length > 0 && (
             <Grid item xs={12} sm={4}>
-              <Autocomplete
+              <CustomAutocomplete
                 name="vendor"
                 size="small"
                 disablePortal
@@ -216,9 +216,7 @@ export const GRNUpdate = (props) => {
                   `${option.vendor} ${option.packing_list_no}`
                 }
                 sx={{ minWidth: 100 }}
-                renderInput={(params) => (
-                  <CustomTextField {...params} label="Update Packing List" />
-                )}
+                label="Update Packing List"
               />
             </Grid>
           )}

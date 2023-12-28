@@ -1,5 +1,4 @@
 import {
-  Autocomplete,
   Box,
   Button,
   Chip,
@@ -15,6 +14,7 @@ import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -184,7 +184,7 @@ export const BillofMaterialsUpdate = (props) => {
             return (
               <>
                 <Grid key={index} item xs={12} sm={3}>
-                  <Autocomplete
+                  <CustomAutocomplete
                     name="product"
                     size="small"
                     disablePortal
@@ -202,9 +202,7 @@ export const BillofMaterialsUpdate = (props) => {
                     }
                     getOptionLabel={(option) => option}
                     sx={{ minWidth: 300 }}
-                    renderInput={(params) => (
-                      <CustomTextField {...params} label="Product Name" />
-                    )}
+                    label="Product Name"
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>

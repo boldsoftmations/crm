@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Autocomplete,
   Box,
   Chip,
   FormControl,
@@ -21,6 +20,7 @@ import ProductService from "../../../services/ProductService";
 import InvoiceServices from "../../../services/InvoiceService";
 import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 export const StoresInventoryCreate = (props) => {
   const { setOpenPopup, getAllStoresInventoryDetails } = props;
   const [open, setOpen] = useState(false);
@@ -122,7 +122,7 @@ export const StoresInventoryCreate = (props) => {
       >
         <Grid container spacing={2}>
           <Grid item xs={12} sm={4}>
-            <Autocomplete
+            <CustomAutocomplete
               name="seller_account"
               size="small"
               disablePortal
@@ -134,13 +134,11 @@ export const StoresInventoryCreate = (props) => {
               options={sellerData.map((option) => option.unit)}
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="Seller Account" />
-              )}
+              label="Seller Account"
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Autocomplete
+            <CustomAutocomplete
               name="product"
               size="small"
               disablePortal
@@ -150,9 +148,7 @@ export const StoresInventoryCreate = (props) => {
               options={product.map((option) => option.name)}
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="Product Name" />
-              )}
+              label="Product Name"
             />
           </Grid>
           <Grid item xs={12} sm={4}>

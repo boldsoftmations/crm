@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Autocomplete, Box, Button, Grid } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
 import ProductService from "../../../services/ProductService";
 import CustomerServices from "../../../services/CustomerService";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
 const ProductAutocomplete = ({ products, onChange, potential }) => (
-  <Autocomplete
+  <CustomAutocomplete
     style={{ minWidth: 180 }}
     size="small"
     onChange={onChange}
     value={potential.product}
     options={products.map((option) => option.name)}
     getOptionLabel={(option) => `${option ? option : "No Options"}`}
-    renderInput={(params) => (
-      <CustomTextField {...params} label="Product Name" />
-    )}
+    label="Product Name"
   />
 );
 

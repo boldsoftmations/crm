@@ -1,10 +1,11 @@
 import React, { useRef, useState } from "react";
-import { Autocomplete, Box, Button, Grid } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 export const CreateWareHouseInventoryDetails = (props) => {
   const { setOpenPopup, getAllVendorDetailsByID, contactData, vendorData } =
     props;
@@ -73,7 +74,7 @@ export const CreateWareHouseInventoryDetails = (props) => {
       >
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Autocomplete
+            <CustomAutocomplete
               fullWidth
               size="small"
               id="grouped-demo"
@@ -81,10 +82,7 @@ export const CreateWareHouseInventoryDetails = (props) => {
               options={contactData.map((option) => option)}
               groupBy={(option) => option.designation}
               getOptionLabel={(option) => `${option.name} ${option.contact}`}
-              // sx={{ minWidth: 300 }}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="Contact" />
-              )}
+              label="Contact"
             />
           </Grid>
           {vendorData.type === "Domestic" ? (

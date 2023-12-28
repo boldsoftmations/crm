@@ -21,6 +21,7 @@ const CustomAutocomplete = ({
   limitTags, // Added to limit the number of tags shown
   freeSolo, // Added for allowing arbitrary values not present in the options
   renderTags, // Added for custom tag rendering
+  style,
   // Include any additional props that might be necessary
 }) => (
   <Autocomplete
@@ -33,7 +34,8 @@ const CustomAutocomplete = ({
     groupBy={groupBy}
     getOptionLabel={getOptionLabel || ((option) => option)} // Ensuring there's a default getOptionLabel
     renderInput={
-      renderInput || ((params) => <CustomTextField {...params} label={label} />)
+      renderInput ||
+      ((params) => <CustomTextField {...params} sx={sx} label={label} />)
     }
     sx={sx}
     multiple={multiple}

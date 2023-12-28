@@ -17,10 +17,10 @@ export const BulkCustomerAssign = (props) => {
   const [touchedAssignTo, setTouchedAssignTo] = useState(false);
 
   useEffect(() => {
-    getLAssignedData();
+    getAssignedData();
   }, []);
 
-  const getLAssignedData = async (id) => {
+  const getAssignedData = async (id) => {
     try {
       setOpen(true);
       const res = await LeadServices.getAllAssignedUser();

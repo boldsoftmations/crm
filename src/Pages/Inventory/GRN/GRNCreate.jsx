@@ -1,5 +1,4 @@
 import {
-  Autocomplete,
   Box,
   Button,
   Chip,
@@ -14,6 +13,7 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
 import { styled } from "@mui/material/styles";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -142,7 +142,7 @@ export const GRNCreate = (props) => {
         />
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
-            <Autocomplete
+            <CustomAutocomplete
               name="vendor"
               size="small"
               disablePortal
@@ -153,9 +153,7 @@ export const GRNCreate = (props) => {
                 `${option.vendor} ${option.packing_list_no}`
               }
               sx={{ minWidth: 300 }}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="Vendor" />
-              )}
+              label="Vendor"
             />
           </Grid>
           <Grid item xs={12} sm={6}>

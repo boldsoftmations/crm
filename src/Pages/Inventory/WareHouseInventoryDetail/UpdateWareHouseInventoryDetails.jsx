@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { Box, Button, Grid, Autocomplete } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import axios from "axios";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 export const UpdateWareHouseInventoryDetails = (props) => {
   const {
     IDForEdit,
@@ -94,7 +95,7 @@ export const UpdateWareHouseInventoryDetails = (props) => {
           </Grid>
           {vendorData.type === "Domestic" ? (
             <Grid item xs={12} sm={6}>
-              <Autocomplete
+              <CustomAutocomplete
                 fullWidth
                 size="small"
                 id="grouped-demo"
@@ -102,10 +103,7 @@ export const UpdateWareHouseInventoryDetails = (props) => {
                 options={contactData.map((option) => option)}
                 groupBy={(option) => option.designation}
                 getOptionLabel={(option) => `${option.name} ${option.contact}`}
-                // sx={{ minWidth: 300 }}
-                renderInput={(params) => (
-                  <CustomTextField {...params} label="Update Contact" />
-                )}
+                label="Update Contact"
               />
             </Grid>
           ) : null}

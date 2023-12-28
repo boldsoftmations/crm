@@ -4,7 +4,6 @@ import {
   Box,
   Grid,
   Paper,
-  Autocomplete,
   TableContainer,
   Table,
   TableHead,
@@ -22,6 +21,7 @@ import { DailySaleReviewUpdate } from "./DailySaleReviewUpdate";
 import UserProfileService from "./../../services/UserProfileService";
 import { DailySaleReviewCreate } from "./DailySaleReviewCreate";
 import { PerformanceUpdate } from "./PerformanceUpdate";
+import CustomAutocomplete from "../../Components/CustomAutocomplete";
 
 export const DailySalesHistory = () => {
   const UsersData = useSelector((state) => state.auth.profile);
@@ -126,16 +126,14 @@ export const DailySalesHistory = () => {
               />
             )}
             {!UsersData.groups.includes("Sales Executive") && (
-              <Autocomplete
+              <CustomAutocomplete
                 size="small"
                 sx={{ width: 300, marginRight: "10px" }}
                 onChange={(event, value) => handleFilterChange(value)}
                 value={salesPersonByFilter}
                 options={assignedOption.map((option) => option.email)}
                 getOptionLabel={(option) => option}
-                renderInput={(params) => (
-                  <CustomTextField {...params} label="Filter By Sales Person" />
-                )}
+                label="Filter By Sales Person"
               />
             )}
 

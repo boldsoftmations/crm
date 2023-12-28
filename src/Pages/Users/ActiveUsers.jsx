@@ -4,7 +4,6 @@ import { CustomTable } from "../../Components/CustomTable";
 import { CustomSearch } from "../../Components/CustomSearch";
 import { CustomLoader } from "../../Components/CustomLoader";
 import {
-  Autocomplete,
   Box,
   Button,
   Checkbox,
@@ -14,6 +13,7 @@ import {
 } from "@mui/material";
 import { Popup } from "../../Components/Popup";
 import CustomTextField from "../../Components/CustomTextField";
+import CustomAutocomplete from "../../Components/CustomAutocomplete";
 export const ActiveUsers = () => {
   const [open, setOpen] = useState(false);
   const [activeUsersData, setActiveUsersData] = useState([]);
@@ -320,7 +320,7 @@ export const ActiveUsers = () => {
             </Grid>
 
             <Grid item xs={12}>
-              <Autocomplete
+              <CustomAutocomplete
                 size="small"
                 value={activeUsersByIDData.groups}
                 onChange={(event, newValue) => {
@@ -362,7 +362,7 @@ export const ActiveUsers = () => {
             )}
             {showRefUserList && (
               <Grid item xs={12} sm={6}>
-                <Autocomplete
+                <CustomAutocomplete
                   id="grouped-demo"
                   size="small"
                   value={selectedRefUser}

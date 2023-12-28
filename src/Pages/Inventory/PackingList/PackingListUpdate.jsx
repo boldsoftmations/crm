@@ -1,5 +1,4 @@
 import {
-  Autocomplete,
   Box,
   Button,
   Chip,
@@ -16,6 +15,7 @@ import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 import CloseIcon from "@mui/icons-material/Close";
 import CustomTextField from "../../../Components/CustomTextField";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -238,7 +238,7 @@ export const PackingListUpdate = (props) => {
           </Grid>
           {vendorOption && vendorOption.length > 0 && (
             <Grid item xs={12} sm={3}>
-              <Autocomplete
+              <CustomAutocomplete
                 name="vendor"
                 size="small"
                 disablePortal
@@ -247,9 +247,7 @@ export const PackingListUpdate = (props) => {
                 options={vendorOption}
                 getOptionLabel={(option) => option.name}
                 sx={{ minWidth: 100 }}
-                renderInput={(params) => (
-                  <CustomTextField {...params} label="Update Vendor" />
-                )}
+                label="Update Vendor"
               />
             </Grid>
           )}
@@ -270,7 +268,7 @@ export const PackingListUpdate = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <Autocomplete
+            <CustomAutocomplete
               name="seller_account"
               size="small"
               disablePortal
@@ -280,9 +278,7 @@ export const PackingListUpdate = (props) => {
               options={sellerData.map((option) => option.unit)}
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="Seller Account" />
-              )}
+              label="Seller Account"
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -313,7 +309,7 @@ export const PackingListUpdate = (props) => {
             return (
               <>
                 <Grid key={index} item xs={12} sm={4}>
-                  <Autocomplete
+                  <CustomAutocomplete
                     name="product"
                     size="small"
                     disablePortal
@@ -325,9 +321,7 @@ export const PackingListUpdate = (props) => {
                     options={productOption.map((option) => option.name)}
                     getOptionLabel={(option) => option}
                     sx={{ minWidth: 300 }}
-                    renderInput={(params) => (
-                      <CustomTextField {...params} label="Product Name" />
-                    )}
+                    label="Product Name"
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
