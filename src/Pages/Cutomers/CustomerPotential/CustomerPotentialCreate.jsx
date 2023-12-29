@@ -6,18 +6,6 @@ import ProductService from "../../../services/ProductService";
 import CustomerServices from "../../../services/CustomerService";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
-const ProductAutocomplete = ({ products, onChange, potential }) => (
-  <CustomAutocomplete
-    style={{ minWidth: 180 }}
-    size="small"
-    onChange={onChange}
-    value={potential.product}
-    options={products.map((option) => option.name)}
-    getOptionLabel={(option) => `${option ? option : "No Options"}`}
-    label="Product Name"
-  />
-);
-
 export const CustomerPotentialCreate = ({
   recordForEdit,
   getCompanyDetailsByID,
@@ -26,7 +14,7 @@ export const CustomerPotentialCreate = ({
   const [open, setOpen] = useState(false);
   const [potential, setPotential] = useState({});
   const [product, setProduct] = useState([]);
-
+  console.log("potential", potential);
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -48,7 +36,7 @@ export const CustomerPotentialCreate = ({
     setPotential({ ...potential, [name]: value });
   };
 
-  const handleAutocompleteChange = (_, value) => {
+  const handleAutocompleteChange = (event,value) => {
     setPotential({ ...potential, product: value });
   };
 
@@ -76,10 +64,14 @@ export const CustomerPotentialCreate = ({
       <Box component="form" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
-            <ProductAutocomplete
-              products={product}
-              potential={potential}
-              onChange={handleAutocompleteChange}
+            <CustomAutocomplete
+              sx={{ minWidth: 180 }}
+              size="small"
+              onChange={ handleAutocompleteChange}
+              value={potential.product}
+              options={product.map((option) => option.name)}
+              getOptionLabel={(option) => `${option ? option : "No Options"}`}
+              label="Product"
             />
           </Grid>
           <Grid item xs={12} sm={6}>
