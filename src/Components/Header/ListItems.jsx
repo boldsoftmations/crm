@@ -908,6 +908,19 @@ export const ListItems = (props) => {
                   primary="Weekly Production Report"
                 />
               </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/inventory/view-currency"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Currency"
+                />
+              </ListItem>
             </List>
           </Collapse>
 
@@ -1758,6 +1771,19 @@ export const ListItems = (props) => {
                       onClick={() => setOpen(false)}
                       inset
                       primary="Production Inventory (Cons)"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-currency"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Currency"
                     />
                   </ListItem>
                 </List>
@@ -5108,6 +5134,19 @@ export const ListItems = (props) => {
                       onClick={() => setOpen(false)}
                       inset
                       primary="Weekly Production Report"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-currency"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Currency"
                     />
                   </ListItem>
                 </List>

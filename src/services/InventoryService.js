@@ -697,6 +697,24 @@ const getWeeklyProductionReportFilterData = (month, year) => {
     `/api/inventory/list-weekly-product-quantity/?month=${month}&year=${year}`
   );
 };
+
+// Currency List Api
+const getCurrencyData = () => {
+  return CustomAxios.get(`/api/inventory/currency`);
+};
+
+const createCurrencyData = (data) => {
+  return CustomAxios.post("/api/inventory/currency/", data);
+};
+
+const getCurrencyDataById = (id) => {
+  return CustomAxios.get(`/api/inventory/currency/${id}`);
+};
+
+const updateCurrencyData = (id, data) => {
+  return CustomAxios.patch(`/api/inventory/currency/${id}/`, data);
+};
+
 const InventoryServices = {
   getAllVendorData,
   getAllPaginateVendorData,
@@ -825,6 +843,10 @@ const InventoryServices = {
   getAllWeeklyProductionReportDataPaginate,
   getWeeklyProductionReportPaginateData,
   getWeeklyProductionReportFilterData,
+  getCurrencyData,
+  createCurrencyData,
+  getCurrencyDataById,
+  updateCurrencyData,
 };
 
 export default InventoryServices;

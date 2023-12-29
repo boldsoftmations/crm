@@ -75,6 +75,7 @@ import { DepartmentView } from "../Pages/HrModel/Department/DepartmentView";
 import { SourceView } from "../Pages/HrModel/CandidateSource/SourceView";
 import { DailySalesHistory } from "../Pages/DailySaleReview/DailySalesHistory";
 import { LeadForecastView } from "../Pages/Leads/LeadForecast/LeadForecastView";
+import { CurrencyView } from "../Pages/Inventory/Currency/CurrencyView";
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
   const token = tokenData.user;
@@ -266,6 +267,7 @@ export const RouteScreen = () => {
               path="/inventory/view-weekly-production"
               element={<WeeklyProductionReport />}
             />
+            <Route path="/inventory/view-currency" element={<CurrencyView />} />
             {/* ProductForecast Route */}
             <Route
               path="/forecast/view-product-forecast"
@@ -285,14 +287,16 @@ export const RouteScreen = () => {
             <Route path="/user/sale-review" element={<DailySaleReviewView />} />
             <Route path="/user/sales-history" element={<DailySalesHistory />} />
             <Route path="/" element={<Home />} />
-            <Route path="/user/hr-model"
-            element={<HrModelTabs />} />
-             <Route path="/user/hr-model/designation"
-            element={<DesignationView />} />
-             <Route path="/user/hr-model/department"
-            element={<DepartmentView />} />
-             <Route path="/user/hr-model/source"
-            element={<SourceView />} />
+            <Route path="/user/hr-model" element={<HrModelTabs />} />
+            <Route
+              path="/user/hr-model/designation"
+              element={<DesignationView />}
+            />
+            <Route
+              path="/user/hr-model/department"
+              element={<DepartmentView />}
+            />
+            <Route path="/user/hr-model/source" element={<SourceView />} />
           </>
         )}
         <Route path="*" element={<Auths />} />
