@@ -292,7 +292,9 @@ export const SalesTeamAnalytics = (props) => {
                   <CustomAutocomplete
                     size="small"
                     value={selectedOption}
-                    onChange={handleAutocompleteChange}
+                    onChange={(event, value) =>
+                      handleAutocompleteChange(value)
+                    }
                     options={displayOptions}
                     groupBy={(option) => option.primaryGroup || ""}
                     getOptionLabel={(option) => option.email}
