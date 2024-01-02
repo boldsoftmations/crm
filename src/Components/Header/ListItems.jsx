@@ -715,7 +715,20 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/inventory/view-packing_list"
+                to="/inventory/view-purchase-order"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Purchase Order"
+                />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/inventory/view-packing-list"
                 style={{ width: 300 }}
               >
                 <ListItemText
@@ -1724,7 +1737,33 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/inventory/view-packing_list"
+                    to="/inventory/view-vendor"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Vendor"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-purchase-order"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Purchase Order"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-packing-list"
                     style={{ width: 300 }}
                   >
                     <ListItemText
@@ -4943,7 +4982,20 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/inventory/view-packing_list"
+                    to="/inventory/view-purchase-order"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Purchase Order"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-packing-list"
                     style={{ width: 300 }}
                   >
                     <ListItemText

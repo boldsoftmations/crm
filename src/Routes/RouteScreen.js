@@ -76,6 +76,7 @@ import { SourceView } from "../Pages/HrModel/CandidateSource/SourceView";
 import { DailySalesHistory } from "../Pages/DailySaleReview/DailySalesHistory";
 import { LeadForecastView } from "../Pages/Leads/LeadForecast/LeadForecastView";
 import { CurrencyView } from "../Pages/Inventory/Currency/CurrencyView";
+import { PurchaseOrderView } from "../Pages/Inventory/Purchase Order/PurchaseOrderView";
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
   const token = tokenData.user;
@@ -211,7 +212,11 @@ export const RouteScreen = () => {
             {/* inventory Routes */}
             <Route path="/inventory/view-vendor" element={<VendorView />} />
             <Route
-              path="/inventory/view-packing_list"
+              path="/inventory/view-purchase-order"
+              element={<PurchaseOrderView />}
+            />
+            <Route
+              path="/inventory/view-packing-list"
               element={<PackingListView />}
             />
             <Route path="/inventory/view-grn" element={<GRNView />} />

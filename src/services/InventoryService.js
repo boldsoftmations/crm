@@ -80,6 +80,39 @@ const updatetWareHouseInventoryData = (id, data) => {
   return CustomAxios.patch(`/api/inventory/list-warehouse/${id}`, data);
 };
 
+// Purchase Order Form List Api
+const getAllPurchaseOrderData = (page, acceptedToFilter, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
+
+  if (page) {
+    params.append("page", page);
+  }
+
+  if (acceptedToFilter) {
+    params.append("accept", acceptedToFilter);
+  }
+
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
+
+  // Sending a GET request with query parameters
+  return CustomAxios.get(`/api/inventory/purchase-order/?${params.toString()}`);
+};
+
+const createPurchaseOrderData = (data) => {
+  return CustomAxios.post("/api/inventory/purchase-order/", data);
+};
+
+const getPurchaseOrderDataById = (id) => {
+  return CustomAxios.get(`/api/inventory/purchase-order/${id}`);
+};
+
+const updatePurchaseOrderData = (id, data) => {
+  return CustomAxios.patch(`/api/inventory/purchase-order/${id}`, data);
+};
+
 // Packing List Api
 
 const getAllPackingListData = () => {
@@ -735,6 +768,10 @@ const InventoryServices = {
   createWareHouseInventoryData,
   updatetWareHouseInventoryData,
   getWareHouseInventoryDataById,
+  getAllPurchaseOrderData,
+  createPurchaseOrderData,
+  getPurchaseOrderDataById,
+  updatePurchaseOrderData,
   getAllPackingListData,
   getAllPaginatePackingListData,
   getAllPaginatePackingListDataWithSearch,

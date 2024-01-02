@@ -31,26 +31,6 @@ import InvoiceServices from "../../../services/InvoiceService";
 import { useDispatch } from "react-redux";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}));
-
 export const PackingListView = () => {
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
@@ -206,7 +186,7 @@ export const PackingListView = () => {
                   fontWeight: 800,
                 }}
               >
-                PackingList Details
+                Packing List
               </h3>
             </Box>
             <Box flexGrow={0.5} align="right">
@@ -222,7 +202,7 @@ export const PackingListView = () => {
           </Box>
           <TableContainer
             sx={{
-              maxHeight: 440,
+              maxHeight: 380,
               "&::-webkit-scrollbar": {
                 width: 15,
               },
@@ -303,8 +283,8 @@ function Row(props) {
   return (
     <>
       {/* <CustomLoader open={open} /> */}
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell>
+      <StyledTableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+        <StyledTableCell>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -313,22 +293,16 @@ function Row(props) {
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
-        </TableCell>
-        <TableCell align="center">{row.vendor}</TableCell>
-        <TableCell align="center">{row.packing_list_no}</TableCell>
-        <TableCell align="center">{row.seller_account}</TableCell>
-        <TableCell align="center">{row.invoice_date}</TableCell>
-        <TableCell align="center">
-          <Button
-            onClick={() => openInPopup(row.id)}
-            variant="contained"
-            color="success"
-          >
-            Edit
-          </Button>
-        </TableCell>
-      </TableRow>
-      <TableRow>
+        </StyledTableCell>
+        <StyledTableCell align="center">{row.vendor}</StyledTableCell>
+        <StyledTableCell align="center">{row.packing_list_no}</StyledTableCell>
+        <StyledTableCell align="center">{row.seller_account}</StyledTableCell>
+        <StyledTableCell align="center">{row.invoice_date}</StyledTableCell>
+        <StyledTableCell align="center">
+          <Button onClick={() => openInPopup(row.id)}>Edit</Button>
+        </StyledTableCell>
+      </StyledTableRow>
+      <StyledTableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
@@ -346,21 +320,47 @@ function Row(props) {
                 </TableHead>
                 <TableBody>
                   {row.products.map((historyRow, i) => (
-                    <TableRow key={i}>
-                      <TableCell align="center">{i + 1}</TableCell>
-                      <TableCell align="center">{historyRow.product}</TableCell>
-                      <TableCell align="center">{historyRow.unit}</TableCell>
-                      <TableCell align="center">
+                    <StyledTableRow key={i}>
+                      <StyledTableCell align="center">{i + 1}</StyledTableCell>
+                      <StyledTableCell align="center">
+                        {historyRow.product}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {historyRow.unit}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
                         {historyRow.quantity}
-                      </TableCell>
-                    </TableRow>
+                      </StyledTableCell>
+                    </StyledTableRow>
                   ))}
                 </TableBody>
               </Table>
             </Box>
           </Collapse>
         </TableCell>
-      </TableRow>
+      </StyledTableRow>
     </>
   );
 }
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+    padding: 0, // Remove padding from header cells
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+    padding: 0, // Remove padding from body cells
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));

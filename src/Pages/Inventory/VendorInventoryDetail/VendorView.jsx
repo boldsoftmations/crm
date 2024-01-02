@@ -12,11 +12,13 @@ import { UpdateAllVendorDetails } from "./UpdateAllVendorDetails";
 import InventoryServices from "../../../services/InventoryService";
 import { CustomTable } from "../../../Components/CustomTable";
 import { CustomPagination } from "../../../Components/CustomPagination";
+import { PurchaseOrderCreate } from "../Purchase Order/PurchaseOrderCreate";
 
 export const VendorView = () => {
   const dispatch = useDispatch();
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
+  const [openPopupPurchaseOrder, setOpenPopupPurchaseOrder] = useState(false);
   const [open, setOpen] = useState(false);
   const errRef = useRef();
   const [errMsg, setErrMsg] = useState("");
@@ -41,6 +43,12 @@ export const VendorView = () => {
     const matchedVendor = vendorData.find((lead) => lead.id === item.id);
     setRecordForEdit(matchedVendor);
     setOpenPopup(true);
+  };
+
+  const openInPopupPurchaseOrder = (item) => {
+    const matchedVendor = vendorData.find((lead) => lead.id === item.id);
+    setRecordForEdit(matchedVendor);
+    setOpenPopupPurchaseOrder(true);
   };
 
   useEffect(() => {
@@ -204,9 +212,10 @@ export const VendorView = () => {
             headers={Tableheaders}
             data={Tabledata}
             openInPopup={openInPopup}
-            openInPopup2={null}
+            openInPopup2={openInPopupPurchaseOrder}
             openInPopup3={null}
             openInPopup4={null}
+            ButtonText={"Create PO"}
           />
           <CustomPagination
             pageCount={pageCount}
@@ -236,6 +245,14 @@ export const VendorView = () => {
           getAllVendorDetails={getAllVendorDetails}
           recordForEdit={recordForEdit}
         />
+      </Popup>
+      <Popup
+        fullScreen={true}
+        title={"Purchase Order"}
+        openPopup={openPopupPurchaseOrder}
+        setOpenPopup={setOpenPopupPurchaseOrder}
+      >
+        <PurchaseOrderCreate recordForEdit={recordForEdit} />
       </Popup>
     </>
   );
