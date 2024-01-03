@@ -44,11 +44,16 @@ export const PurchaseOrderView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [acceptedFilter, setAcceptedFilter] = useState("");
   const [selectedRow, setSelectedRow] = useState(null);
+  const [contactNameOption, setContactNameOption] = useState("");
   const [openCreatePLPopup, setOpenCreatePLPopup] = useState(false);
   const dispatch = useDispatch();
 
-  const handleEdit = (item) => {
+  const handleEdit = async (item) => {
     setSelectedRow(item);
+    const response = await InventoryServices.getAllSearchVendorData(
+      item.vendor
+    );
+    setContactNameOption(response.data.results);
     setOpenPopupUpdate(true);
   };
   const handleAccept = (item) => {
@@ -293,6 +298,7 @@ export const PurchaseOrderView = () => {
           setOpenPopup={setOpenPopupUpdate}
           getAllPurchaseOrderDetails={getAllPurchaseOrderDetails}
           selectedRow={selectedRow}
+          contactNameOption={contactNameOption}
         />
       </Popup>
       <Popup
@@ -326,12 +332,10 @@ function Row(props) {
           </IconButton>
         </StyledTableCell>
         <StyledTableCell align="center">{row.vendor}</StyledTableCell>
-        <StyledTableCell align="center">
-          {row.purchase_order_no}
-        </StyledTableCell>
+        <StyledTableCell align="center">{row.po_no}</StyledTableCell>
         <StyledTableCell align="center">{row.seller_account}</StyledTableCell>
         <StyledTableCell align="center">{row.seller_state}</StyledTableCell>
-        <StyledTableCell align="center">{row.created_date}</StyledTableCell>
+        <StyledTableCell align="center">{row.po_date}</StyledTableCell>
         <StyledTableCell align="center">
           <Button onClick={() => handleEdit(row)}>Edit</Button>
           <Button onClick={handleOpenCreatePLPopup}>Create PL</Button>

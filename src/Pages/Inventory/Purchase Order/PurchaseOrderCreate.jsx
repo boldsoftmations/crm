@@ -35,19 +35,18 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
   }));
   console.log("sellerData", sellerData);
   console.log("userData", userData);
+  const today = new Date().toISOString().slice(0, 10);
   const [inputValues, setInputValues] = useState({
     created_by: userData.email,
-    purchase_order_no: "",
-    purchase_order_date: "",
-    schedule_date: "",
-    vendor: "",
-    vendor_address: "",
+    po_no: "",
+    po_date: today,
+    schedule_date: today,
+    vendor: recordForEdit.name,
+    vendor_type: recordForEdit.type,
     vendor_email: "",
     vendor_contact_person: "",
     vendor_contact: "",
     seller_account: "",
-    seller_address: "",
-    seller_gst_no: "",
     payment_terms: "",
     delivery_terms: "",
     currency: "",
@@ -56,7 +55,6 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
         product: "",
         quantity: "",
         unit: "",
-        pending_quantity: "",
         amount: "",
         rate: "",
       },
@@ -67,7 +65,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
   const [error, setError] = useState(null);
   const [productOption, setProductOption] = useState([]);
   const [currencyOption, setCurrencyOption] = useState([]);
-  const today = new Date().toISOString().slice(0, 10);
+  console.log("inputVales", inputValues);
 
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target;
@@ -76,20 +74,25 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
 
   const handleAutocompleteChange = useCallback(
     (fieldName, value) => {
-      // Find the selected seller from the sellerData array
-      const selectedSeller = sellerData.find((seller) => seller.unit === value);
+      // Update state based on fieldName
+      setInputValues((prevValues) => {
+        const newValues = { ...prevValues, [fieldName]: value };
 
-      setInputValues((prevValues) => ({
-        ...prevValues,
-        [fieldName]: value, // Set the selected seller account
-        // Auto-fill the address, pin code, and GST number of the selected seller
-        seller_company: selectedSeller ? selectedSeller.name : "",
-        seller_address: selectedSeller ? selectedSeller.address : "",
-        seller_pin_code: selectedSeller ? selectedSeller.pin_code : "",
-        seller_gst_no: selectedSeller ? selectedSeller.gst_number : "",
-      }));
+        // If a vendor contact person is selected, also update contact and email fields
+        if (fieldName === "vendor_contact_person") {
+          const selectedContact = recordForEdit.contacts.find(
+            (contact) => contact.name === value
+          );
+          if (selectedContact) {
+            newValues.vendor_contact = selectedContact.contact;
+            newValues.vendor_email = selectedContact.email;
+          }
+        }
+
+        return newValues;
+      });
     },
-    [sellerData]
+    [recordForEdit.contacts] // Now depends on contacts from recordForEdit
   );
 
   const handleProductChange = (index, field, value) => {
@@ -182,7 +185,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
     const lastNo = parseInt(localStorage.getItem(lastNoKey), 10) || baseNo;
     setInputValues((prevValues) => ({
       ...prevValues,
-      purchase_order_no: `GIPL/23-24/PO - ${lastNo + 1}`,
+      po_no: `GIPL/23-24/PO - ${lastNo + 1}`,
     }));
   };
 
@@ -230,23 +233,18 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
       setLoading(true);
       const req = {
         created_by: inputValues.created_by,
-        vendor: recordForEdit.name,
-        vendor_type: recordForEdit.type,
-        vendor_address: recordForEdit.vendor_address,
-        vendor_email: recordForEdit.vendor_email,
-        vendor_contact_person: recordForEdit.vendor_contact_person,
-        vendor_contact: recordForEdit.vendor_contact,
-        seller_company: inputValues.seller_company,
+        vendor: inputValues.vendor,
+        vendor_type: inputValues.vendor_type,
+        vendor_email: inputValues.vendor_email,
+        vendor_contact_person: inputValues.vendor_contact_person,
+        vendor_contact: inputValues.vendor_contact,
         seller_account: inputValues.seller_account,
-        seller_address: inputValues.seller_address,
-        seller_pin_code: inputValues.seller_pin_code,
-        seller_gst_no: inputValues.seller_gst_no,
         payment_terms: inputValues.payment_terms,
         delivery_terms: inputValues.delivery_terms,
         schedule_date: inputValues.schedule_date || today,
         currency: inputValues.currency,
-        purchase_order_no: inputValues.purchase_order_no,
-        purchase_order_date: inputValues.purchase_order_date || today,
+        po_no: inputValues.po_no,
+        po_date: inputValues.po_date || today,
         seller_account: inputValues.seller_account || null,
         products: inputValues.products || [],
       };
@@ -307,6 +305,19 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
               size="small"
               disablePortal
               id="combo-box-demo"
+              options={recordForEdit.contacts}
+              getOptionLabel={(option) => option.name}
+              onChange={(event, value) =>
+                handleAutocompleteChange("vendor_contact_person", value.name)
+              }
+              label="Vendor Contact Person"
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <CustomAutocomplete
+              size="small"
+              disablePortal
+              id="combo-box-demo"
               onChange={(event, value) =>
                 handleAutocompleteChange("seller_account", value)
               }
@@ -349,10 +360,10 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
             <CustomTextField
               fullWidth
               size="small"
-              name="Purchase_order_no"
+              name="po_no"
               label="Purchase Order No."
               variant="outlined"
-              value={inputValues.purchase_order_no}
+              value={inputValues.po_no}
               onChange={handleInputChange}
             />
           </Grid>
@@ -360,11 +371,11 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
             <CustomTextField
               fullWidth
               type="date"
-              name="Purchase_order_date"
+              name="po_date"
               size="small"
               label="Purchase Order Date"
               variant="outlined"
-              value={inputValues.Purchase_order_date || today}
+              value={inputValues.po_date || today}
               onChange={handleInputChange}
             />
           </Grid>
@@ -374,7 +385,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
               disablePortal
               id="combo-box-demo"
               onChange={(event, value) =>
-                setInputValues({ ...inputValues, currency: value.symbol })
+                setInputValues({ ...inputValues, currency: value.name })
               }
               options={currencyOption.map((option) => option)}
               getOptionLabel={(option) => `${option.name} (${option.symbol})`}
@@ -414,7 +425,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
           {inputValues.products.map((input, index) => {
             return (
               <>
-                <Grid key={index} item xs={12} sm={3}>
+                <Grid key={index} item xs={12} sm={4}>
                   <CustomAutocomplete
                     name="product"
                     size="small"
@@ -430,7 +441,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
                     label="Product"
                   />
                 </Grid>
-                <Grid item xs={12} sm={2}>
+                <Grid item xs={12} sm={4}>
                   <CustomTextField
                     fullWidth
                     name="unit"
@@ -440,7 +451,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
                     value={input.unit ? input.unit : ""}
                   />
                 </Grid>
-                <Grid item xs={12} sm={2}>
+                <Grid item xs={12} sm={4}>
                   <CustomTextField
                     fullWidth
                     name="quantity"
@@ -453,24 +464,8 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
                     }
                   />
                 </Grid>
-                <Grid item xs={12} sm={2}>
-                  <CustomTextField
-                    fullWidth
-                    name="pending_quantity"
-                    size="small"
-                    label="Pending Quantity"
-                    variant="outlined"
-                    value={input.pending_quantity || ""}
-                    onChange={(event) =>
-                      handleProductChange(
-                        index,
-                        "pending_quantity",
-                        event.target.value
-                      )
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} sm={2}>
+
+                <Grid item xs={12} sm={4}>
                   <CustomTextField
                     fullWidth
                     name="rate"
@@ -483,7 +478,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
                     }
                   />
                 </Grid>
-                <Grid item xs={12} sm={2}>
+                <Grid item xs={12} sm={4}>
                   <CustomTextField
                     fullWidth
                     name="amount"

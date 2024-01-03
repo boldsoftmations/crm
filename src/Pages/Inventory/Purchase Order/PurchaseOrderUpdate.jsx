@@ -7,15 +7,16 @@ import {
   IconButton,
   Snackbar,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
+import CloseIcon from "@mui/icons-material/Close";
+import CustomTextField from "../../../Components/CustomTextField";
 import InventoryServices from "../../../services/InventoryService";
 import ProductService from "../../../services/ProductService";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
-import CloseIcon from "@mui/icons-material/Close";
-import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -24,54 +25,128 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const PurchaseOrderUpdate = (props) => {
-  const { setOpenPopup, getAllPackingListDetails, idForEdit } = props;
-  console.log("ID for Edit: ", idForEdit);
-  const [PackingListDataByID, setPackingListDataByID] = useState([]);
-
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [productOption, setProductOption] = useState([]);
-  const [selectedSellerData, setSelectedSellerData] = useState(null);
-  const [vendor, setVendor] = useState("");
-  const data = useSelector((state) => state.auth);
-  const sellerData = data.sellerAccount;
-  const today = new Date().toISOString().slice(0, 10);
-  const [error, setError] = useState(null);
-  const [recordForEdit, setRecordForEdit] = useState({ name: "" });
-  const [currencyOption, setCurrencyOption] = useState([]);
-  const { userData } = useSelector((state) => ({
+export const PurchaseOrderUpdate = ({
+  selectedRow,
+  getAllPurchaseOrderDetails,
+  setOpenPopup,
+  contactNameOption,
+}) => {
+  console.log("contactNameOption", contactNameOption);
+  console.log("selectedRow", selectedRow);
+  const { sellerData, userData } = useSelector((state) => ({
     sellerData: state.auth.sellerAccount,
     userData: state.auth.profile,
   }));
-  const [inputValues, setInputValues] = useState({
-    created_by: userData.email,
-    purchase_order_no: "",
-    purchase_order_date: "",
-    purchase_invoice_date: "",
-    schedule_date: "",
-    vendor: "",
-    vendor_address: "",
-    vendor_email: "",
-    vendor_contact_person: "",
-    vendor_contact: "",
-    seller_account: "",
-    seller_address: "",
-    seller_gst_no: "",
-    payment_terms: "",
-    delivery_terms: "",
-    currency: "",
-    products: [
-      { product: "", quantity: "", unit: "", pending_quantity: "", amount: "" },
-    ],
-  });
-  const [products, setProducts] = useState([
-    {
-      product: "",
-      quantity: "",
-      unit: "",
+
+  const [inputValues, setInputValues] = useState(selectedRow);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [productOption, setProductOption] = useState([]);
+  const [currencyOption, setCurrencyOption] = useState([]);
+  const today = new Date().toISOString().slice(0, 10);
+
+  const currencyObject = currencyOption.find(
+    (option) => option.name === inputValues.currency
+  );
+  console.log("inputsvalue contacts", inputValues.vendor_contact_person);
+  const handleInputChange = useCallback((event) => {
+    const { name, value } = event.target;
+    setInputValues((prevValues) => ({ ...prevValues, [name]: value }));
+  }, []);
+
+  const handleAutocompleteChange = useCallback(
+    (fieldName, newValue) => {
+      setInputValues((prevValues) => {
+        const newValues = { ...prevValues };
+
+        if (fieldName === "vendor_contact_person") {
+          newValues[fieldName] = newValue ? newValue.name : "";
+          newValues.vendor_contact = newValue ? newValue.contact : "";
+          newValues.vendor_email = newValue ? newValue.email : "";
+        } else {
+          newValues[fieldName] = newValue;
+        }
+
+        return newValues;
+      });
     },
-  ]);
+    [setInputValues]
+  );
+
+  const handleProductChange = (index, field, value) => {
+    setInputValues((prevValues) => {
+      const updatedProducts = [...prevValues.products];
+      const productToUpdate = { ...updatedProducts[index] };
+
+      // Update the field with the new value
+      productToUpdate[field] = value;
+
+      // Calculate amount if quantity or rate is changed
+      if (field === "quantity" || field === "rate") {
+        const quantity = productToUpdate.quantity
+          ? parseFloat(productToUpdate.quantity)
+          : 0;
+        const rate = productToUpdate.rate
+          ? parseFloat(productToUpdate.rate)
+          : 0;
+        productToUpdate.amount = (quantity * rate).toFixed(2); // Use toFixed(2) to format it as a decimal
+      }
+
+      updatedProducts[index] = productToUpdate;
+      return { ...prevValues, products: updatedProducts };
+    });
+  };
+
+  const handleProductAutocompleteChange = (index, value) => {
+    // Find the product object based on the selected value
+    const productObj = productOption.find((item) => item.name === value);
+
+    // Check if the new value is already included in the selected products list
+    const isDuplicate = inputValues.products.some(
+      (product, idx) => product.product === value && idx !== index
+    );
+
+    if (isDuplicate) {
+      // If the product is already selected, show an error message
+      setError(`Product ${value} is already selected in another field.`);
+    } else {
+      // Update the product entry with the new value and reset any error messages
+      setError(null);
+      setInputValues((prevValues) => {
+        const newProducts = prevValues.products.map((product, idx) =>
+          idx === index
+            ? { ...product, product: value, unit: productObj.unit }
+            : product
+        );
+        return { ...prevValues, products: newProducts };
+      });
+    }
+  };
+
+  const addProductField = useCallback(() => {
+    handleProductChange(inputValues.products.length, "", "");
+    setSelectedProducts([...selectedProducts, ""]);
+  }, [inputValues.products.length, handleProductChange]);
+
+  const removeProductField = (index) => {
+    setInputValues((prevValues) => {
+      const products = prevValues.products.filter((_, i) => i !== index);
+      const removedProduct = prevValues.products[index].product;
+
+      // Update the selected products list: remove the product that is being deleted
+      setSelectedProducts(
+        selectedProducts.filter((item) => item !== removedProduct)
+      );
+
+      return { ...prevValues, products };
+    });
+  };
+
+  useEffect(() => {
+    getProduct();
+    getCurrencyDetails();
+  }, []);
 
   const getCurrencyDetails = async () => {
     setLoading(true);
@@ -88,262 +163,67 @@ export const PurchaseOrderUpdate = (props) => {
     }
   };
 
-  const handleAutocompleteChange = (index, event, value) => {
-    let data = [...products];
-    const productObj = productOption.find((item) => item.name === value);
-
-    if (data[index]) {
-      data[index]["product"] = value;
-      data[index]["unit"] = productObj ? productObj.unit : "";
-      setProducts(data);
-    } else {
-      console.error("Invalid index or data not initialized correctly");
-    }
-  };
-
-  const handleProductChange = (index, field, value) => {
-    let newProducts = [...products];
-    newProducts[index][field] = value;
-    setProducts(newProducts);
-  };
-
-  const handleFormChange = (index, event) => {
-    const selectedValue = event.target.value
-      ? event.target.value
-      : event.target.textContent;
-    const data = [...products];
-    data[index][event.target.name ? event.target.name : "product"] =
-      selectedValue;
-
-    const isValueDuplicate = data.some(
-      (item, i) => item.product === selectedValue && i !== index
-    );
-
-    if (isValueDuplicate) {
-      setError(`Selected ${selectedValue} already exists!`);
-    } else {
-      setProducts(data);
-    }
-  };
-
-  const addFields = () => {
-    let newfield = {
-      product: "",
-      quantity: "",
-      unit: "",
-    };
-    setProducts([...products, newfield]);
-  };
-
-  const removeFields = (index) => {
-    let data = [...products];
-    data.splice(index, 1);
-    setProducts(data);
-  };
-
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setPackingListDataByID({ ...PackingListDataByID, [name]: value });
-  };
-
-  useEffect(() => {
-    getProduct();
-    getCurrencyDetails();
-  }, []);
-
   const getProduct = async () => {
     try {
-      setOpen(true);
+      setLoading(true);
       const res = await ProductService.getAllProduct();
       setProductOption(res.data);
-      setOpen(false);
+      setLoading(false);
     } catch (err) {
       console.error("error potential", err);
-      setOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    console.log("Props: ", props);
-    if (props.idForEdit) {
-      fetchPurchaseOrderData(props.idForEdit);
-    }
-  }, [props.idForEdit]);
-
-  const fetchPurchaseOrderData = async (id) => {
-    try {
-      setLoading(true);
-      const response = await InventoryServices.getPurchaseOrderDataById(id);
-      // Assuming the response has the data in a format that matches your state
-      setInputValues(response.data);
-      setProducts(response.data.products);
-      // ... set other pieces of state as needed ...
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching purchase order data", err);
       setLoading(false);
     }
   };
-  useEffect(() => {
-    if (idForEdit) getAllPackingListDetailsByID();
-  }, [idForEdit]);
 
-  const getAllPackingListDetailsByID = async () => {
-    try {
-      setOpen(true);
-      const response = await InventoryServices.getPackingListDataById(
-        idForEdit
-      );
-
-      setPackingListDataByID(response.data);
-      setSelectedSellerData(response.data.seller_account);
-      var arr = response.data.products.map((fruit) => ({
-        product: fruit.product,
-        quantity: fruit.quantity,
-        unit: fruit.unit,
-      }));
-      setProducts(arr);
-
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-      console.log("company data by id error", err);
-    }
-  };
-
-  const updateLeadProformaInvoiceDetails = async (e) => {
+  const createPurchaseOrderDetails = async (e) => {
     try {
       e.preventDefault();
-      if (!idForEdit) {
-        console.error("ID for Edit is undefined");
-        return;
-      }
-      setOpen(true);
+      setLoading(true);
       const req = {
-        packing_list_no: PackingListDataByID.packing_list_no, //Normal text field
-        invoice_date: PackingListDataByID.invoice_date
-          ? PackingListDataByID.invoice_date
-          : today,
-        vendor: vendor.name ? vendor.name : PackingListDataByID.vendor,
-        seller_account: selectedSellerData ? selectedSellerData : "",
-        products: products,
+        created_by: inputValues.created_by,
+        vendor: inputValues.vendor,
+        vendor_type: inputValues.vendor_type,
+        vendor_email: inputValues.vendor_email,
+        vendor_contact_person: inputValues.vendor_contact_person,
+        vendor_contact: inputValues.vendor_contact,
+        seller_account: inputValues.seller_account,
+        payment_terms: inputValues.payment_terms,
+        delivery_terms: inputValues.delivery_terms,
+        schedule_date: inputValues.schedule_date || today,
+        currency: inputValues.currency,
+        po_no: inputValues.po_no,
+        po_date: inputValues.po_date || today,
+        seller_account: inputValues.seller_account || null,
+        products: inputValues.products || [],
       };
-      await InventoryServices.updatePackingListData(idForEdit, req);
 
-      setOpenPopup(false);
-      getAllPackingListDetails();
-      setOpen(false);
-    } catch (err) {
-      console.log("err", err);
-      setOpen(false);
-    }
-  };
-
-  const updatePurchaseOrderDetails = async (e) => {
-    e.preventDefault();
-
-    // Construct your update payload here
-    const updatePayload = {
-      purchase_order_no: inputValues.purchase_order_no,
-      purchase_order_date: inputValues.purchase_order_date,
-      purchase_invoice_date: inputValues.purchase_invoice_date,
-      schedule_date: inputValues.schedule_date,
-      vendor: inputValues.vendor,
-      vendor_address: inputValues.vendor_address,
-      vendor_email: inputValues.vendor_email,
-      vendor_contact_person: inputValues.vendor_contact_person,
-      vendor_contact: inputValues.vendor_contact,
-      seller_account: inputValues.seller_account,
-      seller_address: inputValues.seller_address,
-      seller_gst_no: inputValues.seller_gst_no,
-      payment_terms: inputValues.payment_terms,
-      delivery_terms: inputValues.delivery_terms,
-      currency: inputValues.currency,
-      products: products.map((product) => ({
-        product: product.product,
-        quantity: product.quantity,
-        unit: product.unit,
-        pending_quantity: product.pending_quantity,
-        amount: product.amount,
-      })),
-    };
-
-    try {
-      // Assuming you have a function to update purchase order data in your InventoryServices
       const response = await InventoryServices.updatePurchaseOrderData(
-        props.idForEdit,
-        updatePayload
+        inputValues.id,
+        req
       );
-
-      // Handle success
-      console.log("Purchase Order Updated Successfully", response);
-      // You can also update UI here, like closing the form or showing a success message
+      if (response.status === 201) {
+        setOpenPopup(false);
+        getAllPurchaseOrderDetails();
+      }
+      setLoading(false);
     } catch (error) {
-      // Handle error
-      console.error("Error updating purchase order", error);
-      // Update the UI to show the error message
+      console.log("createing Packing list error", error);
+      setLoading(false);
     }
   };
 
-  const handleVendorChange = (event) => {
-    setRecordForEdit({
-      ...recordForEdit,
-      name: event.target.value,
-    });
-  };
-
-  const paymentTerms = [
-    "100% Advance against PI",
-    "50% Advance, Balance Before Dispatch",
-    "30% Advance, Balance Before Dispatch",
-    "15 days with PDC (Post-Dated Check)",
-    "30 days with PDC",
-    "45 days with PDC",
-    "60 days with PDC",
-    "15 days credit",
-    "30 days credit",
-    "45 days credit",
-    "60 days credit",
-    "90 days credit",
-    "120 days credit",
-    "TT in 100% advance against PI",
-    "10% Advance, balance against bill of lading",
-    "15% Advance, balance against bill of lading",
-    "20% Advance, balance against bill of lading",
-    "30% Advance, balance against bill of lading",
-    "50% Advance, balance against bill of lading",
-    "60 days against documents",
-    "90 days against documents",
-    "120 days against documents",
-    "LC at Sight",
-    "LC 45 days",
-    "LC 60 days",
-  ];
-
-  const deliveryTerms = [
-    "Ex-Work",
-    "FOB (Free On Board)",
-    "CIF (Cost, Insurance, and Freight)",
-    "C & F (Cost and Freight)",
-    "Door Delivery (Prepaid)",
-    "Door Delivery to pay",
-    "Transporter Warehouse (Prepaid)",
-    "Transporter Warehouse to pay",
-    "Add actual freight in invoice",
-    "Ex - warehouse",
-  ];
   const handleCloseSnackbar = () => {
     setError(null);
   };
 
   return (
     <div>
-      <CustomLoader open={open} />
+      <CustomLoader open={loading} />
 
       <Box
         component="form"
         noValidate
-        onSubmit={(e) => updatePurchaseOrderDetails(e)}
+        onSubmit={(e) => createPurchaseOrderDetails(e)}
       >
         <Snackbar
           open={Boolean(error)}
@@ -362,21 +242,42 @@ export const PurchaseOrderUpdate = (props) => {
           }
         />
         <Grid container spacing={2}>
-          {/* <Grid item xs={12} sm={3}>
+          <Grid item xs={12} sm={3}>
             <CustomTextField
               fullWidth
               size="small"
               label="Vendor"
               variant="outlined"
-              value={recordForEdit.name || ""}
-              onChange={handleVendorChange}
+              value={inputValues.vendor || ""}
             />
-          </Grid> */}
-          {/* <Grid item xs={12} sm={3}>
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <CustomAutocomplete
+              size="small"
+              disablePortal
+              id="vendor-contact-person-autocomplete"
+              options={contactNameOption || []} // Default to an empty array if contactNameOption is not provided
+              getOptionLabel={(option) => option.name}
+              value={
+                contactNameOption.find(
+                  (option) => option.name === inputValues.vendor_contact_person
+                ) || null // Ensure it's null if not found
+              }
+              onChange={(event, newValue) => {
+                // newValue is the object from the options array or null if cleared
+                handleAutocompleteChange("vendor_contact_person", newValue);
+              }}
+              renderInput={(params) => (
+                <CustomTextField {...params} label="Vendor Contact Person" />
+              )}
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
             <CustomAutocomplete
               size="small"
               disablePortal
               id="combo-box-demo"
+              value={inputValues.seller_account || ""}
               onChange={(event, value) =>
                 handleAutocompleteChange("seller_account", value)
               }
@@ -385,12 +286,14 @@ export const PurchaseOrderUpdate = (props) => {
               sx={{ minWidth: 300 }}
               label="Seller Account"
             />
-          </Grid> */}
+          </Grid>
 
           <Grid item xs={12} sm={3}>
             <CustomAutocomplete
               size="small"
+              disablePortal
               id="combo-box-demo"
+              value={inputValues.payment_terms || ""}
               onChange={(event, value) =>
                 setInputValues({ ...inputValues, payment_terms: value })
               }
@@ -403,7 +306,9 @@ export const PurchaseOrderUpdate = (props) => {
           <Grid item xs={12} sm={3}>
             <CustomAutocomplete
               size="small"
+              disablePortal
               id="combo-box-demo"
+              value={inputValues.delivery_terms || ""}
               onChange={(event, value) =>
                 setInputValues({ ...inputValues, delivery_terms: value })
               }
@@ -413,31 +318,14 @@ export const PurchaseOrderUpdate = (props) => {
               label="Delivery Terms"
             />
           </Grid>
-          {/* <Grid item xs={12} sm={3}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              name="Purchase_order_no"
-              label="Purchase Order No."
-              variant="outlined"
-              value={inputValues.purchase_order_no || ""}
-              onChange={(e) =>
-                setInputValues({
-                  ...inputValues,
-                  purchase_order_no: e.target.value,
-                })
-              }
-            />
-          </Grid> */}
           <Grid item xs={12} sm={3}>
             <CustomTextField
               fullWidth
-              type="date"
-              name="Purchase_order_date"
               size="small"
-              label="Purchase Order Date"
+              name="po_no"
+              label="Purchase Order No."
               variant="outlined"
-              value={inputValues.purchase_order_date || today}
+              value={inputValues.po_no || ""}
               onChange={handleInputChange}
             />
           </Grid>
@@ -445,11 +333,11 @@ export const PurchaseOrderUpdate = (props) => {
             <CustomTextField
               fullWidth
               type="date"
-              name="Purchase_invoice_date"
+              name="po_date"
               size="small"
-              label="Purchase Invoice Date"
+              label="Purchase Order Date"
               variant="outlined"
-              value={inputValues.purchase_invoice_date || today}
+              value={inputValues.po_date || today}
               onChange={handleInputChange}
             />
           </Grid>
@@ -458,10 +346,11 @@ export const PurchaseOrderUpdate = (props) => {
               size="small"
               disablePortal
               id="combo-box-demo"
+              value={currencyObject || null} // The value must be null or an option object
               onChange={(event, value) =>
-                setInputValues({ ...inputValues, currency: value.symbol })
+                setInputValues({ ...inputValues, currency: value.name })
               }
-              options={currencyOption.map((option) => option)}
+              options={currencyOption}
               getOptionLabel={(option) => `${option.name} (${option.symbol})`}
               sx={{ minWidth: 300 }}
               label="Currency"
@@ -496,26 +385,26 @@ export const PurchaseOrderUpdate = (props) => {
               </Divider>
             </Root>
           </Grid>
-          {products.map((input, index) => {
+          {inputValues.products.map((input, index) => {
             return (
               <>
-                <Grid key={index} item xs={12} sm={4}>
+                <Grid key={index} item xs={12} sm={3}>
                   <CustomAutocomplete
                     name="product"
                     size="small"
                     disablePortal
-                    id="combo-box-demo"
+                    id={`combo-box-demo-${index}`}
                     value={input.product ? input.product : ""}
                     onChange={(event, value) =>
-                      handleAutocompleteChange(index, event, value)
+                      handleProductAutocompleteChange(index, value)
                     }
                     options={productOption.map((option) => option.name)}
                     getOptionLabel={(option) => option}
                     sx={{ minWidth: 300 }}
-                    label="Product Name"
+                    label="Product"
                   />
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
                     name="unit"
@@ -525,7 +414,7 @@ export const PurchaseOrderUpdate = (props) => {
                     value={input.unit ? input.unit : ""}
                   />
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={1}>
                   <CustomTextField
                     fullWidth
                     name="quantity"
@@ -533,12 +422,12 @@ export const PurchaseOrderUpdate = (props) => {
                     label="Quantity"
                     variant="outlined"
                     value={input.quantity || ""}
-                    onChange={(e) =>
-                      handleProductChange(index, "quantity", e.target.value)
+                    onChange={(event) =>
+                      handleProductChange(index, "quantity", event.target.value)
                     }
                   />
                 </Grid>
-                <Grid item xs={12} sm={2}>
+                <Grid item xs={12} sm={1}>
                   <CustomTextField
                     fullWidth
                     name="pending_quantity"
@@ -558,6 +447,19 @@ export const PurchaseOrderUpdate = (props) => {
                 <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
+                    name="rate"
+                    size="small"
+                    label="Rate"
+                    variant="outlined"
+                    value={input.rate || ""}
+                    onChange={(event) =>
+                      handleProductChange(index, "rate", event.target.value)
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12} sm={2}>
+                  <CustomTextField
+                    fullWidth
                     name="amount"
                     size="small"
                     label="Amount"
@@ -568,11 +470,11 @@ export const PurchaseOrderUpdate = (props) => {
                     }
                   />
                 </Grid>
-                <Grid item xs={12} sm={2} alignContent="right">
+                <Grid item xs={12} sm={1} alignContent="right">
                   {index !== 0 && (
                     <Button
                       disabled={index === 0}
-                      onClick={() => removeFields(index)}
+                      onClick={() => removeProductField(index)}
                       variant="contained"
                     >
                       Remove
@@ -585,7 +487,7 @@ export const PurchaseOrderUpdate = (props) => {
 
           <Grid item xs={12} sm={2} alignContent="right">
             <Button
-              onClick={addFields}
+              onClick={addProductField}
               variant="contained"
               sx={{ marginRight: "1em" }}
             >
@@ -605,3 +507,46 @@ export const PurchaseOrderUpdate = (props) => {
     </div>
   );
 };
+
+// Data structure for Payment Terms
+const paymentTerms = [
+  "100% Advance against PI",
+  "50% Advance, Balance Before Dispatch",
+  "30% Advance, Balance Before Dispatch",
+  "15 days with PDC (Post-Dated Check)",
+  "30 days with PDC",
+  "45 days with PDC",
+  "60 days with PDC",
+  "15 days credit",
+  "30 days credit",
+  "45 days credit",
+  "60 days credit",
+  "90 days credit",
+  "120 days credit",
+  "TT in 100% advance against PI",
+  "10% Advance, balance against bill of lading",
+  "15% Advance, balance against bill of lading",
+  "20% Advance, balance against bill of lading",
+  "30% Advance, balance against bill of lading",
+  "50% Advance, balance against bill of lading",
+  "60 days against documents",
+  "90 days against documents",
+  "120 days against documents",
+  "LC at Sight",
+  "LC 45 days",
+  "LC 60 days",
+];
+
+// Data structure for Delivery Terms
+const deliveryTerms = [
+  "Ex-Work",
+  "FOB (Free On Board)",
+  "CIF (Cost, Insurance, and Freight)",
+  "C & F (Cost and Freight)",
+  "Door Delivery (Prepaid)",
+  "Door Delivery to pay",
+  "Transporter Warehouse (Prepaid)",
+  "Transporter Warehouse to pay",
+  "Add actual freight in invoice",
+  "Ex - warehouse",
+];
