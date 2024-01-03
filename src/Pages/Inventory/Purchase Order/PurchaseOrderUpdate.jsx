@@ -26,16 +26,45 @@ const Root = styled("div")(({ theme }) => ({
 
 export const PurchaseOrderUpdate = (props) => {
   const { setOpenPopup, getAllPackingListDetails, idForEdit } = props;
+  console.log("ID for Edit: ", idForEdit);
   const [PackingListDataByID, setPackingListDataByID] = useState([]);
+
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [vendorOption, setVendorOption] = useState([]);
   const [productOption, setProductOption] = useState([]);
   const [selectedSellerData, setSelectedSellerData] = useState(null);
   const [vendor, setVendor] = useState("");
   const data = useSelector((state) => state.auth);
   const sellerData = data.sellerAccount;
-  const today = new Date().toISOString().slice(0, 10); // Get current date in YYYY-MM-DD format
+  const today = new Date().toISOString().slice(0, 10);
   const [error, setError] = useState(null);
+  const [recordForEdit, setRecordForEdit] = useState({ name: "" });
+  const [currencyOption, setCurrencyOption] = useState([]);
+  const { userData } = useSelector((state) => ({
+    sellerData: state.auth.sellerAccount,
+    userData: state.auth.profile,
+  }));
+  const [inputValues, setInputValues] = useState({
+    created_by: userData.email,
+    purchase_order_no: "",
+    purchase_order_date: "",
+    purchase_invoice_date: "",
+    schedule_date: "",
+    vendor: "",
+    vendor_address: "",
+    vendor_email: "",
+    vendor_contact_person: "",
+    vendor_contact: "",
+    seller_account: "",
+    seller_address: "",
+    seller_gst_no: "",
+    payment_terms: "",
+    delivery_terms: "",
+    currency: "",
+    products: [
+      { product: "", quantity: "", unit: "", pending_quantity: "", amount: "" },
+    ],
+  });
   const [products, setProducts] = useState([
     {
       product: "",
@@ -44,13 +73,38 @@ export const PurchaseOrderUpdate = (props) => {
     },
   ]);
 
+  const getCurrencyDetails = async () => {
+    setLoading(true);
+    try {
+      const response = await InventoryServices.getCurrencyData();
+
+      if (response && response.data) {
+        setCurrencyOption(response.data);
+      }
+    } catch (err) {
+      console.error("Error fetching daily sales review data", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAutocompleteChange = (index, event, value) => {
     let data = [...products];
     const productObj = productOption.find((item) => item.name === value);
-    console.log("productObj", productObj);
-    data[index]["product"] = value;
-    data[index]["unit"] = productObj ? productObj.unit : "";
-    setProducts(data);
+
+    if (data[index]) {
+      data[index]["product"] = value;
+      data[index]["unit"] = productObj ? productObj.unit : "";
+      setProducts(data);
+    } else {
+      console.error("Invalid index or data not initialized correctly");
+    }
+  };
+
+  const handleProductChange = (index, field, value) => {
+    let newProducts = [...products];
+    newProducts[index][field] = value;
+    setProducts(newProducts);
   };
 
   const handleFormChange = (index, event) => {
@@ -61,16 +115,13 @@ export const PurchaseOrderUpdate = (props) => {
     data[index][event.target.name ? event.target.name : "product"] =
       selectedValue;
 
-    // Check if the selected value already exists in the array of selected values
     const isValueDuplicate = data.some(
       (item, i) => item.product === selectedValue && i !== index
     );
 
     if (isValueDuplicate) {
-      // If the selected value already exists, show an error message or handle it as desired
       setError(`Selected ${selectedValue} already exists!`);
     } else {
-      // If the selected value is unique, update the products array as usual
       setProducts(data);
     }
   };
@@ -97,6 +148,7 @@ export const PurchaseOrderUpdate = (props) => {
 
   useEffect(() => {
     getProduct();
+    getCurrencyDetails();
   }, []);
 
   const getProduct = async () => {
@@ -111,23 +163,27 @@ export const PurchaseOrderUpdate = (props) => {
     }
   };
 
-  const fetchVendorOptions = async (e) => {
+  useEffect(() => {
+    console.log("Props: ", props);
+    if (props.idForEdit) {
+      fetchPurchaseOrderData(props.idForEdit);
+    }
+  }, [props.idForEdit]);
+
+  const fetchPurchaseOrderData = async (id) => {
     try {
-      e.preventDefault();
-      setOpen(true);
-
-      const response = await InventoryServices.getAllSearchVendorData(
-        PackingListDataByID.vendor_name
-      );
-      setVendorOption(response.data.results);
-
-      setOpen(false);
+      setLoading(true);
+      const response = await InventoryServices.getPurchaseOrderDataById(id);
+      // Assuming the response has the data in a format that matches your state
+      setInputValues(response.data);
+      setProducts(response.data.products);
+      // ... set other pieces of state as needed ...
+      setLoading(false);
     } catch (err) {
-      setOpen(false);
-      console.log("err all vendor", err);
+      console.error("Error fetching purchase order data", err);
+      setLoading(false);
     }
   };
-
   useEffect(() => {
     if (idForEdit) getAllPackingListDetailsByID();
   }, [idForEdit]);
@@ -158,6 +214,10 @@ export const PurchaseOrderUpdate = (props) => {
   const updateLeadProformaInvoiceDetails = async (e) => {
     try {
       e.preventDefault();
+      if (!idForEdit) {
+        console.error("ID for Edit is undefined");
+        return;
+      }
       setOpen(true);
       const req = {
         packing_list_no: PackingListDataByID.packing_list_no, //Normal text field
@@ -179,6 +239,99 @@ export const PurchaseOrderUpdate = (props) => {
     }
   };
 
+  const updatePurchaseOrderDetails = async (e) => {
+    e.preventDefault();
+
+    // Construct your update payload here
+    const updatePayload = {
+      purchase_order_no: inputValues.purchase_order_no,
+      purchase_order_date: inputValues.purchase_order_date,
+      purchase_invoice_date: inputValues.purchase_invoice_date,
+      schedule_date: inputValues.schedule_date,
+      vendor: inputValues.vendor,
+      vendor_address: inputValues.vendor_address,
+      vendor_email: inputValues.vendor_email,
+      vendor_contact_person: inputValues.vendor_contact_person,
+      vendor_contact: inputValues.vendor_contact,
+      seller_account: inputValues.seller_account,
+      seller_address: inputValues.seller_address,
+      seller_gst_no: inputValues.seller_gst_no,
+      payment_terms: inputValues.payment_terms,
+      delivery_terms: inputValues.delivery_terms,
+      currency: inputValues.currency,
+      products: products.map((product) => ({
+        product: product.product,
+        quantity: product.quantity,
+        unit: product.unit,
+        pending_quantity: product.pending_quantity,
+        amount: product.amount,
+      })),
+    };
+
+    try {
+      // Assuming you have a function to update purchase order data in your InventoryServices
+      const response = await InventoryServices.updatePurchaseOrderData(
+        props.idForEdit,
+        updatePayload
+      );
+
+      // Handle success
+      console.log("Purchase Order Updated Successfully", response);
+      // You can also update UI here, like closing the form or showing a success message
+    } catch (error) {
+      // Handle error
+      console.error("Error updating purchase order", error);
+      // Update the UI to show the error message
+    }
+  };
+
+  const handleVendorChange = (event) => {
+    setRecordForEdit({
+      ...recordForEdit,
+      name: event.target.value,
+    });
+  };
+
+  const paymentTerms = [
+    "100% Advance against PI",
+    "50% Advance, Balance Before Dispatch",
+    "30% Advance, Balance Before Dispatch",
+    "15 days with PDC (Post-Dated Check)",
+    "30 days with PDC",
+    "45 days with PDC",
+    "60 days with PDC",
+    "15 days credit",
+    "30 days credit",
+    "45 days credit",
+    "60 days credit",
+    "90 days credit",
+    "120 days credit",
+    "TT in 100% advance against PI",
+    "10% Advance, balance against bill of lading",
+    "15% Advance, balance against bill of lading",
+    "20% Advance, balance against bill of lading",
+    "30% Advance, balance against bill of lading",
+    "50% Advance, balance against bill of lading",
+    "60 days against documents",
+    "90 days against documents",
+    "120 days against documents",
+    "LC at Sight",
+    "LC 45 days",
+    "LC 60 days",
+  ];
+
+  const deliveryTerms = [
+    "Ex-Work",
+    "FOB (Free On Board)",
+    "CIF (Cost, Insurance, and Freight)",
+    "C & F (Cost and Freight)",
+    "Door Delivery (Prepaid)",
+    "Door Delivery to pay",
+    "Transporter Warehouse (Prepaid)",
+    "Transporter Warehouse to pay",
+    "Add actual freight in invoice",
+    "Ex - warehouse",
+  ];
   const handleCloseSnackbar = () => {
     setError(null);
   };
@@ -190,7 +343,7 @@ export const PurchaseOrderUpdate = (props) => {
       <Box
         component="form"
         noValidate
-        onSubmit={(e) => updateLeadProformaInvoiceDetails(e)}
+        onSubmit={(e) => updatePurchaseOrderDetails(e)}
       >
         <Snackbar
           open={Boolean(error)}
@@ -209,93 +362,131 @@ export const PurchaseOrderUpdate = (props) => {
           }
         />
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={3}>
+          {/* <Grid item xs={12} sm={3}>
             <CustomTextField
               fullWidth
               size="small"
-              name="vendor"
               label="Vendor"
               variant="outlined"
-              value={
-                PackingListDataByID.vendor ? PackingListDataByID.vendor : ""
-              }
-              onChange={handleInputChange}
+              value={recordForEdit.name || ""}
+              onChange={handleVendorChange}
             />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <CustomTextField
-              sx={{ minWidth: "8rem" }}
-              name="vendor_name"
-              size="small"
-              label="search By vendor_name"
-              variant="outlined"
-              onChange={handleInputChange}
-              value={PackingListDataByID.vendor_name}
-            />
-            <Button onClick={(e) => fetchVendorOptions(e)} variant="contained">
-              Submit
-            </Button>
-          </Grid>
-          {vendorOption && vendorOption.length > 0 && (
-            <Grid item xs={12} sm={3}>
-              <CustomAutocomplete
-                name="vendor"
-                size="small"
-                disablePortal
-                id="combo-box-demo"
-                onChange={(event, value) => setVendor(value)}
-                options={vendorOption}
-                getOptionLabel={(option) => option.name}
-                sx={{ minWidth: 100 }}
-                label="Update Vendor"
-              />
-            </Grid>
-          )}
-
-          <Grid item xs={12} sm={3}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              name="packing_list_no"
-              label="Invoice No."
-              variant="outlined"
-              value={
-                PackingListDataByID.packing_list_no
-                  ? PackingListDataByID.packing_list_no
-                  : ""
-              }
-              onChange={handleInputChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
+          </Grid> */}
+          {/* <Grid item xs={12} sm={3}>
             <CustomAutocomplete
-              name="seller_account"
               size="small"
               disablePortal
               id="combo-box-demo"
-              value={selectedSellerData ? selectedSellerData : ""}
-              onChange={(event, value) => setSelectedSellerData(value)}
+              onChange={(event, value) =>
+                handleAutocompleteChange("seller_account", value)
+              }
               options={sellerData.map((option) => option.unit)}
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               label="Seller Account"
+            />
+          </Grid> */}
+
+          <Grid item xs={12} sm={3}>
+            <CustomAutocomplete
+              size="small"
+              id="combo-box-demo"
+              onChange={(event, value) =>
+                setInputValues({ ...inputValues, payment_terms: value })
+              }
+              options={paymentTerms.map((option) => option)}
+              getOptionLabel={(option) => option}
+              sx={{ minWidth: 300 }}
+              label="Payment Terms"
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <CustomAutocomplete
+              size="small"
+              id="combo-box-demo"
+              onChange={(event, value) =>
+                setInputValues({ ...inputValues, delivery_terms: value })
+              }
+              options={deliveryTerms.map((option) => option)}
+              getOptionLabel={(option) => option}
+              sx={{ minWidth: 300 }}
+              label="Delivery Terms"
+            />
+          </Grid>
+          {/* <Grid item xs={12} sm={3}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              name="Purchase_order_no"
+              label="Purchase Order No."
+              variant="outlined"
+              value={inputValues.purchase_order_no || ""}
+              onChange={(e) =>
+                setInputValues({
+                  ...inputValues,
+                  purchase_order_no: e.target.value,
+                })
+              }
+            />
+          </Grid> */}
+          <Grid item xs={12} sm={3}>
+            <CustomTextField
+              fullWidth
+              type="date"
+              name="Purchase_order_date"
+              size="small"
+              label="Purchase Order Date"
+              variant="outlined"
+              value={inputValues.purchase_order_date || today}
+              onChange={handleInputChange}
             />
           </Grid>
           <Grid item xs={12} sm={3}>
             <CustomTextField
               fullWidth
               type="date"
-              name="invoice_date"
+              name="Purchase_invoice_date"
               size="small"
-              label="Invoice Date"
+              label="Purchase Invoice Date"
               variant="outlined"
-              value={
-                PackingListDataByID.invoice_date
-                  ? PackingListDataByID.invoice_date
-                  : today
-              }
+              value={inputValues.purchase_invoice_date || today}
               onChange={handleInputChange}
-              inputProps={{ max: today }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <CustomAutocomplete
+              size="small"
+              disablePortal
+              id="combo-box-demo"
+              onChange={(event, value) =>
+                setInputValues({ ...inputValues, currency: value.symbol })
+              }
+              options={currencyOption.map((option) => option)}
+              getOptionLabel={(option) => `${option.name} (${option.symbol})`}
+              sx={{ minWidth: 300 }}
+              label="Currency"
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <CustomTextField
+              fullWidth
+              type="date"
+              name="schedule_date"
+              size="small"
+              label="Schedule Date"
+              variant="outlined"
+              value={inputValues.schedule_date || today}
+              onChange={handleInputChange}
+              InputProps={{ inputProps: { min: today } }} // Restrict past dates
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Issued By"
+              variant="outlined"
+              value={inputValues.created_by || ""}
             />
           </Grid>
           <Grid item xs={12}>
@@ -341,11 +532,42 @@ export const PurchaseOrderUpdate = (props) => {
                     size="small"
                     label="Quantity"
                     variant="outlined"
-                    value={input.quantity ? input.quantity : ""}
-                    onChange={(event) => handleFormChange(index, event)}
+                    value={input.quantity || ""}
+                    onChange={(e) =>
+                      handleProductChange(index, "quantity", e.target.value)
+                    }
                   />
                 </Grid>
-
+                <Grid item xs={12} sm={2}>
+                  <CustomTextField
+                    fullWidth
+                    name="pending_quantity"
+                    size="small"
+                    label="Pending Quantity"
+                    variant="outlined"
+                    value={input.pending_quantity || ""}
+                    onChange={(event) =>
+                      handleProductChange(
+                        index,
+                        "pending_quantity",
+                        event.target.value
+                      )
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12} sm={2}>
+                  <CustomTextField
+                    fullWidth
+                    name="amount"
+                    size="small"
+                    label="Amount"
+                    variant="outlined"
+                    value={input.amount || ""}
+                    onChange={(event) =>
+                      handleProductChange(index, "amount", event.target.value)
+                    }
+                  />
+                </Grid>
                 <Grid item xs={12} sm={2} alignContent="right">
                   {index !== 0 && (
                     <Button

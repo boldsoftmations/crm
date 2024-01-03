@@ -52,7 +52,14 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
     delivery_terms: "",
     currency: "",
     products: [
-      { product: "", quantity: "", unit: "", pending_quantity: "", amount: "" },
+      {
+        product: "",
+        quantity: "",
+        unit: "",
+        pending_quantity: "",
+        amount: "",
+        rate: "",
+      },
     ],
   });
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -86,37 +93,27 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
   );
 
   const handleProductChange = (index, field, value) => {
-    // Avoid duplicate product selection
-    if (field === "product") {
-      const isDuplicate = inputValues.products.some(
-        (product, idx) => product.product === value && idx !== index
-      );
-      if (isDuplicate) {
-        setError(`The product "${value}" is already selected in another line.`);
-        return;
-      }
-    }
-
-    // Proceed with updating the product's information
     setInputValues((prevValues) => {
       const updatedProducts = [...prevValues.products];
       const productToUpdate = { ...updatedProducts[index] };
 
-      if (field === "product") {
-        const productObj = productOption.find((item) => item.name === value);
-        productToUpdate["unit"] = productObj ? productObj.unit : ""; // Automatically set the unit when product is selected
+      // Update the field with the new value
+      productToUpdate[field] = value;
+
+      // Calculate amount if quantity or rate is changed
+      if (field === "quantity" || field === "rate") {
+        const quantity = productToUpdate.quantity
+          ? parseFloat(productToUpdate.quantity)
+          : 0;
+        const rate = productToUpdate.rate
+          ? parseFloat(productToUpdate.rate)
+          : 0;
+        productToUpdate.amount = (quantity * rate).toFixed(2); // Use toFixed(2) to format it as a decimal
       }
 
-      productToUpdate[field] = value;
       updatedProducts[index] = productToUpdate;
-
       return { ...prevValues, products: updatedProducts };
     });
-
-    // Clear the error after successful update
-    if (field === "product") {
-      setError(null);
-    }
   };
 
   const handleProductAutocompleteChange = (index, value) => {
@@ -470,6 +467,19 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
                         "pending_quantity",
                         event.target.value
                       )
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12} sm={2}>
+                  <CustomTextField
+                    fullWidth
+                    name="rate"
+                    size="small"
+                    label="Rate"
+                    variant="outlined"
+                    value={input.rate || ""}
+                    onChange={(event) =>
+                      handleProductChange(index, "rate", event.target.value)
                     }
                   />
                 </Grid>
