@@ -38,7 +38,7 @@ export const PackingListView = () => {
   const errRef = useRef();
   const [errMsg, setErrMsg] = useState("");
   const [packingListData, setPackingListData] = useState([]);
-  const [pageCount, setpageCount] = useState(0);
+  const [pageCount, setpageCount] = useState(1);
   const [currentPage, setCurrentPage] = useState(0);
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
   const [idForEdit, setIDForEdit] = useState("");
@@ -74,7 +74,7 @@ export const PackingListView = () => {
       setOpen(true);
       const response = currentPage
         ? await InventoryServices.getPackingListPaginateData(currentPage)
-        : await InventoryServices.getAllPackingListData();
+        : await InventoryServices.getAllPaginatePackingListDataWithSearch();
       setPackingListData(response.data.results);
       const total = response.data.count;
       setpageCount(Math.ceil(total / 25));
@@ -103,18 +103,12 @@ export const PackingListView = () => {
   const getSearchData = async (value) => {
     try {
       setOpen(true);
-      const filterSearch = value;
-      if (filterSearch !== "") {
-        const response = await InventoryServices.getAllSearchPackingListData(
+      const filterSearch = value.trim();
+      const response =
+        await InventoryServices.getAllPaginatePackingListDataWithSearch(
+          currentPage,
           filterSearch
         );
-        setPackingListData(response.data.results);
-        const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
-      } else {
-        await getAllPackingListDetails();
-        setFilterSelectedQuery("");
-      }
     } catch (error) {
       console.log("error Search leads", error);
     } finally {
@@ -124,16 +118,15 @@ export const PackingListView = () => {
 
   const handlePageClick = async (event, value) => {
     try {
-      const page = value;
-      setCurrentPage(page);
+      setCurrentPage(value); // Update the current page
       setOpen(true);
 
       const response = filterSelectedQuery
-        ? await InventoryServices.getAllPackingListDataPaginate(
-            page,
+        ? await InventoryServices.getAllPaginatePackingListDataWithSearch(
+            value,
             filterSelectedQuery
           )
-        : await InventoryServices.getPackingListPaginateData(page);
+        : await InventoryServices.getPackingListPaginateData(value);
 
       if (response) {
         setPackingListData(response.data.results);
