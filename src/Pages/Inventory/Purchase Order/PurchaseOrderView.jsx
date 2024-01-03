@@ -33,6 +33,7 @@ import InvoiceServices from "../../../services/InvoiceService";
 import { useDispatch } from "react-redux";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
 import CustomTextField from "../../../Components/CustomTextField";
+import { PackingListCreate } from "../PackingList/PackingListCreate";
 
 export const PurchaseOrderView = () => {
   const [openPopupUpdate, setOpenPopupUpdate] = useState(false);
@@ -43,13 +44,13 @@ export const PurchaseOrderView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [acceptedFilter, setAcceptedFilter] = useState("");
   const [selectedRow, setSelectedRow] = useState(null);
+  const [openCreatePLPopup, setOpenCreatePLPopup] = useState(false);
   const dispatch = useDispatch();
 
   const handleEdit = (item) => {
     setSelectedRow(item);
     setOpenPopupUpdate(true);
   };
-
   const handleAccept = (item) => {
     // setOpenAcceptPopup(true);
     // setMaterialTransferNoteByID(item);
@@ -100,7 +101,7 @@ export const PurchaseOrderView = () => {
           search
         );
         console.log(response.data); // Add this line to debug
-        setPurchaseOrderData(response.data);
+        setPurchaseOrderData(response.data.results);
         setPageCount(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
@@ -111,6 +112,9 @@ export const PurchaseOrderView = () => {
     [acceptedFilter, searchQuery]
   );
 
+  const handleOpenCreatePLPopup = () => {
+    setOpenCreatePLPopup(true);
+  };
   console.log("purchaseOrderData", purchaseOrderData);
   return (
     <>
@@ -256,7 +260,12 @@ export const PurchaseOrderView = () => {
               <TableBody>
                 {Array.isArray(purchaseOrderData) &&
                   purchaseOrderData.map((row, i) => (
-                    <Row key={i} row={row} handleEdit={handleEdit} />
+                    <Row
+                      key={i}
+                      row={row}
+                      handleEdit={handleEdit}
+                      handleOpenCreatePLPopup={handleOpenCreatePLPopup}
+                    />
                   ))}
               </TableBody>
             </Table>
@@ -286,12 +295,20 @@ export const PurchaseOrderView = () => {
           selectedRow={selectedRow}
         />
       </Popup>
+      <Popup
+        fullScreen={true}
+        title="Create Packing List"
+        openPopup={openCreatePLPopup}
+        setOpenPopup={setOpenCreatePLPopup}
+      >
+        <PackingListCreate setOpenPopup={setOpenCreatePLPopup} />
+      </Popup>
     </>
   );
 };
 
 function Row(props) {
-  const { row, handleEdit } = props;
+  const { row, handleEdit, handleOpenCreatePLPopup } = props;
   const [open, setOpen] = useState(false);
 
   return (
@@ -317,6 +334,7 @@ function Row(props) {
         <StyledTableCell align="center">{row.created_date}</StyledTableCell>
         <StyledTableCell align="center">
           <Button onClick={() => handleEdit(row)}>Edit</Button>
+          <Button onClick={handleOpenCreatePLPopup}>Create PL</Button>
         </StyledTableCell>
       </StyledTableRow>
       <TableRow>

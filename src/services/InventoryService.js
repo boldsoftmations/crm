@@ -123,11 +123,10 @@ const getAllPaginatePackingListData = (all) => {
   return CustomAxios.get(`/api/inventory/list-packing-list/?page=${all}`);
 };
 
-const getAllPaginatePackingListDataWithSearch = (all, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-packing-list/?page=${all}&search=${search}`
-  );
+const getAllPaginatePackingListDataWithSearch = async (page = 1, search = "") => {
+  return CustomAxios.get(`/api/inventory/list-packing-list/?page=${page}&search=${search}`);
 };
+
 
 const getAllSearchPackingListData = (search) => {
   return CustomAxios.get(`/api/inventory/list-packing-list/?search=${search}`);
