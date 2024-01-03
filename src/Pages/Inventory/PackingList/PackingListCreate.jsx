@@ -26,16 +26,21 @@ const Root = styled("div")(({ theme }) => ({
 }));
 
 export const PackingListCreate = (props) => {
-  const { setOpenPopup, getAllPackingListDetails } = props;
-  const [inputValue, setInputValue] = useState([]);
+  const { setOpenPopup, getAllPackingListDetails, selectedRow } = props;
+  const [inputValue, setInputValue] = useState({
+    po_no: selectedRow && selectedRow.po_no ? selectedRow.po_no : "",
+    seller_account:
+      selectedRow && selectedRow.seller_account
+        ? selectedRow.seller_account
+        : "",
+  });
+
   const [open, setOpen] = useState(false);
-  const [vendorOption, setVendorOption] = useState([]);
-  const [vendor, setVendor] = useState("");
   const [productOption, setProductOption] = useState([]);
   const [selectedSellerData, setSelectedSellerData] = useState("");
   const data = useSelector((state) => state.auth);
   const sellerData = data.sellerAccount;
-  const today = new Date().toISOString().slice(0, 10); // Get current date in YYYY-MM-DD format
+  const today = new Date().toISOString().slice(0, 10);
   const [error, setError] = useState(null);
   const [products, setProducts] = useState([
     {
@@ -44,9 +49,10 @@ export const PackingListCreate = (props) => {
       unit: "",
     },
   ]);
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setInputValue({ ...inputValue, [name]: value });
+    setInputValue((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleAutocompleteChange = (index, event, value) => {
@@ -66,33 +72,15 @@ export const PackingListCreate = (props) => {
     data[index][event.target.name ? event.target.name : "product"] =
       selectedValue;
 
-    // Check if the selected value already exists in the array of selected values
     const isValueDuplicate = data.some(
       (item, i) => item.product === selectedValue && i !== index
     );
 
     if (isValueDuplicate) {
-      // If the selected value already exists, show an error message or handle it as desired
       setError(`Selected ${selectedValue} already exists!`);
     } else {
-      // If the selected value is unique, update the products array as usual
       setProducts(data);
     }
-  };
-
-  const addFields = () => {
-    let newfield = {
-      product: "",
-      quantity: "",
-      unit: "",
-    };
-    setProducts([...products, newfield]);
-  };
-
-  const removeFields = (index) => {
-    let data = [...products];
-    data.splice(index, 1);
-    setProducts(data);
   };
 
   useEffect(() => {
@@ -111,31 +99,13 @@ export const PackingListCreate = (props) => {
     }
   };
 
-  const fetchVendorOptions = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      console.log("inputValue.vendor_name", inputValue.vendor_name);
-      const response = await InventoryServices.getAllSearchVendorData(
-        inputValue.vendor_name
-      );
-      setVendorOption(response.data.results);
-      console.log("after api");
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-      console.log("err all vendor", err);
-    }
-  };
-
   const createPackingListDetails = async (e) => {
     try {
       e.preventDefault();
       setOpen(true);
       const req = {
-        packing_list_no: inputValue.packing_list_no, //Normal text field
+        purchase_order: inputValue.po_no,
         invoice_date: inputValue.invoice_date ? inputValue.invoice_date : today,
-        vendor: vendor.name,
         seller_account: selectedSellerData,
         products: products,
       };
@@ -152,6 +122,30 @@ export const PackingListCreate = (props) => {
   const handleCloseSnackbar = () => {
     setError(null);
   };
+
+  useEffect(() => {
+    if (selectedRow && selectedRow.products) {
+      setProducts(
+        selectedRow.products.map((product) => ({
+          ...product,
+          product: product.product,
+          quantity: product.quantity,
+          unit: product.unit,
+          isEditable: false,
+        }))
+      );
+    }
+  }, [selectedRow]);
+
+  useEffect(() => {
+    setInputValue({
+      po_no: selectedRow && selectedRow.po_no ? selectedRow.po_no : "",
+      seller_account:
+        selectedRow && selectedRow.seller_account
+          ? selectedRow.seller_account
+          : "",
+    });
+  }, [selectedRow]);
 
   return (
     <div>
@@ -181,55 +175,31 @@ export const PackingListCreate = (props) => {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={3}>
             <CustomTextField
-              sx={{ minWidth: "8rem" }}
-              name="vendor_name"
+              fullWidth
               size="small"
-              label="search By Vendor Name"
+              name="po_no"
+              label="Purchase Order Number"
               variant="outlined"
+              value={inputValue.po_no}
               onChange={handleInputChange}
-              value={inputValue.vendor_name}
+              disabled={true}
             />
-            <Button onClick={(e) => fetchVendorOptions(e)} variant="contained">
-              Submit
-            </Button>
           </Grid>
-          {vendorOption && vendorOption.length > 0 && (
-            <Grid item xs={12} sm={3}>
-              <CustomAutocomplete
-                name="vendor"
-                size="small"
-                disablePortal
-                id="combo-box-demo"
-                onChange={(event, value) => setVendor(value)}
-                options={vendorOption}
-                getOptionLabel={(option) => option.name}
-                sx={{ minWidth: 300 }}
-                label="Vendor"
-              />
-            </Grid>
-          )}
           <Grid item xs={12} sm={3}>
             <CustomAutocomplete
               name="seller_account"
               size="small"
               disablePortal
               id="combo-box-demo"
-              onChange={(event, value) => setSelectedSellerData(value)}
+              value={inputValue.seller_account}
+              onChange={(event, value) => {
+                setInputValue({ ...inputValue, seller_account: value });
+              }}
               options={sellerData.map((option) => option.unit)}
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               label="Seller Account"
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              name="packing_list_no"
-              label="Invoice No."
-              variant="outlined"
-              value={inputValue.packing_list_no}
-              onChange={handleInputChange}
+              disabled={true} // Seller Account field is non-editable
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -268,6 +238,7 @@ export const PackingListCreate = (props) => {
                     getOptionLabel={(option) => option}
                     sx={{ minWidth: 300 }}
                     label="Product Name"
+                    disabled={true}
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
@@ -278,6 +249,7 @@ export const PackingListCreate = (props) => {
                     label="Unit"
                     variant="outlined"
                     value={input.unit ? input.unit : ""}
+                    disabled={true}
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
@@ -291,31 +263,9 @@ export const PackingListCreate = (props) => {
                     onChange={(event) => handleFormChange(index, event)}
                   />
                 </Grid>
-
-                <Grid item xs={12} sm={2} alignContent="right">
-                  {index !== 0 && (
-                    <Button
-                      disabled={index === 0}
-                      onClick={() => removeFields(index)}
-                      variant="contained"
-                    >
-                      Remove
-                    </Button>
-                  )}
-                </Grid>
               </>
             );
           })}
-
-          <Grid item xs={12} sm={2} alignContent="right">
-            <Button
-              onClick={addFields}
-              variant="contained"
-              sx={{ marginRight: "1em" }}
-            >
-              Add More...
-            </Button>
-          </Grid>
         </Grid>
         <Button
           type="submit"

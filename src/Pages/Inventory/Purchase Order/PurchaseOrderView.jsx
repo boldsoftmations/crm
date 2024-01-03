@@ -166,10 +166,12 @@ export const PurchaseOrderView = () => {
     [acceptedFilter, searchQuery]
   );
 
-  const handleOpenCreatePLPopup = () => {
+  const handleOpenCreatePLPopup = (row) => {
     setOpenCreatePLPopup(true);
+    setSelectedRow(row);
   };
   console.log("purchaseOrderData", purchaseOrderData);
+
   return (
     <>
       <CustomLoader open={open} />
@@ -318,7 +320,9 @@ export const PurchaseOrderView = () => {
                       key={i}
                       row={row}
                       handleEdit={handleEdit}
-                      handleOpenCreatePLPopup={handleOpenCreatePLPopup}
+                      handleOpenCreatePLPopup={() =>
+                        handleOpenCreatePLPopup(row)
+                      }
                       handleDownload={handleDownload}
                     />
                   ))}
@@ -357,7 +361,10 @@ export const PurchaseOrderView = () => {
         openPopup={openCreatePLPopup}
         setOpenPopup={setOpenCreatePLPopup}
       >
-        <PackingListCreate setOpenPopup={setOpenCreatePLPopup} />
+        <PackingListCreate
+          setOpenPopup={setOpenCreatePLPopup}
+          selectedRow={selectedRow}
+        />
       </Popup>
     </>
   );
