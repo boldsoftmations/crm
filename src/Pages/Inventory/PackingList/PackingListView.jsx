@@ -206,6 +206,9 @@ export const PackingListView = () => {
                 <StyledTableRow>
                   <StyledTableCell align="center"></StyledTableCell>
                   <StyledTableCell align="center">VENDOR</StyledTableCell>
+                  <StyledTableCell align="center">
+                    PURCHASE ORDER NO
+                  </StyledTableCell>
                   <StyledTableCell align="center">PACKING LIST</StyledTableCell>
                   <StyledTableCell align="center">SELLER STATE</StyledTableCell>
                   <StyledTableCell align="center">INVOICE DATE</StyledTableCell>
@@ -268,6 +271,7 @@ function Row(props) {
           </IconButton>
         </StyledTableCell>
         <StyledTableCell align="center">{row.vendor}</StyledTableCell>
+        <StyledTableCell align="center">{row.purchase_order}</StyledTableCell>
         <StyledTableCell align="center">{row.packing_list_no}</StyledTableCell>
         <StyledTableCell align="center">{row.seller_account}</StyledTableCell>
         <StyledTableCell align="center">{row.invoice_date}</StyledTableCell>
