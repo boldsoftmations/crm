@@ -31,7 +31,7 @@ export const PurchaseOrderUpdate = ({
   setOpenPopup,
   contactNameOption,
 }) => {
-  console.log("contactNameOption", contactNameOption);
+  console.log("contactNameOption", JSON.stringify(contactNameOption));
   console.log("selectedRow", selectedRow);
   const { sellerData, userData } = useSelector((state) => ({
     sellerData: state.auth.sellerAccount,
@@ -46,9 +46,23 @@ export const PurchaseOrderUpdate = ({
   const [currencyOption, setCurrencyOption] = useState([]);
   const today = new Date().toISOString().slice(0, 10);
 
+  // Before your component's return statement, after you've defined inputValues
+  const vendorObject = contactNameOption.find(
+    (vendor) => vendor.name === inputValues.vendor
+  );
+  const selectedVendorContacts = vendorObject ? vendorObject.contacts : [];
+
+  // Then, when you're using the CustomAutocomplete component for vendor contacts, use the selectedVendorContacts array
+
   const currencyObject = currencyOption.find(
     (option) => option.name === inputValues.currency
   );
+  useEffect(() => {
+    if (selectedRow) {
+      setInputValues(selectedRow);
+    }
+  }, [selectedRow]);
+
   console.log("inputsvalue contacts", inputValues.vendor_contact_person);
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target;
@@ -201,7 +215,7 @@ export const PurchaseOrderUpdate = ({
         inputValues.id,
         req
       );
-      if (response.status === 201) {
+      if (response.status === 200) {
         setOpenPopup(false);
         getAllPurchaseOrderDetails();
       }
@@ -256,15 +270,14 @@ export const PurchaseOrderUpdate = ({
               size="small"
               disablePortal
               id="vendor-contact-person-autocomplete"
-              options={contactNameOption || []} // Default to an empty array if contactNameOption is not provided
+              options={selectedVendorContacts}
               getOptionLabel={(option) => option.name}
               value={
-                contactNameOption.find(
+                selectedVendorContacts.find(
                   (option) => option.name === inputValues.vendor_contact_person
-                ) || null // Ensure it's null if not found
+                ) || null
               }
               onChange={(event, newValue) => {
-                // newValue is the object from the options array or null if cleared
                 handleAutocompleteChange("vendor_contact_person", newValue);
               }}
               renderInput={(params) => (
@@ -430,18 +443,10 @@ export const PurchaseOrderUpdate = ({
                 <Grid item xs={12} sm={1}>
                   <CustomTextField
                     fullWidth
-                    name="pending_quantity"
                     size="small"
                     label="Pending Quantity"
                     variant="outlined"
                     value={input.pending_quantity || ""}
-                    onChange={(event) =>
-                      handleProductChange(
-                        index,
-                        "pending_quantity",
-                        event.target.value
-                      )
-                    }
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>

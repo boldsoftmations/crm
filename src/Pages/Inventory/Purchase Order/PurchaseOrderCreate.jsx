@@ -425,7 +425,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
           {inputValues.products.map((input, index) => {
             return (
               <>
-                <Grid key={index} item xs={12} sm={4}>
+                <Grid key={index} item xs={12} sm={3}>
                   <CustomAutocomplete
                     name="product"
                     size="small"
@@ -441,7 +441,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
                     label="Product"
                   />
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
                     name="unit"
@@ -451,7 +451,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
                     value={input.unit ? input.unit : ""}
                   />
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
                     name="quantity"
@@ -465,7 +465,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
                     name="rate"
@@ -478,7 +478,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
                     }
                   />
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
                     name="amount"

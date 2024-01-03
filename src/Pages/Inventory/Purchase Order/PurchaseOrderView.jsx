@@ -34,6 +34,9 @@ import { useDispatch } from "react-redux";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
 import CustomTextField from "../../../Components/CustomTextField";
 import { PackingListCreate } from "../PackingList/PackingListCreate";
+import { PurchaseOrderPDF } from "./PurchaseOrderPDF";
+import jsPDF from "jspdf";
+import { pdf } from "@react-pdf/renderer";
 
 export const PurchaseOrderView = () => {
   const [openPopupUpdate, setOpenPopupUpdate] = useState(false);
@@ -48,13 +51,59 @@ export const PurchaseOrderView = () => {
   const [openCreatePLPopup, setOpenCreatePLPopup] = useState(false);
   const dispatch = useDispatch();
 
+  const handleDownload = async (data) => {
+    try {
+      setOpen(true);
+
+      // create a new jsPDF instance
+      const pdfDoc = new jsPDF();
+
+      // generate the PDF document
+      const pdfData = await pdf(
+        <PurchaseOrderPDF
+          purchaseOrderData={data}
+          // AMOUNT_IN_WORDS={AMOUNT_IN_WORDS}
+        />,
+        pdfDoc,
+        {
+          // set options here if needed
+        }
+      ).toBlob();
+
+      // create a temporary link element to trigger the download
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(pdfData);
+      link.download = `PO Number ${data.po_no}.pdf`;
+      document.body.appendChild(link);
+
+      // trigger the download
+      link.click();
+
+      // clean up the temporary link element
+      document.body.removeChild(link);
+
+      setOpen(false);
+    } catch (error) {
+      console.log("error exporting pdf", error);
+    } finally {
+      setOpen(false);
+    }
+  };
+
   const handleEdit = async (item) => {
-    setSelectedRow(item);
-    const response = await InventoryServices.getAllSearchVendorData(
-      item.vendor
-    );
-    setContactNameOption(response.data.results);
-    setOpenPopupUpdate(true);
+    try {
+      setOpen(true);
+      setSelectedRow(item);
+      const response = await InventoryServices.getAllSearchVendorData(
+        item.vendor
+      );
+      setContactNameOption(response.data.results);
+      setOpenPopupUpdate(true);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setOpen(false);
+    }
   };
   const handleAccept = (item) => {
     // setOpenAcceptPopup(true);
@@ -270,6 +319,7 @@ export const PurchaseOrderView = () => {
                       row={row}
                       handleEdit={handleEdit}
                       handleOpenCreatePLPopup={handleOpenCreatePLPopup}
+                      handleDownload={handleDownload}
                     />
                   ))}
               </TableBody>
@@ -314,7 +364,7 @@ export const PurchaseOrderView = () => {
 };
 
 function Row(props) {
-  const { row, handleEdit, handleOpenCreatePLPopup } = props;
+  const { row, handleEdit, handleOpenCreatePLPopup, handleDownload } = props;
   const [open, setOpen] = useState(false);
 
   return (
@@ -338,7 +388,12 @@ function Row(props) {
         <StyledTableCell align="center">{row.po_date}</StyledTableCell>
         <StyledTableCell align="center">
           <Button onClick={() => handleEdit(row)}>Edit</Button>
-          <Button onClick={handleOpenCreatePLPopup}>Create PL</Button>
+          <Button color="success" onClick={handleOpenCreatePLPopup}>
+            Create PL
+          </Button>
+          <Button color="secondary" onClick={() => handleDownload(row)}>
+            Download
+          </Button>
         </StyledTableCell>
       </StyledTableRow>
       <TableRow>
