@@ -560,35 +560,39 @@ const Footer = () => (
 const Information = [
   {
     id: "1)",
-    text: "Material once sold will not be taken back.",
+    text: "Please send your acceptance through return mail within 24 Hrs.",
   },
   {
     id: "2)",
-    text: "Material is delivered at owner's risk and with no liability of transportation damage to Glutape India Pvt Ltd. ",
+    text: "Material should reach on mentioned dates in Our Stores as per the schedule dates. Any delay in supply will attract a Late delivery charges @2% on part or there of. ",
   },
   {
     id: "3)",
-    text: "Our risk and Responsibility ceases as soon as the goods leave our premises.",
+    text: "Every part needs to make on seperate invoice, cupled invoices will not inwarded.",
   },
   {
     id: "4)",
-    text: "In case the cargo is insured, a claim against insurance will be settled once the insurance claim gets sanctioned from the respective insurance company",
+    text: "Delivery should be between 09.00 AM to 06.00 PM",
   },
   {
     id: "5)",
-    text: "Please test Material before using.",
+    text: "Pl do mention the correct P.O number and Part number in all invoice copies & respective delivery documents .",
   },
   {
     id: "6)",
-    text: "No allowance for storage of difference in quality will be allowed unless the same is given to us within 24 hour of receipt insurance company.",
+    text: "Apart from the schedule excess qty. will be returned to you on your account.",
   },
   {
     id: "7)",
-    text: "Subjects to mumbai, Maharashtra jurisdiction only.",
+    text: "Any short reciept will be debited in multipac of the packets..",
   },
   {
     id: "8)",
-    text: "Validity of this Proforma Invoice is 3 Days from Date of Proforma Invoice.",
+    text: "On acknowledgement of wrong invoicing, GRIPPO will debit 3 times of (concerned) invoice value to your account.",
+  },
+  {
+    id: "9)",
+    text: "We reserve the right to reject the supply at any stage if the consignment / goods does not confirm the specification or sample or defects are revealed during processing.",
   },
 ];
 
