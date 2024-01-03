@@ -63,6 +63,7 @@ export const PackingListCreate = ({
       setOpen(true);
       const req = {
         purchase_order: packingListDetails.po_no,
+        vendor: packingListDetails.vendor || null,
         packing_list_no: packingListDetails.packing_list_no,
         invoice_date: packingListDetails.invoice_date || today,
         seller_account: packingListDetails.seller_account,

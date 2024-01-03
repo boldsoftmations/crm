@@ -33,7 +33,6 @@ import { getSellerAccountData } from "../../../Redux/Action/Action";
 
 export const PackingListView = () => {
   const [openPopup, setOpenPopup] = useState(false);
-  const [openPopup2, setOpenPopup2] = useState(false);
   const [open, setOpen] = useState(false);
   const errRef = useRef();
   const [errMsg, setErrMsg] = useState("");
@@ -182,16 +181,7 @@ export const PackingListView = () => {
                 Packing List
               </h3>
             </Box>
-            <Box flexGrow={0.5} align="right">
-              <Button
-                onClick={() => setOpenPopup2(true)}
-                variant="contained"
-                color="success"
-                // startIcon={<AddIcon />}
-              >
-                Add
-              </Button>
-            </Box>
+            <Box flexGrow={0.5} align="right"></Box>
           </Box>
           <TableContainer
             sx={{
@@ -242,17 +232,7 @@ export const PackingListView = () => {
           </TableFooter>
         </Paper>
       </Grid>
-      <Popup
-        fullScreen={true}
-        title={"Create PackingList Details"}
-        openPopup={openPopup2}
-        setOpenPopup={setOpenPopup2}
-      >
-        <PackingListCreate
-          getAllPackingListDetails={getAllPackingListDetails}
-          setOpenPopup={setOpenPopup2}
-        />
-      </Popup>
+
       <Popup
         fullScreen={true}
         title={"Update PackingList Details"}
@@ -292,7 +272,7 @@ function Row(props) {
         <StyledTableCell align="center">{row.seller_account}</StyledTableCell>
         <StyledTableCell align="center">{row.invoice_date}</StyledTableCell>
         <StyledTableCell align="center">
-          <Button onClick={() => openInPopup(row.id)}>Edit</Button>
+          <Button onClick={() => openInPopup(row)}>Edit</Button>
         </StyledTableCell>
       </StyledTableRow>
       <StyledTableRow>
