@@ -17,7 +17,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -25,19 +25,22 @@ import { Popup } from "../../../Components/Popup";
 import InventoryServices from "../../../services/InventoryService";
 import { PackingListUpdate } from "./PackingListUpdate";
 import InvoiceServices from "../../../services/InvoiceService";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
 import CustomTextField from "../../../Components/CustomTextField";
+import { GRNCreate } from "../GRN/GRNCreate";
 
 export const PackingListView = () => {
+  const dispatch = useDispatch();
+  const userData = useSelector((state) => state.auth.profile);
   const [openPopup, setOpenPopup] = useState(false);
+  const [openPopupCreateGrn, setOpenPopupCreateGrn] = useState(false);
   const [open, setOpen] = useState(false);
   const [packingListData, setPackingListData] = useState([]);
   const [pageCount, setPageCount] = useState(1);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [idForEdit, setIDForEdit] = useState("");
-  const dispatch = useDispatch();
 
   useEffect(() => {
     getAllSellerAccountsDetails();
@@ -90,6 +93,11 @@ export const PackingListView = () => {
   const openInPopup = (item) => {
     setIDForEdit(item);
     setOpenPopup(true);
+  };
+
+  const handleCreateGrn = (item) => {
+    setIDForEdit(item);
+    setOpenPopupCreateGrn(true);
   };
 
   return (
@@ -188,7 +196,13 @@ export const PackingListView = () => {
               </TableHead>
               <TableBody>
                 {packingListData.map((row, i) => (
-                  <Row key={i} row={row} openInPopup={openInPopup} />
+                  <Row
+                    key={i}
+                    row={row}
+                    openInPopup={openInPopup}
+                    handleCreateGrn={handleCreateGrn}
+                    userData={userData}
+                  />
                 ))}
               </TableBody>{" "}
             </Table>
@@ -209,7 +223,7 @@ export const PackingListView = () => {
 
       <Popup
         fullScreen={true}
-        title={"Update PackingList Details"}
+        title={"PackingList Update"}
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
       >
@@ -219,12 +233,19 @@ export const PackingListView = () => {
           idForEdit={idForEdit}
         />
       </Popup>
+      <Popup
+        fullScreen={true}
+        title={"GRN Create"}
+        openPopup={openPopupCreateGrn}
+        setOpenPopup={setOpenPopupCreateGrn}
+      >
+        <GRNCreate setOpenPopup={setOpenPopupCreateGrn} idForEdit={idForEdit} />
+      </Popup>
     </>
   );
 };
 
-function Row(props) {
-  const { row, openInPopup } = props;
+function Row({ row, openInPopup, handleCreateGrn, userData }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -247,7 +268,13 @@ function Row(props) {
         <StyledTableCell align="center">{row.seller_account}</StyledTableCell>
         <StyledTableCell align="center">{row.invoice_date}</StyledTableCell>
         <StyledTableCell align="center">
-          <Button onClick={() => openInPopup(row)}>Edit</Button>
+          {!userData.groups.includes("Stores Delhi") &&
+            !userData.groups.includes("Production Delhi") &&
+            !userData.groups.includes("Stores") && (
+              <Button onClick={() => openInPopup(row)}>Edit</Button>
+            )}
+
+          <Button onClick={() => handleCreateGrn(row)}>Create GRN</Button>
         </StyledTableCell>
       </StyledTableRow>
       <StyledTableRow>

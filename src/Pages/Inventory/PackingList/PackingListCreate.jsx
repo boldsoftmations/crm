@@ -13,6 +13,7 @@ import CustomTextField from "../../../Components/CustomTextField";
 import InventoryServices from "../../../services/InventoryService";
 import { styled } from "@mui/material/styles";
 import { CustomLoader } from "./../../../Components/CustomLoader";
+import { useNavigate } from "react-router-dom";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -22,11 +23,8 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const PackingListCreate = ({
-  setOpenPopup,
-  getAllPackingListDetails,
-  selectedRow,
-}) => {
+export const PackingListCreate = ({ setOpenPopup, selectedRow }) => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [error, setError] = useState(null);
   const [packingListDetails, setPackingListDetails] = useState(selectedRow);
@@ -69,9 +67,11 @@ export const PackingListCreate = ({
         seller_account: packingListDetails.seller_account,
         products: products, // Send updated products
       };
-      await InventoryServices.createPackingListData(req);
-      setOpenPopup(false);
-      getAllPackingListDetails();
+      const response = await InventoryServices.createPackingListData(req);
+      if (response.status === 200) {
+        setOpenPopup(false);
+        navigate("/inventory/view-packing-list");
+      }
     } catch (error) {
       console.error("Creating Packing list error", error);
       setError(error.message || "An error occurred");
