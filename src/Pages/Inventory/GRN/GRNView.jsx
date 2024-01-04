@@ -30,7 +30,6 @@ import { GRNCreate } from "./GRNCreate";
 
 export const GRNView = () => {
   const [openPopup, setOpenPopup] = useState(false);
-  const [openPopup2, setOpenPopup2] = useState(false);
   const [open, setOpen] = useState(false);
   const errRef = useRef();
   const [errMsg, setErrMsg] = useState("");
@@ -188,16 +187,7 @@ export const GRNView = () => {
                 GRN Details
               </h3>
             </Box>
-            <Box flexGrow={0.5} align="right">
-              <Button
-                onClick={() => setOpenPopup2(true)}
-                variant="contained"
-                color="success"
-                // startIcon={<AddIcon />}
-              >
-                Add
-              </Button>
-            </Box>
+            <Box flexGrow={0.5} align="right"></Box>
           </Box>
           <TableContainer
             sx={{
@@ -252,19 +242,6 @@ export const GRNView = () => {
           </TableFooter>
         </Paper>
       </Grid>
-      <Popup
-        fullScreen={true}
-        title={"Create GRN Details"}
-        openPopup={openPopup2}
-        setOpenPopup={setOpenPopup2}
-      >
-        <GRNCreate
-          getAllGRNDetails={getAllGRNDetails}
-          setOpenPopup={setOpenPopup2}
-          vendorOption={vendorOption}
-          getPackingListNoDetails={getPackingListNoDetails}
-        />
-      </Popup>
       <Popup
         fullScreen={true}
         title={"Update GRN Details"}
