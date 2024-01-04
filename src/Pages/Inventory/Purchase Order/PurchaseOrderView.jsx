@@ -45,7 +45,7 @@ export const PurchaseOrderView = () => {
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [acceptedFilter, setAcceptedFilter] = useState("");
+  const [acceptedFilter, setAcceptedFilter] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [contactNameOption, setContactNameOption] = useState("");
   const [openCreatePLPopup, setOpenCreatePLPopup] = useState(false);
@@ -203,7 +203,7 @@ export const PurchaseOrderView = () => {
                       size="small"
                       onClick={() => {
                         setAcceptedFilter("");
-                        getAllPurchaseOrderDetails(1, "", searchQuery);
+                        getAllPurchaseOrderDetails(1, false, searchQuery);
                       }}
                       sx={{
                         position: "absolute",

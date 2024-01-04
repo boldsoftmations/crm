@@ -89,7 +89,7 @@ const getAllPurchaseOrderData = (page, acceptedToFilter, searchValue) => {
     params.append("page", page);
   }
 
-  if (acceptedToFilter) {
+  if (acceptedToFilter !== undefined) {
     params.append("close_shot", acceptedToFilter);
   }
 
@@ -114,7 +114,8 @@ const updatePurchaseOrderData = (id, data) => {
 };
 
 // Packing List Api
-const getAllPackingListData = (page, searchValue, acceptedToFilter) => {
+const getAllPackingListData = (page, acceptedToFilter, searchValue) => {
+  console.log(page, acceptedToFilter, searchValue);
   // Constructing the query parameters
   const params = new URLSearchParams();
 
@@ -122,12 +123,13 @@ const getAllPackingListData = (page, searchValue, acceptedToFilter) => {
     params.append("page", page);
   }
 
-  if (searchValue) {
-    params.append("search", searchValue);
+  if (acceptedToFilter !== undefined) {
+    // Append 'acceptedToFilter' regardless of it being true or false
+    params.append("accepted", acceptedToFilter);
   }
 
-  if (acceptedToFilter) {
-    params.append("accept", acceptedToFilter);
+  if (searchValue) {
+    params.append("search", searchValue);
   }
 
   // Sending a GET request with query parameters

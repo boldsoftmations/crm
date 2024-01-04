@@ -15,8 +15,13 @@ import {
   Collapse,
   Typography,
   IconButton,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
+import ClearIcon from "@mui/icons-material/Clear";
 import React, { useCallback, useEffect, useState } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -40,6 +45,7 @@ export const PackingListView = () => {
   const [pageCount, setPageCount] = useState(1);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [acceptedFilter, setAcceptedFilter] = useState(false);
   const [idForEdit, setIDForEdit] = useState("");
 
   useEffect(() => {
@@ -64,11 +70,12 @@ export const PackingListView = () => {
   }, [currentPage, getAllPackingListDetails]);
 
   const getAllPackingListDetails = useCallback(
-    async (page, search = searchQuery) => {
+    async (page, filter = acceptedFilter, search = searchQuery) => {
       try {
         setOpen(true);
         const response = await InventoryServices.getAllPackingListData(
           page,
+          filter,
           search
         );
         setPackingListData(response.data.results);
@@ -79,7 +86,7 @@ export const PackingListView = () => {
         console.error("error", error);
       }
     },
-    [searchQuery]
+    [acceptedFilter, searchQuery] // Depend on acceptedFilter directly
   );
 
   const handleSearchChange = (event) => {
@@ -88,6 +95,12 @@ export const PackingListView = () => {
 
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
+  };
+
+  const handleFilterChange = (event) => {
+    const { value } = event.target;
+    setAcceptedFilter(value);
+    getAllPackingListDetails(currentPage, value, searchQuery);
   };
 
   const openInPopup = (item) => {
@@ -109,6 +122,44 @@ export const PackingListView = () => {
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} sm={3}>
+                <FormControl sx={{ minWidth: "100px" }} fullWidth size="small">
+                  <InputLabel id="demo-simple-select-label">
+                    Filter By Accepted
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    name="status"
+                    label="Filter By Accepted"
+                    value={acceptedFilter}
+                    onChange={handleFilterChange}
+                  >
+                    {AcceptedOption.map((option, i) => (
+                      <MenuItem key={i} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {acceptedFilter && (
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        setAcceptedFilter(false);
+                        getAllPackingListDetails(1, false, searchQuery);
+                      }}
+                      sx={{
+                        position: "absolute",
+                        right: 8,
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                      }}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  )}
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={3}>
                 <CustomTextField
                   size="small"
                   label="Search"
@@ -123,7 +174,11 @@ export const PackingListView = () => {
                   variant="contained"
                   color="primary"
                   onClick={() =>
-                    getAllPackingListDetails(currentPage, searchQuery)
+                    getAllPackingListDetails(
+                      currentPage,
+                      acceptedFilter,
+                      searchQuery
+                    )
                   } // Call `handleSearch` when the button is clicked
                 >
                   Search
@@ -135,7 +190,7 @@ export const PackingListView = () => {
                   color="secondary"
                   onClick={() => {
                     setSearchQuery("");
-                    getAllPackingListDetails(1, "");
+                    getAllPackingListDetails(1, acceptedFilter, "");
                   }}
                 >
                   Reset
@@ -320,6 +375,11 @@ function Row({ row, openInPopup, handleCreateGrn, userData }) {
     </>
   );
 }
+
+const AcceptedOption = [
+  { label: "Accepted", value: "true" },
+  { label: "Not Accepted", value: "false" },
+];
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
