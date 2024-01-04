@@ -114,43 +114,25 @@ const updatePurchaseOrderData = (id, data) => {
 };
 
 // Packing List Api
+const getAllPackingListData = (page, searchValue, acceptedToFilter) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
 
-const getAllPackingListData = () => {
-  return CustomAxios.get(`/api/inventory/list-packing-list/`);
-};
+  if (page) {
+    params.append("page", page);
+  }
 
-const getAllPaginatePackingListData = (all) => {
-  return CustomAxios.get(`/api/inventory/list-packing-list/?page=${all}`);
-};
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
 
-const getAllPaginatePackingListDataWithSearch = async (
-  page = 1,
-  search = ""
-) => {
+  if (acceptedToFilter) {
+    params.append("accept", acceptedToFilter);
+  }
+
+  // Sending a GET request with query parameters
   return CustomAxios.get(
-    `/api/inventory/list-packing-list/?page=${page}&search=${search}`
-  );
-};
-
-const getAllSearchPackingListData = (search) => {
-  return CustomAxios.get(`/api/inventory/list-packing-list/?search=${search}`);
-};
-
-const getAllSearchWithFilterPackingListData = (all, type) => {
-  return CustomAxios.get(
-    `/api/inventory/list-packing-list/?page=${all}&accept=${type}`
-  );
-};
-
-const getAllPackingListDataPaginate = (currentPage, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-packing-list/?page=${currentPage}&search=${search}`
-  );
-};
-
-const getPackingListPaginateData = (currentPage) => {
-  return CustomAxios.get(
-    `/api/inventory/list-packing-list/?page=${currentPage}`
+    `/api/inventory/list-packing-list/?${params.toString()}`
   );
 };
 
@@ -163,7 +145,7 @@ const getPackingListDataById = (id) => {
 };
 
 const updatePackingListData = (id, data) => {
-  return CustomAxios.patch(`/api/inventory/list-packing-list/${id}`, data);
+  return CustomAxios.patch(`/api/inventory/list-packing-list/${id}/`, data);
 };
 
 // grn List Api
@@ -776,12 +758,6 @@ const InventoryServices = {
   getPurchaseOrderDataById,
   updatePurchaseOrderData,
   getAllPackingListData,
-  getAllPaginatePackingListData,
-  getAllPaginatePackingListDataWithSearch,
-  getAllSearchPackingListData,
-  getAllSearchWithFilterPackingListData,
-  getAllPackingListDataPaginate,
-  getPackingListPaginateData,
   createPackingListData,
   getPackingListDataById,
   updatePackingListData,

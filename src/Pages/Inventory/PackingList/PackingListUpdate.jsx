@@ -64,7 +64,7 @@ export const PackingListUpdate = ({
       setOpen(true);
       const req = {
         purchase_order: packingListDetails.purchase_order || null,
-        vendor: packingListDetails.vendor || null,
+
         packing_list_no: packingListDetails.packing_list_no || null,
         invoice_date: packingListDetails.invoice_date || today,
         seller_account: packingListDetails.seller_account || null,
@@ -122,7 +122,7 @@ export const PackingListUpdate = ({
               size="small"
               label="Purchase Order Number"
               variant="outlined"
-              value={packingListDetails.po_no || ""}
+              value={packingListDetails.purchase_order || ""}
               disabled
             />
           </Grid>

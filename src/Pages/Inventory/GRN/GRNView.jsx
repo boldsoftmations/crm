@@ -28,26 +28,6 @@ import InventoryServices from "../../../services/InventoryService";
 import { GRNUpdate } from "./GRNUpdate";
 import { GRNCreate } from "./GRNCreate";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}));
-
 export const GRNView = () => {
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
@@ -72,11 +52,10 @@ export const GRNView = () => {
   const getPackingListNoDetails = async () => {
     try {
       setOpen(true);
-      const response =
-        await InventoryServices.getAllSearchWithFilterPackingListData(
-          "all",
-          false
-        );
+      const response = await InventoryServices.getAllPackingListData(
+        "all",
+        false
+      );
       setVendorOption(response.data);
       setOpen(false);
     } catch (err) {
@@ -222,7 +201,7 @@ export const GRNView = () => {
           </Box>
           <TableContainer
             sx={{
-              maxHeight: 440,
+              maxHeight: 360,
               "&::-webkit-scrollbar": {
                 width: 15,
               },
@@ -328,13 +307,7 @@ function Row(props) {
 
         <TableCell align="center">{row.packing_list}</TableCell>
         <TableCell align="center">
-          <Button
-            onClick={() => openInPopup(row.grn_no)}
-            variant="contained"
-            color="success"
-          >
-            Edit
-          </Button>
+          <Button onClick={() => openInPopup(row.grn_no)}>Edit</Button>
         </TableCell>
       </TableRow>
       <TableRow>
@@ -385,3 +358,25 @@ function Row(props) {
     </>
   );
 }
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+    padding: 0, // Remove padding from header cells
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+    padding: 0, // Remove padding from body cells
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));

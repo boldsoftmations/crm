@@ -17,35 +17,27 @@ import {
   IconButton,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import { CustomSearch } from "../../../Components/CustomSearch";
-import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 import { Popup } from "../../../Components/Popup";
 import InventoryServices from "../../../services/InventoryService";
 import { PackingListUpdate } from "./PackingListUpdate";
-import { PackingListCreate } from "./PackingListCreate";
 import InvoiceServices from "../../../services/InvoiceService";
 import { useDispatch } from "react-redux";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const PackingListView = () => {
   const [openPopup, setOpenPopup] = useState(false);
   const [open, setOpen] = useState(false);
-  const errRef = useRef();
-  const [errMsg, setErrMsg] = useState("");
   const [packingListData, setPackingListData] = useState([]);
-  const [pageCount, setpageCount] = useState(1);
+  const [pageCount, setPageCount] = useState(1);
   const [currentPage, setCurrentPage] = useState(0);
-  const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [idForEdit, setIDForEdit] = useState("");
   const dispatch = useDispatch();
-  const handleInputChange = (event) => {
-    setFilterSelectedQuery(event.target.value);
-    getSearchData(event.target.value);
-  };
 
   useEffect(() => {
     getAllSellerAccountsDetails();
@@ -65,86 +57,34 @@ export const PackingListView = () => {
   };
 
   useEffect(() => {
-    getAllPackingListDetails();
-  }, []);
+    getAllPackingListDetails(currentPage);
+  }, [currentPage, getAllPackingListDetails]);
 
-  const getAllPackingListDetails = async () => {
-    try {
-      setOpen(true);
-      const response = currentPage
-        ? await InventoryServices.getPackingListPaginateData(currentPage)
-        : await InventoryServices.getAllPaginatePackingListDataWithSearch();
-      setPackingListData(response.data.results);
-      const total = response.data.count;
-      setpageCount(Math.ceil(total / 25));
-    } catch (err) {
-      if (!err.response) {
-        setErrMsg(
-          "“Sorry, You Are Not Allowed to Access This Page” Please contact to admin"
+  const getAllPackingListDetails = useCallback(
+    async (page, search = searchQuery) => {
+      try {
+        setOpen(true);
+        const response = await InventoryServices.getAllPackingListData(
+          page,
+          search
         );
-      } else if (err.response.status === 400) {
-        setErrMsg(
-          err.response.data.errors.name ||
-            err.response.data.errors.non_field_errors
-        );
-      } else if (err.response.status === 401) {
-        setErrMsg(err.response.data.errors.code);
-      } else if (err.response.status === 404 || !err.response.data) {
-        setErrMsg("Data not found or request was null/empty");
-      } else {
-        setErrMsg("Server Error");
-      }
-    } finally {
-      setOpen(false);
-    }
-  };
-
-  const getSearchData = async (value) => {
-    try {
-      setOpen(true);
-      const filterSearch = value.trim();
-      const response =
-        await InventoryServices.getAllPaginatePackingListDataWithSearch(
-          currentPage,
-          filterSearch
-        );
-    } catch (error) {
-      console.log("error Search leads", error);
-    } finally {
-      setOpen(false);
-    }
-  };
-
-  const handlePageClick = async (event, value) => {
-    try {
-      setCurrentPage(value); // Update the current page
-      setOpen(true);
-
-      const response = filterSelectedQuery
-        ? await InventoryServices.getAllPaginatePackingListDataWithSearch(
-            value,
-            filterSelectedQuery
-          )
-        : await InventoryServices.getPackingListPaginateData(value);
-
-      if (response) {
         setPackingListData(response.data.results);
-        const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
-      } else {
-        await getAllPackingListDetails();
-        setFilterSelectedQuery("");
+        setPageCount(Math.ceil(response.data.count / 25));
+        setOpen(false);
+      } catch (error) {
+        setOpen(false);
+        console.error("error", error);
       }
-    } catch (error) {
-      console.log("error", error);
-    } finally {
-      setOpen(false);
-    }
+    },
+    [searchQuery]
+  );
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
   };
 
-  const getResetData = async () => {
-    setFilterSelectedQuery("");
-    await getAllPackingListDetails();
+  const handlePageClick = (event, value) => {
+    setCurrentPage(value);
   };
 
   const openInPopup = (item) => {
@@ -157,35 +97,66 @@ export const PackingListView = () => {
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
-        <ErrorMessage errRef={errRef} errMsg={errMsg} />
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
-          <Box display="flex">
-            <Box flexGrow={0.9}>
-              <CustomSearch
-                filterSelectedQuery={filterSelectedQuery}
-                handleInputChange={handleInputChange}
-                getResetData={getResetData}
-                HelperText={"Search By Vendor & PackingList"}
-              />
-            </Box>
-            <Box flexGrow={2}>
-              <h3
-                style={{
-                  textAlign: "left",
-                  marginBottom: "1em",
-                  fontSize: "24px",
-                  color: "rgb(34, 34, 34)",
-                  fontWeight: 800,
-                }}
-              >
-                Packing List
-              </h3>
-            </Box>
-            <Box flexGrow={0.5} align="right"></Box>
+          <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} sm={3}>
+                <CustomTextField
+                  size="small"
+                  label="Search"
+                  variant="outlined"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={1}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() =>
+                    getAllPackingListDetails(currentPage, searchQuery)
+                  } // Call `handleSearch` when the button is clicked
+                >
+                  Search
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={1}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => {
+                    setSearchQuery("");
+                    getAllPackingListDetails(1, "");
+                  }}
+                >
+                  Reset
+                </Button>
+              </Grid>
+            </Grid>
+          </Box>
+          <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} sm={6}></Grid>
+
+              <Grid item xs={12} sm={3}>
+                <h3
+                  style={{
+                    textAlign: "left",
+                    fontSize: "24px",
+                    color: "rgb(34, 34, 34)",
+                    fontWeight: 800,
+                  }}
+                >
+                  Packing List
+                </h3>
+              </Grid>
+              <Grid item xs={12} sm={3}></Grid>
+            </Grid>
           </Box>
           <TableContainer
             sx={{
-              maxHeight: 380,
+              maxHeight: 360,
               "&::-webkit-scrollbar": {
                 width: 15,
               },

@@ -105,6 +105,7 @@ export const PurchaseOrderView = () => {
       setOpen(false);
     }
   };
+
   const handleAccept = (item) => {
     // setOpenAcceptPopup(true);
     // setMaterialTransferNoteByID(item);
@@ -154,7 +155,6 @@ export const PurchaseOrderView = () => {
           filter,
           search
         );
-        console.log(response.data); // Add this line to debug
         setPurchaseOrderData(response.data.results);
         setPageCount(Math.ceil(response.data.count / 25));
         setOpen(false);
@@ -170,7 +170,6 @@ export const PurchaseOrderView = () => {
     setOpenCreatePLPopup(true);
     setSelectedRow(row);
   };
-  console.log("purchaseOrderData", purchaseOrderData);
 
   return (
     <>
@@ -279,7 +278,7 @@ export const PurchaseOrderView = () => {
           </Box>
           <TableContainer
             sx={{
-              maxHeight: 380,
+              maxHeight: 360,
               "&::-webkit-scrollbar": {
                 width: 15,
               },
