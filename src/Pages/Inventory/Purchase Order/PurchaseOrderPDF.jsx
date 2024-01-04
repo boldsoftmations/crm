@@ -497,7 +497,7 @@ export const PurchaseOrderPDF = ({ purchaseOrderData, AMOUNT_IN_WORDS }) => {
               textAlign: "center",
             }}
           >
-            This is Computer Generated Proforma Tax Invoice
+            This is Computer Generated Purchase Order Invoice
           </Text>
           <Text
             style={{
