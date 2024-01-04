@@ -273,8 +273,11 @@ function Row({ row, openInPopup, handleCreateGrn, userData }) {
             !userData.groups.includes("Stores") && (
               <Button onClick={() => openInPopup(row)}>Edit</Button>
             )}
-
-          <Button onClick={() => handleCreateGrn(row)}>Create GRN</Button>
+          {userData.groups.includes("Stores Delhi") &&
+            userData.groups.includes("Production Delhi") &&
+            userData.groups.includes("Stores") && (
+              <Button onClick={() => handleCreateGrn(row)}>Create GRN</Button>
+            )}
         </StyledTableCell>
       </StyledTableRow>
       <StyledTableRow>
