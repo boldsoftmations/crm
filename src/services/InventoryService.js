@@ -90,7 +90,7 @@ const getAllPurchaseOrderData = (page, acceptedToFilter, searchValue) => {
   }
 
   if (acceptedToFilter) {
-    params.append("accept", acceptedToFilter);
+    params.append("close_shot", acceptedToFilter);
   }
 
   if (searchValue) {
