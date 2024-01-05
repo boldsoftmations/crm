@@ -180,36 +180,21 @@ const updateGRNData = (id, data) => {
 };
 
 // Purchase Invoice List Api
+const getAllPurchaseInvoiceData = (page, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
 
-const getAllPurchaseInvoiceData = () => {
-  return CustomAxios.get(`/api/inventory/list-purchase-invoice/`);
-};
+  if (page) {
+    params.append("page", page);
+  }
 
-const getAllPaginatePurchaseInvoiceData = (all) => {
-  return CustomAxios.get(`/api/inventory/list-purchase-invoice/?page=${all}`);
-};
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
 
-const getAllPaginatePurchaseInvoiceDataWithSearch = (all, search) => {
+  // Sending a GET request with query parameters
   return CustomAxios.get(
-    `/api/inventory/list-purchase-invoice/?page=${all}&search=${search}`
-  );
-};
-
-const getAllSearchPurchaseInvoiceData = (search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-purchase-invoice/?search=${search}`
-  );
-};
-
-const getAllPurchaseInvoiceDataPaginate = (currentPage, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-purchase-invoice/?page=${currentPage}&search=${search}`
-  );
-};
-
-const getPurchaseInvoicePaginateData = (currentPage) => {
-  return CustomAxios.get(
-    `/api/inventory/list-purchase-invoice/?page=${currentPage}`
+    `api/inventory/list-purchase-invoice/?${params.toString()}`
   );
 };
 
@@ -226,7 +211,6 @@ const updatePurchaseInvoiceData = (id, data) => {
 };
 
 // Stores Inventory List Api
-
 const getAllStoresInventoryData = () => {
   return CustomAxios.get(`/api/inventory/list-stores-inventory/`);
 };
@@ -749,11 +733,6 @@ const InventoryServices = {
   getGRNDataById,
   updateGRNData,
   getAllPurchaseInvoiceData,
-  getAllPaginatePurchaseInvoiceData,
-  getAllPaginatePurchaseInvoiceDataWithSearch,
-  getAllSearchPurchaseInvoiceData,
-  getAllPurchaseInvoiceDataPaginate,
-  getPurchaseInvoicePaginateData,
   createPurchaseInvoiceData,
   getPurchaseInvoiceDataById,
   updatePurchaseInvoiceData,
