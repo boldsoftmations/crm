@@ -250,7 +250,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
       };
 
       const response = await InventoryServices.createPurchaseOrderData(req);
-      if (response.status === 201) {
+      if (response) {
         navigate("/inventory/view-purchase-order");
         incrementPurchaseOrderNo();
       }

@@ -1,18 +1,9 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Chip,
-  Divider,
-  Grid,
-  IconButton,
-  Snackbar,
-} from "@mui/material";
+import React, { useEffect, useState, useCallback } from "react";
+import { Box, Button, Grid, IconButton, Snackbar, styled } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CustomTextField from "../../../Components/CustomTextField";
 import InventoryServices from "../../../services/InventoryService";
-import { styled } from "@mui/material/styles";
-import { CustomLoader } from "./../../../Components/CustomLoader";
+import { CustomLoader } from "../../../Components/CustomLoader";
 import { useNavigate } from "react-router-dom";
 
 const Root = styled("div")(({ theme }) => ({
@@ -23,69 +14,76 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const PackingListCreate = ({ setOpenPopup, selectedRow }) => {
+export const PackingListCreate = ({ selectedRow }) => {
+  console.log("selectedRow", selectedRow);
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [packingListDetails, setPackingListDetails] = useState(selectedRow);
-  const [products, setProducts] = useState([]);
-  const today = new Date().toISOString().slice(0, 10);
+  const [details, setDetails] = useState(() => ({
+    seller_account: selectedRow.seller_account,
+    vendor: selectedRow.vendor,
+    purchase_order: selectedRow.po_no,
+    packing_list_no: "",
+    invoice_date: new Date().toISOString().slice(0, 10),
+    products: selectedRow.products.map((product) => ({
+      product: product.product,
+      unit: product.unit,
+      quantity: product.quantity,
+    })),
+  }));
 
   useEffect(() => {
-    // Initialize products state with packingListDetails data
-    if (packingListDetails && packingListDetails.products) {
-      const initialProducts = packingListDetails.products.map((p) => ({
-        ...p,
-        quantity: p.quantity || 0,
-      }));
-      setProducts(initialProducts);
-    }
-  }, [packingListDetails]);
+    setDetails({
+      seller_account: selectedRow.seller_account,
+      vendor: selectedRow.vendor,
+      purchase_order: selectedRow.po_no,
+      packing_list_no: details.packing_list_no,
+      invoice_date: details.invoice_date,
+      products: selectedRow.products.map((product, index) => ({
+        product: product.product,
+        unit: product.unit,
+        quantity:
+          (details.products[index] && details.products[index].quantity) ||
+          product.quantity,
+      })),
+    });
+  }, [selectedRow]);
 
-  const handleQuantityChange = (index, newQuantity) => {
-    const updatedProducts = products.map((product, idx) =>
-      idx === index ? { ...product, quantity: newQuantity } : product
-    );
-    setProducts(updatedProducts);
-  };
-
-  const handleInput = (e) => {
+  const handleInput = useCallback((e) => {
     const { name, value } = e.target;
-    const updatedRow = { ...packingListDetails, [name]: value };
-    setPackingListDetails(updatedRow);
-  };
+    setDetails((current) => ({ ...current, [name]: value }));
+  }, []);
+
+  const handleQuantityChange = useCallback((index, newQuantity) => {
+    setDetails((current) => ({
+      ...current,
+      products: current.products.map((product, idx) =>
+        idx === index ? { ...product, quantity: newQuantity } : product
+      ),
+    }));
+  }, []);
 
   const createPackingListDetails = async (e) => {
     e.preventDefault();
     try {
-      setOpen(true);
-      const req = {
-        purchase_order: packingListDetails.po_no,
-        vendor: packingListDetails.vendor || null,
-        packing_list_no: packingListDetails.packing_list_no,
-        invoice_date: packingListDetails.invoice_date || today,
-        seller_account: packingListDetails.seller_account,
-        products: products, // Send updated products
-      };
-      const response = await InventoryServices.createPackingListData(req);
-      if (response.status === 200) {
-        setOpenPopup(false);
+      setLoading(true);
+      const response = await InventoryServices.createPackingListData(details);
+      if (response) {
         navigate("/inventory/view-packing-list");
       }
     } catch (error) {
       console.error("Creating Packing list error", error);
       setError(error.message || "An error occurred");
     } finally {
-      setOpen(false);
+      setLoading(false);
     }
   };
 
-  const handleCloseSnackbar = () => {
-    setError(null);
-  };
+  const handleCloseSnackbar = useCallback(() => setError(null), []);
+
   return (
-    <div>
-      <CustomLoader open={open} />
+    <Root>
+      <CustomLoader open={loading} />
       <Box component="form" noValidate onSubmit={createPackingListDetails}>
         <Snackbar
           open={Boolean(error)}
@@ -111,7 +109,7 @@ export const PackingListCreate = ({ setOpenPopup, selectedRow }) => {
               name="seller_account"
               label="Seller Account"
               variant="outlined"
-              value={packingListDetails.seller_account}
+              value={details.seller_account}
               disabled
             />
           </Grid>
@@ -121,11 +119,10 @@ export const PackingListCreate = ({ setOpenPopup, selectedRow }) => {
               size="small"
               label="Purchase Order Number"
               variant="outlined"
-              value={packingListDetails.po_no}
+              value={details.purchase_order || ""}
               disabled
             />
           </Grid>
-
           <Grid item xs={12} sm={3}>
             <CustomTextField
               fullWidth
@@ -133,7 +130,7 @@ export const PackingListCreate = ({ setOpenPopup, selectedRow }) => {
               name="packing_list_no"
               label="Packing List No"
               variant="outlined"
-              value={packingListDetails.packing_list_no || ""}
+              value={details.packing_list_no || ""}
               onChange={handleInput}
             />
           </Grid>
@@ -146,11 +143,11 @@ export const PackingListCreate = ({ setOpenPopup, selectedRow }) => {
               label="Invoice Date"
               variant="outlined"
               InputLabelProps={{ shrink: true }}
-              value={packingListDetails.invoice_date || today}
+              value={details.invoice_date || ""}
               onChange={handleInput}
             />
           </Grid>
-          {products.map((product, index) => (
+          {details.products.map((product, index) => (
             <React.Fragment key={product.id || index}>
               <Grid item xs={12} sm={4}>
                 <CustomTextField
@@ -196,6 +193,6 @@ export const PackingListCreate = ({ setOpenPopup, selectedRow }) => {
           Submit
         </Button>
       </Box>
-    </div>
+    </Root>
   );
 };
