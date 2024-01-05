@@ -447,6 +447,9 @@ export const PurchaseOrderPDF = ({ purchaseOrderData, AMOUNT_IN_WORDS }) => {
                   <Text style={outerTextStyle}>
                     Amount in Words :-
                     <Text style={innerTextStyle}> &nbsp;{AMOUNT_IN_WORDS}</Text>
+                    <Text style={{ ...innerTextStyle, textAlign: "center" }}>
+                      {purchaseOrderData.amount_in_word}
+                    </Text>
                   </Text>
                 </View>
               </View>
