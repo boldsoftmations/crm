@@ -16,20 +16,28 @@ export const PurchaseInvoiceCreate = (props) => {
   const { setOpenPopup, recordForEdit } = props;
   const [open, setOpen] = useState(false);
   const [products, setProducts] = useState(
-    recordForEdit.products.map((product) => ({
-      ...product,
-      amount: product.order_quantity * product.rate,
-    }))
+    recordForEdit.products.map((product) => {
+      // Log the rate of each product
+      console.log("rate", product.rate);
+
+      // Return the new product object
+      return {
+        product: product.products,
+        quantity: product.order_quantity,
+        unit: product.unit,
+        amount: "",
+        rate: "",
+      };
+    })
   );
+  console.log("products", products);
 
   const handleFormChange = (index, event) => {
     const { name, value } = event.target;
     const list = [...products];
     list[index][name] = value;
-    if (list[index].order_quantity !== "" && list[index].rate !== "") {
-      list[index].amount = (
-        list[index].order_quantity * list[index].rate
-      ).toFixed(2);
+    if (list[index].quantity !== "" && list[index].rate !== "") {
+      list[index].amount = (list[index].quantity * list[index].rate).toFixed(2);
     }
 
     setProducts(list);
@@ -41,9 +49,9 @@ export const PurchaseInvoiceCreate = (props) => {
       setOpen(true);
       const req = {
         grn: recordForEdit.grn_no,
-        products_data: recordForEdit.products,
-        rate: recordForEdit.rate,
+        products_data: products,
       };
+      console.log("createing Packing list", req);
       await InventoryServices.createPurchaseInvoiceData(req);
       console.log("createing Packing list");
       setOpenPopup(false);
@@ -70,8 +78,18 @@ export const PurchaseInvoiceCreate = (props) => {
               size="small"
               label="Vendor"
               variant="outlined"
-              value={recordForEdit.vendor ? recordForEdit.vendor : ""}
-              disabled={true}
+              value={recordForEdit.vendor || ""}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Grn No"
+              variant="outlined"
+              value={recordForEdit.grn_no || ""}
+              disabled
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -80,12 +98,8 @@ export const PurchaseInvoiceCreate = (props) => {
               size="small"
               label="Invoice No"
               variant="outlined"
-              value={
-                recordForEdit.packing_list_no
-                  ? recordForEdit.packing_list_no
-                  : ""
-              }
-              disabled={true}
+              value={recordForEdit.packing_list_no || ""}
+              disabled
             />
           </Grid>
           <Grid item xs={12}>
@@ -101,12 +115,11 @@ export const PurchaseInvoiceCreate = (props) => {
                 <Grid key={index} item xs={12} sm={4}>
                   <CustomTextField
                     fullWidth
-                    name="product"
                     size="small"
                     label="Product"
                     variant="outlined"
-                    value={input.products || ""}
-                    disabled={true}
+                    value={input.product || ""}
+                    disabled
                   />
                 </Grid>
                 <Grid key={index} item xs={12} sm={2}>
@@ -116,18 +129,17 @@ export const PurchaseInvoiceCreate = (props) => {
                     label="Unit"
                     variant="outlined"
                     value={input.unit || ""}
-                    disabled={true}
+                    disabled
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
-                    name="order_quantity"
                     size="small"
                     label="Quantity"
                     variant="outlined"
-                    value={input.order_quantity || ""}
-                    disabled={true}
+                    value={input.quantity || ""}
+                    disabled
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
@@ -149,8 +161,8 @@ export const PurchaseInvoiceCreate = (props) => {
                     label="Amount"
                     variant="outlined"
                     value={
-                      input.order_quantity !== "" && input.rate !== ""
-                        ? (input.order_quantity * input.rate).toFixed(2)
+                      input.quantity !== "" && input.rate !== ""
+                        ? (input.quantity * input.rate).toFixed(2)
                         : ""
                     }
                     onChange={(event) => handleFormChange(index, event)}
