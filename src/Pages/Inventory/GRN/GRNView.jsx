@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Box,
   Grid,
@@ -17,7 +18,6 @@ import {
   IconButton,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import React, { useCallback, useEffect, useRef, useState } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -26,6 +26,7 @@ import InventoryServices from "../../../services/InventoryService";
 import { GRNUpdate } from "./GRNUpdate";
 import { useSelector } from "react-redux";
 import { PurchaseInvoiceCreate } from "../Purchase Invoice/PurchaseInvoiceCreate";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const GRNView = () => {
   const [openPopupUpdate, setOpenPopupUpdate] = useState(false);
@@ -38,11 +39,6 @@ export const GRNView = () => {
   const [idForEdit, setIDForEdit] = useState();
   const [recordForEdit, setRecordForEdit] = useState();
   const userData = useSelector((state) => state.auth.profile);
-
-  const handleInputChange = (event) => {
-    setFilterSelectedQuery(event.target.value);
-    getSearchData(event.target.value);
-  };
 
   useEffect(() => {
     getAllGRNDetails(currentPage);
