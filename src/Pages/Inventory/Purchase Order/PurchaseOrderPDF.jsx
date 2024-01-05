@@ -151,7 +151,10 @@ export const PurchaseOrderPDF = ({ purchaseOrderData, AMOUNT_IN_WORDS }) => {
                 </View>
                 <View style={{ ...cellStyle, ...borderRightStyle }}>
                   <Text style={{ ...innerTextStyle }}>
-                    {purchaseOrderData.vendor_address}
+                    {purchaseOrderData.vendor_address} ,{" "}
+                    {purchaseOrderData.vendor_city} ,{" "}
+                    {purchaseOrderData.vendor_state} ,{" "}
+                    {purchaseOrderData.vendor_pincode}
                   </Text>
                 </View>
                 <View style={{ ...cellStyle, ...borderRightStyle }}>

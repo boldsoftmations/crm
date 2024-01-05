@@ -4,6 +4,7 @@ import CustomTextField from "../../../Components/CustomTextField";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { styled } from "@mui/material/styles";
+
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
