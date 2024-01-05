@@ -178,7 +178,7 @@ export const PurchaseOrderPDF = ({ purchaseOrderData, AMOUNT_IN_WORDS }) => {
                 </View>
                 <View style={cellStyle}>
                   <Text style={{ ...innerTextStyle }}>
-                    {purchaseOrderData.seller_gst_number}
+                    {purchaseOrderData.seller_gst}
                   </Text>
                 </View>
               </View>
@@ -426,7 +426,7 @@ export const PurchaseOrderPDF = ({ purchaseOrderData, AMOUNT_IN_WORDS }) => {
                 </View>
                 <View style={cellStyle}>
                   <Text style={{ ...innerTextStyle, textAlign: "center" }}>
-                    {purchaseOrderData.round_off_total}
+                    {purchaseOrderData.total}
                   </Text>
                 </View>
               </View>

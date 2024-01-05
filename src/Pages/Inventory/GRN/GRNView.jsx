@@ -27,9 +27,13 @@ import { Popup } from "../../../Components/Popup";
 import InventoryServices from "../../../services/InventoryService";
 import { GRNUpdate } from "./GRNUpdate";
 import { GRNCreate } from "./GRNCreate";
+import { useSelector } from "react-redux";
+import { PurchaseInvoiceCreate } from "../Purchase Invoice/PurchaseInvoiceCreate";
 
 export const GRNView = () => {
+  const userData = useSelector((state) => state.auth.profile);
   const [openPopup, setOpenPopup] = useState(false);
+  const [openPopupCreatePI, setOpenPopupCreatePI] = useState(false);
   const [open, setOpen] = useState(false);
   const errRef = useRef();
   const [errMsg, setErrMsg] = useState("");
@@ -39,6 +43,7 @@ export const GRNView = () => {
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
   const [idForEdit, setIDForEdit] = useState();
   const [vendorOption, setVendorOption] = useState([]);
+  const [recordForEdit, setRecordForEdit] = useState();
   const handleInputChange = (event) => {
     setFilterSelectedQuery(event.target.value);
     getSearchData(event.target.value);
@@ -158,6 +163,10 @@ export const GRNView = () => {
     setOpenPopup(true);
   };
 
+  const handlePurchaseInvoice = (item) => {
+    setRecordForEdit(item);
+    setOpenPopupCreatePI(true);
+  };
   return (
     <>
       <CustomLoader open={open} />
@@ -224,7 +233,13 @@ export const GRNView = () => {
               </TableHead>
               <TableBody>
                 {grnData.map((row, i) => (
-                  <Row key={i} row={row} openInPopup={openInPopup} />
+                  <Row
+                    key={i}
+                    row={row}
+                    openInPopup={openInPopup}
+                    handlePurchaseInvoice={handlePurchaseInvoice}
+                    userData={userData}
+                  />
                 ))}
               </TableBody>{" "}
             </Table>
@@ -256,12 +271,23 @@ export const GRNView = () => {
           getPackingListNoDetails={getPackingListNoDetails}
         />
       </Popup>
+      <Popup
+        fullScreen={true}
+        title={"Purchase Invoice Create"}
+        openPopup={openPopupCreatePI}
+        setOpenPopup={setOpenPopupCreatePI}
+      >
+        <PurchaseInvoiceCreate
+          setOpenPopup={setOpenPopupCreatePI}
+          recordForEdit={recordForEdit}
+        />
+      </Popup>
     </>
   );
 };
 
 function Row(props) {
-  const { row, openInPopup } = props;
+  const { row, openInPopup, userData, handlePurchaseInvoice } = props;
   const [open, setOpen] = useState(false);
 
   return (
@@ -285,6 +311,13 @@ function Row(props) {
         <TableCell align="center">{row.packing_list}</TableCell>
         <TableCell align="center">
           <Button onClick={() => openInPopup(row.grn_no)}>Edit</Button>
+          {(userData.groups.includes("Accounts Executive") ||
+            userData.groups.includes("Director") ||
+            userData.groups.includes("Accounts")) && (
+            <Button onClick={() => handlePurchaseInvoice(row)}>
+              Create Purchase Invoice
+            </Button>
+          )}
         </TableCell>
       </TableRow>
       <TableRow>
