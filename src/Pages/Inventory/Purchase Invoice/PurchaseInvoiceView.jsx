@@ -25,7 +25,6 @@ import { CustomSearch } from "../../../Components/CustomSearch";
 import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 import { Popup } from "../../../Components/Popup";
 import InventoryServices from "../../../services/InventoryService";
-import { PurchaseInvoiceCreate } from "./PurchaseInvoiceCreate";
 import { PurchaseInvoice } from "./PurchaseInvoice";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -50,7 +49,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export const PurchaseInvoiceView = () => {
   const [openPopup, setOpenPopup] = useState(false);
-  const [openPopup2, setOpenPopup2] = useState(false);
   const [open, setOpen] = useState(false);
   const errRef = useRef();
   const [errMsg, setErrMsg] = useState("");
@@ -207,16 +205,6 @@ export const PurchaseInvoiceView = () => {
                 Purchase Invoice Details
               </h3>
             </Box>
-            <Box flexGrow={0.5} align="right">
-              <Button
-                onClick={() => setOpenPopup2(true)}
-                variant="contained"
-                color="success"
-                // startIcon={<AddIcon />}
-              >
-                Add
-              </Button>
-            </Box>
           </Box>
           <TableContainer
             sx={{
@@ -276,19 +264,7 @@ export const PurchaseInvoiceView = () => {
           </TableFooter>
         </Paper>
       </Grid>
-      <Popup
-        fullScreen={true}
-        title={"Create Purchase Invoice Details"}
-        openPopup={openPopup2}
-        setOpenPopup={setOpenPopup2}
-      >
-        <PurchaseInvoiceCreate
-          getAllPurchaseInvoiceDetails={getAllPurchaseInvoiceDetails}
-          setOpenPopup={setOpenPopup2}
-          vendorOption={vendorOption}
-          getGRNDetails={getGRNDetails}
-        />
-      </Popup>
+
       <Popup
         fullScreen={true}
         title={"Update Purchase Invoice Details"}
@@ -333,7 +309,6 @@ function Row(props) {
             onClick={() => {
               openInPopup(row.id);
             }}
-            variant="contained"
             color="success"
           >
             View
