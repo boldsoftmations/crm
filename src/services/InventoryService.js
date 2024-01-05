@@ -151,39 +151,20 @@ const updatePackingListData = (id, data) => {
 };
 
 // grn List Api
+const getAllGRNData = (page, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
 
-const getAllGRNData = () => {
-  return CustomAxios.get(`/api/inventory/list-grn/`);
-};
+  if (page) {
+    params.append("page", page);
+  }
 
-const getAllPaginateGRNData = (all) => {
-  return CustomAxios.get(`/api/inventory/list-grn/?page=${all}`);
-};
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
 
-const getAllPaginateGRNDataWithSearch = (all, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-grn/?page=${all}&search=${search}`
-  );
-};
-
-const getAllSearchGRNData = (search) => {
-  return CustomAxios.get(`/api/inventory/list-grn/?search=${search}`);
-};
-
-const getAllSearchWithFilterGRNData = (all, type) => {
-  return CustomAxios.get(
-    `/api/inventory/list-grn/?page=${all}&accepted=${type}`
-  );
-};
-
-const getAllGRNDataPaginate = (currentPage, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-grn/?page=${currentPage}&search=${search}`
-  );
-};
-
-const getGRNPaginateData = (currentPage) => {
-  return CustomAxios.get(`/api/inventory/list-grn/?page=${currentPage}`);
+  // Sending a GET request with query parameters
+  return CustomAxios.get(`api/inventory/list-grn/?${params.toString()}`);
 };
 
 const createGRNData = (data) => {
@@ -764,12 +745,6 @@ const InventoryServices = {
   getPackingListDataById,
   updatePackingListData,
   getAllGRNData,
-  getAllPaginateGRNData,
-  getAllPaginateGRNDataWithSearch,
-  getAllSearchGRNData,
-  getAllSearchWithFilterGRNData,
-  getAllGRNDataPaginate,
-  getGRNPaginateData,
   createGRNData,
   getGRNDataById,
   updateGRNData,
