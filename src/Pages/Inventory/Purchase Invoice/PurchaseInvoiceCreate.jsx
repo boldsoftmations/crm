@@ -24,7 +24,7 @@ export const PurchaseInvoiceCreate = (props) => {
       // Return the new product object
       return {
         product: product.products,
-        quantity: product.order_quantity,
+        quantity: product.qa_accepted,
         unit: product.unit,
         amount: "",
         rate: "",
