@@ -28,7 +28,7 @@ export const PackingListCreate = ({ selectedRow }) => {
     products: selectedRow.products.map((product) => ({
       product: product.product,
       unit: product.unit,
-      quantity: product.quantity,
+      quantity: product.pending_quantity,
     })),
   }));
 
@@ -44,7 +44,7 @@ export const PackingListCreate = ({ selectedRow }) => {
         unit: product.unit,
         quantity:
           (details.products[index] && details.products[index].quantity) ||
-          product.quantity,
+          product.pending_quantity,
       })),
     });
   }, [selectedRow]);
