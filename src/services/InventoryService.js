@@ -308,45 +308,25 @@ const updateMaterialRequisitionFormData = (id, data) => {
 
 // Bill of Materials List Api
 
-const getAllBillofMaterialsData = () => {
-  return CustomAxios.get(`/api/inventory/list-bill-of-materials/`);
-};
+const getAllBillofMaterialsData = (page, approvedToFilter, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
 
-const getAllPaginateBillofMaterialsData = (all) => {
-  return CustomAxios.get(`/api/inventory/list-bill-of-materials/?page=${all}`);
-};
+  if (page) {
+    params.append("page", page);
+  }
 
-const getAllPaginateBillofMaterialsDataWithSearch = (all, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-bill-of-materials/?page=${all}&search=${search}`
-  );
-};
+  if (approvedToFilter !== undefined) {
+    params.append("approved", approvedToFilter);
+  }
 
-const getAllSearchBillofMaterialsData = (search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-bill-of-materials/?search=${search}`
-  );
-};
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
 
-const getAllFilterBillofMaterialsData = (val) => {
+  // Sending a GET request with query parameters
   return CustomAxios.get(
-    `/api/inventory/list-bill-of-materials/?approved=${val}`
-  );
-};
-const getFilterhBillofMaterialsData = (search, filter) => {
-  return CustomAxios.get(
-    `/api/inventory/list-bill-of-materials/?search=${search}&approved=${filter}`
-  );
-};
-const getAllBillofMaterialsDataPaginate = (currentPage, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-bill-of-materials/?page=${currentPage}&search=${search}`
-  );
-};
-
-const getBillofMaterialsPaginateData = (currentPage) => {
-  return CustomAxios.get(
-    `/api/inventory/list-bill-of-materials/?page=${currentPage}`
+    `api/inventory/list-bill-of-materials/?${params.toString()}`
   );
 };
 
@@ -707,13 +687,6 @@ const InventoryServices = {
   getMaterialRequisitionFormDataById,
   updateMaterialRequisitionFormData,
   getAllBillofMaterialsData,
-  getAllPaginateBillofMaterialsData,
-  getAllPaginateBillofMaterialsDataWithSearch,
-  getAllSearchBillofMaterialsData,
-  getAllFilterBillofMaterialsData,
-  getFilterhBillofMaterialsData,
-  getAllBillofMaterialsDataPaginate,
-  getBillofMaterialsPaginateData,
   createBillofMaterialsData,
   getBillofMaterialsDataById,
   updateBillofMaterialsData,
