@@ -199,41 +199,27 @@ const updatePurchaseInvoiceData = (id, data) => {
 };
 
 // Stores Inventory List Api
-const getAllStoresInventoryData = () => {
-  return CustomAxios.get(`/api/inventory/list-stores-inventory/`);
+const getAllStoresInventoryDetails = (page, searchValue) => {
+  const params = new URLSearchParams();
+
+  if (page) {
+    params.append("page", page);
+  }
+
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
+
+  return CustomAxios.get(
+    `api/inventory/list-stores-inventory/?${params.toString()}`
+  );
 };
+
 
 const createStoresInventoryData = (data) => {
   return CustomAxios.post("/api/inventory/list-stores-inventory/", data);
 };
 
-const getAllPaginateStoresInventoryData = (all) => {
-  return CustomAxios.get(`/api/inventory/list-stores-inventory/?page=${all}`);
-};
-
-const getAllPaginateStoresInventoryDataWithSearch = (all, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-stores-inventory/?page=${all}&search=${search}`
-  );
-};
-
-const getAllSearchStoresInventoryData = (search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-stores-inventory/?search=${search}`
-  );
-};
-
-const getAllStoresInventoryDataPaginate = (currentPage, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-stores-inventory/?page=${currentPage}&search=${search}`
-  );
-};
-
-const getStoresInventoryPaginateData = (currentPage) => {
-  return CustomAxios.get(
-    `/api/inventory/list-stores-inventory/?page=${currentPage}`
-  );
-};
 
 const getAllConsStoresInventoryData = () => {
   return CustomAxios.get(`/api/inventory/list-con-stores-inventory/`);
@@ -689,13 +675,7 @@ const InventoryServices = {
   createPurchaseInvoiceData,
   getPurchaseInvoiceDataById,
   updatePurchaseInvoiceData,
-  getAllStoresInventoryData,
   createStoresInventoryData,
-  getAllPaginateStoresInventoryData,
-  getAllPaginateStoresInventoryDataWithSearch,
-  getAllSearchStoresInventoryData,
-  getAllStoresInventoryDataPaginate,
-  getStoresInventoryPaginateData,
   getAllConsStoresInventoryData,
   getAllPaginateConsStoresInventoryData,
   getAllPaginateConsStoresInventoryDataWithSearch,
@@ -762,6 +742,7 @@ const InventoryServices = {
   createCurrencyData,
   getCurrencyDataById,
   updateCurrencyData,
+  getAllStoresInventoryDetails
 };
 
 export default InventoryServices;
