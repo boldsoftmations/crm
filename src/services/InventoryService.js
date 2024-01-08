@@ -294,45 +294,25 @@ const updateMaterialRequisitionFormData = (id, data) => {
 
 // Bill of Materials List Api
 
-const getAllBillofMaterialsData = () => {
-  return CustomAxios.get(`/api/inventory/list-bill-of-materials/`);
-};
+const getAllBillofMaterialsData = (page, approvedToFilter, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
 
-const getAllPaginateBillofMaterialsData = (all) => {
-  return CustomAxios.get(`/api/inventory/list-bill-of-materials/?page=${all}`);
-};
+  if (page) {
+    params.append("page", page);
+  }
 
-const getAllPaginateBillofMaterialsDataWithSearch = (all, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-bill-of-materials/?page=${all}&search=${search}`
-  );
-};
+  if (approvedToFilter !== undefined) {
+    params.append("approved", approvedToFilter);
+  }
 
-const getAllSearchBillofMaterialsData = (search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-bill-of-materials/?search=${search}`
-  );
-};
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
 
-const getAllFilterBillofMaterialsData = (val) => {
+  // Sending a GET request with query parameters
   return CustomAxios.get(
-    `/api/inventory/list-bill-of-materials/?approved=${val}`
-  );
-};
-const getFilterhBillofMaterialsData = (search, filter) => {
-  return CustomAxios.get(
-    `/api/inventory/list-bill-of-materials/?search=${search}&approved=${filter}`
-  );
-};
-const getAllBillofMaterialsDataPaginate = (currentPage, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-bill-of-materials/?page=${currentPage}&search=${search}`
-  );
-};
-
-const getBillofMaterialsPaginateData = (currentPage) => {
-  return CustomAxios.get(
-    `/api/inventory/list-bill-of-materials/?page=${currentPage}`
+    `api/inventory/list-bill-of-materials/?${params.toString()}`
   );
 };
 
@@ -493,41 +473,25 @@ const getProductionInventoryPaginateData = (currentPage) => {
 };
 
 // Production Inventory G&L List Api
+const getAllProductionGAndLInventoryData = (page, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
 
-const getAllProductionGAndLInventoryData = () => {
-  return CustomAxios.get(`/api/inventory/list-production-gnl/`);
-};
+  if (page) {
+    params.append("page", page);
+  }
 
-const getAllPaginateProductionGAndLInventoryData = (all) => {
-  return CustomAxios.get(`/api/inventory/list-production-gnl/?page=${all}`);
-};
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
 
-const getAllPaginateProductionGAndLInventoryDataWithSearch = (all, search) => {
+  // Sending a GET request with query parameters
   return CustomAxios.get(
-    `/api/inventory/list-production-gnl/?page=${all}&search=${search}`
-  );
-};
-
-const getAllSearchProductionGAndLInventoryData = (search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-production-gnl/?search=${search}`
-  );
-};
-
-const getAllProductionGAndLInventoryDataPaginate = (currentPage, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-production-gnl/?page=${currentPage}&search=${search}`
-  );
-};
-
-const getProductionGAndLInventoryPaginateData = (currentPage) => {
-  return CustomAxios.get(
-    `/api/inventory/list-production-gnl/?page=${currentPage}`
+    `api/inventory/list-production-gnl/?${params.toString()}`
   );
 };
 
 // Production ShortFall List Api
-
 const getAllProductionShortFallData = () => {
   return CustomAxios.get(`/api/inventory/list-production-shortfall/`);
 };
@@ -687,13 +651,6 @@ const InventoryServices = {
   getMaterialRequisitionFormDataById,
   updateMaterialRequisitionFormData,
   getAllBillofMaterialsData,
-  getAllPaginateBillofMaterialsData,
-  getAllPaginateBillofMaterialsDataWithSearch,
-  getAllSearchBillofMaterialsData,
-  getAllFilterBillofMaterialsData,
-  getFilterhBillofMaterialsData,
-  getAllBillofMaterialsDataPaginate,
-  getBillofMaterialsPaginateData,
   createBillofMaterialsData,
   getBillofMaterialsDataById,
   updateBillofMaterialsData,
@@ -718,11 +675,6 @@ const InventoryServices = {
   getAllConsProductionInventoryDataPaginate,
   getConsProductionInventoryPaginateData,
   getAllProductionGAndLInventoryData,
-  getAllPaginateProductionGAndLInventoryData,
-  getAllPaginateProductionGAndLInventoryDataWithSearch,
-  getAllSearchProductionGAndLInventoryData,
-  getAllProductionGAndLInventoryDataPaginate,
-  getProductionGAndLInventoryPaginateData,
   getAllProductionShortFallData,
   getAllPaginateProductionShortFallData,
   getAllPaginateProductionShortFallDataWithSearch,

@@ -63,6 +63,7 @@ export const MaterialRequisitionFormView = () => {
 
   useEffect(() => {
     getAllSellerAccountsDetails();
+    getAllStoresInventoryDetails();
   }, []);
 
   const getAllSellerAccountsDetails = async () => {
@@ -79,10 +80,6 @@ export const MaterialRequisitionFormView = () => {
       console.log("err", err);
     }
   };
-
-  useEffect(() => {
-    getAllStoresInventoryDetails();
-  }, []);
 
   const getAllStoresInventoryDetails = async () => {
     try {

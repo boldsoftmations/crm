@@ -43,6 +43,7 @@ export const ProductionEntryView = () => {
 
   useEffect(() => {
     getAllSellerAccountsDetails();
+    getFinishGoods();
   }, []);
 
   const getAllSellerAccountsDetails = async () => {
@@ -59,10 +60,6 @@ export const ProductionEntryView = () => {
       console.log("err", err);
     }
   };
-
-  useEffect(() => {
-    getFinishGoods();
-  }, []);
 
   const getFinishGoods = async () => {
     try {
