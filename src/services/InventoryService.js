@@ -270,37 +270,21 @@ const getConsStoresInventoryPaginateData = (currentPage) => {
 };
 // Material Requisition Form List Api
 
-const getAllMaterialRequisitionFormData = () => {
-  return CustomAxios.get(`/api/inventory/list-material-requisition-form/`);
-};
+const getAllMaterialRequisitionFormData = (page, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
 
-const getAllPaginateMaterialRequisitionFormData = (all) => {
-  return CustomAxios.get(
-    `/api/inventory/list-material-requisition-form/?page=${all}`
-  );
-};
+  if (page) {
+    params.append("page", page);
+  }
 
-const getAllPaginateMaterialRequisitionFormDataWithSearch = (all, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-material-requisition-form/?page=${all}&search=${search}`
-  );
-};
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
 
-const getAllSearchMaterialRequisitionFormData = (search) => {
+  // Sending a GET request with query parameters
   return CustomAxios.get(
-    `/api/inventory/list-material-requisition-form/?search=${search}`
-  );
-};
-
-const getAllMaterialRequisitionFormDataPaginate = (currentPage, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-material-requisition-form/?page=${currentPage}&search=${search}`
-  );
-};
-
-const getMaterialRequisitionFormPaginateData = (currentPage) => {
-  return CustomAxios.get(
-    `/api/inventory/list-material-requisition-form/?page=${currentPage}`
+    `api/inventory/list-material-requisition-form/?${params.toString()}`
   );
 };
 
@@ -733,11 +717,6 @@ const InventoryServices = {
   getAllConsStoresInventoryDataPaginate,
   getConsStoresInventoryPaginateData,
   getAllMaterialRequisitionFormData,
-  getAllPaginateMaterialRequisitionFormData,
-  getAllPaginateMaterialRequisitionFormDataWithSearch,
-  getAllSearchMaterialRequisitionFormData,
-  getAllMaterialRequisitionFormDataPaginate,
-  getMaterialRequisitionFormPaginateData,
   createMaterialRequisitionFormData,
   getMaterialRequisitionFormDataById,
   updateMaterialRequisitionFormData,
