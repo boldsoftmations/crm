@@ -1,31 +1,19 @@
 import CustomAxios from "./api";
 
-const getAllVendorData = () => {
-  return CustomAxios.get(`/api/inventory/list-vendor/`);
-};
+const getAllVendorData = (page, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
 
-const getAllPaginateVendorData = (all) => {
-  return CustomAxios.get(`/api/inventory/list-vendor/?page=${all}`);
-};
+  if (page) {
+    params.append("page", page);
+  }
 
-const getAllPaginateVendorDataWithSearch = (all, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-vendor/?page=${all}&search=${search}`
-  );
-};
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
 
-const getAllSearchVendorData = (search) => {
-  return CustomAxios.get(`/api/inventory/list-vendor/?search=${search}`);
-};
-
-const getAllVendorDataPaginate = (currentPage, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-vendor/?page=${currentPage}&search=${search}`
-  );
-};
-
-const getVendorPaginateData = (currentPage) => {
-  return CustomAxios.get(`/api/inventory/list-vendor/?page=${currentPage}`);
+  // Sending a GET request with query parameters
+  return CustomAxios.get(`api/inventory/list-vendor/?${params.toString()}`);
 };
 
 const createVendorData = (data) => {
@@ -702,11 +690,6 @@ const updateCurrencyData = (id, data) => {
 
 const InventoryServices = {
   getAllVendorData,
-  getAllPaginateVendorData,
-  getAllPaginateVendorDataWithSearch,
-  getAllSearchVendorData,
-  getAllVendorDataPaginate,
-  getVendorPaginateData,
   createVendorData,
   getVendorDataById,
   updateVendorData,
