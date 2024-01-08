@@ -487,41 +487,25 @@ const getProductionInventoryPaginateData = (currentPage) => {
 };
 
 // Production Inventory G&L List Api
+const getAllProductionGAndLInventoryData = (page, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
 
-const getAllProductionGAndLInventoryData = () => {
-  return CustomAxios.get(`/api/inventory/list-production-gnl/`);
-};
+  if (page) {
+    params.append("page", page);
+  }
 
-const getAllPaginateProductionGAndLInventoryData = (all) => {
-  return CustomAxios.get(`/api/inventory/list-production-gnl/?page=${all}`);
-};
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
 
-const getAllPaginateProductionGAndLInventoryDataWithSearch = (all, search) => {
+  // Sending a GET request with query parameters
   return CustomAxios.get(
-    `/api/inventory/list-production-gnl/?page=${all}&search=${search}`
-  );
-};
-
-const getAllSearchProductionGAndLInventoryData = (search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-production-gnl/?search=${search}`
-  );
-};
-
-const getAllProductionGAndLInventoryDataPaginate = (currentPage, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-production-gnl/?page=${currentPage}&search=${search}`
-  );
-};
-
-const getProductionGAndLInventoryPaginateData = (currentPage) => {
-  return CustomAxios.get(
-    `/api/inventory/list-production-gnl/?page=${currentPage}`
+    `api/inventory/list-production-gnl/?${params.toString()}`
   );
 };
 
 // Production ShortFall List Api
-
 const getAllProductionShortFallData = () => {
   return CustomAxios.get(`/api/inventory/list-production-shortfall/`);
 };
@@ -711,11 +695,6 @@ const InventoryServices = {
   getAllConsProductionInventoryDataPaginate,
   getConsProductionInventoryPaginateData,
   getAllProductionGAndLInventoryData,
-  getAllPaginateProductionGAndLInventoryData,
-  getAllPaginateProductionGAndLInventoryDataWithSearch,
-  getAllSearchProductionGAndLInventoryData,
-  getAllProductionGAndLInventoryDataPaginate,
-  getProductionGAndLInventoryPaginateData,
   getAllProductionShortFallData,
   getAllPaginateProductionShortFallData,
   getAllPaginateProductionShortFallDataWithSearch,
