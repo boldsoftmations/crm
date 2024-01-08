@@ -364,35 +364,21 @@ const updateBillofMaterialsData = (id, data) => {
 
 // Production Entry List Api
 
-const getAllProductionEntryData = () => {
-  return CustomAxios.get(`/api/inventory/list-production-entry/`);
-};
+const getAllProductionEntryData = (page, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
 
-const getAllPaginateProductionEntryData = (all) => {
-  return CustomAxios.get(`/api/inventory/list-production-entry/?page=${all}`);
-};
+  if (page) {
+    params.append("page", page);
+  }
 
-const getAllPaginateProductionEntryDataWithSearch = (all, search) => {
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
+
+  // Sending a GET request with query parameters
   return CustomAxios.get(
-    `/api/inventory/list-production-entry/?page=${all}&search=${search}`
-  );
-};
-
-const getAllSearchProductionEntryData = (search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-production-entry/?search=${search}`
-  );
-};
-
-const getAllProductionEntryDataPaginate = (currentPage, search) => {
-  return CustomAxios.get(
-    `/api/inventory/list-production-entry/?page=${currentPage}&search=${search}`
-  );
-};
-
-const getProductionEntryPaginateData = (currentPage) => {
-  return CustomAxios.get(
-    `/api/inventory/list-production-entry/?page=${currentPage}`
+    `api/inventory/list-production-entry/?${params.toString()}`
   );
 };
 
@@ -732,11 +718,6 @@ const InventoryServices = {
   getBillofMaterialsDataById,
   updateBillofMaterialsData,
   getAllProductionEntryData,
-  getAllPaginateProductionEntryData,
-  getAllPaginateProductionEntryDataWithSearch,
-  getAllSearchProductionEntryData,
-  getAllProductionEntryDataPaginate,
-  getProductionEntryPaginateData,
   createProductionEntryData,
   getProductionEntryDataById,
   updateProductionEntryData,
