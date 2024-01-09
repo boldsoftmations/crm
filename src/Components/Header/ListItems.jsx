@@ -733,7 +733,7 @@ export const ListItems = (props) => {
                   primary="Purchase Order Book"
                 />
               </ListItem>
-              <ListItem
+              {/* <ListItem
                 button
                 component={RouterLink}
                 to="/inventory/view-packing-list"
@@ -745,7 +745,7 @@ export const ListItems = (props) => {
                   inset
                   primary="Pending GRN"
                 />
-              </ListItem>
+              </ListItem> */}
               <ListItem
                 button
                 component={RouterLink}
@@ -913,6 +913,19 @@ export const ListItems = (props) => {
           <Collapse in={expandInventory} timeout="auto" unmountOnExit>
             <Divider />
             <List component="div" disablePadding>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/inventory/view-packing-list"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Pending GRN"
+                />
+              </ListItem>
               <ListItem
                 button
                 component={RouterLink}
@@ -5378,6 +5391,19 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
+                    to="/inventory/view-packing-list"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Pending GRN"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
                     to="/inventory/view-stores-inventory"
                     style={{ width: 300 }}
                   >
@@ -6095,6 +6121,19 @@ export const ListItems = (props) => {
               <Collapse in={expandInventory} timeout="auto" unmountOnExit>
                 <Divider />
                 <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-packing-list"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Pending GRN"
+                    />
+                  </ListItem>
                   <ListItem
                     button
                     component={RouterLink}
