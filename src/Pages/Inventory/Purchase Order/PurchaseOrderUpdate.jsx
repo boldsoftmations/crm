@@ -131,6 +131,7 @@ export const PurchaseOrderUpdate = ({
               label="Vendor"
               variant="outlined"
               value={inputValues.vendor || ""}
+              disabled
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -140,6 +141,7 @@ export const PurchaseOrderUpdate = ({
               label="Vendor Contact Person"
               variant="outlined"
               value={inputValues.vendor_contact_person || ""}
+              disabled
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -149,6 +151,7 @@ export const PurchaseOrderUpdate = ({
               label="Buyer Account"
               variant="outlined"
               value={inputValues.seller_account || ""}
+              disabled
             />
           </Grid>
 
@@ -159,6 +162,7 @@ export const PurchaseOrderUpdate = ({
               label="Payment Terms"
               variant="outlined"
               value={inputValues.payment_terms || ""}
+              disabled
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -168,6 +172,7 @@ export const PurchaseOrderUpdate = ({
               label="Delivery Terms"
               variant="outlined"
               value={inputValues.delivery_terms || ""}
+              disabled
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -178,6 +183,7 @@ export const PurchaseOrderUpdate = ({
               label="Purchase Order No."
               variant="outlined"
               value={inputValues.po_no || ""}
+              disabled
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -188,6 +194,7 @@ export const PurchaseOrderUpdate = ({
               label="Purchase Order Date"
               variant="outlined"
               value={inputValues.po_date}
+              disabled
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -197,6 +204,7 @@ export const PurchaseOrderUpdate = ({
               label="Currency"
               variant="outlined"
               value={inputValues.currency || ""}
+              disabled
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -207,6 +215,7 @@ export const PurchaseOrderUpdate = ({
               label="Schedule Date"
               variant="outlined"
               value={inputValues.schedule_date}
+              disabled
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -216,6 +225,7 @@ export const PurchaseOrderUpdate = ({
               label="Issued By"
               variant="outlined"
               value={inputValues.created_by || ""}
+              disabled
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -249,6 +259,7 @@ export const PurchaseOrderUpdate = ({
                     label="Product"
                     variant="outlined"
                     value={input.product || ""}
+                    disabled
                   />
                 </Grid>
                 <Grid item xs={12} sm={1}>
@@ -258,6 +269,7 @@ export const PurchaseOrderUpdate = ({
                     label="Unit"
                     variant="outlined"
                     value={input.unit || ""}
+                    disabled
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
@@ -268,6 +280,7 @@ export const PurchaseOrderUpdate = ({
                     label="Quantity"
                     variant="outlined"
                     value={input.quantity || ""}
+                    disabled
                     onChange={(event) =>
                       handleProductChange(index, "quantity", event.target.value)
                     }
@@ -280,6 +293,7 @@ export const PurchaseOrderUpdate = ({
                     label="Pending Quantity"
                     variant="outlined"
                     value={input.pending_quantity || ""}
+                    disabled
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
