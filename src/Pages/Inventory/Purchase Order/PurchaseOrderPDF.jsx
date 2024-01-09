@@ -494,11 +494,17 @@ export const PurchaseOrderPDF = ({ purchaseOrderData, AMOUNT_IN_WORDS }) => {
                   <Text style={{ fontWeight: "bold", fontSize: 8 }}>
                     Terms and Condition :-
                   </Text>
-                  {Information.map((data, i) => (
-                    <Text key={i} style={{ color: "#777777", fontSize: 6 }}>
-                      {data.id} {data.text}
-                    </Text>
-                  ))}
+                  {purchaseOrderData.vendor_type === "Domestic"
+                    ? Information.map((data, i) => (
+                        <Text key={i} style={{ color: "#777777", fontSize: 6 }}>
+                          {data.id} {data.text}
+                        </Text>
+                      ))
+                    : Info.map((data, i) => (
+                        <Text key={i} style={{ color: "#777777", fontSize: 6 }}>
+                          {data.id} {data.text}
+                        </Text>
+                      ))}
                 </View>
                 <View
                   style={{
@@ -585,6 +591,42 @@ const Footer = () => (
     <Image source={AllLogo} style={{ width: "100%", height: "auto" }} />
   </View>
 );
+
+const Info = [
+  {
+    id: "1)",
+    text: "Please send your acceptance through return mail within 24 Hrs.",
+  },
+  {
+    id: "2)",
+    text: "Material should  be shipped as per the schedule dates. Any delay in supply will attract a Late delivery charges @2% on part or there of. ",
+  },
+
+  {
+    id: "3)",
+    text: "Please do mention the correct P.O number and Part number in all invoice copies & respective delivery documents .",
+  },
+  {
+    id: "4)",
+    text: "Apart from this, schedule excess qty. will be returned to you on your account.",
+  },
+  {
+    id: "5)",
+    text: "Any short reciept will be debited in multipac of the packets..",
+  },
+  {
+    id: "6)",
+    text: "On acknowledgement of wrong invoicing, Glutape India Pvt Ltd will debit 3 times of (concerned) invoice value to your account.",
+  },
+  {
+    id: "7)",
+    text: "We reserve the right to reject the supply at any stage if the consignment / goods does not confirm the specification or sample or defects are revealed during processing.",
+  },
+  {
+    id: "8)",
+    text: "Please ensure that proper broadcasting is followed for each item mentioned in this purchase order, if barcoding is not followed, the material will be rejected and sent back on your account.",
+  },
+];
 
 const Information = [
   {
