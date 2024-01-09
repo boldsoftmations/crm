@@ -94,7 +94,7 @@ export const PurchaseOrderView = () => {
     try {
       setOpen(true);
       setSelectedRow(item);
-      const response = await InventoryServices.getAllVendorData(item.vendor);
+      const response = await InventoryServices.getAllVendorData(0, item.vendor);
       setContactNameOption(response.data.results);
       setOpenPopupUpdate(true);
     } catch (err) {

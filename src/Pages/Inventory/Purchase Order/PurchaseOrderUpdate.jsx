@@ -6,6 +6,7 @@ import {
   Grid,
   IconButton,
   Snackbar,
+  Switch,
 } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -208,6 +209,7 @@ export const PurchaseOrderUpdate = ({
         po_no: inputValues.po_no,
         po_date: inputValues.po_date || today,
         seller_account: inputValues.seller_account || null,
+        close_short: inputValues.close_short,
         products: inputValues.products || [],
       };
 
@@ -390,6 +392,20 @@ export const PurchaseOrderUpdate = ({
               variant="outlined"
               value={inputValues.created_by || ""}
             />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <Switch
+              checked={inputValues.close_short}
+              onChange={(event) =>
+                setInputValues({
+                  ...inputValues,
+                  close_short: event.target.checked,
+                })
+              }
+              name="close_short"
+              inputProps={{ "aria-label": "controlled" }}
+            />
+            <span>Close Short</span>
           </Grid>
           <Grid item xs={12}>
             <Root>
