@@ -128,7 +128,7 @@ export const GRNCreate = ({ setOpenPopup, idForEdit }) => {
             <CustomTextField
               fullWidth
               size="small"
-              label="Packing List No"
+              label="Invoice No"
               variant="outlined"
               value={idForEdit.packing_list_no || ""}
             />

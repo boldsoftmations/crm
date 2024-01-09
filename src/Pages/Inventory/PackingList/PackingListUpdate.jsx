@@ -110,7 +110,7 @@ export const PackingListUpdate = ({
               fullWidth
               size="small"
               name="seller_account"
-              label="Seller Account"
+              label="Buyer Account"
               variant="outlined"
               value={packingListDetails.seller_account || ""}
               disabled
@@ -132,7 +132,7 @@ export const PackingListUpdate = ({
               fullWidth
               size="small"
               name="packing_list_no"
-              label="Packing List No"
+              label="Invoice No"
               variant="outlined"
               value={packingListDetails.packing_list_no || ""}
               onChange={handleInput}

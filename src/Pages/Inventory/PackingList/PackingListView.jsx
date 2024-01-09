@@ -211,7 +211,7 @@ export const PackingListView = () => {
                     fontWeight: 800,
                   }}
                 >
-                  Packing List
+                  Pending GRN
                 </h3>
               </Grid>
               <Grid item xs={12} sm={3}></Grid>
@@ -239,13 +239,13 @@ export const PackingListView = () => {
               <TableHead>
                 <StyledTableRow>
                   <StyledTableCell align="center"></StyledTableCell>
-                  <StyledTableCell align="center">VENDOR</StyledTableCell>
-                  <StyledTableCell align="center">
-                    PURCHASE ORDER NO
-                  </StyledTableCell>
-                  <StyledTableCell align="center">PACKING LIST</StyledTableCell>
-                  <StyledTableCell align="center">SELLER STATE</StyledTableCell>
                   <StyledTableCell align="center">INVOICE DATE</StyledTableCell>
+                  <StyledTableCell align="center">INVOICE NO</StyledTableCell>
+                  <StyledTableCell align="center">
+                    PURCHASE ORDER
+                  </StyledTableCell>
+                  <StyledTableCell align="center">VENDOR</StyledTableCell>
+                  <StyledTableCell align="center">BUYER STATE</StyledTableCell>
                   <StyledTableCell align="center">Action</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
@@ -317,11 +317,12 @@ function Row({ row, openInPopup, handleCreateGrn, userData }) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </StyledTableCell>
-        <StyledTableCell align="center">{row.vendor}</StyledTableCell>
-        <StyledTableCell align="center">{row.purchase_order}</StyledTableCell>
-        <StyledTableCell align="center">{row.packing_list_no}</StyledTableCell>
-        <StyledTableCell align="center">{row.seller_account}</StyledTableCell>
         <StyledTableCell align="center">{row.invoice_date}</StyledTableCell>
+        <StyledTableCell align="center">{row.packing_list_no}</StyledTableCell>
+        <StyledTableCell align="center">{row.purchase_order}</StyledTableCell>
+        <StyledTableCell align="center">{row.vendor}</StyledTableCell>
+        <StyledTableCell align="center">{row.seller_account}</StyledTableCell>
+
         <StyledTableCell align="center">
           {
             // Show Edit button only if the user is NOT in any of the specified groups

@@ -131,7 +131,7 @@ export const GRNView = () => {
                     fontWeight: 800,
                   }}
                 >
-                  GRN
+                  Purchase Invoice
                 </h3>
               </Grid>
               <Grid item xs={12} sm={3}></Grid>
@@ -159,14 +159,11 @@ export const GRNView = () => {
               <TableHead>
                 <StyledTableRow>
                   <StyledTableCell align="center"></StyledTableCell>
+                  <StyledTableCell align="center">GRN DATE</StyledTableCell>
+                  <StyledTableCell align="center">GRN NO</StyledTableCell>
+                  <StyledTableCell align="center">INVOICE NO</StyledTableCell>
                   <StyledTableCell align="center">VENDOR</StyledTableCell>
-                  <StyledTableCell align="center">
-                    PACKINGLIST NO.
-                  </StyledTableCell>
-                  <StyledTableCell align="center">DATE</StyledTableCell>
-
                   <StyledTableCell align="center">PACKING LIST</StyledTableCell>
-
                   <StyledTableCell align="center">Action</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
@@ -241,9 +238,10 @@ function Row(props) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </StyledTableCell>
-        <StyledTableCell align="center">{row.vendor}</StyledTableCell>
-        <StyledTableCell align="center">{row.packing_list_no}</StyledTableCell>
         <StyledTableCell align="center">{row.created_on}</StyledTableCell>
+        <StyledTableCell align="center">{row.grn_no}</StyledTableCell>
+        <StyledTableCell align="center">{row.packing_list_no}</StyledTableCell>
+        <StyledTableCell align="center">{row.vendor}</StyledTableCell>
         <StyledTableCell align="center">{row.packing_list}</StyledTableCell>
         <StyledTableCell align="center">
           <Button onClick={() => openInPopup(row.grn_no)}>Edit</Button>

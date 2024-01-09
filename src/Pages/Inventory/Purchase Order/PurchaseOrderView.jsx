@@ -268,7 +268,7 @@ export const PurchaseOrderView = () => {
                     fontWeight: 800,
                   }}
                 >
-                  Purchase Order
+                  Purchase Order Book
                 </h3>
               </Grid>
               <Grid item xs={12} sm={3}></Grid>
@@ -296,17 +296,19 @@ export const PurchaseOrderView = () => {
               <TableHead>
                 <StyledTableRow>
                   <StyledTableCell align="center"></StyledTableCell>
-                  <StyledTableCell align="center">Vendor</StyledTableCell>
-                  <StyledTableCell align="center">
-                    Purchase Order No
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    Seller Account
-                  </StyledTableCell>
-                  <StyledTableCell align="center">Seller State</StyledTableCell>
                   <StyledTableCell align="center">
                     Purchase Order Date
                   </StyledTableCell>
+                  <StyledTableCell align="center">
+                    Purchase Order
+                  </StyledTableCell>
+                  <StyledTableCell align="center">Vendor</StyledTableCell>
+
+                  <StyledTableCell align="center">
+                    Buyer Account
+                  </StyledTableCell>
+                  <StyledTableCell align="center">Buyer State</StyledTableCell>
+
                   <StyledTableCell align="center">Action</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
@@ -385,11 +387,12 @@ function Row(props) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </StyledTableCell>
-        <StyledTableCell align="center">{row.vendor}</StyledTableCell>
+        <StyledTableCell align="center">{row.po_date}</StyledTableCell>
         <StyledTableCell align="center">{row.po_no}</StyledTableCell>
+        <StyledTableCell align="center">{row.vendor}</StyledTableCell>
         <StyledTableCell align="center">{row.seller_account}</StyledTableCell>
         <StyledTableCell align="center">{row.seller_state}</StyledTableCell>
-        <StyledTableCell align="center">{row.po_date}</StyledTableCell>
+
         <StyledTableCell align="center">
           <Button onClick={() => handleEdit(row)}>Edit</Button>
           <Button color="success" onClick={handleOpenCreatePLPopup}>
@@ -445,8 +448,8 @@ function Row(props) {
 }
 
 const AcceptedOption = [
-  { label: "Accepted", value: "true" },
-  { label: "Not Accepted", value: "false" },
+  { label: "Closed", value: "true" },
+  { label: "Not Closed", value: "false" },
 ];
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
