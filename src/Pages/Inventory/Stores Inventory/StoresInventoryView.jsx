@@ -182,9 +182,28 @@ export const StoresInventoryView = () => {
         </Box>
         <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={5}></Grid>
+            <Grid item xs={12} sm={5}>
+              <Button onClick={handleDownload} variant="contained">
+                Download CSV
+              </Button>
 
-            <Grid item xs={12} sm={3}>
+              {exportData.length > 0 && (
+                <CSVLink
+                  data={[...exportData]}
+                  headers={headers}
+                  ref={csvLinkRef}
+                  filename="Store Inventory.csv"
+                  target="_blank"
+                  style={{
+                    textDecoration: "none",
+                    outline: "none",
+                    height: "5vh",
+                  }}
+                />
+              )}
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
               <h3
                 style={{
                   textAlign: "left",
@@ -196,37 +215,20 @@ export const StoresInventoryView = () => {
                 Stores Inventory
               </h3>
             </Grid>
-            <Grid item xs={12} sm={3}></Grid>
+            <Grid item xs={12} sm={1}>
+              {userData.groups.includes("Accounts") && (
+                <Button
+                  onClick={() => setOpenPopup(true)}
+                  variant="contained"
+                  color="success"
+                >
+                  Add
+                </Button>
+              )}
+            </Grid>
           </Grid>
         </Box>
-        <Grid item xs={12} sm={3}>
-          <Button onClick={handleDownload} variant="contained">
-            Download CSV
-          </Button>
-        </Grid>
-        {exportData.length > 0 && (
-          <CSVLink
-            data={[...exportData]}
-            headers={headers}
-            ref={csvLinkRef}
-            filename="Store Inventory.csv"
-            target="_blank"
-            style={{
-              textDecoration: "none",
-              outline: "none",
-              height: "5vh",
-            }}
-          />
-        )}
-        {userData.groups.includes("Accounts") && (
-          <Button
-            onClick={() => setOpenPopup(true)}
-            variant="contained"
-            color="success"
-          >
-            Add
-          </Button>
-        )}
+
         <CustomTable
           headers={Tableheaders}
           data={Tabledata}

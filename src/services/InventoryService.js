@@ -78,7 +78,7 @@ const getAllPurchaseOrderData = (page, acceptedToFilter, searchValue) => {
   }
 
   if (acceptedToFilter !== undefined) {
-    params.append("close_shot", acceptedToFilter);
+    params.append("close_short", acceptedToFilter);
   }
 
   if (searchValue) {
@@ -215,11 +215,9 @@ const getAllStoresInventoryDetails = (page, searchValue) => {
   );
 };
 
-
 const createStoresInventoryData = (data) => {
   return CustomAxios.post("/api/inventory/list-stores-inventory/", data);
 };
-
 
 const getAllConsStoresInventoryData = () => {
   return CustomAxios.get(`/api/inventory/list-con-stores-inventory/`);
@@ -694,7 +692,7 @@ const InventoryServices = {
   createCurrencyData,
   getCurrencyDataById,
   updateCurrencyData,
-  getAllStoresInventoryDetails
+  getAllStoresInventoryDetails,
 };
 
 export default InventoryServices;
