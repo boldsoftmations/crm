@@ -71,27 +71,26 @@ export const PurchaseOrderPDF = ({ purchaseOrderData, AMOUNT_IN_WORDS }) => {
                   </Text>
                 </View>
                 <View style={{ ...cellStyle, ...borderRightStyle }}>
-                  <Text style={{ ...outerTextStyle }}>Currency : </Text>
-                </View>
-                <View style={{ ...cellStyle, ...borderRightStyle }}>
-                  <Text style={{ ...innerTextStyle }}>
-                    {purchaseOrderData.currency}
-                  </Text>
-                </View>
-                <View style={{ ...cellStyle, ...borderRightStyle }}>
-                  <Text style={{ ...outerTextStyle }}>PO NO : </Text>
+                  <Text style={{ ...outerTextStyle }}>PO NO & Date : </Text>
                 </View>
                 <View style={cellStyle}>
                   <Text style={{ ...innerTextStyle }}>
-                    {purchaseOrderData.po_no}
+                    {purchaseOrderData.po_no} & {purchaseOrderData.po_date}
                   </Text>
                 </View>
               </View>
 
               {/* PAYMENT TERMS*/}
               <View style={rowStyle}>
-                <View style={{ ...cellStyle }}></View>
-                <View style={{ ...cellStyle, ...borderRightStyle }}></View>
+                <View style={{ ...cellStyle, ...borderRightStyle }}>
+                  <Text style={{ ...outerTextStyle }}>Currency :</Text>
+                </View>
+                <View style={{ ...cellStyle, ...borderRightStyle }}>
+                  <Text style={{ ...innerTextStyle }}>
+                    {purchaseOrderData.symbol && `${purchaseOrderData.symbol} `}
+                    {purchaseOrderData.currency}
+                  </Text>
+                </View>
                 <View style={{ ...cellStyle, ...borderRightStyle }}>
                   <Text style={{ ...outerTextStyle }}>Payment Terms :</Text>
                 </View>
@@ -103,8 +102,14 @@ export const PurchaseOrderPDF = ({ purchaseOrderData, AMOUNT_IN_WORDS }) => {
               </View>
               {/* DELIVERY TERMS */}
               <View style={rowStyle}>
-                <View style={{ ...cellStyle }}></View>
-                <View style={{ ...cellStyle, ...borderRightStyle }}></View>
+                <View style={{ ...cellStyle, ...borderRightStyle }}>
+                  <Text style={{ ...outerTextStyle }}>Schedule Date :</Text>
+                </View>
+                <View style={{ ...cellStyle, ...borderRightStyle }}>
+                  <Text style={{ ...innerTextStyle }}>
+                    {purchaseOrderData.schedule_date}
+                  </Text>
+                </View>
                 <View style={{ ...cellStyle, ...borderRightStyle }}>
                   <Text style={{ ...outerTextStyle }}>Delivery Terms :</Text>
                 </View>
@@ -125,11 +130,13 @@ export const PurchaseOrderPDF = ({ purchaseOrderData, AMOUNT_IN_WORDS }) => {
                       ...borderRightStyle,
                       textAlign: "center",
                     }}
-                  ></Text>
+                  >
+                    Supplier Details
+                  </Text>
                 </View>
                 <View style={cellStyle}>
                   <Text style={{ ...outerTextStyle, textAlign: "center" }}>
-                    Deliver Address
+                    Buyer Details
                   </Text>
                 </View>
               </View>
@@ -377,57 +384,65 @@ export const PurchaseOrderPDF = ({ purchaseOrderData, AMOUNT_IN_WORDS }) => {
               })}
 
               {/*  COMPANY & Taxable Amount*/}
-              <View style={rowStyle}>
-                <View style={{ ...cellStyle }}>
-                  <Text style={{ ...outerTextStyle, textAlign: "right" }}>
-                    CGST Amount :
-                  </Text>
+              {purchaseOrderData.vendor_type === "Domestic" && (
+                <View style={rowStyle}>
+                  <View style={{ ...cellStyle }}>
+                    <Text style={{ ...outerTextStyle, textAlign: "right" }}>
+                      CGST Amount :
+                    </Text>
+                  </View>
+                  <View style={cellStyle}>
+                    <Text style={{ ...innerTextStyle, textAlign: "center" }}>
+                      {purchaseOrderData.cgst ? purchaseOrderData.cgst : "-"}
+                    </Text>
+                  </View>
                 </View>
-                <View style={cellStyle}>
-                  <Text style={{ ...innerTextStyle, textAlign: "center" }}>
-                    {purchaseOrderData.cgst ? purchaseOrderData.cgst : "-"}
-                  </Text>
-                </View>
-              </View>
+              )}
               {/* Bank & CGST Amount*/}
-              <View style={rowStyle}>
-                <View style={{ ...cellStyle }}>
-                  <Text style={{ ...outerTextStyle, textAlign: "right" }}>
-                    SGST Amount :
-                  </Text>
+              {purchaseOrderData.vendor_type === "Domestic" && (
+                <View style={rowStyle}>
+                  <View style={{ ...cellStyle }}>
+                    <Text style={{ ...outerTextStyle, textAlign: "right" }}>
+                      SGST Amount :
+                    </Text>
+                  </View>
+                  <View style={cellStyle}>
+                    <Text style={{ ...innerTextStyle, textAlign: "center" }}>
+                      {purchaseOrderData.sgst ? purchaseOrderData.sgst : "-"}
+                    </Text>
+                  </View>
                 </View>
-                <View style={cellStyle}>
-                  <Text style={{ ...innerTextStyle, textAlign: "center" }}>
-                    {purchaseOrderData.sgst ? purchaseOrderData.sgst : "-"}
-                  </Text>
-                </View>
-              </View>
+              )}
               {/* >Account No & CITY & SGST Amount*/}
-              <View style={rowStyle}>
-                <View style={{ ...cellStyle }}>
-                  <Text style={{ ...outerTextStyle, textAlign: "right" }}>
-                    IGST Amount :
-                  </Text>
+              {purchaseOrderData.vendor_type === "Domestic" && (
+                <View style={rowStyle}>
+                  <View style={{ ...cellStyle }}>
+                    <Text style={{ ...outerTextStyle, textAlign: "right" }}>
+                      IGST Amount :
+                    </Text>
+                  </View>
+                  <View style={cellStyle}>
+                    <Text style={{ ...innerTextStyle, textAlign: "center" }}>
+                      {purchaseOrderData.igst ? purchaseOrderData.igst : "-"}
+                    </Text>
+                  </View>
                 </View>
-                <View style={cellStyle}>
-                  <Text style={{ ...innerTextStyle, textAlign: "center" }}>
-                    {purchaseOrderData.igst ? purchaseOrderData.igst : "-"}
-                  </Text>
-                </View>
-              </View>
+              )}
               {/* Branch and IFSC Code & IGST Amount*/}
-              <View style={rowStyle}>
-                <View style={{ ...cellStyle }}>
-                  <Text style={{ ...outerTextStyle, textAlign: "right" }}>
-                    Round Off :
-                  </Text>
+              {purchaseOrderData.vendor_type === "Domestic" && (
+                <View style={rowStyle}>
+                  <View style={{ ...cellStyle }}>
+                    <Text style={{ ...outerTextStyle, textAlign: "right" }}>
+                      Round Off :
+                    </Text>
+                  </View>
+                  <View style={cellStyle}>
+                    <Text style={{ ...innerTextStyle, textAlign: "center" }}>
+                      {purchaseOrderData.round_off}
+                    </Text>
+                  </View>
                 </View>
-                <View style={cellStyle}>
-                  <Text style={{ ...innerTextStyle, textAlign: "center" }}>
-                    {purchaseOrderData.round_off}
-                  </Text>
-                </View>
-              </View>
+              )}
               {/* Round Off & GST NUMBER*/}
               <View style={rowStyle}>
                 <View style={{ ...cellStyle }}>
@@ -437,7 +452,7 @@ export const PurchaseOrderPDF = ({ purchaseOrderData, AMOUNT_IN_WORDS }) => {
                 </View>
                 <View style={cellStyle}>
                   <Text style={{ ...innerTextStyle, textAlign: "center" }}>
-                    {purchaseOrderData.total}
+                    {purchaseOrderData.round_off_total}
                   </Text>
                 </View>
               </View>
