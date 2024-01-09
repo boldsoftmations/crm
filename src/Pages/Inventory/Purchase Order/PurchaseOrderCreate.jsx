@@ -244,7 +244,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
         schedule_date: inputValues.schedule_date || today,
         currency: inputValues.currency,
         po_no: inputValues.po_no,
-        po_date: inputValues.po_date || today,
+        po_date: inputValues.po_date,
         seller_account: inputValues.seller_account || null,
         products: inputValues.products || [],
       };
@@ -377,6 +377,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
               variant="outlined"
               value={inputValues.po_date || today}
               onChange={handleInputChange}
+              InputProps={{ inputProps: { min: today, max: today } }}
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -401,7 +402,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
               size="small"
               label="Schedule Date"
               variant="outlined"
-              value={inputValues.schedule_date || today}
+              value={inputValues.schedule_date}
               onChange={handleInputChange}
               InputProps={{ inputProps: { min: today } }} // Restrict past dates
             />

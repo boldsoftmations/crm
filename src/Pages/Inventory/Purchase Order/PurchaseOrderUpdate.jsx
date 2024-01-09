@@ -45,7 +45,6 @@ export const PurchaseOrderUpdate = ({
   const [error, setError] = useState(null);
   const [productOption, setProductOption] = useState([]);
   const [currencyOption, setCurrencyOption] = useState([]);
-  const today = new Date().toISOString().slice(0, 10);
 
   // Before your component's return statement, after you've defined inputValues
   const vendorObject = contactNameOption.find(
@@ -204,10 +203,10 @@ export const PurchaseOrderUpdate = ({
         seller_account: inputValues.seller_account,
         payment_terms: inputValues.payment_terms,
         delivery_terms: inputValues.delivery_terms,
-        schedule_date: inputValues.schedule_date || today,
+        schedule_date: inputValues.schedule_date,
         currency: inputValues.currency,
         po_no: inputValues.po_no,
-        po_date: inputValues.po_date || today,
+        po_date: inputValues.po_date,
         seller_account: inputValues.seller_account || null,
         close_short: inputValues.close_short,
         products: inputValues.products || [],
@@ -347,12 +346,11 @@ export const PurchaseOrderUpdate = ({
           <Grid item xs={12} sm={3}>
             <CustomTextField
               fullWidth
-              type="date"
               name="po_date"
               size="small"
               label="Purchase Order Date"
               variant="outlined"
-              value={inputValues.po_date || today}
+              value={inputValues.po_date}
               onChange={handleInputChange}
             />
           </Grid>
@@ -374,14 +372,12 @@ export const PurchaseOrderUpdate = ({
           <Grid item xs={12} sm={3}>
             <CustomTextField
               fullWidth
-              type="date"
               name="schedule_date"
               size="small"
               label="Schedule Date"
               variant="outlined"
-              value={inputValues.schedule_date || today}
+              value={inputValues.schedule_date}
               onChange={handleInputChange}
-              InputProps={{ inputProps: { min: today } }} // Restrict past dates
             />
           </Grid>
           <Grid item xs={12} sm={3}>
