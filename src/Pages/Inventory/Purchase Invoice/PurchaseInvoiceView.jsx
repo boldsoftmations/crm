@@ -126,7 +126,7 @@ export const PurchaseInvoiceView = () => {
                     fontWeight: 800,
                   }}
                 >
-                  Purchase Invoice
+                  Purchase Register
                 </h3>
               </Grid>
               <Grid item xs={12} sm={3}></Grid>
@@ -157,9 +157,7 @@ export const PurchaseInvoiceView = () => {
                   <StyledTableCell align="center">INVOICE</StyledTableCell>
                   <StyledTableCell align="center">GRN</StyledTableCell>
                   <StyledTableCell align="center">VENDOR</StyledTableCell>
-                  <StyledTableCell align="center">
-                    PURCHASE VOUCHER
-                  </StyledTableCell>
+                  <StyledTableCell align="center">INVOICE NO </StyledTableCell>
                   <StyledTableCell align="center">ORDER DATE</StyledTableCell>
 
                   <StyledTableCell align="center">Action</StyledTableCell>

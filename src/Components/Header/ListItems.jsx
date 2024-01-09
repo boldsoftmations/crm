@@ -730,7 +730,7 @@ export const ListItems = (props) => {
                   component={Button}
                   onClick={() => setOpen(false)}
                   inset
-                  primary="Purchase Order"
+                  primary="Purchase Order Book"
                 />
               </ListItem>
               <ListItem
@@ -743,7 +743,7 @@ export const ListItems = (props) => {
                   component={Button}
                   onClick={() => setOpen(false)}
                   inset
-                  primary="Packing List"
+                  primary="Pending GRN"
                 />
               </ListItem>
               <ListItem
@@ -756,7 +756,7 @@ export const ListItems = (props) => {
                   component={Button}
                   onClick={() => setOpen(false)}
                   inset
-                  primary="GRN"
+                  primary="Purchase Invoice"
                 />
               </ListItem>
               <ListItem
@@ -769,7 +769,7 @@ export const ListItems = (props) => {
                   inset
                   component={Button}
                   onClick={() => setOpen(false)}
-                  primary="Purchase Invoice"
+                  primary="Purchase Register"
                 />
               </ListItem>
             </List>
@@ -1803,7 +1803,7 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Purchase Order"
+                      primary="Purchase Order Book"
                     />
                   </ListItem>
                   <ListItem
@@ -1816,7 +1816,7 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Packing List"
+                      primary="Pending GRN"
                     />
                   </ListItem>
                 </List>
@@ -1970,7 +1970,7 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Packing List"
+                      primary="Pending GRN"
                     />
                   </ListItem>
                   <ListItem
@@ -1983,7 +1983,7 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="GRN"
+                      primary="Purchase Invoice"
                     />
                   </ListItem>
                 </List>
@@ -2122,7 +2122,7 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Packing List"
+                      primary="Pending GRN"
                     />
                   </ListItem>
                   <ListItem
@@ -2135,7 +2135,7 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="GRN"
+                      primary="Purchase Register"
                     />
                   </ListItem>
                 </List>
@@ -5192,7 +5192,7 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Purchase Order"
+                      primary="Purchase Order Book"
                     />
                   </ListItem>
                   <ListItem
@@ -5205,7 +5205,7 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Packing List"
+                      primary="Pending GRN"
                     />
                   </ListItem>
                   <ListItem
@@ -5218,7 +5218,7 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="GRN"
+                      primary="Purchase Invoice"
                     />
                   </ListItem>
                   <ListItem
@@ -5231,7 +5231,7 @@ export const ListItems = (props) => {
                       inset
                       component={Button}
                       onClick={() => setOpen(false)}
-                      primary="Purchase Invoice"
+                      primary="Purchase Register"
                     />
                   </ListItem>
                 </List>
@@ -5978,7 +5978,7 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="GRN"
+                      primary="Purchase Invoice"
                     />
                   </ListItem>
                   <ListItem
@@ -5991,7 +5991,7 @@ export const ListItems = (props) => {
                       inset
                       component={Button}
                       onClick={() => setOpen(false)}
-                      primary="Purchase Invoice"
+                      primary="Purchase Register"
                     />
                   </ListItem>
                 </List>

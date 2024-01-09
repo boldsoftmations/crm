@@ -26,6 +26,8 @@ export const PurchaseInvoiceCreate = (props) => {
         product: product.products,
         quantity: product.qa_accepted,
         unit: product.unit,
+        order_date: product.order_date,
+        po_no: product.po_no,
         amount: "",
         rate: "",
       };
@@ -100,6 +102,26 @@ export const PurchaseInvoiceCreate = (props) => {
               label="Invoice No"
               variant="outlined"
               value={recordForEdit.packing_list_no || ""}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Invoice Date"
+              variant="outlined"
+              value={recordForEdit.order_date || ""}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Purchase Order No"
+              variant="outlined"
+              value={recordForEdit.po_no || ""}
               disabled
             />
           </Grid>

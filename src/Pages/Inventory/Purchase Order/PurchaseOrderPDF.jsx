@@ -71,6 +71,14 @@ export const PurchaseOrderPDF = ({ purchaseOrderData, AMOUNT_IN_WORDS }) => {
                   </Text>
                 </View>
                 <View style={{ ...cellStyle, ...borderRightStyle }}>
+                  <Text style={{ ...outerTextStyle }}>Currency : </Text>
+                </View>
+                <View style={{ ...cellStyle, ...borderRightStyle }}>
+                  <Text style={{ ...innerTextStyle }}>
+                    {purchaseOrderData.currency}
+                  </Text>
+                </View>
+                <View style={{ ...cellStyle, ...borderRightStyle }}>
                   <Text style={{ ...outerTextStyle }}>PO NO : </Text>
                 </View>
                 <View style={cellStyle}>
@@ -570,7 +578,7 @@ const Information = [
   },
   {
     id: "2)",
-    text: "Material should reach on mentioned dates in Our Stores as per the schedule dates. Any delay in supply will attract a Late delivery charges @2% on part or there of. ",
+    text: "Material should  reach in Our Stores as per the schedule dates. Any delay in supply will attract a Late delivery charges @2% on part or there of. ",
   },
   {
     id: "3)",
@@ -582,11 +590,11 @@ const Information = [
   },
   {
     id: "5)",
-    text: "Pl do mention the correct P.O number and Part number in all invoice copies & respective delivery documents .",
+    text: "Please do mention the correct P.O number and Part number in all invoice copies & respective delivery documents .",
   },
   {
     id: "6)",
-    text: "Apart from the schedule excess qty. will be returned to you on your account.",
+    text: "Apart from this, schedule excess qty. will be returned to you on your account.",
   },
   {
     id: "7)",
@@ -594,11 +602,15 @@ const Information = [
   },
   {
     id: "8)",
-    text: "On acknowledgement of wrong invoicing, GRIPPO will debit 3 times of (concerned) invoice value to your account.",
+    text: "On acknowledgement of wrong invoicing, Glutape India Pvt Ltd will debit 3 times of (concerned) invoice value to your account.",
   },
   {
     id: "9)",
     text: "We reserve the right to reject the supply at any stage if the consignment / goods does not confirm the specification or sample or defects are revealed during processing.",
+  },
+  {
+    id: "10)",
+    text: "Please ensure that proper broadcasting is followed for each item mentioned in this purchase order, if barcoding is not followed, the material will be rejected and sent back on your account.",
   },
 ];
 
