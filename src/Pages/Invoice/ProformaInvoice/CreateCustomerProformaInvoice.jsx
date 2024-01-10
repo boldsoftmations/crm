@@ -177,18 +177,28 @@ export const CreateCustomerProformaInvoice = (props) => {
   const extractErrorMessages = (error) => {
     let messages = [];
 
+    // Check if error.response and error.response.data exist
     if (error.response && error.response.data) {
-      if (error.response.data.non_field_errors) {
+      if (Array.isArray(error.response.data.non_field_errors)) {
+        // Concatenate all non-field error messages
         messages = [...error.response.data.non_field_errors];
-      } else if (error.response.data.errors) {
-        for (const [key, value] of Object.entries(error.response.data.errors)) {
-          messages.push(`${key}: ${value.join(", ")}`);
-        }
-      } else if (error.response.data.message) {
+      } else if (typeof error.response.data.errors === "object") {
+        // Extract field errors
+        Object.entries(error.response.data.errors).forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            messages.push(`${key}: ${value.join(", ")}`);
+          }
+        });
+      } else if (typeof error.response.data.message === "string") {
+        // Handle single message error
         messages.push(error.response.data.message);
       }
+    } else if (error.message) {
+      // Fallback for generic JavaScript error message
+      messages.push(error.message);
     } else {
-      messages.push(error.message || "An unknown error occurred");
+      // Final fallback for an entirely unknown error
+      messages.push("An unknown error occurred");
     }
 
     return messages;

@@ -70,7 +70,6 @@ export const GRNCreate = ({ setOpenPopup, idForEdit }) => {
       });
       if (response) {
         setOpenPopup(false);
-        navigate("/inventory/view-grn");
       }
     } catch (err) {
       setError("Error occurred while creating GRN.");

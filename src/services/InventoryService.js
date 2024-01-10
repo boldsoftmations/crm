@@ -167,6 +167,25 @@ const updateGRNData = (id, data) => {
   return CustomAxios.patch(`/api/inventory/list-grn/${id}`, data);
 };
 
+// GRN Register
+const getAllGRNRegisterDetails = (page, yearMonthFilter) => {
+  const params = new URLSearchParams();
+
+  if (page) {
+    params.append("page", page);
+  }
+
+  if (yearMonthFilter) {
+    params.append("year_month", yearMonthFilter);
+  }
+
+  // if (searchValue) {
+  //   params.append("search", searchValue);
+  // }
+
+  return CustomAxios.get(`api/inventory/grn-register/?${params.toString()}`);
+};
+
 // Purchase Invoice List Api
 const getAllPurchaseInvoiceData = (page, searchValue) => {
   // Constructing the query parameters
@@ -633,6 +652,7 @@ const InventoryServices = {
   createGRNData,
   getGRNDataById,
   updateGRNData,
+  getAllGRNRegisterDetails,
   getAllPurchaseInvoiceData,
   createPurchaseInvoiceData,
   getPurchaseInvoiceDataById,

@@ -929,6 +929,19 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
+                to="/inventory/view-grn-register"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="GRN Register"
+                />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
                 to="/inventory/view-stores-inventory"
                 style={{ width: 300 }}
               >
@@ -1832,6 +1845,19 @@ export const ListItems = (props) => {
                       primary="Pending GRN"
                     />
                   </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-grn-register"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="GRN Register"
+                    />
+                  </ListItem>
                 </List>
               </Collapse>
 
@@ -1881,6 +1907,19 @@ export const ListItems = (props) => {
               <Collapse in={expandInventory} timeout="auto" unmountOnExit>
                 <Divider />
                 <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-grn-register"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="GRN Register"
+                    />
+                  </ListItem>
                   <ListItem
                     button
                     component={RouterLink}
@@ -1984,6 +2023,19 @@ export const ListItems = (props) => {
                       onClick={() => setOpen(false)}
                       inset
                       primary="Pending GRN"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-grn-register"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="GRN Register"
                     />
                   </ListItem>
                   <ListItem
@@ -2136,6 +2188,19 @@ export const ListItems = (props) => {
                       onClick={() => setOpen(false)}
                       inset
                       primary="Pending GRN"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-grn-register"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="GRN Register"
                     />
                   </ListItem>
                   <ListItem
@@ -5224,6 +5289,19 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
+                    to="/inventory/view-grn-register"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="GRN Register"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
                     to="/inventory/view-grn"
                     style={{ width: 300 }}
                   >
@@ -5399,6 +5477,19 @@ export const ListItems = (props) => {
                       onClick={() => setOpen(false)}
                       inset
                       primary="Pending GRN"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-grn-register"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="GRN Register"
                     />
                   </ListItem>
                   <ListItem

@@ -16,7 +16,6 @@ import ProductService from "../../../services/ProductService";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
-import { useNavigate } from "react-router-dom";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -26,9 +25,8 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const PurchaseOrderCreate = ({ recordForEdit }) => {
+export const PurchaseOrderCreate = ({ recordForEdit, setOpenPopup }) => {
   console.log("recordForEdit", recordForEdit);
-  const navigate = useNavigate();
   const { sellerData, userData } = useSelector((state) => ({
     sellerData: state.auth.sellerAccount,
     userData: state.auth.profile,
@@ -74,11 +72,9 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
 
   const handleAutocompleteChange = useCallback(
     (fieldName, value) => {
-      // Update state based on fieldName
       setInputValues((prevValues) => {
         const newValues = { ...prevValues, [fieldName]: value };
 
-        // If a vendor contact person is selected, also update contact and email fields
         if (fieldName === "vendor_contact_person") {
           const selectedContact = recordForEdit.contacts.find(
             (contact) => contact.name === value
@@ -87,12 +83,20 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
             newValues.vendor_contact = selectedContact.contact;
             newValues.vendor_email = selectedContact.email;
           }
+
+          // Set currency based on vendor type from recordForEdit
+          if (recordForEdit.type === "Domestic") {
+            newValues.currency = "INR";
+          } else if (recordForEdit.type === "International") {
+            // Remove INR from options or set to a default currency for International
+            newValues.currency = ""; // This can be set to a different default if needed
+          }
         }
 
         return newValues;
       });
     },
-    [recordForEdit.contacts] // Now depends on contacts from recordForEdit
+    [recordForEdit.type, recordForEdit.contacts]
   );
 
   const handleProductChange = (index, field, value) => {
@@ -165,6 +169,15 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
   };
 
   useEffect(() => {
+    if (recordForEdit) {
+      setInputValues((prevValues) => ({
+        ...prevValues,
+        vendor_type: recordForEdit.type,
+      }));
+    }
+  }, [recordForEdit]);
+
+  useEffect(() => {
     getProduct();
     getCurrencyDetails();
     getCurrentPurchaseOrderNo();
@@ -204,12 +217,26 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
     setLoading(true);
     try {
       const response = await InventoryServices.getCurrencyData();
-
       if (response && response.data) {
-        setCurrencyOption(response.data);
+        let filteredCurrencyOptions = response.data;
+        if (recordForEdit.type === "International") {
+          // Exclude INR for international vendors
+          filteredCurrencyOptions = filteredCurrencyOptions.filter(
+            (option) => option.name !== "INR"
+          );
+        }
+        setCurrencyOption(filteredCurrencyOptions);
+
+        // Set default currency to INR if vendor is Domestic
+        if (recordForEdit.type === "Domestic" && !inputValues.currency) {
+          setInputValues((prevValues) => ({
+            ...prevValues,
+            currency: "INR",
+          }));
+        }
       }
     } catch (err) {
-      console.error("Error fetching daily sales review data", err);
+      console.error("Error fetching currency data", err);
     } finally {
       setLoading(false);
     }
@@ -241,7 +268,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
         seller_account: inputValues.seller_account,
         payment_terms: inputValues.payment_terms,
         delivery_terms: inputValues.delivery_terms,
-        schedule_date: inputValues.schedule_date || today,
+        schedule_date: inputValues.schedule_date,
         currency: inputValues.currency,
         po_no: inputValues.po_no,
         po_date: inputValues.po_date,
@@ -251,7 +278,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
 
       const response = await InventoryServices.createPurchaseOrderData(req);
       if (response) {
-        navigate("/inventory/view-purchase-order");
+        setOpenPopup(false);
         incrementPurchaseOrderNo();
       }
       setLoading(false);
@@ -314,6 +341,17 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
             />
           </Grid>
           <Grid item xs={12} sm={3}>
+            <CustomTextField
+              disabled
+              fullWidth
+              size="small"
+              label="Vendor Type"
+              variant="outlined"
+              value={inputValues.vendor_type || ""}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={3}>
             <CustomAutocomplete
               size="small"
               disablePortal
@@ -324,7 +362,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
               options={sellerData.map((option) => option.unit)}
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
-              label="Seller Account"
+              label="Buyer Account"
             />
           </Grid>
 
@@ -359,6 +397,7 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
           <Grid item xs={12} sm={3}>
             <CustomTextField
               fullWidth
+              disabled
               size="small"
               name="po_no"
               label="Purchase Order No."
@@ -370,13 +409,13 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
           <Grid item xs={12} sm={3}>
             <CustomTextField
               fullWidth
+              disabled
               type="date"
               name="po_date"
               size="small"
               label="Purchase Order Date"
               variant="outlined"
-              value={inputValues.po_date || today}
-              onChange={handleInputChange}
+              value={inputValues.po_date}
               InputProps={{ inputProps: { min: today, max: today } }}
             />
           </Grid>
@@ -384,7 +423,11 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
             <CustomAutocomplete
               size="small"
               disablePortal
-              id="combo-box-demo"
+              id="currency-autocomplete"
+              value={
+                currencyOption.find((c) => c.name === inputValues.currency) ||
+                null
+              }
               onChange={(event, value) =>
                 setInputValues({ ...inputValues, currency: value.name })
               }
@@ -403,19 +446,10 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
               label="Schedule Date"
               variant="outlined"
               value={inputValues.schedule_date}
-              onChange={handleInputChange}
               InputProps={{ inputProps: { min: today } }} // Restrict past dates
             />
           </Grid>
-          <Grid item xs={12} sm={3}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Issued By"
-              variant="outlined"
-              value={inputValues.created_by || ""}
-            />
-          </Grid>
+
           <Grid item xs={12}>
             <Root>
               <Divider>
@@ -482,14 +516,12 @@ export const PurchaseOrderCreate = ({ recordForEdit }) => {
                 <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
+                    disabled
                     name="amount"
                     size="small"
                     label="Amount"
                     variant="outlined"
                     value={input.amount || ""}
-                    onChange={(event) =>
-                      handleProductChange(index, "amount", event.target.value)
-                    }
                   />
                 </Grid>
                 <Grid item xs={12} sm={1} alignContent="right">

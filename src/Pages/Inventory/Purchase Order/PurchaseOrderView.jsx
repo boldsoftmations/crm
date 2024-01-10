@@ -33,7 +33,10 @@ import InvoiceServices from "../../../services/InvoiceService";
 import { useDispatch } from "react-redux";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
 import CustomTextField from "../../../Components/CustomTextField";
-import { PackingListCreate } from "../PackingList/PackingListCreate";
+import {
+  PackingListCreate,
+  PackingListMergeCreate,
+} from "../PackingList/PackingListCreate";
 import { PurchaseOrderPDF } from "./PurchaseOrderPDF";
 import jsPDF from "jspdf";
 import { pdf } from "@react-pdf/renderer";
@@ -49,6 +52,7 @@ export const PurchaseOrderView = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [contactNameOption, setContactNameOption] = useState("");
   const [openCreatePLPopup, setOpenCreatePLPopup] = useState(false);
+  const [openMergePLPopup, setOpenMergePLPopup] = useState(false);
   const dispatch = useDispatch();
 
   const handleDownload = async (data) => {
@@ -100,11 +104,6 @@ export const PurchaseOrderView = () => {
     } finally {
       setOpen(false);
     }
-  };
-
-  const handleAccept = (item) => {
-    // setOpenAcceptPopup(true);
-    // setMaterialTransferNoteByID(item);
   };
 
   const handleSearchChange = (event) => {
@@ -250,17 +249,24 @@ export const PurchaseOrderView = () => {
                   Reset
                 </Button>
               </Grid>
+              <Grid item xs={12} sm={2}>
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={() => {
+                    setOpenMergePLPopup(true);
+                  }}
+                >
+                  Merge PL
+                </Button>
+              </Grid>
             </Grid>
           </Box>
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={6}></Grid>
-
-              <Grid item xs={12} sm={3}>
-                {/* Customer Header */}
+              <Grid item xs={12} sx={{ textAlign: "center" }}>
                 <h3
                   style={{
-                    textAlign: "left",
                     fontSize: "24px",
                     color: "rgb(34, 34, 34)",
                     fontWeight: 800,
@@ -269,7 +275,6 @@ export const PurchaseOrderView = () => {
                   Purchase Order Book
                 </h3>
               </Grid>
-              <Grid item xs={12} sm={3}></Grid>
             </Grid>
           </Box>
           <TableContainer
@@ -362,6 +367,17 @@ export const PurchaseOrderView = () => {
           selectedRow={selectedRow}
         />
       </Popup>
+      <Popup
+        fullScreen={true}
+        title="Merge Packing List"
+        openPopup={openMergePLPopup}
+        setOpenPopup={setOpenMergePLPopup}
+      >
+        <PackingListMergeCreate
+          setOpenPopup={setOpenMergePLPopup}
+          purchaseOrderData={purchaseOrderData}
+        />
+      </Popup>
     </>
   );
 };
@@ -434,7 +450,9 @@ function Row(props) {
                           {historyRow.quantity}
                         </StyledTableCell>
                         <StyledTableCell align="center">
-                          {historyRow.pending_quantity}
+                          {row.close_short === true
+                            ? 0
+                            : historyRow.pending_quantity}
                         </StyledTableCell>
                       </StyledTableRow>
                     ))}

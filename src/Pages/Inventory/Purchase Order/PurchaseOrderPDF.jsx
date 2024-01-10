@@ -87,7 +87,7 @@ export const PurchaseOrderPDF = ({ purchaseOrderData, AMOUNT_IN_WORDS }) => {
                 </View>
                 <View style={{ ...cellStyle, ...borderRightStyle }}>
                   <Text style={{ ...innerTextStyle }}>
-                    {purchaseOrderData.symbol && `${purchaseOrderData.symbol} `}
+                    {purchaseOrderData.symbol + " "}
                     {purchaseOrderData.currency}
                   </Text>
                 </View>
@@ -452,6 +452,7 @@ export const PurchaseOrderPDF = ({ purchaseOrderData, AMOUNT_IN_WORDS }) => {
                 </View>
                 <View style={cellStyle}>
                   <Text style={{ ...innerTextStyle, textAlign: "center" }}>
+                    {purchaseOrderData.symbol + " "}
                     {purchaseOrderData.round_off_total}
                   </Text>
                 </View>
@@ -624,7 +625,7 @@ const Info = [
   },
   {
     id: "8)",
-    text: "Please ensure that proper broadcasting is followed for each item mentioned in this purchase order, if barcoding is not followed, the material will be rejected and sent back on your account.",
+    text: "Please ensure that proper barcoding is followed for each item mentioned in this purchase order, if barcoding is not followed, the material will be rejected and sent back on your account.",
   },
 ];
 
@@ -667,7 +668,7 @@ const Information = [
   },
   {
     id: "10)",
-    text: "Please ensure that proper broadcasting is followed for each item mentioned in this purchase order, if barcoding is not followed, the material will be rejected and sent back on your account.",
+    text: "Please ensure that proper barcoding is followed for each item mentioned in this purchase order, if barcoding is not followed, the material will be rejected and sent back on your account.",
   },
 ];
 

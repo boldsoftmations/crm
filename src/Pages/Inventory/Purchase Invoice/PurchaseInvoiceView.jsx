@@ -155,11 +155,14 @@ export const PurchaseInvoiceView = () => {
                 <StyledTableRow>
                   <StyledTableCell align="center"></StyledTableCell>
                   <StyledTableCell align="center">INVOICE</StyledTableCell>
-                  <StyledTableCell align="center">GRN</StyledTableCell>
+                  <StyledTableCell align="center">GRN NO</StyledTableCell>
+                  <StyledTableCell align="center">GRN Date</StyledTableCell>
+                  <StyledTableCell align="center">
+                    SALES ORDER NO
+                  </StyledTableCell>
                   <StyledTableCell align="center">VENDOR</StyledTableCell>
                   <StyledTableCell align="center">INVOICE NO </StyledTableCell>
                   <StyledTableCell align="center">ORDER DATE</StyledTableCell>
-
                   <StyledTableCell align="center">Action</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
@@ -224,7 +227,9 @@ function Row(props) {
           </IconButton>
         </StyledTableCell>
         <StyledTableCell align="center">{row.invoice_no}</StyledTableCell>
-        <StyledTableCell align="center">{row.grn}</StyledTableCell>
+        <StyledTableCell align="center">{row.grn_no}</StyledTableCell>
+        <StyledTableCell align="center">{row.grn_date}</StyledTableCell>
+        <StyledTableCell align="center">{row.po_no}</StyledTableCell>
         <StyledTableCell align="center">{row.supplier_name}</StyledTableCell>
         <StyledTableCell align="center">{row.packing_list_no}</StyledTableCell>
         <StyledTableCell align="center">{row.order_date}</StyledTableCell>

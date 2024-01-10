@@ -88,6 +88,7 @@ export const VendorView = () => {
   const Tabledata = vendorData.map((row) => ({
     id: row.id,
     name: row.name,
+    type: row.type,
     pan_number: row.pan_number,
     gst_number: row.gst_number,
     city: row.city,
@@ -97,6 +98,7 @@ export const VendorView = () => {
   const Tableheaders = [
     "ID",
     "Vendor",
+    "Type",
     "Pan No.",
     "Gst No.",
     "City",
@@ -209,7 +211,10 @@ export const VendorView = () => {
         openPopup={openPopupPurchaseOrder}
         setOpenPopup={setOpenPopupPurchaseOrder}
       >
-        <PurchaseOrderCreate recordForEdit={recordForEdit} />
+        <PurchaseOrderCreate
+          setOpenPopup={setOpenPopupPurchaseOrder}
+          recordForEdit={recordForEdit}
+        />
       </Popup>
     </>
   );

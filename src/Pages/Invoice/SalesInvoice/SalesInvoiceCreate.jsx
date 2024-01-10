@@ -85,7 +85,7 @@ export const SalesInvoiceCreate = (props) => {
   const getCustomerWiseOrderBook = async (value) => {
     try {
       setOpen(true); // Show loading spinner
-
+      console.log("value", value);
       const data = value;
 
       // Initialize arrays

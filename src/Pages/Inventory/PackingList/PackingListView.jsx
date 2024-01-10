@@ -319,7 +319,10 @@ function Row({ row, openInPopup, handleCreateGrn, userData }) {
         </StyledTableCell>
         <StyledTableCell align="center">{row.invoice_date}</StyledTableCell>
         <StyledTableCell align="center">{row.packing_list_no}</StyledTableCell>
-        <StyledTableCell align="center">{row.purchase_order}</StyledTableCell>
+        <StyledTableCell align="center">
+          {row.purchase_order.join(", ")}
+        </StyledTableCell>
+
         <StyledTableCell align="center">{row.vendor}</StyledTableCell>
         <StyledTableCell align="center">{row.seller_account}</StyledTableCell>
 

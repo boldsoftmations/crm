@@ -244,7 +244,7 @@ function Row(props) {
         <StyledTableCell align="center">{row.vendor}</StyledTableCell>
         <StyledTableCell align="center">{row.packing_list}</StyledTableCell>
         <StyledTableCell align="center">
-          <Button onClick={() => openInPopup(row.grn_no)}>Edit</Button>
+          {/* <Button onClick={() => openInPopup(row.grn_no)}>Edit</Button> */}
           {(userData.groups.includes("Accounts Executive") ||
             userData.groups.includes("Director") ||
             userData.groups.includes("Accounts")) && (
