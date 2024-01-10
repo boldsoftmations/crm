@@ -1,5 +1,13 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Box, Button, Grid, IconButton, Snackbar, styled } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  Snackbar,
+  styled,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CustomTextField from "../../../Components/CustomTextField";
 import InventoryServices from "../../../services/InventoryService";
@@ -241,9 +249,8 @@ export const PackingListMergeCreate = ({
       seller_account: value,
     }));
   };
-  console.log("poOptionsForSelectedAccount", poOptionsForSelectedAccount);
-  // Triggered when PO numbers are selected
-  const handlePoNoChange = (event, newValue) => {
+
+  const handlePoNoChange = (newValue) => {
     if (newValue && newValue.length > 0) {
       // Process the newValue array to ensure it contains objects with 'value' property
       const processedNewValue = newValue.map((po) =>
@@ -280,9 +287,6 @@ export const PackingListMergeCreate = ({
       setSelectedPoNos([]);
     }
   };
-
-  console.log("selectedPoNos", selectedPoNos);
-  console.log("details", details);
 
   const handleInput = useCallback((e) => {
     const { name, value } = e.target;
@@ -344,7 +348,7 @@ export const PackingListMergeCreate = ({
         />
         <Grid container spacing={2}>
           <Grid item xs={12} sm={3}>
-            <CustomAutocomplete
+            <Autocomplete
               size="small"
               disablePortal
               id="buyer-account-autocomplete"
@@ -363,12 +367,13 @@ export const PackingListMergeCreate = ({
           </Grid>
           {poOptionsForSelectedAccount.length > 0 && (
             <Grid item xs={12} sm={3}>
-              <CustomAutocomplete
+              <Autocomplete
+                size="small"
                 multiple
                 options={poOptionsForSelectedAccount}
                 getOptionLabel={(option) => (option ? option.label : "")}
-                value={selectedPoNos}
-                onChange={handlePoNoChange}
+                // value={selectedPoNos}
+                onChange={(event, value) => handlePoNoChange(value)}
                 renderInput={(params) => (
                   <CustomTextField
                     {...params}
