@@ -14,7 +14,7 @@ const Root = styled("div")(({ theme }) => ({
 }));
 
 export const PurchaseInvoiceCreate = (props) => {
-  const { setOpenPopup, recordForEdit } = props;
+  const { setOpenPopup, recordForEdit, getAllVendorDetails } = props;
   const [open, setOpen] = useState(false);
   const [products, setProducts] = useState(
     recordForEdit.products.map((product) => {
@@ -57,6 +57,7 @@ export const PurchaseInvoiceCreate = (props) => {
       console.log("createing Packing list", req);
       await InventoryServices.createPurchaseInvoiceData(req);
       console.log("createing Packing list");
+      getAllVendorDetails();
       setOpenPopup(false);
       setOpen(false);
     } catch (error) {

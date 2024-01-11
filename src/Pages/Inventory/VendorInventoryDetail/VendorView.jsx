@@ -223,6 +223,7 @@ export const VendorView = () => {
         <PurchaseOrderCreate
           setOpenPopup={setOpenPopupPurchaseOrder}
           recordForEdit={recordForEdit}
+          getAllVendorDetails={getAllVendorDetails}
         />
       </Popup>
     </>

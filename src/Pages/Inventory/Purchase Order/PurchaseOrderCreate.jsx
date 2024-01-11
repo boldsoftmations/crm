@@ -25,7 +25,11 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const PurchaseOrderCreate = ({ recordForEdit, setOpenPopup }) => {
+export const PurchaseOrderCreate = ({
+  recordForEdit,
+  setOpenPopup,
+  getAllVendorDetails,
+}) => {
   console.log("recordForEdit", recordForEdit);
   const { sellerData, userData } = useSelector((state) => ({
     sellerData: state.auth.sellerAccount,
@@ -278,6 +282,7 @@ export const PurchaseOrderCreate = ({ recordForEdit, setOpenPopup }) => {
 
       const response = await InventoryServices.createPurchaseOrderData(req);
       if (response) {
+        getAllVendorDetails();
         setOpenPopup(false);
         incrementPurchaseOrderNo();
       }
