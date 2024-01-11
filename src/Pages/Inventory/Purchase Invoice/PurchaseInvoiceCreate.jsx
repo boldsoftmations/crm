@@ -125,7 +125,7 @@ export const PurchaseInvoiceCreate = ({
               size="small"
               label="Purchase Order No"
               variant="outlined"
-              value={recordForEdit.purchase_order || ""}
+              value={recordForEdit.po_no || ""}
               disabled
             />
           </Grid>
