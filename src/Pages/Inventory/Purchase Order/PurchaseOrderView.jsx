@@ -33,13 +33,11 @@ import InvoiceServices from "../../../services/InvoiceService";
 import { useDispatch } from "react-redux";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
 import CustomTextField from "../../../Components/CustomTextField";
-import {
-  PackingListCreate,
-  PackingListMergeCreate,
-} from "../PackingList/PackingListCreate";
+import { PackingListCreate } from "../PackingList/PackingListCreate";
 import { PurchaseOrderPDF } from "./PurchaseOrderPDF";
 import jsPDF from "jspdf";
 import { pdf } from "@react-pdf/renderer";
+import { PackingListMergeCreate } from "../PackingList/PackingListMergeCreate";
 
 export const PurchaseOrderView = () => {
   const [openPopupUpdate, setOpenPopupUpdate] = useState(false);
