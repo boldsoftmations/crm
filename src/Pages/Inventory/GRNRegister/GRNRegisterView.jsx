@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { CustomPagination } from "../../../Components/CustomPagination";
-import { CustomTable } from "../../../Components/CustomTable";
+import jsPDF from "jspdf";
+import { pdf } from "@react-pdf/renderer";
 import { CSVLink } from "react-csv";
 import {
   Box,
@@ -16,10 +17,12 @@ import {
   TableRow,
   TableCell,
   Button,
+  Typography,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import { useSelector } from "react-redux";
 import CustomTextField from "../../../Components/CustomTextField";
+import { GRNPDFDownload } from "./GRNPDFDownload";
 
 export const GRNRegisterView = () => {
   const [open, setOpen] = useState(false);
@@ -51,46 +54,73 @@ export const GRNRegisterView = () => {
   };
 
   const headers = [
-    { label: "PRODUCT", key: "product" },
-    { label: "SELLER STATE", key: "seller_account" },
-    { label: "DESCRIPTION", key: "description" },
-    { label: "DATE", key: "created_on" },
-    { label: "UNIT", key: "unit" },
-    { label: "QUANTITY", key: "quantity" },
-    { label: "PENDING QUANTITY", key: "pending_quantity" },
-    { label: "RATE", key: "rate" },
-    { label: "AMOUNT", key: "amount" },
+    { label: "Date", key: "invoice_date" },
+    { label: "Vendor", key: "vendor" },
+    { label: "Invoice No", key: "invoice_no" },
+    { label: "Description", key: "description" },
+    { label: "Product", key: "products" },
+    { label: "Order Quantity", key: "invoice_quantity" },
+    { label: "QA Rejected Quantity", key: "qa_rejected" },
+    { label: "Received Quantity", key: "qa_recieved" },
   ];
 
   const handleExport = async () => {
     try {
       setOpen(true);
-      let response;
-      if (searchQuery) {
-        response = await InventoryServices.getAllStoresInventoryDetails(
-          "all",
-          searchQuery
-        );
-      } else {
-        response = await InventoryServices.getAllStoresInventoryDetails("all");
-      }
-      const data = response.data.map((row) => {
-        return {
-          product: row.product,
-          seller_account: row.seller_account,
-          description: row.description,
-          created_on: row.created_on,
-          unit: row.unit,
-          quantity: row.quantity,
-          pending_quantity: row.pending_quantity,
-          rate: row.rate,
-          amount: row.amount,
-        };
-      });
+      const response = await InventoryServices.getAllGRNRegisterDetails(
+        selectedYearMonth,
+        "all"
+      );
+      const formattedData = response.data.map((row) => ({
+        invoice_date: row.invoice_date,
+        vendor: row.vendor,
+        invoice_no: row.invoice_no,
+        description: row.description,
+        products: row.products,
+        invoice_quantity: row.invoice_quantity,
+        qa_rejected: row.qa_rejected,
+        qa_recieved: row.qa_recieved,
+      }));
+      console.log("formattedData", formattedData);
+      return formattedData;
+    } catch (error) {
+      console.error("CSVLink Download error", error);
+    } finally {
       setOpen(false);
-      return data;
-    } catch (err) {
-      console.log(err);
+    }
+  };
+
+  const handlePrint = async (data) => {
+    try {
+      setOpen(true);
+
+      // create a new jsPDF instance
+      const pdfDoc = new jsPDF();
+
+      // generate the PDF document
+      const pdfData = await pdf(
+        <GRNPDFDownload grnRegisterPDFData={data} />,
+        pdfDoc,
+        {
+          // set options here if needed
+        }
+      ).toBlob();
+
+      // create a temporary link element to trigger the download
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(pdfData);
+      link.download = `${data.vendor}- ${data.invoice_no}.pdf`;
+      document.body.appendChild(link);
+
+      // trigger the download
+      link.click();
+
+      // clean up the temporary link element
+      document.body.removeChild(link);
+
+      setOpen(false);
+    } catch (error) {
+      console.log("error exporting pdf", error);
     } finally {
       setOpen(false);
     }
@@ -142,6 +172,7 @@ export const GRNRegisterView = () => {
     "Order Quantity",
     "QA Rejected Quantity",
     "Received Quantity",
+    "Action",
   ];
 
   return (
@@ -149,26 +180,60 @@ export const GRNRegisterView = () => {
       <CustomLoader open={open} />
       <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
         <Box display="flex" marginBottom="10px">
-          <CustomTextField
-            size="small"
-            type="month"
-            label="Filter By Month and Year"
-            value={selectedYearMonth}
-            onChange={(e) => setSelectedYearMonth(e.target.value)}
-            sx={{ width: 200, marginRight: "15rem" }}
-          />
+          <Grid container alignItems="center" spacing={2} sx={{ mb: 2, mx: 3 }}>
+            <Grid item xs={12} sm={4} md={4}>
+              <CustomTextField
+                size="small"
+                type="month"
+                label="Filter By Month and Year"
+                value={selectedYearMonth}
+                onChange={(e) => setSelectedYearMonth(e.target.value)}
+                fullWidth
+              />
+            </Grid>
 
-          <h3
-            style={{
-              marginBottom: "1em",
-              fontSize: "24px",
-              color: "rgb(34, 34, 34)",
-              fontWeight: 800,
-              textAlign: "center",
-            }}
-          >
-            GRN Registers
-          </h3>
+            {/* Typography in the Center */}
+            <Grid item xs={12} sm={4} md={4}>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 800,
+                  color: "rgb(34, 34, 34)",
+                  textAlign: "center",
+                }}
+              >
+                GRN Registers
+              </Typography>
+            </Grid>
+
+            {/* Download CSV Button on the Right */}
+            <Grid
+              item
+              xs={12}
+              sm={4}
+              md={4}
+              sx={{ display: "flex", justifyContent: "flex-end" }}
+            >
+              <Button onClick={handleDownload} variant="contained">
+                Download CSV
+              </Button>
+            </Grid>
+
+            {exportData.length > 0 && (
+              <CSVLink
+                data={exportData}
+                headers={headers}
+                ref={csvLinkRef}
+                filename="GRN Register.csv"
+                target="_blank"
+                style={{
+                  textDecoration: "none",
+                  outline: "none",
+                  width: "100%",
+                }}
+              />
+            )}
+          </Grid>
         </Box>
         <TableContainer
           sx={{
@@ -209,6 +274,15 @@ export const GRNRegisterView = () => {
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     {row.qa_recieved}
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    <Button
+                      onClick={() => {
+                        handlePrint(row);
+                      }}
+                    >
+                      Download
+                    </Button>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
