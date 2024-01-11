@@ -446,6 +446,7 @@ export const PurchaseOrderCreate = ({ recordForEdit, setOpenPopup }) => {
               label="Schedule Date"
               variant="outlined"
               value={inputValues.schedule_date}
+              onChange={handleInputChange}
               InputProps={{ inputProps: { min: today } }} // Restrict past dates
             />
           </Grid>

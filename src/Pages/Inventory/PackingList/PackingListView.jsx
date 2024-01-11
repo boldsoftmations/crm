@@ -327,14 +327,14 @@ function Row({ row, openInPopup, handleCreateGrn, userData }) {
         <StyledTableCell align="center">{row.seller_account}</StyledTableCell>
 
         <StyledTableCell align="center">
-          {
+          {/* {
             // Show Edit button only if the user is NOT in any of the specified groups
             !userData.groups.includes("Stores Delhi") &&
               !userData.groups.includes("Production Delhi") &&
               !userData.groups.includes("Stores") && (
                 <Button onClick={() => openInPopup(row)}>Edit</Button>
               )
-          }
+          } */}
           {
             // Show Create GRN button if the user is in any of the specified groups
             (userData.groups.includes("Stores Delhi") ||

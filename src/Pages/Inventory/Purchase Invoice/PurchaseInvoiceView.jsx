@@ -34,13 +34,19 @@ export const PurchaseInvoiceView = () => {
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const currentYearMonth = `${new Date().getFullYear()}-${(
+    new Date().getMonth() + 1
+  )
+    .toString()
+    .padStart(2, "0")}`;
+  const [selectedYearMonth, setSelectedYearMonth] = useState(currentYearMonth);
 
   useEffect(() => {
     getAllPurchaseInvoiceDetails(currentPage);
-  }, [currentPage, getAllPurchaseInvoiceDetails]);
+  }, [currentPage, selectedYearMonth, getAllPurchaseInvoiceDetails]);
 
   const getAllPurchaseInvoiceDetails = useCallback(
-    async (page, search = searchQuery) => {
+    async (page, filter = selectedYearMonth, search = searchQuery) => {
       try {
         setOpen(true);
         const response = await InventoryServices.getAllPurchaseInvoiceData(
@@ -55,7 +61,7 @@ export const PurchaseInvoiceView = () => {
         console.error("error", error);
       }
     },
-    [searchQuery] // Depend on acceptedFilter directly
+    [selectedYearMonth, searchQuery] // Depend on acceptedFilter directly
   );
 
   const handleSearchChange = (event) => {
@@ -78,6 +84,17 @@ export const PurchaseInvoiceView = () => {
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} sm={3}>
+                <CustomTextField
+                  fullWidth
+                  size="small"
+                  type="month"
+                  label="Filter By Month and Year"
+                  value={selectedYearMonth}
+                  onChange={(e) => setSelectedYearMonth(e.target.value)}
+                  // sx={{ width: 200, marginRight: "15rem" }}
+                />
+              </Grid>
               <Grid item xs={12} sm={3}>
                 <CustomTextField
                   size="small"
@@ -154,7 +171,6 @@ export const PurchaseInvoiceView = () => {
               <TableHead>
                 <StyledTableRow>
                   <StyledTableCell align="center"></StyledTableCell>
-                  <StyledTableCell align="center">INVOICE</StyledTableCell>
                   <StyledTableCell align="center">GRN NO</StyledTableCell>
                   <StyledTableCell align="center">GRN Date</StyledTableCell>
                   <StyledTableCell align="center">
@@ -227,7 +243,6 @@ function Row(props) {
           </IconButton>
         </StyledTableCell>
         <StyledTableCell align="center">{row.invoice_no}</StyledTableCell>
-        <StyledTableCell align="center">{row.grn_no}</StyledTableCell>
         <StyledTableCell align="center">{row.grn_date}</StyledTableCell>
         <StyledTableCell align="center">{row.po_no}</StyledTableCell>
         <StyledTableCell align="center">{row.supplier_name}</StyledTableCell>

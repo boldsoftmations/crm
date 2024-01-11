@@ -105,12 +105,12 @@ export const GRNRegisterView = () => {
   }, [currentPage, selectedYearMonth, getAllGRNRegisterDetails]);
 
   const getAllGRNRegisterDetails = useCallback(
-    async (page, filter = selectedYearMonth) => {
+    async (page) => {
       try {
         setOpen(true);
         const response = await InventoryServices.getAllGRNRegisterDetails(
-          page,
-          filter
+          selectedYearMonth,
+          page
         );
         setGRNRegisterData(response.data.results);
         setPageCount(Math.ceil(response.data.count / 25));

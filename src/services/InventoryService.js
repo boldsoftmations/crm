@@ -168,15 +168,15 @@ const updateGRNData = (id, data) => {
 };
 
 // GRN Register
-const getAllGRNRegisterDetails = (page, yearMonthFilter) => {
+const getAllGRNRegisterDetails = (yearMonthFilter, page) => {
   const params = new URLSearchParams();
-
-  if (page) {
-    params.append("page", page);
-  }
 
   if (yearMonthFilter) {
     params.append("year_month", yearMonthFilter);
+  }
+
+  if (page) {
+    params.append("page", page);
   }
 
   // if (searchValue) {
@@ -187,12 +187,16 @@ const getAllGRNRegisterDetails = (page, yearMonthFilter) => {
 };
 
 // Purchase Invoice List Api
-const getAllPurchaseInvoiceData = (page, searchValue) => {
+const getAllPurchaseInvoiceData = (page, yearMonthFilter, searchValue) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
 
   if (page) {
     params.append("page", page);
+  }
+
+  if (yearMonthFilter) {
+    params.append("year_month", yearMonthFilter);
   }
 
   if (searchValue) {

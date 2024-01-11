@@ -66,7 +66,7 @@ export const PackingListUpdate = ({
         purchase_order: packingListDetails.purchase_order || null,
 
         packing_list_no: packingListDetails.packing_list_no || null,
-        invoice_date: packingListDetails.invoice_date || today,
+        invoice_date: packingListDetails.invoice_date,
         seller_account: packingListDetails.seller_account || null,
         products: products || [], // Send updated products
       };
@@ -130,25 +130,28 @@ export const PackingListUpdate = ({
           <Grid item xs={12} sm={3}>
             <CustomTextField
               fullWidth
+              disabled
               size="small"
               name="packing_list_no"
               label="Invoice No"
               variant="outlined"
               value={packingListDetails.packing_list_no || ""}
-              onChange={handleInput}
+              // onChange={handleInput}
             />
           </Grid>
           <Grid item xs={12} sm={3}>
             <CustomTextField
               fullWidth
-              type="date"
+              disabled
+              // type="date"
               size="small"
               name="invoice_date"
               label="Invoice Date"
               variant="outlined"
               InputLabelProps={{ shrink: true }}
-              value={packingListDetails.invoice_date || today}
-              onChange={handleInput}
+              value={packingListDetails.invoice_date}
+              // InputProps={{ inputProps: { max: today } }}
+              // onChange={handleInput}
             />
           </Grid>
           <Grid item xs={12}>
