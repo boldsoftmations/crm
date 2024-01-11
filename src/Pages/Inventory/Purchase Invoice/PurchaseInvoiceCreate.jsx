@@ -13,8 +13,7 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const PurchaseInvoiceCreate = (props) => {
-  const { setOpenPopup, recordForEdit } = props;
+export const PurchaseInvoiceCreate = ({ setOpenPopup, recordForEdit }) => {
   const [open, setOpen] = useState(false);
   const [products, setProducts] = useState(
     recordForEdit.products.map((product) => {
@@ -111,7 +110,7 @@ export const PurchaseInvoiceCreate = (props) => {
               size="small"
               label="Invoice Date"
               variant="outlined"
-              value={recordForEdit.order_date || ""}
+              value={recordForEdit.created_on || ""}
               disabled
             />
           </Grid>
@@ -121,7 +120,7 @@ export const PurchaseInvoiceCreate = (props) => {
               size="small"
               label="Purchase Order No"
               variant="outlined"
-              value={recordForEdit.po_no || ""}
+              value={recordForEdit.purchase_order || ""}
               disabled
             />
           </Grid>
