@@ -35,7 +35,7 @@ import { getSellerAccountData } from "../../../Redux/Action/Action";
 import CustomTextField from "../../../Components/CustomTextField";
 import { GRNCreate } from "../GRN/GRNCreate";
 
-export const PackingListView = () => {
+export const PackingListView = (getAllVendorDetails) => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.auth.profile);
   const [openPopup, setOpenPopup] = useState(false);
@@ -294,7 +294,11 @@ export const PackingListView = () => {
         openPopup={openPopupCreateGrn}
         setOpenPopup={setOpenPopupCreateGrn}
       >
-        <GRNCreate setOpenPopup={setOpenPopupCreateGrn} idForEdit={idForEdit} />
+        <GRNCreate
+          setOpenPopup={setOpenPopupCreateGrn}
+          idForEdit={idForEdit}
+          getAllVendorDetails={getAllVendorDetails}
+        />
       </Popup>
     </>
   );

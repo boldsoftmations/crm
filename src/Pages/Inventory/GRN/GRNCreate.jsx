@@ -7,13 +7,12 @@ import {
   IconButton,
   Snackbar,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
 import { styled } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -22,8 +21,7 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const GRNCreate = ({ setOpenPopup, idForEdit }) => {
-  const navigate = useNavigate();
+export const GRNCreate = ({ setOpenPopup, idForEdit, getAllVendorDetails }) => {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState(null);
   const [products, setProducts] = useState(
@@ -69,6 +67,7 @@ export const GRNCreate = ({ setOpenPopup, idForEdit }) => {
         products,
       });
       if (response) {
+        getAllVendorDetails();
         setOpenPopup(false);
       }
     } catch (err) {

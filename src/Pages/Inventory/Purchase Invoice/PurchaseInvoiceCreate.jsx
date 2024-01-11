@@ -13,7 +13,11 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const PurchaseInvoiceCreate = ({ setOpenPopup, recordForEdit }) => {
+export const PurchaseInvoiceCreate = ({
+  setOpenPopup,
+  recordForEdit,
+  getAllVendorDetails,
+}) => {
   const [open, setOpen] = useState(false);
   const [products, setProducts] = useState(
     recordForEdit.products.map((product) => {
@@ -56,6 +60,7 @@ export const PurchaseInvoiceCreate = ({ setOpenPopup, recordForEdit }) => {
       console.log("createing Packing list", req);
       await InventoryServices.createPurchaseInvoiceData(req);
       console.log("createing Packing list");
+      getAllVendorDetails();
       setOpenPopup(false);
       setOpen(false);
     } catch (error) {
