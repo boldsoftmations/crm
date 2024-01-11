@@ -340,8 +340,7 @@ function Row({ row, openInPopup, handleCreateGrn, userData }) {
             (userData.groups.includes("Stores Delhi") ||
               userData.groups.includes("Production Delhi") ||
               userData.groups.includes("Stores") ||
-              userData.groups.includes("Director") ||
-              userData.groups.includes("Accounts")) && (
+              userData.groups.includes("Director")) && (
               <Button onClick={() => handleCreateGrn(row)}>Create GRN</Button>
             )
           }

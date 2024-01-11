@@ -32,30 +32,6 @@ export const PurchaseOrderUpdate = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleProductChange = (index, field, value) => {
-    setInputValues((prevValues) => {
-      // Direct reference to the product that needs to be updated
-      let productToUpdate = prevValues.products[index];
-
-      // Update the field with the new value
-      productToUpdate = { ...productToUpdate, [field]: value };
-
-      // Calculate amount if quantity or rate is changed
-      if (field === "quantity" || field === "rate") {
-        const quantity = parseFloat(productToUpdate.quantity) || 0;
-        const rate = parseFloat(productToUpdate.rate) || 0;
-        productToUpdate.amount = (quantity * rate).toFixed(2); // Use toFixed(2) to format it as a decimal
-      }
-
-      // Create a new array with the updated product
-      const updatedProducts = Object.assign([...prevValues.products], {
-        [index]: productToUpdate,
-      });
-
-      return { ...prevValues, products: updatedProducts };
-    });
-  };
-
   const createPurchaseOrderDetails = async (e) => {
     try {
       e.preventDefault();
@@ -281,9 +257,6 @@ export const PurchaseOrderUpdate = ({
                     variant="outlined"
                     value={input.quantity || ""}
                     disabled
-                    onChange={(event) =>
-                      handleProductChange(index, "quantity", event.target.value)
-                    }
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
@@ -304,9 +277,7 @@ export const PurchaseOrderUpdate = ({
                     label="Rate"
                     variant="outlined"
                     value={input.rate || ""}
-                    onChange={(event) =>
-                      handleProductChange(index, "rate", event.target.value)
-                    }
+                    disabled
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
@@ -317,6 +288,7 @@ export const PurchaseOrderUpdate = ({
                     label="Amount"
                     variant="outlined"
                     value={input.amount || ""}
+                    disabled
                   />
                 </Grid>
                 {/* <Grid item xs={12} sm={1} alignContent="right"></Grid> */}

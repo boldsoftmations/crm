@@ -309,6 +309,9 @@ export const PurchaseOrderView = () => {
                     Buyer Account
                   </StyledTableCell>
                   <StyledTableCell align="center">Buyer State</StyledTableCell>
+                  <StyledTableCell align="center">
+                    Schedule Date
+                  </StyledTableCell>
                   <StyledTableCell align="center">Action</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
@@ -403,6 +406,7 @@ function Row(props) {
         <StyledTableCell align="center">{row.vendor}</StyledTableCell>
         <StyledTableCell align="center">{row.seller_account}</StyledTableCell>
         <StyledTableCell align="center">{row.seller_state}</StyledTableCell>
+        <StyledTableCell align="center">{row.schedule_date}</StyledTableCell>
 
         <StyledTableCell align="center">
           <Button onClick={() => handleEdit(row)}>Edit</Button>
