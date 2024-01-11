@@ -16,8 +16,8 @@ import CustomTextField from "../../../Components/CustomTextField";
 
 export const VendorView = () => {
   const dispatch = useDispatch();
-  const [openPopup, setOpenPopup] = useState(false);
-  const [openPopup2, setOpenPopup2] = useState(false);
+  const [openPopupUpdate, setOpenPopupUpdate] = useState(false);
+  const [openPopupCreate, setOpenPopupCreate] = useState(false);
   const [openPopupPurchaseOrder, setOpenPopupPurchaseOrder] = useState(false);
   const [open, setOpen] = useState(false);
   const errRef = useRef();
@@ -31,7 +31,7 @@ export const VendorView = () => {
   const openInPopupUpdate = (item) => {
     const matchedVendor = vendorData.find((lead) => lead.id === item.id);
     setRecordForEdit(matchedVendor);
-    setOpenPopup(true);
+    setOpenPopupUpdate(true);
   };
 
   const openInPopupPurchaseOrder = (item) => {
@@ -164,7 +164,16 @@ export const VendorView = () => {
                   Vendor
                 </h3>
               </Grid>
-              <Grid item xs={12} sm={3}></Grid>
+              <Grid item xs={12} sm={3}>
+                <Button
+                  onClick={() => setOpenPopupCreate(true)}
+                  variant="contained"
+                  color="success"
+                  // startIcon={<AddIcon />}
+                >
+                  Add
+                </Button>
+              </Grid>
             </Grid>
           </Box>
           <CustomTable
@@ -185,22 +194,22 @@ export const VendorView = () => {
       <Popup
         fullScreen={true}
         title={"Create Vendor Details"}
-        openPopup={openPopup2}
-        setOpenPopup={setOpenPopup2}
+        openPopup={openPopupCreate}
+        setOpenPopup={setOpenPopupCreate}
       >
         <CreateVendorDetails
-          setOpenPopup={setOpenPopup2}
+          setOpenPopup={setOpenPopupCreate}
           getAllVendorDetails={getAllVendorDetails}
         />
       </Popup>
       <Popup
         fullScreen={true}
         title={"Update Vendor Details"}
-        openPopup={openPopup}
-        setOpenPopup={setOpenPopup}
+        openPopup={openPopupUpdate}
+        setOpenPopup={setOpenPopupUpdate}
       >
         <UpdateAllVendorDetails
-          setOpenPopup={setOpenPopup}
+          setOpenPopup={setOpenPopupUpdate}
           getAllVendorDetails={getAllVendorDetails}
           recordForEdit={recordForEdit}
         />
