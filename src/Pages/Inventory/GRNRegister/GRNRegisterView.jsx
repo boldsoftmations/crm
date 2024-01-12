@@ -132,14 +132,14 @@ export const GRNRegisterView = () => {
 
   useEffect(() => {
     getAllGRNRegisterDetails(currentPage);
-  }, [currentPage, selectedYearMonth, getAllGRNRegisterDetails]);
+  }, [currentPage, getAllGRNRegisterDetails]);
 
   const getAllGRNRegisterDetails = useCallback(
-    async (page) => {
+    async (page, filter = selectedYearMonth) => {
       try {
         setOpen(true);
         const response = await InventoryServices.getAllGRNRegisterDetails(
-          selectedYearMonth,
+          filter,
           page
         );
         setGRNRegisterData(response.data.results);
@@ -164,6 +164,7 @@ export const GRNRegisterView = () => {
   };
 
   const Tableheaders = [
+    "Grn ID",
     "Date",
     "Vendor",
     "Invoce No",
@@ -187,7 +188,11 @@ export const GRNRegisterView = () => {
                 type="month"
                 label="Filter By Month and Year"
                 value={selectedYearMonth}
-                onChange={(e) => setSelectedYearMonth(e.target.value)}
+                onChange={(e) => {
+                  setCurrentPage(0);
+                  setSelectedYearMonth(e.target.value);
+                  getAllGRNRegisterDetails(0, e.target.value);
+                }}
                 fullWidth
               />
             </Grid>
@@ -253,6 +258,7 @@ export const GRNRegisterView = () => {
             <TableBody>
               {grnRegisterData.map((row, index) => (
                 <StyledTableRow key={index}>
+                  <StyledTableCell align="center">{row.grn_no}</StyledTableCell>
                   <StyledTableCell align="center">
                     {row.invoice_date}
                   </StyledTableCell>

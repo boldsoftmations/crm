@@ -1,151 +1,178 @@
 import React, { useCallback, useEffect, useState } from "react";
-import logo from "../../../Images/LOGOS3.png";
 import {
-  pdf,
-  Image,
   Document,
   Page,
-  View,
   Text,
+  View,
   StyleSheet,
+  Font,
 } from "@react-pdf/renderer";
-import moment from "moment";
+import InventoryServices from "../../../services/InventoryService";
+import { CustomLoader } from "../../../Components/CustomLoader";
 
-export const GRNPDFDownload = ({ grnRegisterPDFData }) => (
-  <Document>
-    <Page style={{ fontFamily: "Helvetica", fontSize: "12pt" }}>
-      <View style={{ padding: "20pt" }}>
-        <View style={style.container}>
-          <View style={style.row}>
-            <View style={style.cell}>
-              <Image style={style.logo} src={logo} />
-            </View>
-            <View
-              style={{
-                ...style.cell,
-                justifyContent: "center",
-                alignItems: "flex-start",
-              }}
-            >
-              <Text style={{ fontSize: "18pt", fontWeight: "bold" }}>
-                GRN Register
-              </Text>
-            </View>
-          </View>
+// Register a font if necessary
+// Font.register({ family: 'Oswald', src: 'http://fonts.gstatic.com/s/oswald/v13/Y_TKV6o8WovbUd3m_X9aAA.ttf' });
 
-          <View style={style.row}>
-            <View style={style.cell}>
-              <Text>Date</Text>
-            </View>
-            <View style={style.cell}>
-              <Text style={style.lightText}>
-                {moment(grnRegisterPDFData.invoice_date).format("DD-MM-YYYY")}
-              </Text>
-            </View>
-          </View>
-          <View style={style.row}>
-            <View style={style.cell}>
-              <Text>Vendor</Text>
-            </View>
-            <View style={style.cell}>
-              <Text style={style.lightText}>
-                {grnRegisterPDFData.vendor || "N/A"}
-              </Text>
-            </View>
-          </View>
-          <View style={style.row}>
-            <View style={style.cell}>
-              <Text>Invoice No</Text>
-            </View>
-            <View style={style.cell}>
-              <Text style={style.lightText}>
-                {grnRegisterPDFData.invoice_no || "N/A"}
-              </Text>
-            </View>
-          </View>
-          <View style={style.row}>
-            <View style={style.cell}>
-              <Text>Description</Text>
-            </View>
-            <View style={style.cell}>
-              <Text style={style.lightText}>
-                {grnRegisterPDFData.description}
-              </Text>
-            </View>
-          </View>
-          <View style={style.row}>
-            <View style={style.cell}>
-              <Text>Product</Text>
-            </View>
-            <View style={style.cell}>
-              <Text style={style.lightText}>
-                {grnRegisterPDFData.products || "N/A"}
-              </Text>
-            </View>
-          </View>
-          <View style={style.row}>
-            <View style={style.cell}>
-              <Text>Order Quantity</Text>
-            </View>
-            <View style={style.cell}>
-              <Text style={style.lightText}>
-                {grnRegisterPDFData.invoice_quantity || "N/A"}
-              </Text>
-            </View>
-          </View>
-          <View style={style.row}>
-            <View style={style.cell}>
-              <Text>QA Rejected</Text>
-            </View>
-            <View style={style.cell}>
-              <Text style={style.lightText}>
-                {grnRegisterPDFData.qa_rejected || "N/A"}
-              </Text>
-            </View>
-          </View>
-          <View style={style.row}>
-            <View style={style.cell}>
-              <Text>Received Quantity</Text>
-            </View>
-            <View style={style.cell}>
-              <Text style={style.lightText}>
-                {grnRegisterPDFData.qa_recieved}
-              </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    </Page>
-  </Document>
-);
-
-const style = StyleSheet.create({
-  container: {
-    // margin: "50pt",
-    // padding: "10pt",
-    border: "1pt solid #ccc",
-  },
-  row: {
-    display: "flex",
-    flexDirection: "row",
-    borderBottom: "1pt solid #ccc",
-    padding: "5pt",
+const styles = StyleSheet.create({
+  page: {
+    padding: 10,
+    fontSize: 11,
+    fontFamily: "Helvetica",
   },
   header: {
-    backgroundColor: "#eee",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 3,
+  },
+  title: {
     fontWeight: "bold",
   },
-  cell: {
-    flex: 1,
-    flexGrow: 1,
-    textAlign: "center",
-    padding: "5pt",
+  table: {
+    display: "table",
+    width: "auto",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderRightWidth: 0,
+    borderBottomWidth: 0,
   },
-  logo: {
-    height: "auto",
-    width: "100pt",
+  tableRow: {
+    flexDirection: "row",
+    borderBottomColor: "#000",
+    borderBottomWidth: 1,
+    alignItems: "center",
+    height: 24,
   },
-  lightText: {
-    color: "#777", // set the color to a light gray color
+  tableRowHeader: {
+    backgroundColor: "#CCCCCC",
+    height: 20,
+  },
+  tableColHeader: {
+    borderStyle: "solid",
+    borderColor: "#000",
+    borderBottomColor: "#000",
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+    fontWeight: "bold",
+  },
+  tableCol: {
+    borderStyle: "solid",
+    borderColor: "#000",
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+  },
+  tableCellHeader: {
+    margin: "auto",
+    margin: 5,
+    fontSize: 10,
+    fontWeight: "bold",
+  },
+  tableCell: {
+    margin: "auto",
+    margin: 5,
+    fontSize: 10,
+  },
+  footer: {
+    marginTop: 5,
+    paddingTop: 5,
+    borderTopWidth: 1,
+    borderTopColor: "#000",
+    borderTopStyle: "solid",
   },
 });
+
+export const GRNPDFDownload = ({ GRN_ID }) => {
+  const [grnRegisterPDFData, setGRNRegisterPDFData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Fetch GRN data
+  const fetchGRNData = useCallback(async () => {
+    if (GRN_ID) {
+      try {
+        setIsLoading(true);
+        const response = await InventoryServices.getGRNDataById(GRN_ID);
+        setGRNRegisterPDFData(response.data.results);
+      } catch (error) {
+        console.error("Error fetching GRN data", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }, [GRN_ID]);
+
+  useEffect(() => {
+    fetchGRNData();
+  }, [fetchGRNData]);
+
+  console.log("grnRegisterPDFData", grnRegisterPDFData);
+  return (
+    <>
+      <CustomLoader open={isLoading} />
+      <Document>
+        <Page size="A4" style={styles.page}>
+          <View style={styles.header}>
+            <Text style={styles.title}>GOODS RECEIVED NOTE</Text>
+            <Text style={styles.title}>
+              GRN No. {grnRegisterPDFData.grn_no}
+            </Text>
+          </View>
+
+          <View style={styles.table}>
+            {/* Table Header */}
+            <View style={[styles.tableRow, styles.tableRowHeader]}>
+              <View
+                style={[
+                  styles.tableCol,
+                  styles.tableColHeader,
+                  { width: "10%" },
+                ]}
+              >
+                <Text style={styles.tableCellHeader}>Sr. No.</Text>
+              </View>
+              <View
+                style={[
+                  styles.tableCol,
+                  styles.tableColHeader,
+                  { width: "20%" },
+                ]}
+              >
+                <Text style={styles.tableCellHeader}>Item Code</Text>
+              </View>
+              <View
+                style={[
+                  styles.tableCol,
+                  styles.tableColHeader,
+                  { width: "40%" },
+                ]}
+              >
+                <Text style={styles.tableCellHeader}>Item Description</Text>
+              </View>
+              {/* Add other headers as per the original form, adjusting the width accordingly */}
+            </View>
+
+            {/* Table Row for each item */}
+            {/* Repeat this structure for each item in the list */}
+            <View style={styles.tableRow}>
+              <View style={[styles.tableCol, { width: "10%" }]}>
+                <Text style={styles.tableCell}>1</Text>
+              </View>
+              <View style={[styles.tableCol, { width: "20%" }]}>
+                <Text style={styles.tableCell}>0001</Text>
+              </View>
+              <View style={[styles.tableCol, { width: "40%" }]}>
+                <Text style={styles.tableCell}>Description here</Text>
+              </View>
+              {/* Add other columns as per the original form */}
+            </View>
+          </View>
+
+          <View style={styles.footer}>
+            <Text>Stores Supervisor's Name: _______________</Text>
+            {/* Add other footer elements as per the original form */}
+          </View>
+        </Page>
+      </Document>
+    </>
+  );
+};
