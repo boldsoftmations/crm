@@ -66,6 +66,7 @@ export const GRNView = () => {
 
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
+    getAllGRNDetails(value);
   };
 
   const openInPopup = (item) => {
@@ -99,7 +100,10 @@ export const GRNView = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => getAllGRNDetails(currentPage, searchQuery)} // Call `handleSearch` when the button is clicked
+                  onClick={() => {
+                    setCurrentPage(0);
+                    getAllGRNDetails(0, searchQuery);
+                  }}
                 >
                   Search
                 </Button>
@@ -110,7 +114,7 @@ export const GRNView = () => {
                   color="secondary"
                   onClick={() => {
                     setSearchQuery("");
-                    getAllGRNDetails(1, "");
+                    getAllGRNDetails(0, "");
                   }}
                 >
                   Reset

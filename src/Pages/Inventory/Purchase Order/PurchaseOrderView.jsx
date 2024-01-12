@@ -224,13 +224,10 @@ export const PurchaseOrderView = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() =>
-                    getAllPurchaseOrderDetails(
-                      currentPage,
-                      acceptedFilter,
-                      searchQuery
-                    )
-                  } // Call `handleSearch` when the button is clicked
+                  onClick={() => {
+                    setCurrentPage(0);
+                    getAllPurchaseOrderDetails(0, acceptedFilter, searchQuery);
+                  }}
                 >
                   Search
                 </Button>

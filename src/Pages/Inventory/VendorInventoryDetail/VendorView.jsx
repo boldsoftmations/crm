@@ -128,7 +128,10 @@ export const VendorView = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => getAllVendorDetails(currentPage, searchQuery)} // Call `handleSearch` when the button is clicked
+                  onClick={() => {
+                    setCurrentPage(0);
+                    getAllVendorDetails(0, searchQuery);
+                  }}
                 >
                   Search
                 </Button>
