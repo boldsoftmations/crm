@@ -174,33 +174,16 @@ export const CreateCustomerProformaInvoice = (props) => {
     setInputValue({ ...inputValue, [name]: value });
   };
 
-  const extractErrorMessages = (error) => {
+  const extractErrorMessages = (data) => {
     let messages = [];
-
-    // Check if error.response and error.response.data exist
-    if (error.response && error.response.data) {
-      if (Array.isArray(error.response.data.non_field_errors)) {
-        // Concatenate all non-field error messages
-        messages = [...error.response.data.non_field_errors];
-      } else if (typeof error.response.data.errors === "object") {
-        // Extract field errors
-        Object.entries(error.response.data.errors).forEach(([key, value]) => {
-          if (Array.isArray(value)) {
-            messages.push(`${key}: ${value.join(", ")}`);
-          }
+    if (data.errors) {
+      for (const [key, value] of Object.entries(data.errors)) {
+        // Assuming each key has an array of messages, concatenate them.
+        value.forEach((msg) => {
+          messages.push(`${key}: ${msg}`);
         });
-      } else if (typeof error.response.data.message === "string") {
-        // Handle single message error
-        messages.push(error.response.data.message);
       }
-    } else if (error.message) {
-      // Fallback for generic JavaScript error message
-      messages.push(error.message);
-    } else {
-      // Final fallback for an entirely unknown error
-      messages.push("An unknown error occurred");
     }
-
     return messages;
   };
 
@@ -270,10 +253,11 @@ export const CreateCustomerProformaInvoice = (props) => {
       setOpen(false);
     } catch (error) {
       console.log("creating Customer PI error", error);
-      const newErrors = extractErrorMessages(error); // Pass the entire error object
+      const newErrors = extractErrorMessages(error.response.data);
       setErrorMessages(newErrors);
       setCurrentErrorIndex(0); // Reset the error index when new errors arrive
       setOpenSnackbar((prevOpen) => !prevOpen);
+      // setOpenSnackbar(true);
       // setOpenPopup2(true);
     } finally {
       setOpen(false);
@@ -300,15 +284,12 @@ export const CreateCustomerProformaInvoice = (props) => {
         open={openSnackbar}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        {errorMessages.map((message, index) => (
-          <Alert key={index} onClose={handleCloseSnackbar} severity="error">
-            {message}
-          </Alert>
-        ))}
+        <Alert onClose={handleCloseSnackbar} severity="error">
+          {errorMessages[currentErrorIndex]}
+        </Alert>
       </Snackbar>
-
       <CustomLoader open={open} />
       <Box
         component="form"

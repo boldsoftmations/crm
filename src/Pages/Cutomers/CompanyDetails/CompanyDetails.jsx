@@ -636,7 +636,7 @@ export const CompanyDetails = () => {
         />
       </Popup>
       <Popup
-        maxWidth={"xl"}
+        fullScreen={true}
         title={"Create Customer Proforma Invoice"}
         openPopup={openPopup3}
         setOpenPopup={setOpenPopup3}
