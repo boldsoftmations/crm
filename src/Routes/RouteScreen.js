@@ -77,6 +77,7 @@ import { LeadForecastView } from "../Pages/Leads/LeadForecast/LeadForecastView";
 import { CurrencyView } from "../Pages/Inventory/Currency/CurrencyView";
 import { PurchaseOrderView } from "../Pages/Inventory/Purchase Order/PurchaseOrderView";
 import { GRNRegisterView } from "../Pages/Inventory/GRNRegister/GRNRegisterView";
+import { SafetyStockView } from "../Pages/Inventory/SafetyStockLevel/SafetyStockView";
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
   const token = tokenData.user;
@@ -277,6 +278,7 @@ export const RouteScreen = () => {
               element={<WeeklyProductionReport />}
             />
             <Route path="/inventory/view-currency" element={<CurrencyView />} />
+            <Route path="/inventory/view-safety-stock" element={<SafetyStockView />} />
             {/* ProductForecast Route */}
             <Route
               path="/forecast/view-product-forecast"

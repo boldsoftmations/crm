@@ -639,8 +639,8 @@ const updateCurrencyData = (id, data) => {
     return CustomAxios.post(`/api/inventory/safety-stock/`, data);
   }
 
-  const updateSafetyStockData =(id) => {
-    return CustomAxios.patch(`/api/inventory/safety-stock/${id}/`);
+  const updateSafetyStockData =(id,data) => {
+    return CustomAxios.patch(`/api/inventory/safety-stock/${id}/`,data);
   }
 const InventoryServices = {
   getAllVendorData,

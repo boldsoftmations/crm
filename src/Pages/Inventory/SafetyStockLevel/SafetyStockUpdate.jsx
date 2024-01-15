@@ -1,0 +1,63 @@
+import React, { useState, useEffect } from "react";
+import { Box, Button, TextField, Grid } from "@mui/material";
+import InventoryServices from "../../../services/InventoryService";
+
+export const SafetyStockUpdate = ({
+  setOpenPopup,
+  selectedRow,
+  onUpdateSuccess,
+}) => {
+  const [quantity, setQuantity] = useState(selectedRow.quantity);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (selectedRow) {
+      setQuantity(selectedRow.quantity);
+    }
+  }, [selectedRow]);
+
+  const handleUpdate = async () => {
+    setIsLoading(true);
+    try {
+      await InventoryServices.updateSafetyStockData(selectedRow.id, {
+        ...selectedRow,
+        quantity,
+      });
+      onUpdateSuccess();
+      setOpenPopup(false);
+    } catch (error) {
+      console.error("Error updating safety stock data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Box p={3}>
+      <Grid container spacing={2} alignItems="center" justifyContent="center">
+        <Grid item xs={12}>
+          <TextField
+            fullWidth
+            label="Quantity"
+            variant="outlined"
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+            type="number"
+            disabled={isLoading}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={handleUpdate}
+            disabled={isLoading}
+          >
+            Update
+          </Button>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+};
