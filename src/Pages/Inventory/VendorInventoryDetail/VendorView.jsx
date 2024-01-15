@@ -188,9 +188,9 @@ export const VendorView = () => {
             openInPopup3={null}
             openInPopup4={null}
             ButtonText={
-              userData.groups.includes("Accounts Executive") || "Accounts"
-                ? ""
-                : "Create PO"
+              (!userData.groups.includes("Accounts Executive") ||
+                !userData.groups.includes("Accounts")) &&
+              "Create PO"
             }
           />
           <CustomPagination
