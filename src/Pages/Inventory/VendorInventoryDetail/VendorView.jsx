@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Box, Grid, Paper, Button, Typography } from "@mui/material";
 import { Popup } from "../../../Components/Popup";
 import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
 import InvoiceServices from "../../../services/InvoiceService";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -27,6 +27,7 @@ export const VendorView = () => {
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const userData = useSelector((state) => state.auth.profile);
 
   const openInPopupUpdate = (item) => {
     const matchedVendor = vendorData.find((lead) => lead.id === item.id);
@@ -186,7 +187,11 @@ export const VendorView = () => {
             openInPopup2={openInPopupPurchaseOrder}
             openInPopup3={null}
             openInPopup4={null}
-            ButtonText={"Create PO"}
+            ButtonText={
+              userData.groups.includes("Accounts Executive") || "Accounts"
+                ? ""
+                : "Create PO"
+            }
           />
           <CustomPagination
             pageCount={pageCount}
@@ -217,18 +222,23 @@ export const VendorView = () => {
           recordForEdit={recordForEdit}
         />
       </Popup>
-      <Popup
-        fullScreen={true}
-        title={"Purchase Order"}
-        openPopup={openPopupPurchaseOrder}
-        setOpenPopup={setOpenPopupPurchaseOrder}
-      >
-        <PurchaseOrderCreate
-          setOpenPopup={setOpenPopupPurchaseOrder}
-          recordForEdit={recordForEdit}
-          getAllVendorDetails={getAllVendorDetails}
-        />
-      </Popup>
+      {userData.groups.includes(
+        "Accounts Executive" ||
+          ("Accounts" && (
+            <Popup
+              fullScreen={true}
+              title={"Purchase Order"}
+              openPopup={openPopupPurchaseOrder}
+              setOpenPopup={setOpenPopupPurchaseOrder}
+            >
+              <PurchaseOrderCreate
+                setOpenPopup={setOpenPopupPurchaseOrder}
+                recordForEdit={recordForEdit}
+                getAllVendorDetails={getAllVendorDetails}
+              />
+            </Popup>
+          ))
+      )}
     </>
   );
 };
