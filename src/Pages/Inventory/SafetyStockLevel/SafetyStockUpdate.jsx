@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, TextField, Grid } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import InventoryServices from "../../../services/InventoryService";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const SafetyStockUpdate = ({
   setOpenPopup,
@@ -35,9 +36,19 @@ export const SafetyStockUpdate = ({
   return (
     <Box p={3}>
       <Grid container spacing={2} alignItems="center" justifyContent="center">
-        <Grid item xs={12}>
-          <TextField
+        <Grid item xs={12} sm={6}>
+          <CustomTextField
             fullWidth
+            size="small"
+            label="Product"
+            variant="outlined"
+            value={selectedRow.product}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <CustomTextField
+            fullWidth
+            size="small"
             label="Quantity"
             variant="outlined"
             value={quantity}

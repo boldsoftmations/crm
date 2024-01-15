@@ -64,6 +64,7 @@ export const SafetyStockCreate = ({ setOpenPopup, onCreateSuccess }) => {
     try {
       await InventoryServices.createSafetyStockData(inputValues);
       onCreateSuccess();
+      setOpenPopup(false);
     } catch (error) {
       console.error("Error creating safety stock", error);
       setError("Failed to create safety stock");
