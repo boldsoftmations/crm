@@ -145,7 +145,7 @@ export const GRNPDFDownload = ({ grnRegisterPDFData }) => {
               </Text>
             </View>
           </View>
-          <View style={styles.divider} />
+          {/* <View style={styles.divider} /> */}
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
@@ -155,6 +155,9 @@ export const GRNPDFDownload = ({ grnRegisterPDFData }) => {
             <View style={{ flex: 1, alignItems: "flex-end", marginRight: 24 }}>
               <Text style={{ fontSize: 12 }}>
                 GRN Date: {grnRegisterPDFData.created_on}
+              </Text>
+              <Text style={{ fontSize: 12 }}>
+                Invoice No: {grnRegisterPDFData.packing_list_no}
               </Text>
               <Text style={{ fontSize: 12 }}>
                 Supplier Invoice Date: {grnRegisterPDFData.pl_date}
