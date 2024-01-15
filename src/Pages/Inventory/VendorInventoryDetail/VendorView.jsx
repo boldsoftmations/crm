@@ -222,23 +222,18 @@ export const VendorView = () => {
           recordForEdit={recordForEdit}
         />
       </Popup>
-      {userData.groups.includes(
-        "Accounts Executive" ||
-          ("Accounts" && (
-            <Popup
-              fullScreen={true}
-              title={"Purchase Order"}
-              openPopup={openPopupPurchaseOrder}
-              setOpenPopup={setOpenPopupPurchaseOrder}
-            >
-              <PurchaseOrderCreate
-                setOpenPopup={setOpenPopupPurchaseOrder}
-                recordForEdit={recordForEdit}
-                getAllVendorDetails={getAllVendorDetails}
-              />
-            </Popup>
-          ))
-      )}
+      <Popup
+        fullScreen={true}
+        title={"Purchase Order"}
+        openPopup={openPopupPurchaseOrder}
+        setOpenPopup={setOpenPopupPurchaseOrder}
+      >
+        <PurchaseOrderCreate
+          setOpenPopup={setOpenPopupPurchaseOrder}
+          recordForEdit={recordForEdit}
+          getAllVendorDetails={getAllVendorDetails}
+        />
+      </Popup>
     </>
   );
 };
