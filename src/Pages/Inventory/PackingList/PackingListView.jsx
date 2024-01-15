@@ -100,7 +100,8 @@ export const PackingListView = () => {
   const handleFilterChange = (event) => {
     const { value } = event.target;
     setAcceptedFilter(value);
-    getAllPackingListDetails(currentPage, value, searchQuery);
+    setCurrentPage(0);
+    getAllPackingListDetails(0, value, searchQuery);
   };
 
   const openInPopup = (item) => {
@@ -173,13 +174,10 @@ export const PackingListView = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() =>
-                    getAllPackingListDetails(
-                      currentPage,
-                      acceptedFilter,
-                      searchQuery
-                    )
-                  } // Call `handleSearch` when the button is clicked
+                  onClick={() => {
+                    setCurrentPage(0);
+                    getAllPackingListDetails(0, acceptedFilter, searchQuery);
+                  }} // Call `handleSearch` when the button is clicked
                 >
                   Search
                 </Button>
@@ -190,7 +188,7 @@ export const PackingListView = () => {
                   color="secondary"
                   onClick={() => {
                     setSearchQuery("");
-                    getAllPackingListDetails(1, acceptedFilter, "");
+                    getAllPackingListDetails(0, acceptedFilter, "");
                   }}
                 >
                   Reset

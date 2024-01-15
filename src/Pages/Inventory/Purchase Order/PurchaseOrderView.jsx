@@ -115,7 +115,8 @@ export const PurchaseOrderView = () => {
   const handleFilterChange = (event) => {
     const { value } = event.target;
     setAcceptedFilter(value);
-    getAllPurchaseOrderDetails(currentPage, value, searchQuery);
+    setCurrentPage(0);
+    getAllPurchaseOrderDetails(0, value, searchQuery);
   };
 
   useEffect(() => {
@@ -238,7 +239,7 @@ export const PurchaseOrderView = () => {
                   color="secondary"
                   onClick={() => {
                     setSearchQuery("");
-                    getAllPurchaseOrderDetails(1, acceptedFilter, "");
+                    getAllPurchaseOrderDetails(0, acceptedFilter, "");
                   }}
                 >
                   Reset
