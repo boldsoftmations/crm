@@ -1,178 +1,235 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import {
   Document,
   Page,
-  Text,
   View,
+  Text,
   StyleSheet,
+  Image,
   Font,
 } from "@react-pdf/renderer";
-import InventoryServices from "../../../services/InventoryService";
-import { CustomLoader } from "../../../Components/CustomLoader";
+import logo from "../../../Images/LOGOS3.png"; // Ensure the logo is imported correctly
 
-// Register a font if necessary
+// Register font if necessary
 // Font.register({ family: 'Oswald', src: 'http://fonts.gstatic.com/s/oswald/v13/Y_TKV6o8WovbUd3m_X9aAA.ttf' });
 
+// Create styles
+// Styles for the entire page, header, table, and footer
 const styles = StyleSheet.create({
   page: {
-    padding: 10,
-    fontSize: 11,
+    flexDirection: "column",
+    padding: 24,
     fontFamily: "Helvetica",
+  },
+  Container: {
+    borderWidth: 1,
+    borderColor: "#000",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 3,
+    alignItems: "center",
+    marginBottom: 12,
+    borderBottomWidth: 1, // Add a bottom border
+    borderColor: "#000",
+  },
+  logo: {
+    width: 100,
+    height: 30,
   },
   title: {
+    fontSize: 18,
     fontWeight: "bold",
+    textAlign: "center",
+    flex: 1,
+    marginRight: 100, // Adjust based on the size of your logo
+  },
+  grnInfoContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    fontSize: 12,
+    alignItems: "flex-end",
+  },
+  grnInfo: {
+    marginLeft: 4,
   },
   table: {
-    display: "table",
-    width: "auto",
-    borderStyle: "solid",
     borderWidth: 1,
-    borderRightWidth: 0,
-    borderBottomWidth: 0,
+    borderColor: "#000",
+    marginBottom: 12,
+  },
+  tableHeader: {
+    flexDirection: "row",
+    backgroundColor: "#CCCCCC",
+  },
+  tableHeaderCell: {
+    fontSize: 12,
+    fontWeight: "bold",
+    padding: 4,
+    borderRightWidth: 1,
+    borderColor: "#000",
   },
   tableRow: {
     flexDirection: "row",
-    borderBottomColor: "#000",
     borderBottomWidth: 1,
-    alignItems: "center",
-    height: 24,
-  },
-  tableRowHeader: {
-    backgroundColor: "#CCCCCC",
-    height: 20,
-  },
-  tableColHeader: {
-    borderStyle: "solid",
     borderColor: "#000",
-    borderBottomColor: "#000",
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-    fontWeight: "bold",
-  },
-  tableCol: {
-    borderStyle: "solid",
-    borderColor: "#000",
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-  },
-  tableCellHeader: {
-    margin: "auto",
-    margin: 5,
-    fontSize: 10,
-    fontWeight: "bold",
   },
   tableCell: {
-    margin: "auto",
-    margin: 5,
-    fontSize: 10,
+    fontSize: 12,
+    padding: 4,
+    borderRightWidth: 1,
+    borderColor: "#000",
   },
   footer: {
-    marginTop: 5,
-    paddingTop: 5,
-    borderTopWidth: 1,
-    borderTopColor: "#000",
-    borderTopStyle: "solid",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  signatureBlock: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    marginTop: 12,
+  },
+  signatureLabel: {
+    fontSize: 12,
+  },
+  signatureLine: {
+    borderBottomWidth: 1,
+    borderColor: "#000",
+    // minWidth: 150,
+    marginTop: 4,
   },
 });
 
-export const GRNPDFDownload = ({ GRN_ID }) => {
-  const [grnRegisterPDFData, setGRNRegisterPDFData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+const colStyles = StyleSheet.create({
+  col1: { flex: 0.5 },
+  col2: { flex: 1 },
+  col3: { flex: 3 },
+  col4: { flex: 1 },
+  col5: { flex: 1 },
+  col6: { flex: 1 },
+});
 
-  // Fetch GRN data
-  const fetchGRNData = useCallback(async () => {
-    if (GRN_ID) {
-      try {
-        setIsLoading(true);
-        const response = await InventoryServices.getGRNDataById(GRN_ID);
-        setGRNRegisterPDFData(response.data.results);
-      } catch (error) {
-        console.error("Error fetching GRN data", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  }, [GRN_ID]);
-
-  useEffect(() => {
-    fetchGRNData();
-  }, [fetchGRNData]);
-
-  console.log("grnRegisterPDFData", grnRegisterPDFData);
+// Example data structure for items
+const items = [
+  {
+    code: "0001",
+    description: "Sample Item Description",
+    orderQty: 10,
+    qaRejection: 0,
+    receivedQty: 10,
+  },
+  // ... more items
+];
+// Define your document component
+export const GRNPDFDownload = ({ grnRegisterPDFData }) => {
   return (
-    <>
-      <CustomLoader open={isLoading} />
-      <Document>
-        <Page size="A4" style={styles.page}>
+    <Document>
+      <Page size="A4" style={styles.page}>
+        <View style={styles.Container}>
+          {/* Header Section */}
+          <View style={styles.header}>
+            <Image source={logo} style={styles.logo} />
+          </View>
           <View style={styles.header}>
             <Text style={styles.title}>GOODS RECEIVED NOTE</Text>
-            <Text style={styles.title}>
-              GRN No. {grnRegisterPDFData.grn_no}
-            </Text>
+            <View style={styles.grnInfoContainer}>
+              <Text style={styles.grnInfo}>
+                GRN No: {grnRegisterPDFData.grn_no}
+              </Text>
+              {/* <Text style={styles.grnInfo}>Date: {grnRegisterPDFData.date}</Text>
+            <Text style={styles.grnInfo}>
+              Ch No: {grnRegisterPDFData.ch_no}
+            </Text> */}
+            </View>
           </View>
-
+          {/* Table Section */}
           <View style={styles.table}>
-            {/* Table Header */}
-            <View style={[styles.tableRow, styles.tableRowHeader]}>
-              <View
+            <View style={styles.tableHeader}>
+              <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Sr. No.</Text>
+              <Text style={[styles.tableHeaderCell, { flex: 4 }]}>
+                Item Code
+              </Text>
+              <Text style={[styles.tableHeaderCell, { flex: 2 }]}>
+                Item Description
+              </Text>
+              <Text style={[styles.tableHeaderCell, { flex: 1 }]}>
+                Order Qty
+              </Text>
+              <Text style={[styles.tableHeaderCell, { flex: 1 }]}>
+                QA Rejection
+              </Text>
+              <Text
                 style={[
-                  styles.tableCol,
-                  styles.tableColHeader,
-                  { width: "10%" },
+                  styles.tableHeaderCell,
+                  { flex: 1, borderRightWidth: 0 },
                 ]}
               >
-                <Text style={styles.tableCellHeader}>Sr. No.</Text>
-              </View>
-              <View
-                style={[
-                  styles.tableCol,
-                  styles.tableColHeader,
-                  { width: "20%" },
-                ]}
-              >
-                <Text style={styles.tableCellHeader}>Item Code</Text>
-              </View>
-              <View
-                style={[
-                  styles.tableCol,
-                  styles.tableColHeader,
-                  { width: "40%" },
-                ]}
-              >
-                <Text style={styles.tableCellHeader}>Item Description</Text>
-              </View>
-              {/* Add other headers as per the original form, adjusting the width accordingly */}
+                Received Qty
+              </Text>
             </View>
-
-            {/* Table Row for each item */}
-            {/* Repeat this structure for each item in the list */}
-            <View style={styles.tableRow}>
-              <View style={[styles.tableCol, { width: "10%" }]}>
-                <Text style={styles.tableCell}>1</Text>
+            {grnRegisterPDFData.products.map((item, index) => (
+              <View style={styles.tableRow} key={index}>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{index + 1}</Text>
+                <Text style={[styles.tableCell, { flex: 4 }]}>
+                  {item.products}
+                </Text>
+                <Text style={[styles.tableCell, { flex: 2 }]}>
+                  {item.description}
+                </Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>
+                  {item.order_quantity}
+                </Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>
+                  {item.qa_rejected}
+                </Text>
+                <Text
+                  style={[styles.tableCell, { flex: 1, borderRightWidth: 0 }]}
+                >
+                  {item.qa_accepted}
+                </Text>
               </View>
-              <View style={[styles.tableCol, { width: "20%" }]}>
-                <Text style={styles.tableCell}>0001</Text>
-              </View>
-              <View style={[styles.tableCol, { width: "40%" }]}>
-                <Text style={styles.tableCell}>Description here</Text>
-              </View>
-              {/* Add other columns as per the original form */}
-            </View>
+            ))}
           </View>
-
+          {/* Stores Supervisor Row */}
           <View style={styles.footer}>
-            <Text>Stores Supervisor's Name: _______________</Text>
-            {/* Add other footer elements as per the original form */}
+            <View style={{ flexDirection: "row" }}>
+              <View style={styles.signatureBlock}>
+                <Text style={styles.signatureLabel}>
+                  Stores Supervisor's Name:
+                </Text>
+                <View style={[styles.signatureLine, { width: 100 }]} />
+              </View>
+              <View style={styles.signatureBlock}>
+                <Text style={styles.signatureLabel}>Signature:</Text>
+                <View style={[styles.signatureLine, { width: 80 }]} />
+              </View>
+              <View style={styles.signatureBlock}>
+                <Text style={styles.signatureLabel}>Date:</Text>
+                <View style={[styles.signatureLine, { width: 80 }]} />
+              </View>
+            </View>
           </View>
-        </Page>
-      </Document>
-    </>
+          {/* Quality Supervisor Row */}
+          <View style={styles.footer}>
+            <View style={{ flexDirection: "row" }}>
+              <View style={styles.signatureBlock}>
+                <Text style={styles.signatureLabel}>
+                  Quality Supervisor's Name:
+                </Text>
+                <View style={[styles.signatureLine, { width: 100 }]} />
+              </View>
+              <View style={styles.signatureBlock}>
+                <Text style={styles.signatureLabel}>Signature:</Text>
+                <View style={[styles.signatureLine, { width: 80 }]} />
+              </View>
+              <View style={styles.signatureBlock}>
+                <Text style={styles.signatureLabel}>Date:</Text>
+                <View style={[styles.signatureLine, { width: 80 }]} />
+              </View>
+            </View>
+          </View>
+        </View>
+      </Page>
+    </Document>
   );
 };

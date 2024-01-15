@@ -90,6 +90,18 @@ export const GRNRegisterView = () => {
     }
   };
 
+  const fetchGRNData = async (data) => {
+    try {
+      setOpen(true);
+      const response = await InventoryServices.getGRNDataById(data.grn_no);
+      handlePrint(response.data);
+    } catch (error) {
+      console.error("Error fetching GRN data", error);
+    } finally {
+      setOpen(false);
+    }
+  };
+
   const handlePrint = async (data) => {
     try {
       setOpen(true);
@@ -284,7 +296,7 @@ export const GRNRegisterView = () => {
                   <StyledTableCell align="center">
                     <Button
                       onClick={() => {
-                        handlePrint(row);
+                        fetchGRNData(row);
                       }}
                     >
                       Download
