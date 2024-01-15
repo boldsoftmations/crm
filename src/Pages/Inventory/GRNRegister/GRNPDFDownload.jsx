@@ -38,20 +38,21 @@ const styles = StyleSheet.create({
     height: 30,
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
-    textAlign: "center",
+    // textAlign: "center",
     flex: 1,
     marginRight: 100, // Adjust based on the size of your logo
   },
   grnInfoContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "flex-end",
     fontSize: 12,
     alignItems: "flex-end",
   },
   grnInfo: {
     marginLeft: 4,
+    marginBottom: 4,
   },
   table: {
     borderWidth: 1,
@@ -98,6 +99,12 @@ const styles = StyleSheet.create({
     // minWidth: 150,
     marginTop: 4,
   },
+  divider: {
+    borderBottomWidth: 1,
+    borderColor: "#000",
+    marginTop: 8,
+    marginBottom: 8,
+  },
 });
 
 const colStyles = StyleSheet.create({
@@ -136,10 +143,13 @@ export const GRNPDFDownload = ({ grnRegisterPDFData }) => {
               <Text style={styles.grnInfo}>
                 GRN No: {grnRegisterPDFData.grn_no}
               </Text>
-              {/* <Text style={styles.grnInfo}>Date: {grnRegisterPDFData.date}</Text>
-            <Text style={styles.grnInfo}>
-              Ch No: {grnRegisterPDFData.ch_no}
-            </Text> */}
+
+              <Text style={styles.grnInfo}>
+                Date: {grnRegisterPDFData.created_on}
+              </Text>
+              {/* <Text style={styles.grnInfo}>
+                Supplier Invoice Date: {grnRegisterPDFData.invoice_date}
+              </Text> */}
             </View>
           </View>
           {/* Table Section */}
@@ -197,18 +207,16 @@ export const GRNPDFDownload = ({ grnRegisterPDFData }) => {
                 <Text style={styles.signatureLabel}>
                   Stores Supervisor's Name:
                 </Text>
-                <View style={[styles.signatureLine, { width: 100 }]} />
               </View>
-              <View style={styles.signatureBlock}>
+              <View style={[styles.signatureBlock, { marginLeft: 100 }]}>
                 <Text style={styles.signatureLabel}>Signature:</Text>
-                <View style={[styles.signatureLine, { width: 80 }]} />
               </View>
-              <View style={styles.signatureBlock}>
+              <View style={[styles.signatureBlock, { marginLeft: 100 }]}>
                 <Text style={styles.signatureLabel}>Date:</Text>
-                <View style={[styles.signatureLine, { width: 80 }]} />
               </View>
             </View>
           </View>
+          <View style={styles.divider} />
           {/* Quality Supervisor Row */}
           <View style={styles.footer}>
             <View style={{ flexDirection: "row" }}>
@@ -216,15 +224,12 @@ export const GRNPDFDownload = ({ grnRegisterPDFData }) => {
                 <Text style={styles.signatureLabel}>
                   Quality Supervisor's Name:
                 </Text>
-                <View style={[styles.signatureLine, { width: 100 }]} />
               </View>
-              <View style={styles.signatureBlock}>
+              <View style={[styles.signatureBlock, { marginLeft: 100 }]}>
                 <Text style={styles.signatureLabel}>Signature:</Text>
-                <View style={[styles.signatureLine, { width: 80 }]} />
               </View>
-              <View style={styles.signatureBlock}>
+              <View style={[styles.signatureBlock, { marginLeft: 100 }]}>
                 <Text style={styles.signatureLabel}>Date:</Text>
-                <View style={[styles.signatureLine, { width: 80 }]} />
               </View>
             </View>
           </View>
