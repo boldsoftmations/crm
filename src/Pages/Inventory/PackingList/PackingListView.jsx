@@ -340,6 +340,7 @@ function Row({ row, openInPopup, handleCreateGrn, userData }) {
           {
             // Show Create GRN button if the user is in any of the specified groups
             (userData.groups.includes("Stores Delhi") ||
+              userData.groups.includes("Accounts") ||
               userData.groups.includes("Production Delhi") ||
               userData.groups.includes("Stores") ||
               userData.groups.includes("Director")) && (
