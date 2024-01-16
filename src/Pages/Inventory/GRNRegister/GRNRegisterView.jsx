@@ -93,6 +93,7 @@ export const GRNRegisterView = () => {
   const fetchGRNData = async (data) => {
     try {
       setOpen(true);
+
       const response = await InventoryServices.getGRNDataById(data.grn_no);
       handlePrint(response.data);
     } catch (error) {
@@ -121,7 +122,7 @@ export const GRNRegisterView = () => {
       // create a temporary link element to trigger the download
       const link = document.createElement("a");
       link.href = URL.createObjectURL(pdfData);
-      link.download = `${data.vendor}- ${data.invoice_no}.pdf`;
+      link.download = `${data.vendor} - ${data.grn_no}.pdf`;
       document.body.appendChild(link);
 
       // trigger the download
