@@ -80,24 +80,22 @@ export const WhatsappGroupCreate = ({
     try {
       e.preventDefault();
 
-      const formData = new FormData();
-      formData.append("groups", JSON.stringify(selectedGroupIds));
+      let data = {
+        groups: selectedGroupIds,
+        message: whatsappGroup.message || "",
+      };
+
+      // Only add caption and file to data if filePreview is present
       if (filePreview) {
-        // If file preview is present, append 'caption'
-        formData.append("caption", whatsappGroup.caption || "");
-        formData.append("file", filePreview);
-      } else {
-        // If no file preview, append 'message'
-        formData.append("message", JSON.stringify(whatsappGroup.message) || "");
+        data.caption = whatsappGroup.caption || "";
+        data.file = filePreview; // Assuming filePreview is a base64 string
       }
-      // Debugging FormData
-      for (let [key, value] of formData.entries()) {
-        console.log(key, value);
-      }
+
+      console.log("Data to be sent:", data);
       setOpen(true);
 
       // Send the FormData
-      await WhatsappGroupService.createWhatsappData(formData);
+      await WhatsappGroupService.createWhatsappData(data);
 
       setOpenPopup(false);
       setOpen(false);
