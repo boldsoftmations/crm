@@ -31,6 +31,7 @@ import { Helmet } from "react-helmet";
 import CustomTextField from "../../../Components/CustomTextField";
 import { CustomerPotentialCreate } from "../CustomerPotential/CustomerPotentialCreate";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { WhatsappGroupCreate } from "../../WhatsappGroup/WhatsappGroupCreate";
 
 export const CompanyDetails = () => {
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ export const CompanyDetails = () => {
   const [openPopup3, setOpenPopup3] = useState(false);
   const [openPopupActivity, setOpenPopupActivity] = useState(false);
   const [openPopupPotential, setOpenPopupPotential] = useState(false);
+  const [openPopupWhatsapp, setOpenPopupWhatsapp] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [open, setOpen] = useState(false);
@@ -399,7 +401,7 @@ export const CompanyDetails = () => {
           </Box>
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={3}>
                 {/* Bulk Assign Button */}
                 {userData.is_staff === true && (
                   <Button
@@ -453,6 +455,19 @@ export const CompanyDetails = () => {
                       visibility: "hidden",
                     }}
                   />
+                )}
+              </Grid>
+              <Grid item xs={12} sm={3}>
+                {/* Whatsapp Create */}
+                {(userData.groups.includes("Director") ||
+                  userData.groups.includes("Customer Service")) && (
+                  <Button
+                    color="success"
+                    variant="contained"
+                    onClick={() => setOpenPopupWhatsapp(true)}
+                  >
+                    Whatsapp
+                  </Button>
                 )}
               </Grid>
             </Grid>
@@ -679,6 +694,16 @@ export const CompanyDetails = () => {
           recordForEdit={recordForEdit}
           product={product}
           setOpenModal={setOpenPopupPotential}
+        />
+      </Popup>
+      <Popup
+        title={"Whatsapp Message Create"}
+        openPopup={openPopupWhatsapp}
+        setOpenPopup={setOpenPopupWhatsapp}
+      >
+        <WhatsappGroupCreate
+          // getsetWhatsappGroupDetails={getsetWhatsappGroupDetails}
+          setOpenPopup={setOpenPopupWhatsapp}
         />
       </Popup>
     </>
