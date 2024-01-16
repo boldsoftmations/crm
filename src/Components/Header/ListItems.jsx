@@ -1218,6 +1218,20 @@ export const ListItems = (props) => {
               </ListItem>
             </List>
           </Collapse>
+
+          {/* Whatsapp Group */}
+          <ListItem
+            button
+            component={RouterLink}
+            to="/user/whatsapp-group"
+            style={{ width: 300 }}
+            onClick={() => setOpen(false)}
+          >
+            <ListItemIcon>
+              <AttachMoneyIcon />
+            </ListItemIcon>
+            <ListItemText primary="Whatsapp Group" />
+          </ListItem>
         </>
       ) : (
         <>

@@ -78,6 +78,7 @@ import { CurrencyView } from "../Pages/Inventory/Currency/CurrencyView";
 import { PurchaseOrderView } from "../Pages/Inventory/Purchase Order/PurchaseOrderView";
 import { GRNRegisterView } from "../Pages/Inventory/GRNRegister/GRNRegisterView";
 import { SafetyStockView } from "../Pages/Inventory/SafetyStockLevel/SafetyStockView";
+import { WhatsappGroupView } from "../Pages/WhatsappGroup/WhatsappGroupView";
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
   const token = tokenData.user;
@@ -278,7 +279,10 @@ export const RouteScreen = () => {
               element={<WeeklyProductionReport />}
             />
             <Route path="/inventory/view-currency" element={<CurrencyView />} />
-            <Route path="/inventory/view-safety-stock" element={<SafetyStockView />} />
+            <Route
+              path="/inventory/view-safety-stock"
+              element={<SafetyStockView />}
+            />
             {/* ProductForecast Route */}
             <Route
               path="/forecast/view-product-forecast"
@@ -306,7 +310,14 @@ export const RouteScreen = () => {
               path="/user/hr-model/department"
               element={<DepartmentView />}
             />
-            <Route path="/user/hr-model/source" element={<SourceView />} />
+            <Route
+              path="/user/hr-model/department"
+              element={<DepartmentView />}
+            />
+            <Route
+              path="/user/whatsapp-group"
+              element={<WhatsappGroupView />}
+            />
           </>
         )}
         <Route path="*" element={<Auths />} />
