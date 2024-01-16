@@ -32,6 +32,7 @@ import CustomTextField from "../../../Components/CustomTextField";
 import { CustomerPotentialCreate } from "../CustomerPotential/CustomerPotentialCreate";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { WhatsappGroupCreate } from "../../WhatsappGroup/WhatsappGroupCreate";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 
 export const CompanyDetails = () => {
   const dispatch = useDispatch();
@@ -465,6 +466,7 @@ export const CompanyDetails = () => {
                     color="success"
                     variant="contained"
                     onClick={() => setOpenPopupWhatsapp(true)}
+                    startIcon={<WhatsAppIcon />} // Adding the WhatsApp icon to the button
                   >
                     Whatsapp
                   </Button>
