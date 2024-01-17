@@ -376,7 +376,16 @@ export const CompanyDetails = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={handleSearch} // Call `handleSearch` when the button is clicked
+                  onClick={() => {
+                    setCurrentPage(0);
+                    getAllCompanyDetails(
+                      0,
+                      statusFilter,
+
+                      filterSelectedQuery,
+                      searchQuery
+                    );
+                  }}
                 >
                   Search
                 </Button>
