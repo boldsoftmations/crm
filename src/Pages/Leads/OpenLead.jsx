@@ -186,11 +186,11 @@ export const OpenLead = () => {
       setOpen(false);
     }
   };
+
   const extractErrorMessages = (data) => {
     let messages = [];
     if (data.errors) {
       for (const [key, value] of Object.entries(data.errors)) {
-        // Assuming each key has an array of messages, concatenate them.
         value.forEach((msg) => {
           messages.push(`${key}: ${msg}`);
         });
@@ -227,8 +227,7 @@ export const OpenLead = () => {
         console.log("Open leads get api", error);
         const newErrors = extractErrorMessages(error.response.data);
         setErrorMessages(newErrors);
-        setCurrentErrorIndex(0); // Reset the error index when new errors arrive
-        setOpenSnackbar((prevOpen) => !prevOpen);
+        setOpenSnackbar(true);
       } finally {
         setOpen(false);
       }
@@ -293,7 +292,8 @@ export const OpenLead = () => {
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <Alert onClose={handleCloseSnackbar} severity="error">
-          {errorMessages[currentErrorIndex]}
+          {errorMessages.join(", ")}{" "}
+          {/* Display all errors as a comma-separated string */}
         </Alert>
       </Snackbar>
       <Helmet>
