@@ -35,79 +35,32 @@ const getAllLeads = (
   return CustomAxios.get(`api/lead/list-lead/?${params.toString()}`);
 };
 
-const getAllSearchWithFilteredLeads = (
-  stage,
-  orderingValue,
-  filter,
-  filterValue,
-  searchValue
-) => {
-  return CustomAxios.get(
-    `/api/lead/list-lead/?funnel=${stage}&ordering=${orderingValue}&${filter}=${filterValue}&search=${searchValue}`
-  );
-};
-
-const getFilteredLeads = (stage, orderingValue, filter, filterValue) => {
-  return CustomAxios.get(
-    `/api/lead/list-lead/?funnel=${stage}&ordering=${orderingValue}&${filter}=${filterValue}`
-  );
-};
-
-const getSearchLeads = (stage, orderingValue, searchValue) => {
-  return CustomAxios.get(
-    `/api/lead/list-lead/?funnel=${stage}&ordering=${orderingValue}&search=${searchValue}`
-  );
-};
-
-const getFilterWithSearchPaginateLeads = (
-  currentPage,
-  stage,
-  orderValue,
-  filter,
-  filterValue,
-  searchValue
-) => {
-  return CustomAxios.get(
-    `/api/lead/list-lead/?page=${currentPage}&funnel=${stage}&ordering=${orderValue}&${filter}=${filterValue}&search=${searchValue}`
-  );
-};
-
-const getSearchPaginateLeads = (
-  currentPage,
-  stage,
-  orderValue,
-  searchValue
-) => {
-  return CustomAxios.get(
-    `/api/lead/list-lead/?page=${currentPage}&funnel=${stage}&ordering=${orderValue}&search=${searchValue}`
-  );
-};
-
-const getFilterPaginateLeads = (
-  currentPage,
-  stage,
-  orderValue,
-  filter,
-  filterValue
-) => {
-  return CustomAxios.get(
-    `/api/lead/list-lead/?page=${currentPage}&funnel=${stage}&ordering=${orderValue}&${filter}=${filterValue}`
-  );
-};
-
-const getAllPaginateLeads = (currentPage, stage, orderingValue) => {
-  return CustomAxios.get(
-    `/api/lead/list-lead/?page=${currentPage}&funnel=${stage}&ordering=${orderingValue}`
-  );
-};
-
-const getFilterAssignedtoPaginateLeads = (currentPage, filter, search) => {
-  return CustomAxios.get(
-    `/api/lead/list-lead/?page=${currentPage}&${filter}=${search}`
-  );
-};
-
 // duplicate leads
+
+// const getAllDuplicateLeads = (
+//   page,
+//   fieldValue,
+
+//   searchValue
+// ) => {
+//   // Constructing the query parameters
+//   const params = new URLSearchParams();
+
+//   if (page) {
+//     params.append("page", page);
+//   }
+
+//   if (fieldValue) {
+//     params.append("field", fieldValue);
+//   }
+
+//   if (searchValue) {
+//     params.append("search", searchValue);
+//   }
+
+//   // Sending a GET request with query parameters
+//   return CustomAxios.get(`api/lead/duplicate-leads/?${params.toString()}`);
+// };
 
 const getAllDuplicateLeads = (filterValue) => {
   return CustomAxios.get(`/api/lead/duplicate-leads/?field=${filterValue}`);
@@ -270,14 +223,6 @@ const LeadServices = {
   getAllFilterByUnassignedData,
   getAllPaginateUnassigned,
   getAllPaginateWithFilterUnassigned,
-  getAllSearchWithFilteredLeads,
-  getFilteredLeads,
-  getSearchLeads,
-  getFilterWithSearchPaginateLeads,
-  getSearchPaginateLeads,
-  getFilterPaginateLeads,
-  getAllPaginateLeads,
-  getFilterAssignedtoPaginateLeads,
   getAllDuplicateLeads,
   getAllPaginateDuplicateLeads,
   getSearchDuplicateLeads,
