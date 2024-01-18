@@ -139,12 +139,16 @@ const updatePackingListData = (id, data) => {
 };
 
 // grn List Api
-const getAllGRNData = (page, searchValue) => {
+const getAllGRNData = (page ,acceptedToFilter, searchValue) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
 
   if (page) {
     params.append("page", page);
+  }
+
+  if (acceptedToFilter !== undefined) {
+    params.append("accepted", acceptedToFilter);
   }
 
   if (searchValue) {
