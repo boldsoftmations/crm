@@ -412,7 +412,7 @@ export const NewLeads = () => {
                   color="secondary"
                   onClick={() => {
                     setSearchQuery("");
-                    getleads(0, filterQuery, filterSelectedQuery, "");
+                    getleads(1, filterQuery, filterSelectedQuery, "");
                   }}
                 >
                   Reset

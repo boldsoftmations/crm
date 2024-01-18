@@ -224,7 +224,7 @@ export const OpenLead = () => {
         setPageCount(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
-        console.log("New leads get api", error);
+        console.log("Open leads get api", error);
         const newErrors = extractErrorMessages(error.response.data);
         setErrorMessages(newErrors);
         setCurrentErrorIndex(0); // Reset the error index when new errors arrive
@@ -408,7 +408,7 @@ export const OpenLead = () => {
                   color="secondary"
                   onClick={() => {
                     setSearchQuery("");
-                    getleads(0, filterQuery, filterSelectedQuery, "");
+                    getleads(1, filterQuery, filterSelectedQuery, "");
                   }}
                 >
                   Reset
