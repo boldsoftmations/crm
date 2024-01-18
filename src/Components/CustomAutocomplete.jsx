@@ -34,8 +34,7 @@ const CustomAutocomplete = ({
     groupBy={groupBy}
     getOptionLabel={getOptionLabel || ((option) => option)} // Ensuring there's a default getOptionLabel
     renderInput={
-      renderInput ||
-      ((params) => <CustomTextField {...params} sx={sx} label={label} />)
+      renderInput || ((params) => <CustomTextField {...params} label={label} />)
     }
     sx={sx}
     multiple={multiple}
