@@ -158,7 +158,7 @@ export const GRNView = () => {
                   color="primary"
                   onClick={() => {
                     setCurrentPage(0);
-                    getAllGRNDetails(0, searchQuery);
+                    getAllGRNDetails(0, acceptedFilter, searchQuery);
                   }}
                 >
                   Search
