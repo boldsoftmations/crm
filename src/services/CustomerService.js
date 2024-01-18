@@ -221,6 +221,26 @@ const updateCompetitors = (id, data) => {
   return CustomAxios.patch(`/api/customer/list-main-distribution/${id}`, data);
 };
 
+// Whatsapp routes
+const getAllWhatsappGroupData = () => {
+  return CustomAxios.get(`/api/customer/whatsapp-group-list`);
+};
+
+const createWhatsappData = (data) => {
+  return CustomAxios.post("/api/customer/whatsapp-group-list/", data);
+};
+
+const createWhatsappImageData = (data) => {
+  return CustomAxios.post(
+    "/api/customer/whatsapp-group-list/send-image/",
+    data
+  );
+};
+
+const createWhatsappPdfData = (data) => {
+  return CustomAxios.post("/api/customer/whatsapp-group-list/send-pdf/", data);
+};
+
 const CustomerServices = {
   getAllCustomerData,
   getIncompleteKycCustomerData,
@@ -265,6 +285,10 @@ const CustomerServices = {
   createCompetitorAPI,
   getAllSearchCompetitors,
   updateCompetitors,
+  getAllWhatsappGroupData,
+  createWhatsappData,
+  createWhatsappImageData,
+  createWhatsappPdfData,
 };
 
 export default CustomerServices;

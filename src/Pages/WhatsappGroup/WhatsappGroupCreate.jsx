@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Grid, Typography } from "@mui/material";
-import WhatsappGroupService from "../../services/WhatsappGroupService";
 import CustomAutocomplete from "../../Components/CustomAutocomplete";
 import CustomTextField from "../../Components/CustomTextField";
 import { CustomLoader } from "../../Components/CustomLoader";
+import CustomerServices from "../../services/CustomerService";
 
-export const WhatsappGroupCreate = ({
-  getsetWhatsappGroupDetails,
-  setOpenPopup,
-}) => {
+export const WhatsappGroupCreate = ({ setOpenPopup }) => {
   const [whatsappGroup, setWhatsappGroup] = useState([]);
   const [open, setOpen] = useState(false);
   const [allWhatsappGroupMenu, setAllWhatsappGroupMenu] = useState([]);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
   const [selectedGroupIds, setSelectedGroupIds] = useState([]);
+  const [isPdf, setIsPdf] = useState(false); // New state to track if the uploaded file is a PDF
 
   const handleGroupChange = (event, newValue) => {
     // Find and store the group IDs corresponding to the selected group names
@@ -40,7 +38,7 @@ export const WhatsappGroupCreate = ({
 
   const getAllWhatsappGroup = async () => {
     try {
-      const res = await WhatsappGroupService.getAllWhatsappGroupData();
+      const res = await CustomerServices.getAllWhatsappGroupData();
       setAllWhatsappGroupMenu(res.data);
     } catch (err) {
       console.error(err);
@@ -59,23 +57,25 @@ export const WhatsappGroupCreate = ({
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
-    setUploadedFile(file); // Corrected line
-    // Check if file is an image or a PDF
+    setUploadedFile(file);
+    setIsPdf(file.type === "application/pdf"); // Set isPdf based on file type
+
     if (
       file &&
       (file.type.startsWith("image/") || file.type === "application/pdf")
     ) {
       try {
         const base64 = await convertToBase64(file);
-        setFilePreview(base64); // Set preview for images, for PDF this could be a generic PDF icon
+        setFilePreview(base64);
       } catch (error) {
         console.error("Error converting file to base64", error);
       }
     } else {
-      setFilePreview(null); // Reset preview if file type is not supported
+      setFilePreview(null);
     }
   };
 
+  console.log("filePreview", filePreview);
   const createWhatsappGroup = async (e) => {
     try {
       e.preventDefault();
@@ -85,24 +85,42 @@ export const WhatsappGroupCreate = ({
         message: whatsappGroup.message || "",
       };
 
-      // Only add caption and file to data if filePreview is present
-      if (filePreview) {
-        data.caption = whatsappGroup.caption || "";
-        data.file = filePreview; // Assuming filePreview is a base64 string
-      }
-
-      console.log("Data to be sent:", data);
       setOpen(true);
 
-      // Send the FormData
-      await WhatsappGroupService.createWhatsappData(data);
+      // Send message only if there is no file uploaded or the file is not an image or PDF
+      if (!filePreview && whatsappGroup.message) {
+        await CustomerServices.createWhatsappData(data);
+      }
 
+      // Check if filePreview exists and is not a PDF
+      if (filePreview && !isPdf) {
+        let imageData = {
+          groups: selectedGroupIds,
+          caption: whatsappGroup.caption,
+          image: filePreview, // For images
+        };
+
+        // Call the API for images
+        await CustomerServices.createWhatsappImageData(imageData);
+      }
+
+      // Check if the uploaded file is a PDF
+      if (isPdf && filePreview) {
+        let pdfData = {
+          groups: selectedGroupIds,
+          caption: whatsappGroup.caption,
+          document: filePreview, // Send base64 of PDF
+          filename: uploadedFile.name, // Include the file name
+        };
+
+        // Call the API for PDF
+        await CustomerServices.createWhatsappPdfData(pdfData);
+      }
+    } catch (error) {
+      console.log("error create Objection", error);
+    } finally {
       setOpenPopup(false);
       setOpen(false);
-      getsetWhatsappGroupDetails();
-    } catch (error) {
-      setOpen(false);
-      console.log("error create Objection", error);
     }
   };
 
@@ -138,16 +156,20 @@ export const WhatsappGroupCreate = ({
             </Button>
             {uploadedFile && (
               <Box sx={{ mt: 2 }}>
-                {filePreview ? (
-                  <img
-                    src={filePreview}
-                    alt="Preview"
-                    style={{ maxWidth: "100%", maxHeight: "200px" }}
-                  />
-                ) : (
+                {isPdf ? (
+                  // Display file name for PDF
                   <Typography variant="subtitle1">
                     {uploadedFile.name}
                   </Typography>
+                ) : (
+                  // Display image preview for images
+                  filePreview && (
+                    <img
+                      src={filePreview}
+                      alt="Preview"
+                      style={{ maxWidth: "100%", maxHeight: "200px" }}
+                    />
+                  )
                 )}
               </Box>
             )}
