@@ -24,14 +24,14 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
         return group ? group.group_id : null;
       })
       .filter((id) => id !== null); // Filter out any null values
-    console.log("newGroupIds", newGroupIds);
+
     setSelectedGroupIds(newGroupIds);
     setWhatsappGroup({
       ...whatsappGroup,
       groups: newValue,
     });
   };
-  console.log("uploadedFile", uploadedFile);
+
   useEffect(() => {
     getAllWhatsappGroup();
   }, []);
@@ -46,15 +46,7 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
   };
   console.log("allWhatsappGroupMenu", allWhatsappGroupMenu);
 
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
-
+  // Updated handleFileChange function
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     setUploadedFile(file);
@@ -65,8 +57,9 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
       (file.type.startsWith("image/") || file.type === "application/pdf")
     ) {
       try {
-        const base64 = await convertToBase64(file);
-        setFilePreview(base64);
+        setUploadedFile(file);
+        const fileURL = URL.createObjectURL(file);
+        setFilePreview(fileURL);
       } catch (error) {
         console.error("Error converting file to base64", error);
       }
@@ -75,52 +68,53 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
     }
   };
 
-  console.log("filePreview", filePreview);
+  // Effect for cleanup
+  useEffect(() => {
+    // Cleanup the object URL on unmount or when file changes
+    return () => {
+      if (filePreview) {
+        URL.revokeObjectURL(filePreview);
+      }
+    };
+  }, [filePreview]);
+
   const createWhatsappGroup = async (e) => {
+    e.preventDefault();
+    setOpen(true);
+
     try {
-      e.preventDefault();
+      const formData = new FormData();
 
-      let data = {
-        groups: selectedGroupIds,
-        message: whatsappGroup.message || "",
-      };
+      // Append each group ID as an individual entry to formData
+      formData.append("groups", JSON.stringify(selectedGroupIds.join(", ")));
 
-      setOpen(true);
-
-      // Send message only if there is no file uploaded or the file is not an image or PDF
-      if (!filePreview && whatsappGroup.message) {
-        await CustomerServices.createWhatsappData(data);
+      // Handle the file upload and associated data
+      if (uploadedFile) {
+        const fileKey = isPdf ? "file" : "image";
+        formData.append(fileKey, uploadedFile);
+        formData.append("caption", whatsappGroup.caption || "");
+      } else {
+        // For text-only messages
+        formData.append("message", whatsappGroup.message || "");
       }
 
-      // Check if filePreview exists and is not a PDF
-      if (filePreview && !isPdf) {
-        let imageData = {
-          groups: selectedGroupIds,
-          caption: whatsappGroup.caption,
-          image: filePreview, // For images
-        };
-
-        // Call the API for images
-        await CustomerServices.createWhatsappImageData(imageData);
+      // Select the appropriate API call
+      let apiCall;
+      if (uploadedFile) {
+        apiCall = isPdf
+          ? CustomerServices.createWhatsappPdfData
+          : CustomerServices.createWhatsappImageData;
+      } else {
+        apiCall = CustomerServices.createWhatsappData;
       }
 
-      // Check if the uploaded file is a PDF
-      if (isPdf && filePreview) {
-        let pdfData = {
-          groups: selectedGroupIds,
-          caption: whatsappGroup.caption,
-          document: filePreview, // Send base64 of PDF
-          filename: uploadedFile.name, // Include the file name
-        };
-
-        // Call the API for PDF
-        await CustomerServices.createWhatsappPdfData(pdfData);
-      }
+      // Make the API call
+      await apiCall(formData);
     } catch (error) {
-      console.log("error create Objection", error);
+      console.error("Error creating WhatsApp group", error);
     } finally {
-      setOpenPopup(false);
       setOpen(false);
+      setOpenPopup(false);
     }
   };
 

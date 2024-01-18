@@ -231,10 +231,7 @@ const createWhatsappData = (data) => {
 };
 
 const createWhatsappImageData = (data) => {
-  return CustomAxios.post(
-    "/api/customer/whatsapp-group-list/send-image/",
-    data
-  );
+  return CustomAxios.post("/api/customer/whatsapp-image/", data);
 };
 
 const createWhatsappPdfData = (data) => {
