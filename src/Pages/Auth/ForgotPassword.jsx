@@ -10,14 +10,12 @@ import {
   Button,
 } from "@mui/material";
 import LockResetIcon from "@mui/icons-material/LockReset";
-import axios from "axios";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { Link } from "react-router-dom";
 import CustomTextField from "../../Components/CustomTextField";
 import { CustomLoader } from "../../Components/CustomLoader";
 import { Popup } from "../../Components/Popup";
-// const RESET_URL = `${process.env.REACT_APP_DEPLOY_BACKEND_URL}/api/user/send-reset-password-email/`;
-const RESET_URL = `${process.env.REACT_APP_TESTING_BACKEND_URL}/api/user/send-reset-password-email/`;
+import UserProfileService from "../../services/UserProfileService";
 
 const style = {
   position: "absolute",
@@ -47,7 +45,7 @@ export const ForgotPassword = () => {
         const req = {
           email: email,
         };
-        const response = await axios.post(RESET_URL, req);
+        const response = await UserProfileService.sendResetPasswordEmail(req);
         setMessage(response.data.message);
         setModalOpen(true);
         setEmail("");

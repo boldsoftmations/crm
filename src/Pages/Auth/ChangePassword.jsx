@@ -12,13 +12,12 @@ import {
   Typography,
 } from "@mui/material";
 import LockResetIcon from "@mui/icons-material/LockReset";
-import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CustomTextField from "../../Components/CustomTextField";
 import { CustomLoader } from "../../Components/CustomLoader";
-// const RESET_URL = `${process.env.REACT_APP_DEPLOY_BACKEND_URL}/api/user/reset-password`;
-const RESET_URL = `${process.env.REACT_APP_TESTING_BACKEND_URL}/api/user/reset-password`;
+import UserProfileService from "../../services/UserProfileService";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -52,7 +51,7 @@ export const ChangePassword = () => {
         password: password,
         password2: password2,
       };
-      const response = await axios.post(`${RESET_URL}/${id}/${token}/`, req);
+      const response = await UserProfileService.ChangePassword(id, token, req);
       setMessage(response.data.message);
       setModalOpen(true);
 
