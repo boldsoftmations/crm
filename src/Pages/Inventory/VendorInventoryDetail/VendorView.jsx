@@ -169,21 +169,27 @@ export const VendorView = () => {
                 </h3>
               </Grid>
               <Grid item xs={12} sm={3}>
-                <Button
-                  onClick={() => setOpenPopupCreate(true)}
-                  variant="contained"
-                  color="success"
-                  // startIcon={<AddIcon />}
-                >
-                  Add
-                </Button>
+                {(userData.groups.includes("Accounts") ||
+                  userData.groups.includes("Director") ||
+                  userData.groups.includes("Accounts Executive")) && (
+                  <Button
+                    onClick={() => setOpenPopupCreate(true)}
+                    variant="contained"
+                    color="success"
+                    // startIcon={<AddIcon />}
+                  >
+                    Add
+                  </Button>
+                )}
               </Grid>
             </Grid>
           </Box>
           <CustomTable
             headers={Tableheaders}
             data={Tabledata}
-            openInPopup={openInPopupUpdate}
+            openInPopup={
+              !userData.groups.includes("Purchase") ? openInPopupUpdate : null
+            }
             openInPopup2={openInPopupPurchaseOrder}
             openInPopup3={null}
             openInPopup4={null}
