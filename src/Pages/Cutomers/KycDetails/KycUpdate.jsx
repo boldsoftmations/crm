@@ -212,6 +212,8 @@ const KycUpdate = ({
         const errors = error.response.data.errors;
         if (errors["non_field_errors"]) {
           setErrorMessage(errors["non_field_errors"].join(" "));
+        } else {
+          setErrorMessage(errors["whatsapp_group"].join(" "));
         }
       }
     } finally {
