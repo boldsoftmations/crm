@@ -91,7 +91,7 @@ export const WhatsappGroupView = () => {
             handlePageClick={handlePageClick}
           /> */}
           <Popup
-            title={"Whatsapp Message Create"}
+            title={"Send Message or File"}
             openPopup={openPopupWhatsapp}
             setOpenPopup={setOpenPopupWhatsapp}
           >

@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Grid, Typography } from "@mui/material";
-import CustomAutocomplete from "../../Components/CustomAutocomplete";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Grid,
+  Radio,
+  RadioGroup,
+  Typography,
+} from "@mui/material";
 import CustomTextField from "../../Components/CustomTextField";
 import { CustomLoader } from "../../Components/CustomLoader";
 import CustomerServices from "../../services/CustomerService";
@@ -12,25 +21,8 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
   const [selectedGroupIds, setSelectedGroupIds] = useState([]);
-  const [isPdf, setIsPdf] = useState(false); // New state to track if the uploaded file is a PDF
-
-  const handleGroupChange = (event, newValue) => {
-    // Find and store the group IDs corresponding to the selected group names
-    const newGroupIds = newValue
-      .map((groupName) => {
-        const group = allWhatsappGroupMenu.find(
-          (g) => g.group_name === groupName
-        );
-        return group ? group.group_id : null;
-      })
-      .filter((id) => id !== null); // Filter out any null values
-
-    setSelectedGroupIds(newGroupIds);
-    setWhatsappGroup({
-      ...whatsappGroup,
-      groups: newValue,
-    });
-  };
+  const [isPdf, setIsPdf] = useState(false);
+  const [filter, setFilter] = useState("message");
 
   useEffect(() => {
     getAllWhatsappGroup();
@@ -86,11 +78,11 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
       const formData = new FormData();
 
       // Append each group ID as an individual entry to formData
-      formData.append("groups", JSON.stringify(selectedGroupIds.join(", ")));
+      // formData.append("groups", JSON.stringify(selectedGroupIds.join(", ")));
 
       // Handle the file upload and associated data
       if (uploadedFile) {
-        const fileKey = isPdf ? "file" : "image";
+        const fileKey = "file";
         formData.append(fileKey, uploadedFile);
         formData.append("caption", whatsappGroup.caption || "");
       } else {
@@ -101,9 +93,7 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
       // Select the appropriate API call
       let apiCall;
       if (uploadedFile) {
-        apiCall = isPdf
-          ? CustomerServices.createWhatsappPdfData
-          : CustomerServices.createWhatsappImageData;
+        apiCall = CustomerServices.createWhatsappImageData;
       } else {
         apiCall = CustomerServices.createWhatsappData;
       }
@@ -118,27 +108,30 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
     }
   };
 
-  return (
-    <>
-      <CustomLoader open={open} />
-      <Box component="form" noValidate onSubmit={(e) => createWhatsappGroup(e)}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <CustomAutocomplete
-              fullWidth
-              multiple
-              size="small"
-              variant="outlined"
-              options={allWhatsappGroupMenu.map((option) => option.group_name)}
-              getOptionLabel={(option) => option}
-              value={whatsappGroup.groups || []}
-              onChange={handleGroupChange}
-              renderInput={(params) => (
-                <CustomTextField {...params} label="Whatsapp Group" />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12}>
+  const renderInputFields = () => {
+    switch (filter) {
+      case "message":
+        return (
+          <CustomTextField
+            fullWidth
+            multiline
+            name="message"
+            size="small"
+            label="Message"
+            variant="outlined"
+            value={whatsappGroup["message"] || ""}
+            onChange={(event) =>
+              setWhatsappGroup({
+                ...whatsappGroup,
+                [event.target.name]: event.target.value,
+              })
+            }
+          />
+        );
+      case "image":
+      case "pdf":
+        return (
+          <>
             <Button
               variant="contained"
               component="label"
@@ -150,13 +143,11 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
             </Button>
             {uploadedFile && (
               <Box sx={{ mt: 2 }}>
-                {isPdf ? (
-                  // Display file name for PDF
+                {isPdf || filter === "pdf" ? (
                   <Typography variant="subtitle1">
                     {uploadedFile.name}
                   </Typography>
                 ) : (
-                  // Display image preview for images
                   filePreview && (
                     <img
                       src={filePreview}
@@ -167,16 +158,14 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
                 )}
               </Box>
             )}
-          </Grid>
-          <Grid item xs={12}>
             <CustomTextField
               fullWidth
               multiline
-              name={uploadedFile ? "caption" : "message"}
+              name="caption"
               size="small"
-              label={uploadedFile ? "Caption" : "Message"}
+              label="Caption"
               variant="outlined"
-              value={whatsappGroup[uploadedFile ? "caption" : "message"] || ""}
+              value={whatsappGroup["caption"] || ""}
               onChange={(event) =>
                 setWhatsappGroup({
                   ...whatsappGroup,
@@ -184,6 +173,38 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
                 })
               }
             />
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <>
+      <CustomLoader open={open} />
+      <Box component="form" noValidate onSubmit={(e) => createWhatsappGroup(e)}>
+        <FormControl component="fieldset">
+          <FormLabel component="legend">Type</FormLabel>
+          <RadioGroup
+            row
+            aria-label="type"
+            name="type"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          >
+            <FormControlLabel
+              value="message"
+              control={<Radio />}
+              label="Message"
+            />
+            <FormControlLabel value="image" control={<Radio />} label="Image" />
+            <FormControlLabel value="pdf" control={<Radio />} label="PDF" />
+          </RadioGroup>
+        </FormControl>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            {renderInputFields()}
           </Grid>
         </Grid>
         <Button
