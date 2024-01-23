@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { CustomTable } from "../../Components/CustomTable";
-import { Box, Grid, Paper } from "@mui/material";
+import { Box, Button, Grid, Paper } from "@mui/material";
 import CustomerServices from "../../services/CustomerService";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { useSelector } from "react-redux";
-import { Button } from "bootstrap";
 import { WhatsappGroupCreate } from "./WhatsappGroupCreate";
 import { Popup } from "../../Components/Popup";
 import { CustomPagination } from "../../Components/CustomPagination";
+import { CustomLoader } from "../../Components/CustomLoader";
 
 export const WhatsappGroupView = () => {
+  const [open, setOpen] = useState(false);
   const [whatsappGroupData, setWhatsappGroupData] = useState([]);
-  const [allWhatsappGroupMenu, setAllWhatsappGroupMenu] = useState([]);
   const [openPopupWhatsapp, setOpenPopupWhatsapp] = useState(false);
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
@@ -24,11 +24,14 @@ export const WhatsappGroupView = () => {
 
   const getAllWhatsappGroup = async () => {
     try {
+      setOpen(true);
       const res = await CustomerServices.getAllWhatsappGroupData();
-      setAllWhatsappGroupMenu(res.data);
+      setWhatsappGroupData(res.data);
       setPageCount(Math.ceil(res.data.count / 25));
     } catch (err) {
       console.error(err);
+    } finally {
+      setOpen(false);
     }
   };
 
@@ -46,14 +49,15 @@ export const WhatsappGroupView = () => {
 
   return (
     <>
+      <CustomLoader open={open} />
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
-          <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
+          <Box display="flex" marginBottom="10px">
             <Grid container spacing={2}>
               <Grid item xs={12} sm={3}>
                 {" "}
               </Grid>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={6} alignItems={"center"}>
                 <h3
                   style={{
                     textAlign: "center",
