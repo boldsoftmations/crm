@@ -83,7 +83,9 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
       // Handle the file upload and associated data
       if (uploadedFile) {
         const fileKey = "file";
-        formData.append(fileKey, uploadedFile);
+        const fileName = uploadedFile.name;
+        isPdf && formData.append(fileKey, uploadedFile);
+        formData.append("filename", fileName);
         formData.append("caption", whatsappGroup.caption || "");
       } else {
         // For text-only messages
@@ -142,7 +144,7 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
               <input type="file" hidden onChange={handleFileChange} />
             </Button>
             {uploadedFile && (
-              <Box sx={{ mt: 2 }}>
+              <Box sx={{ mt: 2, mb: 2 }}>
                 {isPdf || filter === "pdf" ? (
                   <Typography variant="subtitle1">
                     {uploadedFile.name}
