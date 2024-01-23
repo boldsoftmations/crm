@@ -84,7 +84,7 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
       if (uploadedFile) {
         const fileKey = "file";
         const fileName = uploadedFile.name;
-        isPdf && formData.append(fileKey, uploadedFile);
+        formData.append(fileKey, uploadedFile);
         formData.append("filename", fileName);
         formData.append("caption", whatsappGroup.caption || "");
       } else {
