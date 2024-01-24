@@ -238,6 +238,13 @@ const createWhatsappPdfData = (data) => {
   return CustomAxios.post("/api/customer/whatsapp-group-list/send-pdf/", data);
 };
 
+const getWhatsappImageData = () => {
+  return CustomAxios.get(`/api/customer/whatsapp-image/`);
+}
+
+const resendWhatsappMessage = (referenceId) => {
+  return CustomAxios.post(`/api/customer/whatsapp-image/unsend-message${referenceId}/`);
+}
 const CustomerServices = {
   getAllCustomerData,
   getIncompleteKycCustomerData,
@@ -286,6 +293,8 @@ const CustomerServices = {
   createWhatsappData,
   createWhatsappImageData,
   createWhatsappPdfData,
+  getWhatsappImageData,
+  resendWhatsappMessage
 };
 
 export default CustomerServices;

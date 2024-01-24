@@ -79,7 +79,7 @@ import { PurchaseOrderView } from "../Pages/Inventory/Purchase Order/PurchaseOrd
 import { GRNRegisterView } from "../Pages/Inventory/GRNRegister/GRNRegisterView";
 import { SafetyStockView } from "../Pages/Inventory/SafetyStockLevel/SafetyStockView";
 import { WhatsappGroupView } from "../Pages/WhatsappGroup/WhatsappGroupView";
-
+import { WhatsappGroup } from "../Pages/WhatsappGroup/WhatsappGroup";
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
   const token = tokenData.user;
@@ -316,6 +316,7 @@ export const RouteScreen = () => {
               element={<DepartmentView />}
             />
             <Route path="/user/whatsapp-group" element={<WhatsappGroupView />} />
+            <Route path="/user/whatsapp" element={<WhatsappGroup/>} />
           </>
         )}
         <Route path="*" element={<Auths />} />

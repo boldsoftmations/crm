@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CustomTable } from "../../Components/CustomTable";
-import { Box, Button, Grid, Paper } from "@mui/material";
+import { Box, Grid, Paper } from "@mui/material";
 import CustomerServices from "../../services/CustomerService";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { useSelector } from "react-redux";
 import { WhatsappGroupCreate } from "./WhatsappGroupCreate";
 import { Popup } from "../../Components/Popup";
@@ -70,19 +69,6 @@ export const WhatsappGroupView = () => {
                   Customer Whatsapp Group
                 </h3>
               </Grid>
-              {(userData.groups.includes("Director") ||
-                userData.groups.includes("Customer Service")) && (
-                <Grid item xs={12} sm={3}>
-                  <Button
-                    color="success"
-                    variant="contained"
-                    onClick={() => setOpenPopupWhatsapp(true)}
-                    startIcon={<WhatsAppIcon />}
-                  >
-                    Whatsapp
-                  </Button>
-                </Grid>
-              )}
             </Grid>
           </Box>
           <CustomTable headers={Tableheaders} data={Tabledata} />

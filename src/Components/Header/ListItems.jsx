@@ -1149,6 +1149,18 @@ export const ListItems = (props) => {
             </ListItemIcon>
             <ListItemText primary="Whatsapp Group" />
           </ListItem>
+          <ListItem
+            button
+            component={RouterLink}
+            to="/user/whatsapp"
+            style={{ width: 300 }}
+            onClick={() => setOpen(false)}
+          >
+            <ListItemIcon>
+              <WhatsAppIcon />
+            </ListItemIcon>
+            <ListItemText primary="Whatsapp" />
+          </ListItem>
           {/* <ListItem
             button
             component={RouterLink}
