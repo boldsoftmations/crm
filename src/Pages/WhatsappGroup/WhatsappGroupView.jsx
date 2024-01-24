@@ -67,7 +67,7 @@ export const WhatsappGroupView = () => {
                     fontWeight: 800,
                   }}
                 >
-                  Whatsapp Group
+                  Customer Whatsapp Group
                 </h3>
               </Grid>
               {(userData.groups.includes("Director") ||
