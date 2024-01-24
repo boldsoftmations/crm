@@ -25,7 +25,7 @@ export const WhatsappGroupView = () => {
     try {
       setOpen(true);
       const res = await CustomerServices.getAllWhatsappGroupData();
-      setWhatsappGroupData(res.data);
+      setWhatsappGroupData(res.data.results);
       setPageCount(Math.ceil(res.data.count / 25));
     } catch (err) {
       console.error(err);
@@ -38,11 +38,13 @@ export const WhatsappGroupView = () => {
     setCurrentPage(value);
   };
 
-  const Tabledata = whatsappGroupData.map((row) => ({
-    name: row.name,
-    whatsapp_group: row.whatsapp_group,
-    whatsapp_group_id: row.whatsapp_group_id,
-  }));
+  const Tabledata = Array.isArray(whatsappGroupData)
+    ? whatsappGroupData.map((row) => ({
+        name: row.name,
+        whatsapp_group: row.whatsapp_group,
+        whatsapp_group_id: row.whatsapp_group_id,
+      }))
+    : [];
 
   const Tableheaders = ["Comapny ", "Group Name", "Group Id"];
 

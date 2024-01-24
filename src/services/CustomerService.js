@@ -242,8 +242,8 @@ const getWhatsappImageData = () => {
   return CustomAxios.get(`/api/customer/whatsapp-image/`);
 }
 
-const resendWhatsappMessage = (referenceId) => {
-  return CustomAxios.post(`/api/customer/whatsapp-image/unsend-message${referenceId}/`);
+const resendWhatsappMessage = () => {
+  return CustomAxios.post(`/api/customer/whatsapp-image/unsend-message/`);
 }
 const CustomerServices = {
   getAllCustomerData,

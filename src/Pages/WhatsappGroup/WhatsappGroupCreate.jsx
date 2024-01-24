@@ -97,7 +97,7 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
       if (uploadedFile) {
         apiCall = CustomerServices.createWhatsappImageData;
       } else {
-        apiCall = CustomerServices.createWhatsappData;
+        apiCall = CustomerServices.createWhatsappImageData;
       }
 
       // Make the API call
