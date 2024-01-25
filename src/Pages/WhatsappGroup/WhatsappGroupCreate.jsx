@@ -102,11 +102,12 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
 
       // Make the API call
       await apiCall(formData);
+      setOpenPopup(false);
+      await getAllWhatsappGroup();
     } catch (error) {
       console.error("Error creating WhatsApp group", error);
     } finally {
       setOpen(false);
-      setOpenPopup(false);
     }
   };
 

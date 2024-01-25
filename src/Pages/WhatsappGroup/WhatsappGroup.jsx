@@ -33,8 +33,9 @@ export const WhatsappGroup = () => {
     try {
       setOpen(true);
       const res = await CustomerServices.getWhatsappImageData();
-      setWhatsappGroupData(res.data);
-      setPageCount(Math.ceil(res.data.length / 25));
+      setWhatsappGroupData(res.data.results);
+      const total = res.data.count;
+      setPageCount(Math.ceil(total / 25));
     } catch (err) {
       console.error(err);
     } finally {
@@ -50,11 +51,10 @@ export const WhatsappGroup = () => {
   const handleSendAgain = async (referenceId) => {
     try {
       setOpen(true);
-
-      await CustomerServices.resendWhatsappMessage(referenceId);
-      console.log(
-        `Message with reference ID ${referenceId} resent successfully`
-      );
+      const res = {
+        reference_id: referenceId,
+      };
+      await CustomerServices.resendWhatsappMessage(res);
     } catch (err) {
       console.error(`Error resending message: ${err}`);
     } finally {
@@ -85,39 +85,41 @@ export const WhatsappGroup = () => {
           </Grid>
         </Box>
 
-        {whatsappGroupData
-          .filter(
-            (data) =>
-              data.message &&
-              data.message.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-          .map((data, index) => (
-            <Accordion key={data.id} sx={{ margin: 1 }}>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>
-                  {index + 1}) Date: {formatDate(data.creation_date)} | Sent:{" "}
-                  {data.messages_statistics.sent} | Failed:{" "}
-                  {data.messages_statistics.unsent} | Queue:{" "}
-                  {data.messages_statistics.queue} | Refrence ID:{" "}
-                  {data.reference_id}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography>{data.message}</Typography>
-              </AccordionDetails>
-              <AccordionDetails>
-                <Grid item xs={12} sm={1} justifyContent="flex-end">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleSendAgain(data.reference_id)}
-                  >
-                    Send Again
-                  </Button>
-                </Grid>
-              </AccordionDetails>
-            </Accordion>
-          ))}
+        {Array.isArray(whatsappGroupData) &&
+          whatsappGroupData
+            .filter(
+              (data) =>
+                data.message &&
+                data.message.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+            .map((data, index) => (
+              <Accordion key={data.id} sx={{ margin: 1 }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography>
+                    {index + 1}) Date: {formatDate(data.creation_date)} | All:{" "}
+                    {data.messages_statistics.all} | Sent:{" "}
+                    {data.messages_statistics.sent} | Failed:{" "}
+                    {data.messages_statistics.unsent} | Queue:{" "}
+                    {data.messages_statistics.queue} | Refrence ID:{" "}
+                    {data.reference_id}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography>{data.message}</Typography>
+                </AccordionDetails>
+                <AccordionDetails>
+                  <Grid item xs={12} sm={1} justifyContent="flex-end">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleSendAgain(data.reference_id)}
+                    >
+                      Send Again
+                    </Button>
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+            ))}
         <Box sx={{ marginBottom: 4 }}>
           <CustomPagination
             currentPage={currentPage}
