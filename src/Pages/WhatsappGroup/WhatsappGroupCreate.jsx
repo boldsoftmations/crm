@@ -14,7 +14,7 @@ import CustomTextField from "../../Components/CustomTextField";
 import { CustomLoader } from "../../Components/CustomLoader";
 import CustomerServices from "../../services/CustomerService";
 
-export const WhatsappGroupCreate = ({ setOpenPopup }) => {
+export const WhatsappGroupCreate = ({ setOpenPopup, refreshData }) => {
   const [whatsappGroup, setWhatsappGroup] = useState([]);
   const [open, setOpen] = useState(false);
   const [allWhatsappGroupMenu, setAllWhatsappGroupMenu] = useState([]);
@@ -103,7 +103,7 @@ export const WhatsappGroupCreate = ({ setOpenPopup }) => {
       // Make the API call
       await apiCall(formData);
       setOpenPopup(false);
-      await getAllWhatsappGroup();
+      await refreshData();
     } catch (error) {
       console.error("Error creating WhatsApp group", error);
     } finally {

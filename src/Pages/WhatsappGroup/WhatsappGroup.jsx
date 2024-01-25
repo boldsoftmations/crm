@@ -95,6 +95,10 @@ export const WhatsappGroup = () => {
     setCurrentPage(value);
   };
 
+  const refreshData = async () => {
+    await getAllWhatsappGroup();
+  };
+
   return (
     <>
       <CustomLoader open={open} />
@@ -178,6 +182,7 @@ export const WhatsappGroup = () => {
             <WhatsappGroupCreate
               // getsetWhatsappGroupDetails={getsetWhatsappGroupDetails}
               setOpenPopup={setOpenPopupWhatsapp}
+              refreshData={refreshData}
             />
           </Popup>
         </Box>
