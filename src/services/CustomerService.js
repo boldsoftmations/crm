@@ -243,8 +243,13 @@ const getWhatsappImageData = () => {
 }
 
 const resendWhatsappMessage = (data) => {
-  return CustomAxios.post(`/api/customer/whatsapp-image/unsend-message/`,data);
+  return CustomAxios.post(`/api/customer/whatsapp-image/unsent_message/`,data);
 }
+
+const bulkResendMessage = (data) => {
+  return CustomAxios.post(`/api/customer/whatsapp-image/unsent_bulk_message/`,data);
+}
+
 const CustomerServices = {
   getAllCustomerData,
   getIncompleteKycCustomerData,
@@ -294,7 +299,8 @@ const CustomerServices = {
   createWhatsappImageData,
   createWhatsappPdfData,
   getWhatsappImageData,
-  resendWhatsappMessage
+  resendWhatsappMessage,
+  bulkResendMessage
 };
 
 export default CustomerServices;

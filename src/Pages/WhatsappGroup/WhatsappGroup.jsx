@@ -9,6 +9,7 @@ import {
   Button,
   Box,
   Paper,
+  Snackbar,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { CustomPagination } from "../../Components/CustomPagination";
@@ -24,6 +25,8 @@ export const WhatsappGroup = () => {
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [openPopupWhatsapp, setOpenPopupWhatsapp] = useState(false);
+  const [error, setError] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   useEffect(() => {
     getAllWhatsappGroup();
@@ -48,6 +51,16 @@ export const WhatsappGroup = () => {
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   }, []);
 
+  useEffect(() => {
+    if (error) {
+      setOpenSnackbar(true);
+      setTimeout(() => {
+        setOpenSnackbar(false);
+        setError(null);
+      }, 1500);
+    }
+  }, [error]);
+
   const handleSendAgain = async (referenceId) => {
     try {
       setOpen(true);
@@ -55,13 +68,29 @@ export const WhatsappGroup = () => {
         reference_id: referenceId,
       };
       await CustomerServices.resendWhatsappMessage(res);
-    } catch (err) {
-      console.error(`Error resending message: ${err}`);
+    } catch (error) {
+      console.log(error.message);
+      if (error.response) {
+        setError(error.response.data.message);
+      }
     } finally {
       setOpen(false);
     }
   };
 
+  const handleBulkResend = async () => {
+    try {
+      setOpen(true);
+      await CustomerServices.bulkResendMessage();
+    } catch (error) {
+      console.log(error.message);
+      if (error.response) {
+        setError(error.response.data.message);
+      }
+    } finally {
+      setOpen(false);
+    }
+  };
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
   };
@@ -71,6 +100,12 @@ export const WhatsappGroup = () => {
       <CustomLoader open={open} />
       <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
         <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
+          <Snackbar
+            open={openSnackbar}
+            autoHideDuration={1500}
+            onClose={() => setOpenSnackbar(false)}
+            message={error}
+          />
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} sm={4}>
               <Button
@@ -82,6 +117,15 @@ export const WhatsappGroup = () => {
                 Whatsapp
               </Button>
             </Grid>
+          </Grid>
+          <Grid item xs={10} sm={4}>
+            <Button
+              color="success"
+              variant="contained"
+              onClick={() => handleBulkResend()}
+            >
+              Bulk Resend
+            </Button>
           </Grid>
         </Box>
 
