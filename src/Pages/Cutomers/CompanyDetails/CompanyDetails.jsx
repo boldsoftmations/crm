@@ -21,7 +21,6 @@ import { getSellerAccountData } from "../../../Redux/Action/Action";
 import InvoiceServices from "../../../services/InvoiceService";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { BulkCustomerAssign } from "./BulkCustomerAssign";
-import { CustomTable } from "./../../../Components/CustomTable";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { CustomerActivityCreate } from "../../FollowUp/CustomerActivityCreate";
 import ProductService from "../../../services/ProductService";
@@ -31,8 +30,6 @@ import { Helmet } from "react-helmet";
 import CustomTextField from "../../../Components/CustomTextField";
 import { CustomerPotentialCreate } from "../CustomerPotential/CustomerPotentialCreate";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
-import { WhatsappGroupCreate } from "../../WhatsappGroup/WhatsappGroupCreate";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 
 export const CompanyDetails = () => {
   const dispatch = useDispatch();
@@ -41,7 +38,6 @@ export const CompanyDetails = () => {
   const [openPopup3, setOpenPopup3] = useState(false);
   const [openPopupActivity, setOpenPopupActivity] = useState(false);
   const [openPopupPotential, setOpenPopupPotential] = useState(false);
-  const [openPopupWhatsapp, setOpenPopupWhatsapp] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [open, setOpen] = useState(false);
@@ -467,20 +463,6 @@ export const CompanyDetails = () => {
                   />
                 )}
               </Grid>
-              <Grid item xs={12} sm={3}>
-                {/* Whatsapp Create */}
-                {(userData.groups.includes("Director") ||
-                  userData.groups.includes("Customer Service")) && (
-                  <Button
-                    color="success"
-                    variant="contained"
-                    onClick={() => setOpenPopupWhatsapp(true)}
-                    startIcon={<WhatsAppIcon />} // Adding the WhatsApp icon to the button
-                  >
-                    Whatsapp
-                  </Button>
-                )}
-              </Grid>
             </Grid>
           </Box>
           <div
@@ -705,16 +687,6 @@ export const CompanyDetails = () => {
           recordForEdit={recordForEdit}
           product={product}
           setOpenModal={setOpenPopupPotential}
-        />
-      </Popup>
-      <Popup
-        title={"Whatsapp Message Create"}
-        openPopup={openPopupWhatsapp}
-        setOpenPopup={setOpenPopupWhatsapp}
-      >
-        <WhatsappGroupCreate
-          // getsetWhatsappGroupDetails={getsetWhatsappGroupDetails}
-          setOpenPopup={setOpenPopupWhatsapp}
         />
       </Popup>
     </>
