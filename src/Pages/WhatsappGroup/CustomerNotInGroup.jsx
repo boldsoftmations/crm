@@ -47,7 +47,8 @@ export const CustomerNotInGroup = () => {
         assigned_to: Array.isArray(row.assigned_to)
           ? row.assigned_to.join(", ")
           : "",
-        customer_in_group: row.whatsapp_group,
+        whatsapp_group: row.whatsapp_group,
+        customer_in_group: row.member_details.is_customer,
         sales_person_not_in_group:
           row.member_details && Array.isArray(row.member_details.not_user)
             ? row.member_details.not_user.join(", ")
@@ -58,6 +59,7 @@ export const CustomerNotInGroup = () => {
   const Tableheaders = [
     "Company ",
     "Assigned To",
+    "Group Name",
     "Customer In Group",
     "Sales Person Not In Group",
   ];
