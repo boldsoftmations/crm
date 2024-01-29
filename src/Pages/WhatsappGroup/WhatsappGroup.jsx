@@ -23,7 +23,7 @@ export const WhatsappGroup = () => {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [pageCount, setPageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [openPopupWhatsapp, setOpenPopupWhatsapp] = useState(false);
   const [error, setError] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -37,8 +37,7 @@ export const WhatsappGroup = () => {
       setOpen(true);
       const res = await CustomerServices.getWhatsappImageData();
       setWhatsappGroupData(res.data.results);
-      const total = res.data.count;
-      setPageCount(Math.ceil(total / 25));
+      setPageCount(Math.ceil(res.data.count / 25));
     } catch (err) {
       console.error(err);
     } finally {
@@ -170,7 +169,6 @@ export const WhatsappGroup = () => {
             ))}
         <Box sx={{ marginBottom: 4 }}>
           <CustomPagination
-            currentPage={currentPage}
             pageCount={pageCount}
             handlePageClick={handlePageClick}
           />

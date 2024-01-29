@@ -74,10 +74,10 @@ export const WhatsappGroupView = () => {
             </Grid>
           </Box>
           <CustomTable headers={Tableheaders} data={Tabledata} />
-          {/* <CustomPagination
+          <CustomPagination
             pageCount={pageCount}
             handlePageClick={handlePageClick}
-          /> */}
+          />
           <Popup
             title={"Send Message or File"}
             openPopup={openPopupWhatsapp}

@@ -49,6 +49,7 @@ export const ListItems = (props) => {
   const [expandInventory, setExpandInventory] = useState(false);
   const [expandUser, setExpandUser] = useState(false);
   const [expandHr, setExpandHr] = useState(false);
+  const [expandWhatsapp, setExpandWhastapp] = useState(false);
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
 
@@ -1139,28 +1140,47 @@ export const ListItems = (props) => {
           {/* Whatsapp Group */}
           <ListItem
             button
-            component={RouterLink}
-            to="/user/whatsapp-group"
+            onClick={() => setExpandWhastapp(!expandWhatsapp)}
             style={{ width: 300 }}
-            onClick={() => setOpen(false)}
           >
             <ListItemIcon>
               <WhatsAppIcon />
             </ListItemIcon>
-            <ListItemText primary="Whatsapp Group" />
+            <ListItemText primary="WhatsApp" />
+            {expandWhatsapp ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItem>
-          <ListItem
-            button
-            component={RouterLink}
-            to="/user/whatsapp"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-          >
-            <ListItemIcon>
-              <WhatsAppIcon />
-            </ListItemIcon>
-            <ListItemText primary="Whatsapp" />
-          </ListItem>
+
+          <Collapse in={expandWhatsapp} timeout="auto" unmountOnExit>
+            <Divider />
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/whatsapp-group"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Group Info"
+                />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/whatsapp"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Automation"
+                />
+              </ListItem>
+            </List>
+          </Collapse>
           {/* <ListItem
             button
             component={RouterLink}
@@ -1838,19 +1858,37 @@ export const ListItems = (props) => {
                 <ListItemText primary="Script" />
               </ListItem>
 
-              {/* Whatsapp */}
+              {/* Whatsapp Group */}
               <ListItem
                 button
-                component={RouterLink}
-                to="/user/whatsapp"
+                onClick={() => setExpandWhastapp(!expandWhatsapp)}
                 style={{ width: 300 }}
-                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <WhatsAppIcon />
                 </ListItemIcon>
-                <ListItemText primary="Whatsapp" />
+                <ListItemText primary="WhatsApp" />
+                {expandWhatsapp ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
+
+              <Collapse in={expandWhatsapp} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/whatsapp"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Automation"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
             </>
           )}
 
