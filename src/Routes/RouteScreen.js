@@ -315,6 +315,10 @@ export const RouteScreen = () => {
               path="/user/hr-model/department"
               element={<DepartmentView />}
             />
+              <Route
+              path="/user/hr-model/source"
+              element={<SourceView />}
+            />
             <Route path="/user/whatsapp-group" element={<WhatsappGroupView />} />
             <Route path="/user/whatsapp" element={<WhatsappGroup/>} />
           </>
