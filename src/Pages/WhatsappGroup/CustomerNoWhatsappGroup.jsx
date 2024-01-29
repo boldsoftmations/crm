@@ -4,22 +4,30 @@ import { Box, Grid, Paper } from "@mui/material";
 import CustomerServices from "../../services/CustomerService";
 import { CustomPagination } from "../../Components/CustomPagination";
 import { CustomLoader } from "../../Components/CustomLoader";
+import KycUpdate from "../../Pages/Cutomers/KycDetails/KycUpdate";
+import { Popup } from "../../Components/Popup";
 
-export const WhatsappGroupView = () => {
+export const CustomerNoWhatsappGroup = () => {
   const [open, setOpen] = useState(false);
-  const [whatsappGroupData, setWhatsappGroupData] = useState([]);
+  const [
+    customerNotHavingWhatsappGroupData,
+    setCustomerNotHavingWhatsappGroupData,
+  ] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [openPopupKycUpdate, setOpenPopupKycUpdate] = useState(false);
 
   useEffect(() => {
-    getAllWhatsappGroup();
+    getAllCustomerNotHavingWhatsappGroup();
   }, [currentPage]);
 
-  const getAllWhatsappGroup = async () => {
+  const getAllCustomerNotHavingWhatsappGroup = async () => {
     try {
       setOpen(true);
-      const res = await CustomerServices.getAllWhatsappGroupData(currentPage);
-      setWhatsappGroupData(res.data.results);
+      const res = await CustomerServices.getCustomerNotHavingWhatsappGroup(
+        currentPage
+      );
+      setCustomerNotHavingWhatsappGroupData(res.data.results);
       setPageCount(Math.ceil(res.data.count / 25));
     } catch (err) {
       console.error(err);
@@ -32,15 +40,19 @@ export const WhatsappGroupView = () => {
     setCurrentPage(value);
   };
 
-  const Tabledata = Array.isArray(whatsappGroupData)
-    ? whatsappGroupData.map((row) => ({
+  const Tabledata = Array.isArray(customerNotHavingWhatsappGroupData)
+    ? customerNotHavingWhatsappGroupData.map((row) => ({
         name: row.name,
         whatsapp_group: row.whatsapp_group,
-        whatsapp_group_id: row.whatsapp_group_id,
       }))
     : [];
 
-  const Tableheaders = ["Company ", "Group Name", "Group Id"];
+  const Tableheaders = ["Company ", "Group Name", "Action"];
+
+  const handleKycUpdate = (data) => {
+    setOpenPopupKycUpdate(true);
+    console.log(data);
+  };
 
   return (
     <>
@@ -62,16 +74,32 @@ export const WhatsappGroupView = () => {
                     fontWeight: 800,
                   }}
                 >
-                  Customer Whatsapp Group
+                  Customer Not Having Whatsapp Group
                 </h3>
               </Grid>
             </Grid>
           </Box>
-          <CustomTable headers={Tableheaders} data={Tabledata} />
+          <CustomTable
+            headers={Tableheaders}
+            data={Tabledata}
+            openInPopup={handleKycUpdate}
+          />
           <CustomPagination
             pageCount={pageCount}
             handlePageClick={handlePageClick}
           />
+          <Popup
+            title={"Kyc Update"}
+            openPopup={openPopupKycUpdate}
+            setOpenPopup={setOpenPopupKycUpdate}
+          >
+            <KycUpdate
+              setOpenPopup={setOpenPopupKycUpdate}
+              getIncompleteKycCustomerData={
+                getAllCustomerNotHavingWhatsappGroup
+              }
+            />
+          </Popup>
         </Paper>
       </Grid>
     </>
