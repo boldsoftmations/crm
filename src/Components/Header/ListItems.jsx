@@ -1176,7 +1176,7 @@ export const ListItems = (props) => {
                   component={Button}
                   onClick={() => setOpen(false)}
                   inset
-                  primary="Customer Not In Group"
+                  primary="Customer Not Having Group"
                 />
               </ListItem>
               <ListItem
@@ -1897,7 +1897,7 @@ export const ListItems = (props) => {
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Customer Not In Group"
+                      primary="Customer Not Having Group"
                     />
                   </ListItem>
                   <ListItem
