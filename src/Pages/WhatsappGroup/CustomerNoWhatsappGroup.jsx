@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { CustomTable } from "../../Components/CustomTable";
 import { Box, Button, Grid, Paper } from "@mui/material";
 import CustomerServices from "../../services/CustomerService";
@@ -21,24 +21,27 @@ export const CustomerNoWhatsappGroup = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    getAllCustomerNotHavingWhatsappGroup();
-  }, [currentPage]);
+    getAllCustomerNotHavingWhatsappGroup(currentPage);
+  }, [currentPage, getAllCustomerNotHavingWhatsappGroup]);
 
-  const getAllCustomerNotHavingWhatsappGroup = async (searchQuery) => {
-    try {
-      setOpen(true);
-      const res = await CustomerServices.getCustomerNotHavingWhatsappGroup(
-        currentPage,
-        searchQuery
-      );
-      setCustomerNotHavingWhatsappGroupData(res.data.results);
-      setPageCount(Math.ceil(res.data.count / 25));
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setOpen(false);
-    }
-  };
+  const getAllCustomerNotHavingWhatsappGroup = useCallback(
+    async (page = currentPage, searchValue = searchQuery) => {
+      try {
+        setOpen(true);
+        const res = await CustomerServices.getCustomerNotHavingWhatsappGroup(
+          page,
+          searchValue
+        );
+        setCustomerNotHavingWhatsappGroupData(res.data.results);
+        setPageCount(Math.ceil(res.data.count / 25));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setOpen(false);
+      }
+    },
+    [searchQuery]
+  );
 
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
@@ -98,7 +101,7 @@ export const CustomerNoWhatsappGroup = () => {
                   color="primary"
                   onClick={() => {
                     setCurrentPage(0);
-                    getAllCustomerNotHavingWhatsappGroup(searchQuery);
+                    getAllCustomerNotHavingWhatsappGroup(0, searchQuery);
                   }}
                 >
                   Search
@@ -110,6 +113,7 @@ export const CustomerNoWhatsappGroup = () => {
                   color="secondary"
                   onClick={() => {
                     setSearchQuery("");
+                    setCurrentPage(1);
                     getAllCustomerNotHavingWhatsappGroup(
                       1,
 
