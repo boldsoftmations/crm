@@ -13,18 +13,18 @@ export const WhatsappGroupView = () => {
   const [whatsappGroupData, setWhatsappGroupData] = useState([]);
   const [openPopupWhatsapp, setOpenPopupWhatsapp] = useState(false);
   const [pageCount, setPageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
 
   useEffect(() => {
     getAllWhatsappGroup();
-  }, []);
+  }, [currentPage]);
 
   const getAllWhatsappGroup = async () => {
     try {
       setOpen(true);
-      const res = await CustomerServices.getAllWhatsappGroupData();
+      const res = await CustomerServices.getAllWhatsappGroupData(currentPage);
       setWhatsappGroupData(res.data.results);
       setPageCount(Math.ceil(res.data.count / 25));
     } catch (err) {

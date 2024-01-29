@@ -23,19 +23,19 @@ export const WhatsappGroup = () => {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [pageCount, setPageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [openPopupWhatsapp, setOpenPopupWhatsapp] = useState(false);
   const [error, setError] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   useEffect(() => {
     getAllWhatsappGroup();
-  }, []);
+  }, [currentPage]);
 
   const getAllWhatsappGroup = async () => {
     try {
       setOpen(true);
-      const res = await CustomerServices.getWhatsappImageData();
+      const res = await CustomerServices.getWhatsappImageData(currentPage);
       setWhatsappGroupData(res.data.results);
       setPageCount(Math.ceil(res.data.count / 25));
     } catch (err) {
