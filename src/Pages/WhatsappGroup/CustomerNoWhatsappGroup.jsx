@@ -16,7 +16,7 @@ export const CustomerNoWhatsappGroup = () => {
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [openPopupKycUpdate, setOpenPopupKycUpdate] = useState(false);
-
+  const [selectedCustomerData, setSelectedCustomerData] = useState({});
   useEffect(() => {
     getAllCustomerNotHavingWhatsappGroup();
   }, [currentPage]);
@@ -49,9 +49,22 @@ export const CustomerNoWhatsappGroup = () => {
 
   const Tableheaders = ["Company ", "Group Name", "Action"];
 
-  const handleKycUpdate = (data) => {
-    setOpenPopupKycUpdate(true);
-    console.log(data);
+  const handleKycUpdate = async (data) => {
+    try {
+      setOpen(true);
+      const response = await CustomerServices.getAllCustomerData(
+        "Active",
+        "all",
+        null,
+        data.name
+      );
+      setSelectedCustomerData(response.data[0].id);
+      setOpenPopupKycUpdate(true);
+    } catch (error) {
+      console.error("error while getting customer data", error);
+    } finally {
+      setOpen(false);
+    }
   };
 
   return (
@@ -98,6 +111,7 @@ export const CustomerNoWhatsappGroup = () => {
               getIncompleteKycCustomerData={
                 getAllCustomerNotHavingWhatsappGroup
               }
+              recordForEdit={selectedCustomerData}
             />
           </Popup>
         </Paper>
