@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CustomTable } from "../../Components/CustomTable";
-import { Box, Button, Chip, Grid, Paper } from "@mui/material";
+import { Box, Button, Grid, Paper } from "@mui/material";
 import CustomerServices from "../../services/CustomerService";
 import { CustomPagination } from "../../Components/CustomPagination";
 import { CustomLoader } from "../../Components/CustomLoader";
@@ -48,11 +48,28 @@ export const SalesPersonNotInGroup = () => {
         sales_person_not_in_group: Array.isArray(
           row.member_details.not_user
         ) ? (
-          row.member_details.not_user.map((assigned) => (
-            <Chip label={assigned} />
+          row.member_details.not_user.map((assigned, id) => (
+            <div
+              key={id}
+              style={{
+                border: "1px solid #4caf50",
+                borderRadius: "20px",
+                color: "#4caf50",
+              }}
+            >
+              {assigned}
+            </div>
           ))
         ) : (
-          <Chip label={row.member_details.not_user} />
+          <div
+            style={{
+              border: "1px solid #4caf50",
+              borderRadius: "20px",
+              color: "#4caf50",
+            }}
+          >
+            row.member_details.not_user
+          </div>
         ),
       }))
     : [];

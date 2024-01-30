@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CustomTable } from "../../Components/CustomTable";
-import { Box, Button, Chip, Grid, Paper } from "@mui/material";
+import { Box, Button, Grid, Paper } from "@mui/material";
 import CustomerServices from "../../services/CustomerService";
 import { CustomPagination } from "../../Components/CustomPagination";
 import { CustomLoader } from "../../Components/CustomLoader";
@@ -42,18 +42,42 @@ export const CustomerNotInGroup = () => {
   };
 
   const Tabledata = Array.isArray(whatsappGroupData)
-    ? whatsappGroupData.map((row) => ({
-        company: row.name,
-        whatsapp_group: row.whatsapp_group,
-        assigned_to: Array.isArray(row.assigned_to) ? (
-          row.assigned_to.map((assigned) => <Chip label={assigned} />)
-        ) : (
-          <Chip label={row.assigned_to} />
-        ),
-        customer_in_group: row.member_details.is_customer,
-      }))
+    ? whatsappGroupData.map(
+        ({ name, whatsapp_group, assigned_to, member_details }) => ({
+          company: name,
+          whatsapp_group,
+          assigned_to: Array.isArray(assigned_to) ? (
+            assigned_to.map((assigned, id) => (
+              <div
+                key={id}
+                style={{
+                  border: "1px solid #4caf50",
+                  borderRadius: "20px",
+                  color: "#4caf50",
+                }}
+              >
+                {assigned}
+              </div>
+            ))
+          ) : (
+            <div
+              style={{
+                border: "1px solid #4caf50",
+                borderRadius: "20px",
+                color: "#4caf50",
+              }}
+            >
+              assigned_to
+            </div>
+          ),
+          customer_in_group:
+            member_details && "is_customer" in member_details
+              ? member_details.is_customer
+              : undefined,
+          // Using optional chaining for safety
+        })
+      )
     : [];
-
   const Tableheaders = [
     "Company ",
     "Group",
