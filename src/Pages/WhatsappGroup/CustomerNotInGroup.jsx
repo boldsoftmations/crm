@@ -70,10 +70,10 @@ export const CustomerNotInGroup = () => {
               assigned_to
             </div>
           ),
-          customer_in_group:
-            member_details && "is_customer" in member_details
-              ? member_details.is_customer
-              : undefined,
+          // customer_in_group:
+          //   member_details && "is_customer" in member_details
+          //     ? member_details.is_customer
+          //     : undefined,
           // Using optional chaining for safety
         })
       )
@@ -82,7 +82,7 @@ export const CustomerNotInGroup = () => {
     "Company ",
     "Group",
     "Assigned Sales Person",
-    "Customer In Group",
+    // "Customer In Group",
   ];
 
   return (
