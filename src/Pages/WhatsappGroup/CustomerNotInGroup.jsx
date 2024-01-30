@@ -24,8 +24,13 @@ export const CustomerNotInGroup = () => {
         currentPage,
         searchQuery
       );
-      setWhatsappGroupData(res.data.results);
-      setPageCount(Math.ceil(res.data.count / 25));
+      const filteredData = res.data.results.filter(
+        (item) =>
+          item.member_details && item.member_details.is_customer === "No"
+      );
+      console.log(filteredData);
+      setWhatsappGroupData(filteredData);
+      setPageCount(Math.ceil(filteredData.length / 25));
     } catch (err) {
       console.error(err);
     } finally {
@@ -42,12 +47,8 @@ export const CustomerNotInGroup = () => {
   };
 
   const Tabledata = Array.isArray(whatsappGroupData)
-    ? whatsappGroupData
-        .filter(
-          (item) =>
-            item.member_details && item.member_details.is_customer === "No"
-        )
-        .map(({ name, whatsapp_group, assigned_to, member_details }) => ({
+    ? whatsappGroupData.map(
+        ({ name, whatsapp_group, assigned_to, member_details }) => ({
           company: name,
           whatsapp_group,
           assigned_to: Array.isArray(assigned_to) ? (
@@ -78,7 +79,8 @@ export const CustomerNotInGroup = () => {
             member_details && "sales_persons" in member_details
               ? member_details.sales_persons
               : undefined,
-        }))
+        })
+      )
     : [];
 
   const Tableheaders = [

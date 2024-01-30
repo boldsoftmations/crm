@@ -24,6 +24,11 @@ export const SalesPersonNotInGroup = () => {
         currentPage,
         searchQuery
       );
+      const filteredData = res.data.results.filter(
+        (item) =>
+          item.member_details && item.member_details.is_sales_person === "No"
+      );
+      console.log(filteredData);
       setWhatsappGroupData(res.data.results);
       setPageCount(Math.ceil(res.data.count / 25));
     } catch (err) {
