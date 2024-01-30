@@ -1182,6 +1182,19 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
+                to="/user/no-sales-person-group"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Sales Person Not In Group"
+                />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
                 to="/user/not-in-whatsapp-group"
                 style={{ width: 300 }}
               >
@@ -1911,6 +1924,19 @@ export const ListItems = (props) => {
                       onClick={() => setOpen(false)}
                       inset
                       primary="Customer Not In Group"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/no-sales-person-group"
+                    style={{ width: 300 }}
+                  >
+                    <ListItemText
+                      component={Button}
+                      onClick={() => setOpen(false)}
+                      inset
+                      primary="Sales Person Not In Group"
                     />
                   </ListItem>
                   <ListItem

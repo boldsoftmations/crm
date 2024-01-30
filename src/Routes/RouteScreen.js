@@ -82,6 +82,7 @@ import { WhatsappGroupView } from "../Pages/WhatsappGroup/WhatsappGroupView";
 import { WhatsappGroup } from "../Pages/WhatsappGroup/WhatsappGroup";
 import { CustomerNoWhatsappGroup } from "../Pages/WhatsappGroup/CustomerNoWhatsappGroup";
 import { CustomerNotInGroup } from "../Pages/WhatsappGroup/CustomerNotInGroup";
+import { SalesPersonNotInGroup } from "../Pages/WhatsappGroup/SalesPersonNotInGroup";
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
   const token = tokenData.user;
@@ -323,6 +324,7 @@ export const RouteScreen = () => {
             />
             <Route path="/user/whatsapp-group" element={<WhatsappGroupView />} />
             <Route path="/user/not-in-whatsapp-group" element={<CustomerNotInGroup />} />
+            <Route path="/user/no-sales-person-group" element={<SalesPersonNotInGroup />} />
             <Route path="/user/no-whatsapp-group" element={<CustomerNoWhatsappGroup />} />
             <Route path="/user/whatsapp" element={<WhatsappGroup/>} />
           </>

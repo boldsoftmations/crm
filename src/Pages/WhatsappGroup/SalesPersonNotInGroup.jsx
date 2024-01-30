@@ -6,7 +6,7 @@ import { CustomPagination } from "../../Components/CustomPagination";
 import { CustomLoader } from "../../Components/CustomLoader";
 import CustomTextField from "../../Components/CustomTextField";
 
-export const CustomerNotInGroup = () => {
+export const SalesPersonNotInGroup = () => {
   const [open, setOpen] = useState(false);
   const [whatsappGroupData, setWhatsappGroupData] = useState([]);
   const [pageCount, setPageCount] = useState(0);
@@ -45,21 +45,19 @@ export const CustomerNotInGroup = () => {
     ? whatsappGroupData.map((row) => ({
         company: row.name,
         whatsapp_group: row.whatsapp_group,
-        assigned_to: Array.isArray(row.assigned_to) ? (
-          row.assigned_to.map((assigned) => <Chip label={assigned} />)
+        sales_person_not_in_group: Array.isArray(
+          row.member_details.not_user
+        ) ? (
+          row.member_details.not_user.map((assigned) => (
+            <Chip label={assigned} />
+          ))
         ) : (
-          <Chip label={row.assigned_to} />
+          <Chip label={row.member_details.not_user} />
         ),
-        customer_in_group: row.member_details.is_customer,
       }))
     : [];
 
-  const Tableheaders = [
-    "Company ",
-    "Group",
-    "Assigned Sales Person",
-    "Customer In Group",
-  ];
+  const Tableheaders = ["Company ", "Group ", "Sales Person Not In Group"];
 
   return (
     <>
@@ -116,7 +114,7 @@ export const CustomerNotInGroup = () => {
                     fontWeight: 800,
                   }}
                 >
-                  Customer Not In Group
+                  Sales Person Not In Group
                 </h3>
               </Grid>
             </Grid>
