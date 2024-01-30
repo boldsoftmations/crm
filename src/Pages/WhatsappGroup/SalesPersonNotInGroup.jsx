@@ -42,39 +42,50 @@ export const SalesPersonNotInGroup = () => {
   };
 
   const Tabledata = Array.isArray(whatsappGroupData)
-    ? whatsappGroupData.map((row) => ({
-        company: row.name,
-        whatsapp_group: row.whatsapp_group,
-        sales_person_not_in_group: Array.isArray(
-          row.member_details.not_user
-        ) ? (
-          row.member_details.not_user.map((assigned, id) => (
+    ? whatsappGroupData
+        .filter(
+          (item) =>
+            item.member_details && item.member_details.is_sales_person === "No"
+        )
+        .map((row) => ({
+          company: row.name,
+          whatsapp_group: row.whatsapp_group,
+          sales_person_not_in_group: Array.isArray(
+            row.member_details.not_user
+          ) ? (
+            row.member_details.not_user.map((assigned, id) => (
+              <div
+                key={id}
+                style={{
+                  border: "1px solid #4caf50",
+                  borderRadius: "20px",
+                  color: "#4caf50",
+                }}
+              >
+                {assigned}
+              </div>
+            ))
+          ) : (
             <div
-              key={id}
               style={{
                 border: "1px solid #4caf50",
                 borderRadius: "20px",
                 color: "#4caf50",
               }}
             >
-              {assigned}
+              row.member_details.not_user
             </div>
-          ))
-        ) : (
-          <div
-            style={{
-              border: "1px solid #4caf50",
-              borderRadius: "20px",
-              color: "#4caf50",
-            }}
-          >
-            row.member_details.not_user
-          </div>
-        ),
-      }))
+          ),
+          sales_persons: row.member_details.sales_persons,
+        }))
     : [];
 
-  const Tableheaders = ["Company ", "Group ", "Sales Person Not In Group"];
+  const Tableheaders = [
+    "Company ",
+    "Group ",
+    "Sales Person Not In Group",
+    "Sales Person In Group",
+  ];
 
   return (
     <>

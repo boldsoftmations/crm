@@ -42,8 +42,12 @@ export const CustomerNotInGroup = () => {
   };
 
   const Tabledata = Array.isArray(whatsappGroupData)
-    ? whatsappGroupData.map(
-        ({ name, whatsapp_group, assigned_to, member_details }) => ({
+    ? whatsappGroupData
+        .filter(
+          (item) =>
+            item.member_details && item.member_details.is_customer === "No"
+        )
+        .map(({ name, whatsapp_group, assigned_to, member_details }) => ({
           company: name,
           whatsapp_group,
           assigned_to: Array.isArray(assigned_to) ? (
@@ -70,19 +74,18 @@ export const CustomerNotInGroup = () => {
               assigned_to
             </div>
           ),
-          // customer_in_group:
-          //   member_details && "is_customer" in member_details
-          //     ? member_details.is_customer
-          //     : undefined,
-          // Using optional chaining for safety
-        })
-      )
+          sales_persons:
+            member_details && "sales_persons" in member_details
+              ? member_details.sales_persons
+              : undefined,
+        }))
     : [];
+
   const Tableheaders = [
     "Company ",
     "Group",
     "Assigned Sales Person",
-    // "Customer In Group",
+    "Sales Person In Group",
   ];
 
   return (
@@ -108,7 +111,7 @@ export const CustomerNotInGroup = () => {
                   color="primary"
                   onClick={() => {
                     setCurrentPage(0);
-                    getAllCustomerNotInGroupData(searchQuery);
+                    getAllCustomerNotInGroupData("", searchQuery);
                   }}
                 >
                   Search
