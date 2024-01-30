@@ -1156,7 +1156,7 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/user/whatsapp-group"
+                to="/customers/whatsapp-group"
                 style={{ width: 300 }}
               >
                 <ListItemText
@@ -1169,7 +1169,7 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/user/no-whatsapp-group"
+                to="/customers/no-whatsapp-group"
                 style={{ width: 300 }}
               >
                 <ListItemText
@@ -1182,7 +1182,7 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/user/no-sales-person-group"
+                to="/customers/no-sales-person-group"
                 style={{ width: 300 }}
               >
                 <ListItemText
@@ -1195,7 +1195,7 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/user/not-in-whatsapp-group"
+                to="/customers/not-in-whatsapp-group"
                 style={{ width: 300 }}
               >
                 <ListItemText
@@ -1208,14 +1208,14 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/user/whatsapp"
+                to="/customers/whatsapp"
                 style={{ width: 300 }}
               >
                 <ListItemText
                   component={Button}
                   onClick={() => setOpen(false)}
                   inset
-                  primary="Automation"
+                  primary="Bulk Message"
                 />
               </ListItem>
             </List>
@@ -1252,7 +1252,7 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/user/hr-model"
+                to="/hr-model"
                 style={{ width: 300 }}
               >
                 <ListItemText
@@ -1265,7 +1265,7 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/user/hr-model/designation"
+                to="/hr-model/designation"
                 style={{ width: 300 }}
               >
                 <ListItemText
@@ -1278,7 +1278,7 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/user/hr-model/department"
+                to="/hr-model/department"
                 style={{ width: 300 }}
               >
                 <ListItemText
@@ -1291,7 +1291,7 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
-                to="/user/hr-model/source"
+                to="/hr-model/source"
                 style={{ width: 300 }}
               >
                 <ListItemText
@@ -1399,7 +1399,7 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/user/hr-model"
+                    to="/hr-model"
                     style={{ width: 300 }}
                   >
                     <ListItemText
@@ -1412,7 +1412,7 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/user/hr-model/designation"
+                    to="/hr-model/designation"
                     style={{ width: 300 }}
                   >
                     <ListItemText
@@ -1425,7 +1425,7 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/user/hr-model/department"
+                    to="/hr-model/department"
                     style={{ width: 300 }}
                   >
                     <ListItemText
@@ -1438,7 +1438,7 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/user/hr-model/source"
+                    to="/hr-model/source"
                     style={{ width: 300 }}
                   >
                     <ListItemText
@@ -1916,7 +1916,7 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/user/not-in-whatsapp-group"
+                    to="/customers/not-in-whatsapp-group"
                     style={{ width: 300 }}
                   >
                     <ListItemText
@@ -1929,7 +1929,7 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/user/no-sales-person-group"
+                    to="/customers/no-sales-person-group"
                     style={{ width: 300 }}
                   >
                     <ListItemText
@@ -1942,7 +1942,7 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/user/no-whatsapp-group"
+                    to="/customers/no-whatsapp-group"
                     style={{ width: 300 }}
                   >
                     <ListItemText
@@ -1955,14 +1955,14 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/user/whatsapp"
+                    to="/customers/whatsapp"
                     style={{ width: 300 }}
                   >
                     <ListItemText
                       component={Button}
                       onClick={() => setOpen(false)}
                       inset
-                      primary="Automation"
+                      primary="Bulk Message"
                     />
                   </ListItem>
                 </List>
@@ -3224,7 +3224,7 @@ export const ListItems = (props) => {
                   <ListItem
                     button
                     component={RouterLink}
-                    to="/user/hr-model"
+                    to="/hr-model"
                     style={{ width: 300 }}
                   >
                     <ListItemText
