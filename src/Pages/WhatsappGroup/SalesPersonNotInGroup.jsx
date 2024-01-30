@@ -12,20 +12,19 @@ export const SalesPersonNotInGroup = () => {
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
     getAllCustomerNotInGroupData(currentPage);
-  }, [currentPage]);
+  }, [currentPage, searchQuery]);
 
-  const getAllCustomerNotInGroupData = async (
-    page = currentPage,
-    searchValue = searchQuery
-  ) => {
+  const getAllCustomerNotInGroupData = async () => {
     try {
       setOpen(true);
       const res = await CustomerServices.getCustomerNotInGroupData(
-        page,
-        searchValue
+        false,
+        currentPage,
+        searchQuery
       );
       setWhatsappGroupData(res.data.results);
       setPageCount(Math.ceil(res.data.count / 25));
@@ -41,7 +40,7 @@ export const SalesPersonNotInGroup = () => {
   };
 
   const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
+    setInputValue(event.target.value);
   };
 
   const Tabledata = Array.isArray(whatsappGroupData)
@@ -102,7 +101,7 @@ export const SalesPersonNotInGroup = () => {
                   size="small"
                   label="Search"
                   variant="outlined"
-                  value={searchQuery}
+                  value={inputValue}
                   onChange={handleSearchChange}
                   fullWidth
                 />
@@ -112,8 +111,8 @@ export const SalesPersonNotInGroup = () => {
                   variant="contained"
                   color="primary"
                   onClick={() => {
-                    setCurrentPage(0);
-                    getAllCustomerNotInGroupData(0, searchQuery);
+                    setSearchQuery(inputValue);
+                    setCurrentPage(1);
                   }}
                 >
                   Search
@@ -124,12 +123,9 @@ export const SalesPersonNotInGroup = () => {
                   variant="contained"
                   color="secondary"
                   onClick={() => {
+                    setInputValue("");
                     setSearchQuery("");
-                    getAllCustomerNotInGroupData(
-                      1,
-
-                      ""
-                    );
+                    setCurrentPage(1);
                   }}
                 >
                   Reset
