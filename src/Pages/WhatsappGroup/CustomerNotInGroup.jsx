@@ -14,23 +14,21 @@ export const CustomerNotInGroup = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    getAllCustomerNotInGroupData();
+    getAllCustomerNotInGroupData(currentPage);
   }, [currentPage]);
 
-  const getAllCustomerNotInGroupData = async (searchQuery) => {
+  const getAllCustomerNotInGroupData = async (
+    page = currentPage,
+    searchValue = searchQuery
+  ) => {
     try {
       setOpen(true);
       const res = await CustomerServices.getCustomerNotInGroupData(
-        currentPage,
-        searchQuery
+        page,
+        searchValue
       );
-      const filteredData = res.data.results.filter(
-        (item) =>
-          item.member_details && item.member_details.is_customer === "No"
-      );
-      console.log(filteredData);
-      setWhatsappGroupData(filteredData);
-      setPageCount(Math.ceil(filteredData.length / 25));
+      setWhatsappGroupData(res.data.results);
+      setPageCount(Math.ceil(res.data.count / 25));
     } catch (err) {
       console.error(err);
     } finally {
@@ -113,7 +111,7 @@ export const CustomerNotInGroup = () => {
                   color="primary"
                   onClick={() => {
                     setCurrentPage(0);
-                    getAllCustomerNotInGroupData("", searchQuery);
+                    getAllCustomerNotInGroupData(0, searchQuery);
                   }}
                 >
                   Search
