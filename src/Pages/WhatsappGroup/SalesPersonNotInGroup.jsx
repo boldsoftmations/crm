@@ -78,16 +78,10 @@ export const SalesPersonNotInGroup = () => {
               row.member_details.not_user
             </div>
           ),
-          sales_persons: row.member_details.sales_persons,
         }))
     : [];
 
-  const Tableheaders = [
-    "Company ",
-    "Group ",
-    "Sales Person Not In Group",
-    "Sales Person In Group",
-  ];
+  const Tableheaders = ["Company ", "Group ", "Sales Person Not In Group"];
 
   return (
     <>
