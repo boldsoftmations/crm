@@ -1,35 +1,47 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { CustomTable } from "../../Components/CustomTable";
-import { Box, Grid, Paper } from "@mui/material";
+import { Box, Button, Grid, Paper } from "@mui/material";
 import CustomerServices from "../../services/CustomerService";
 import { CustomPagination } from "../../Components/CustomPagination";
 import { CustomLoader } from "../../Components/CustomLoader";
+import CustomTextField from "../../Components/CustomTextField";
 
 export const WhatsappGroupView = () => {
   const [open, setOpen] = useState(false);
   const [whatsappGroupData, setWhatsappGroupData] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     getAllWhatsappGroup();
   }, [currentPage]);
 
-  const getAllWhatsappGroup = async () => {
-    try {
-      setOpen(true);
-      const res = await CustomerServices.getAllWhatsappGroupData(currentPage);
-      setWhatsappGroupData(res.data.results);
-      setPageCount(Math.ceil(res.data.count / 25));
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setOpen(false);
-    }
-  };
+  const getAllWhatsappGroup = useCallback(
+    async (page = currentPage, searchValue = searchQuery) => {
+      try {
+        setOpen(true);
+        const res = await CustomerServices.getAllWhatsappGroupData(
+          page,
+          searchValue
+        );
+        setWhatsappGroupData(res.data.results);
+        setPageCount(Math.ceil(res.data.count / 25));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setOpen(false);
+      }
+    },
+    [searchQuery]
+  );
 
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
   };
 
   const Tabledata = Array.isArray(whatsappGroupData)
@@ -50,7 +62,39 @@ export const WhatsappGroupView = () => {
           <Box display="flex" marginBottom="10px">
             <Grid container spacing={2}>
               <Grid item xs={12} sm={3}>
-                {" "}
+                <CustomTextField
+                  size="small"
+                  label="Search"
+                  variant="outlined"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={1}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    setCurrentPage(1);
+                    getAllWhatsappGroup(1, searchQuery);
+                  }}
+                >
+                  Search
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={1}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setCurrentPage(1);
+                    getAllWhatsappGroup(1, "");
+                  }}
+                >
+                  Reset
+                </Button>
               </Grid>
               <Grid item xs={12} sm={6} alignItems={"center"}>
                 <h3

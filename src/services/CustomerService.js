@@ -222,8 +222,20 @@ const updateCompetitors = (id, data) => {
 };
 
 // Whatsapp routes
-const getAllWhatsappGroupData = (page = 1) => {
-  return CustomAxios.get(`/api/customer/whatsapp-group-list/?page=${page}`);
+const getAllWhatsappGroupData = (page = 1, searchValue) => {
+  const params = new URLSearchParams();
+
+  params.append("is_whatsapp", false);
+
+  if (!searchValue && page) {
+    params.append("page", page);
+  }
+
+
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
+  return CustomAxios.get(`/api/customer/whatsapp-group-list/?${params.toString()}`);
 };
 
 const getCustomerNotHavingWhatsappGroup = (page, searchValue) => {
