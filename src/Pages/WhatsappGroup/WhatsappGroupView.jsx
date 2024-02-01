@@ -1,12 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { CustomTable } from "../../Components/CustomTable";
-import { Box, Button, Grid, Paper, Snackbar } from "@mui/material"; // Import Snackbar from Material-UI
+import { Box, Button, Grid, Paper, Snackbar } from "@mui/material";
 import CustomerServices from "../../services/CustomerService";
 import { CustomPagination } from "../../Components/CustomPagination";
 import { CustomLoader } from "../../Components/CustomLoader";
 import CustomTextField from "../../Components/CustomTextField";
-import { DeleteWhatsappGroup } from "./DeleteWhatsappGroup";
-import { Popup } from "../../Components/Popup";
 
 export const WhatsappGroupView = () => {
   const [open, setOpen] = useState(false);
@@ -14,10 +12,8 @@ export const WhatsappGroupView = () => {
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [deletePopupOpen, setDeletePopupOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // State for snackbar
-  const [snackbarMessage, setSnackbarMessage] = useState(""); // State for snackbar message
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   useEffect(() => {
     getAllWhatsappGroup();
@@ -52,20 +48,17 @@ export const WhatsappGroupView = () => {
   };
 
   const handleDelete = async (id) => {
-    setSelectedRow(id);
-    setDeletePopupOpen(true);
-  };
-
-  const onDeleteSuccess = async (deletedId) => {
-    setWhatsappGroupData((prevData) =>
-      prevData.filter((row) => row.whatsapp_group_id !== deletedId)
-    );
-    setSnackbarMessage("Group deleted successfully");
-    setSnackbarOpen(true);
-  };
-
-  const closeDeletePopup = () => {
-    setDeletePopupOpen(false);
+    try {
+      await CustomerServices.deleteWhatsappData(id);
+      setWhatsappGroupData((prevData) =>
+        prevData.filter((row) => row.whatsapp_group_id !== id)
+      );
+      setSnackbarMessage("Group deleted successfully");
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error("Error deleting group:", error);
+      alert("Error deleting group");
+    }
   };
 
   const Tabledata = Array.isArray(whatsappGroupData)
@@ -138,23 +131,12 @@ export const WhatsappGroupView = () => {
           <CustomTable
             headers={Tableheaders}
             data={Tabledata}
-            openInPopup={handleDelete}
+            openDeletePopup={handleDelete}
           />
           <CustomPagination
             pageCount={pageCount}
             handlePageClick={handlePageClick}
           />
-          <Popup
-            title={"Delete"}
-            openPopup={deletePopupOpen}
-            setOpenPopup={setDeletePopupOpen}
-          >
-            <DeleteWhatsappGroup
-              id={selectedRow}
-              onClose={closeDeletePopup}
-              onDeleteSuccess={onDeleteSuccess}
-            />
-          </Popup>
           <Snackbar
             open={snackbarOpen}
             autoHideDuration={3000}
