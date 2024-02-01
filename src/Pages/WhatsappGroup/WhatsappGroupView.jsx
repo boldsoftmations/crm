@@ -32,7 +32,6 @@ export const WhatsappGroupView = () => {
       } catch (err) {
         console.error(err);
       } finally {
-        getAllWhatsappGroup();
         setOpen(false);
       }
     },
@@ -58,6 +57,8 @@ export const WhatsappGroupView = () => {
     } catch (error) {
       console.error("Error deleting group:", error);
       alert("Error deleting group");
+    } finally {
+      getAllWhatsappGroup(currentPage, searchQuery);
     }
   };
 
