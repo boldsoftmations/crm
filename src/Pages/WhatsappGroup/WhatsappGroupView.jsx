@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CustomTable } from "../../Components/CustomTable";
 import { Box, Button, Grid, Paper, Snackbar } from "@mui/material";
 import CustomerServices from "../../services/CustomerService";
@@ -19,24 +19,23 @@ export const WhatsappGroupView = () => {
     getAllWhatsappGroup();
   }, [currentPage]);
 
-  const getAllWhatsappGroup = useCallback(
-    async (page = currentPage, searchValue = searchQuery) => {
-      try {
-        setOpen(true);
-        const res = await CustomerServices.getAllWhatsappGroupData(
-          page,
-          searchValue
-        );
-        setWhatsappGroupData(res.data.results);
-        setPageCount(Math.ceil(res.data.count / 25));
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setOpen(false);
-      }
-    },
-    [searchQuery]
-  );
+  const getAllWhatsappGroup = async (
+    page = currentPage,
+    searchValue = searchQuery
+  ) => {
+    try {
+      setOpen(true);
+      const res = await CustomerServices.getAllWhatsappGroupData(
+        page,
+        searchValue
+      );
+      setWhatsappGroupData(res.data.results);
+      setPageCount(Math.ceil(res.data.count / 25));
+    } catch (err) {
+      console.error(err);
+    }
+    setOpen(false);
+  };
 
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
@@ -135,6 +134,7 @@ export const WhatsappGroupView = () => {
             openDeletePopup={handleDelete}
           />
           <CustomPagination
+            key={currentPage}
             pageCount={pageCount}
             handlePageClick={handlePageClick}
           />
