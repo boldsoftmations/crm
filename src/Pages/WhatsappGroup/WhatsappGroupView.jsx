@@ -41,8 +41,8 @@ export const WhatsappGroupView = () => {
     setOpen(false);
   };
 
-  const handleDelete = async (id) => {
-    setSelectedRow(id);
+  const handleDelete = async (data) => {
+    setSelectedRow(data);
     setDeletePopupOpen(true);
   };
 
@@ -151,12 +151,12 @@ export const WhatsappGroupView = () => {
             handlePageClick={handlePageClick}
           />
           <Popup
-            title={"Are You Sure"}
+            title={"Whatsapp Group Delete"}
             openPopup={deletePopupOpen}
             setOpenPopup={setDeletePopupOpen}
           >
             <WhatsappGroupDelete
-              id={selectedRow}
+              selectedData={selectedRow}
               onClose={closeDeletePopup}
               onDeleteSuccess={onDeleteSuccess}
             />
