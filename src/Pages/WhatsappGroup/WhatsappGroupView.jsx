@@ -56,6 +56,7 @@ export const WhatsappGroupView = () => {
 
   const closeDeletePopup = () => {
     setDeletePopupOpen(false);
+    getAllWhatsappGroup();
   };
 
   const handlePageClick = (event, value) => {
