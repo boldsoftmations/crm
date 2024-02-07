@@ -164,9 +164,12 @@ export const SalesInvoiceCreate = (props) => {
   const createSalesInvoiceDetails = async (e) => {
     try {
       e.preventDefault();
-      const PRODUCTS = products.map(
-        ({ pending_quantity, rate, requested_date, ...rest }) => rest
-      );
+      const PRODUCTS = products
+        .filter(
+          (product) =>
+            Number(product.pending_quantity) > 0 && Number(product.quantity) > 0
+        ) // Keep products where both pending_quantity and quantity are > 0
+        .map(({ pending_quantity, rate, requested_date, ...rest }) => rest); // Exclude specified fields
 
       const req = {
         order_book: customerorderBookData.id,
