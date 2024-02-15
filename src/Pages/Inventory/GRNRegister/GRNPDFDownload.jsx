@@ -141,7 +141,7 @@ export const GRNPDFDownload = ({ grnRegisterPDFData }) => {
             <Text style={styles.title}>GOODS RECEIVED NOTE</Text>
             <View style={styles.grnInfoContainer}>
               <Text style={styles.grnInfo}>
-                GRN No: {grnRegisterPDFData.grn_no}
+                GRN No: {grnRegisterPDFData.grn_number}
               </Text>
             </View>
           </View>

@@ -177,7 +177,7 @@ export const GRNRegisterView = () => {
   };
 
   const Tableheaders = [
-    "Grn ID",
+    "Grn NO",
     "Date",
     "Vendor",
     "Invoce No",
@@ -271,7 +271,9 @@ export const GRNRegisterView = () => {
             <TableBody>
               {grnRegisterData.map((row, index) => (
                 <StyledTableRow key={index}>
-                  <StyledTableCell align="center">{row.grn_no}</StyledTableCell>
+                  <StyledTableCell align="center">
+                    {row.grn_number}
+                  </StyledTableCell>
                   <StyledTableCell align="center">
                     {row.invoice_date}
                   </StyledTableCell>
