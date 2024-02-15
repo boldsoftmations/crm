@@ -13,8 +13,6 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
 import { styled } from "@mui/material/styles";
-import { useSelector } from "react-redux";
-import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -30,9 +28,6 @@ export const GRNCreate = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState(null);
-  const data = useSelector((state) => state.auth);
-  const sellerData = data.sellerAccount;
-  const [selectedSellerData, setSelectedSellerData] = useState("");
   const [products, setProducts] = useState(
     idForEdit.products.map(({ product, unit, quantity }) => ({
       products: product,
@@ -46,13 +41,6 @@ export const GRNCreate = ({
     return !isNaN(orderQty) && !isNaN(rejectedQty)
       ? parseInt(orderQty, 10) - parseInt(rejectedQty, 10)
       : "";
-  };
-
-  const tfStyle = {
-    "& .MuiButtonBase-root.MuiAutocomplete-clearIndicator": {
-      color: "blue",
-      visibility: "visible",
-    },
   };
 
   const handleFormChange = (index, event) => {
@@ -81,7 +69,6 @@ export const GRNCreate = ({
       const response = await InventoryServices.createGRNData({
         packing_list: idForEdit.id,
         products,
-        seller_account: selectedSellerData.unit,
       });
 
       getAllPackingListDetails();
@@ -127,20 +114,7 @@ export const GRNCreate = ({
               value={idForEdit.vendor || ""}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomAutocomplete
-              name="seller_account"
-              size="small"
-              disablePortal
-              id="combo-box-demo"
-              onChange={(event, value) => setSelectedSellerData(value)}
-              options={sellerData.map((option) => option)}
-              getOptionLabel={(option) => option.unit}
-              sx={{ minWidth: 300 }}
-              label="Seller Account"
-              style={tfStyle}
-            />
-          </Grid>
+
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
