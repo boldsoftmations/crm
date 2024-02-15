@@ -7,6 +7,7 @@ import {
   Chip,
   Divider,
   Grid,
+  LinearProgress,
   List,
   ListItem,
   ListItemSecondaryAction,
@@ -24,17 +25,34 @@ import jsPDF from "jspdf";
 import { DailySalesReviewPDF } from "./DailySalesReviewPDF";
 import { pdf } from "@react-pdf/renderer";
 
+// Utility function to capitalize the first letter of each word
+const capitalizeWords = (str) =>
+  str
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
 const generateListItem = (label, value, maxValue) => {
+  // Capitalize each word in the label
+  const capitalizedLabel = capitalizeWords(label);
+
+  // Calculate the percentage
+  const percentage = (value / maxValue) * 100;
+
   return (
     <ListItem key={label}>
-      <ListItemText primary={label} />
+      <ListItemText
+        primary={capitalizedLabel}
+        secondary={<LinearProgress variant="determinate" value={percentage} />}
+      />
       <ListItemSecondaryAction>
-        <Typography variant="caption">{value}</Typography>
+        <Typography variant="caption">{`${value} (${percentage.toFixed(
+          2
+        )}%)`}</Typography>
       </ListItemSecondaryAction>
     </ListItem>
   );
 };
-
 const GridItemCard = ({ title, children, xs, sm, lg }) => (
   <Grid item xs={xs} sm={sm} lg={lg}>
     <Card raised>
@@ -50,6 +68,20 @@ const GridItemCard = ({ title, children, xs, sm, lg }) => (
 );
 
 const CallPerformanceTable = ({ callPerformanceData }) => {
+  // Calculate totals
+  const totals = Object.values(callPerformanceData).reduce(
+    (acc, values) => {
+      acc.today += values.today;
+      acc.last_7_days += values.last_7_days;
+      acc.month += values.month;
+      return acc;
+    },
+    { today: 0, last_7_days: 0, month: 0 }
+  );
+
+  // Placeholder for additional month info - replace with actual calculation if needed
+  const additionalMonthInfo = "Placeholder Info";
+
   return (
     <TableContainer>
       <Table>
@@ -58,25 +90,77 @@ const CallPerformanceTable = ({ callPerformanceData }) => {
             <TableCell>Category</TableCell>
             <TableCell align="right">Today</TableCell>
             <TableCell align="right">Last 7 Days</TableCell>
-            <TableCell align="right">Month</TableCell>
+            <TableCell align="right">This Month</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {Object.entries(callPerformanceData).map(([key, values]) => (
             <TableRow key={key}>
               <TableCell component="th" scope="row">
-                {key.replace(/_/g, " ")}
+                {capitalizeWords(key.replace(/_/g, " "))}
               </TableCell>
               <TableCell align="right">{values.today}</TableCell>
               <TableCell align="right">{values.last_7_days}</TableCell>
               <TableCell align="right">{values.month}</TableCell>
             </TableRow>
           ))}
+          {/* Add a row for totals, with additional month info directly in the same cell */}
+          <TableRow>
+            <TableCell component="th" scope="row">
+              Total
+            </TableCell>
+            <TableCell align="right">{totals.today}</TableCell>
+            <TableCell align="right">{totals.last_7_days}</TableCell>
+            <TableCell align="right">{totals.month}</TableCell>
+          </TableRow>
         </TableBody>
       </Table>
     </TableContainer>
   );
 };
+
+// General-purpose reusable component for displaying overview items
+const OverviewItemCard = ({ label, count }) => (
+  <>
+    <CardContent
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        py: 1, // Add padding top and bottom for spacing
+      }}
+    >
+      <Typography variant="subtitle1">{label}</Typography>
+      <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+        {count}
+      </Typography>
+    </CardContent>
+    <Divider variant="middle" />
+  </>
+);
+
+const TopCustomerItemCard = ({ primary, amount, isBilledThisMonth }) => (
+  <>
+    <CardContent
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        justifyContent: "center",
+        py: 1,
+      }}
+    >
+      <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+        {primary}
+      </Typography>
+      <Typography variant="body2">Amount: {amount}</Typography>
+      <Typography variant="body2">
+        Billed This Month: {isBilledThisMonth ? "Yes" : "No"}
+      </Typography>
+    </CardContent>
+    <Divider variant="middle" />
+  </>
+);
 
 const PendingPaymentsCard = ({ payment }) => {
   const theme = useTheme();
@@ -104,7 +188,9 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
   console.log("recordForEdit", JSON.stringify(recordForEdit, null, 2));
   const { daily_sales_review: reviewData = {} } = recordForEdit || {};
   console.log("reviewData", JSON.stringify(reviewData, null, 2));
-
+  const assignedCustomerTotal = reviewData.existing_customer.assigned_customer;
+  const entries = Object.entries(reviewData.no_order_customer);
+  const totalCount = entries.reduce((acc, [, count]) => acc + count, 0);
   const generatePDF = async () => {
     try {
       // create a new jsPDF instance
@@ -147,7 +233,11 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
               {reviewData && reviewData.existing_customer ? (
                 Object.entries(reviewData.existing_customer).map(
                   ([key, value]) =>
-                    generateListItem(key.replace(/_/g, " "), value) // Assuming a default max value of 10
+                    generateListItem(
+                      key.replace(/_/g, " "),
+                      value,
+                      assignedCustomerTotal
+                    ) // Assuming a default max value of 10
                 )
               ) : (
                 <Typography>No Customer Data Available</Typography>
@@ -167,80 +257,76 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
             sm={6}
             lg={4}
           >
-            {Object.entries(reviewData.no_order_customer).map(
-              ([timeRange, count]) => (
-                <Box key={timeRange} mb={2}>
-                  <Typography variant="subtitle2" color="textSecondary">
-                    {timeRange.replace(/_/g, " ")}
-                  </Typography>
-                  {/* <LinearProgress
-                variant="determinate"
-                value={(count / maxCount) * 100}
-                style={{ height: 10, borderRadius: 5, marginBottom: 4 }}
-              /> */}
-                  <Typography variant="caption">{`Count: ${count}`}</Typography>
-                </Box>
-              )
+            {entries.length > 0 ? (
+              entries.map(([label, count]) => (
+                <OverviewItemCard
+                  key={label}
+                  label={capitalizeWords(label.replace(/_/g, " "))}
+                  count={count}
+                />
+              ))
+            ) : (
+              <Typography variant="subtitle1">
+                No Customer Data Available
+              </Typography>
             )}
+            <Box mt={2} sx={{ textAlign: "center" }}>
+              <Typography variant="subtitle1" color="textPrimary">
+                Total Count: {totalCount}
+              </Typography>
+            </Box>
           </GridItemCard>
 
           <GridItemCard title="PI Summary" xs={12} sm={6} lg={4}>
-            <List>
-              <ListItem>
-                <ListItemText
-                  primary="Drop"
-                  secondary={reviewData.pi_summary.drop}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemText
-                  primary="Month Drop"
-                  secondary={reviewData.pi_summary.month_drop}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemText
-                  primary="Raised"
-                  secondary={reviewData.pi_summary.raised}
-                />
-              </ListItem>
-            </List>
+            <OverviewItemCard
+              label="Raised Today"
+              count={reviewData.pi_summary.raised}
+            />
+            <OverviewItemCard
+              label="PI Dropped Today"
+              count={reviewData.pi_summary.drop}
+            />
+            <OverviewItemCard
+              label="PI Drop This Month"
+              count={reviewData.pi_summary.month_drop}
+            />
           </GridItemCard>
 
           <GridItemCard title="Follow-up Summary" xs={12} sm={6} lg={4}>
-            <List>
-              <ListItem>
-                <ListItemText
-                  primary="New Follow-up Created Today"
-                  secondary={reviewData.followup_summary.today}
-                />
-              </ListItem>
-
-              <ListItem>
-                <ListItemText
-                  primary="Hot Lead Created Today"
-                  secondary={reviewData.followup_summary.today_hot_lead}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemText
-                  primary="Follow-up Missed Today"
-                  secondary={reviewData.followup_summary.today_missed_followup}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemText
-                  primary="Overdue Follow-up"
-                  secondary={reviewData.followup_summary.overdue_followup}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemText
-                  primary="Overdue Task"
-                  secondary={reviewData.followup_summary.overdue_task}
-                />
-              </ListItem>
-            </List>
+            <OverviewItemCard
+              label="New Follow-up Created Today"
+              count={reviewData.followup_summary.today}
+            />
+            <OverviewItemCard
+              label="Hot Lead Created Today"
+              count={reviewData.followup_summary.today_hot_lead}
+            />
+            <OverviewItemCard
+              label="Follow-up Missed Today"
+              count={reviewData.followup_summary.today_missed_followup}
+            />
+            <OverviewItemCard
+              label="Overdue Follow-up"
+              count={reviewData.followup_summary.overdue_followup}
+            />
+            <OverviewItemCard
+              label="Overdue Task"
+              count={reviewData.followup_summary.overdue_task}
+            />
+          </GridItemCard>
+          <GridItemCard title="New Customer Summary" xs={12} sm={6} lg={4}>
+            <OverviewItemCard
+              label=" New Customer Last Month"
+              count={reviewData.new_customer_summary.last_month}
+            />
+            <OverviewItemCard
+              label="New Customer This Month"
+              count={reviewData.new_customer_summary.month}
+            />
+            <OverviewItemCard
+              label="New Customer Billed Today"
+              count={reviewData.new_customer_summary.sales_invoice}
+            />
           </GridItemCard>
           {/* Pending Payments */}
           <GridItemCard title="Pending Payments" xs={12}>
@@ -250,68 +336,31 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
                 <PendingPaymentsCard key={index} payment={payment} />
               ))}
           </GridItemCard>
-          <GridItemCard title="New Customer Summary" xs={12} sm={6} lg={4}>
-            <List>
-              <ListItem>
-                <ListItemText
-                  primary="Last Month"
-                  secondary={reviewData.new_customer_summary.last_month}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemText
-                  primary="Month"
-                  secondary={reviewData.new_customer_summary.month}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemText
-                  primary="Sales Invoice"
-                  secondary={reviewData.new_customer_summary.sales_invoice}
-                />
-              </ListItem>
-            </List>
-          </GridItemCard>
-          <GridItemCard title="Customer Conversion Ratio" xs={12} sm={6} lg={4}>
-            <List>
-              <ListItem>
-                <ListItemText
-                  primary="Lead Count"
-                  secondary={reviewData.conversion_ratio.lead_count}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemText
-                  primary="New Customer"
-                  secondary={reviewData.conversion_ratio.new_customer}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemText
-                  primary="Conversion Ratio"
-                  secondary={reviewData.conversion_ratio.conversion_ratiof}
-                />
-              </ListItem>
-            </List>
+
+          <GridItemCard title="Call to Conversion Ratio" xs={12} sm={6} lg={4}>
+            <OverviewItemCard
+              label="Lead Count"
+              count={reviewData.conversion_ratio.lead_count}
+            />
+            <OverviewItemCard
+              label="New Customer"
+              count={reviewData.conversion_ratio.new_customer}
+            />
+            <OverviewItemCard
+              label="Conversion Ratio"
+              count={reviewData.conversion_ratio.conversion_ratiof}
+            />
           </GridItemCard>
           <GridItemCard title="Top Customers" xs={12} sm={6} lg={4}>
             <List>
               {reviewData.length && reviewData.top_customer ? (
                 reviewData.top_customer.map((customer, index) => (
-                  <ListItem key={index}>
-                    <ListItemText
-                      primary={`Customer: ${customer.customer}`}
-                      secondary={
-                        <span>
-                          {`Amount: ${customer.amount}`}
-                          <br />
-                          {`Billed This Month: ${
-                            customer.is_billed_this_month ? "Yes" : "No"
-                          }`}
-                        </span>
-                      }
-                    />
-                  </ListItem>
+                  <TopCustomerItemCard
+                    key={index}
+                    primary={`Customer: ${customer.customer}`}
+                    amount={customer.amount}
+                    isBilledThisMonth={customer.is_billed_this_month}
+                  />
                 ))
               ) : (
                 <Typography>No Top Customer Data Available</Typography>
@@ -324,22 +373,12 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
               {reviewData.length && reviewData.top_forecast_customer ? (
                 reviewData.top_forecast_customer.map(
                   (forecastCustomer, index) => (
-                    <ListItem key={index}>
-                      <ListItemText
-                        primary={`Customer: ${forecastCustomer.customer}`}
-                        secondary={
-                          <span>
-                            {`Amount: ${forecastCustomer.amount}`}
-                            <br />
-                            {`Billed This Month: ${
-                              forecastCustomer.is_billed_this_month
-                                ? "Yes"
-                                : "No"
-                            }`}
-                          </span>
-                        }
-                      />
-                    </ListItem>
+                    <TopCustomerItemCard
+                      key={index}
+                      primary={`Customer: ${forecastCustomer.customer}`}
+                      amount={forecastCustomer.amount}
+                      isBilledThisMonth={forecastCustomer.is_billed_this_month}
+                    />
                   )
                 )
               ) : (
@@ -347,6 +386,7 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
               )}
             </List>
           </GridItemCard>
+
           <GridItemCard
             title="Today Missed Customer Order"
             xs={12}
@@ -382,6 +422,39 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
               </Table>
             </TableContainer>
           </GridItemCard>
+          <GridItemCard
+            title="Today Estimate Customer Order"
+            xs={12}
+            sm={8}
+            lg={6}
+          >
+            <TableContainer>
+              <Table aria-label="Estimate Customer Order">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Customer</TableCell>
+                    <TableCell>Estimated Date</TableCell>
+                    <TableCell>Description</TableCell>
+                    <TableCell>Product</TableCell>
+                    <TableCell>Quantity</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {reviewData &&
+                    reviewData.customer_estimated_order &&
+                    reviewData.customer_estimated_order.map((order, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{order.customer}</TableCell>
+                        <TableCell>{order.estimated_date}</TableCell>
+                        <TableCell>{order.description}</TableCell>
+                        <TableCell>{order.product}</TableCell>
+                        <TableCell>{order.quantity}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </GridItemCard>
           <GridItemCard title="Today Missed Lead Order" xs={12} sm={8} lg={6}>
             <TableContainer>
               <Table aria-label="Missed Customer Orders">
@@ -410,30 +483,37 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
               </Table>
             </TableContainer>
           </GridItemCard>
-          <GridItemCard title="Today Lead Estimate Order" xs={12} sm={6} lg={4}>
-            {reviewData &&
-              reviewData.today_lead_estimate_order &&
-              reviewData.today_lead_estimate_order.map((order, index) => (
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                  <Card raised>
-                    <CardContent>
-                      <Typography variant="h6" component="h2">
-                        {order.leadcompany || "No Company"}
-                      </Typography>
-                      <Chip
-                        label={order.lead_stage || "No Stage"}
-                        color="primary"
-                      />
-                      <Typography color="textSecondary">
-                        Anticipated Date:{" "}
-                        {order.anticipated_date || "Not Provided"}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
+          <GridItemCard title="Today Lead Estimate Order" xs={12} sm={8} lg={6}>
+            <TableContainer>
+              <Table aria-label="Lead Estimate Order">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Stage</TableCell>
+                    <TableCell>Customer</TableCell>
+                    <TableCell>Anticipated Date</TableCell>
+                    <TableCell>Description</TableCell>
+                    <TableCell>Product</TableCell>
+                    <TableCell>Quantity</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {reviewData &&
+                    reviewData.today_lead_estimate_order &&
+                    reviewData.today_lead_estimate_order.map((order, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{order.stage}</TableCell>
+                        <TableCell>{order.customer}</TableCell>
+                        <TableCell>{order.anticipated_date}</TableCell>
+                        <TableCell>{order.description}</TableCell>
+                        <TableCell>{order.product}</TableCell>
+                        <TableCell>{order.quantity}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </GridItemCard>
-          <GridItemCard title="Sales Summary" xs={12} sm={10} lg={8}>
+          <GridItemCard title="Sales Summary" xs={12}>
             <TableContainer>
               <Table aria-label="Sales Summary Table">
                 <TableHead>
