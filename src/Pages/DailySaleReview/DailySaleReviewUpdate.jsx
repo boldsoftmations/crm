@@ -584,7 +584,7 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
             </TableContainer>
           </GridItemCard>
 
-          <GridItemCard title="Whatsapp Details" xs={6}>
+          <GridItemCard title="Whatsapp Summary" xs={6}>
             <OverviewItemCard
               label="Customer Not in WhatsApp Group"
               count={reviewData.whatsapp_summary.not_customer}
