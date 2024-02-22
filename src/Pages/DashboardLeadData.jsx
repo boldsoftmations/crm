@@ -35,15 +35,30 @@ export const DashboardLeadData = () => {
   }, [leadData]);
 
   const fetchLeadData = async () => {
+    const leadStage = {
+      new: "New",
+      open: "Open",
+      close: "Closed",
+      opportunity: "Opportunity",
+      potential: "Potential",
+      interested: "Interested",
+      converted: "Converted",
+      "not interested": "Not Interested",
+    };
     try {
       const response = await DashboardService.getLeadRetailData();
       const data = response.data;
       setLeadData(data);
       const combinedData = [
-        ...data.stage_based_leads.map((item) => ({
-          ...item,
-          type: "stage",
-        })),
+        ...data.stage_based_leads.map(
+          (item) => (
+            (item.updated_stage_name = leadStage[item.stage]),
+            {
+              ...item,
+              type: "stage",
+            }
+          )
+        ),
         ...data.source_based_leads.map((item) => ({
           ...item,
           type: "source",
@@ -94,7 +109,7 @@ export const DashboardLeadData = () => {
         <Grid item xs={12} md={3}>
           <CustomAutocomplete
             options={leadData.stage_based_leads}
-            getOptionLabel={(option) => option.stage}
+            getOptionLabel={(option) => option.updated_stage_name}
             onChange={(event, value, reason) =>
               handleFilterChange(event, value, reason, "stage")
             }
@@ -144,17 +159,45 @@ export const DashboardLeadData = () => {
         <Grid item xs={12}>
           <Grid container spacing={2}>
             {filteredData.map((data, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
+              <Grid item xs={12} sm={4} key={index}>
                 <Card>
                   <CardContent>
                     <Typography variant="h5" component="div">
                       {data.type === "stage"
-                        ? data.stage
+                        ? data.updated_stage_name
                         : data.references__source || "Unknown Source"}
                     </Typography>
                     <Typography color="text.secondary">
                       Total Leads: {data.total_leads}
                     </Typography>
+                    {data.type === "source" && (
+                      <>
+                        <Typography color="text.secondary">
+                          New: {data.new}
+                        </Typography>
+                        <Typography color="text.secondary">
+                          Open : {data.open}
+                        </Typography>
+                        <Typography color="text.secondary">
+                          Opportunity : {data.opportunity}
+                        </Typography>
+                        <Typography color="text.secondary">
+                          Potential : {data.potential}
+                        </Typography>
+                        <Typography color="text.secondary">
+                          Interested : {data.interested}
+                        </Typography>
+                        <Typography color="text.secondary">
+                          Converted : {data.converted}
+                        </Typography>
+                        <Typography color="text.secondary">
+                          Not-Interested : {data.not_interested}
+                        </Typography>
+                        <Typography color="text.secondary">
+                          Closed : {data.close}
+                        </Typography>
+                      </>
+                    )}
                   </CardContent>
                 </Card>
               </Grid>
