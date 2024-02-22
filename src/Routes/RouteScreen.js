@@ -83,6 +83,10 @@ import { WhatsappGroup } from "../Pages/WhatsappGroup/WhatsappGroup";
 import { CustomerNoWhatsappGroup } from "../Pages/WhatsappGroup/CustomerNoWhatsappGroup";
 import { CustomerNotInGroup } from "../Pages/WhatsappGroup/CustomerNotInGroup";
 import { SalesPersonNotInGroup } from "../Pages/WhatsappGroup/SalesPersonNotInGroup";
+import { RetailCustomerData } from "../Pages/RetailCustomerData";
+import { DashboardLeadData } from "../Pages/DashboardLeadData";
+import { Automation } from "../Pages/WhatsappGroup/Automation";
+
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
   const token = tokenData.user;
@@ -109,6 +113,8 @@ export const RouteScreen = () => {
               exact
               element={<TeamWiseDashboard />}
             />
+           <Route path="/user/retailer-data" element={<RetailCustomerData />} />
+           <Route path="/user/dasboard-lead-data" element={<DashboardLeadData />} />
             <Route path="/user/dashoard" element={<Dashboard />} />
             <Route path="/user/profile" exact element={<Profile />} />
             <Route
@@ -327,6 +333,7 @@ export const RouteScreen = () => {
             <Route path="/customers/no-sales-person-group" element={<SalesPersonNotInGroup />} />
             <Route path="/customers/no-whatsapp-group" element={<CustomerNoWhatsappGroup />} />
             <Route path="/customers/whatsapp" element={<WhatsappGroup/>} />
+            <Route path="/customers/automation" element={<Automation/>} />
           </>
         )}
         <Route path="*" element={<Auths />} />
