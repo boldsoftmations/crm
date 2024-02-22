@@ -174,27 +174,20 @@ const StateOption = [
 export const RetailCustomerData = () => {
   const [retailers, setRetailers] = useState([]);
   const [filterState, setFilterState] = useState(StateOption[0]);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [retailerCustomerCount, setRetailerCustomerCount] = useState(0);
-  const [deadCustomerCount, setDeadCustomerCount] = useState(0);
 
   useEffect(() => {
-    // This effect will now re-fetch data whenever filterState changes.
     const fetchData = async () => {
-      setIsLoading(true);
       setError(null);
       try {
         const response = await DashboardService.getRetailerCustomerData(
           filterState.value
-        ); // Assume service can handle 'All' or specific state
+        );
         setRetailers(response.data.state_based_count || []);
         setRetailerCustomerCount(response.data.retailer_customer_count);
-        setDeadCustomerCount(response.data.dead_retailer_customer_count);
       } catch (err) {
         setError(err.message);
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -210,9 +203,6 @@ export const RetailCustomerData = () => {
       ? true
       : filterState && retailer.state === filterState.value
   );
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
 
   return (
     <Container>
@@ -250,7 +240,7 @@ export const RetailCustomerData = () => {
                 margin: "20px 0",
               }}
             >
-              Retailer Customer Count: {retailerCustomerCount}
+              Distribution Customer Count: {retailerCustomerCount}
             </Typography>
           </Grid>
         </Grid>
