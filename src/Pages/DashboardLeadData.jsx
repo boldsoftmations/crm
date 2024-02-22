@@ -21,19 +21,6 @@ export const DashboardLeadData = () => {
     fetchLeadData();
   }, []);
 
-  useEffect(() => {
-    const total =
-      leadData.stage_based_leads.reduce(
-        (acc, cur) => acc + cur.total_leads,
-        0
-      ) +
-      leadData.source_based_leads.reduce(
-        (acc, cur) => acc + cur.total_leads,
-        0
-      );
-    setTotalLeads(total);
-  }, [leadData]);
-
   const fetchLeadData = async () => {
     const leadStage = {
       new: "New",
@@ -49,6 +36,7 @@ export const DashboardLeadData = () => {
       const response = await DashboardService.getLeadRetailData();
       const data = response.data;
       setLeadData(data);
+      setTotalLeads(data.total_leads);
       const combinedData = [
         ...data.stage_based_leads.map(
           (item) => (
