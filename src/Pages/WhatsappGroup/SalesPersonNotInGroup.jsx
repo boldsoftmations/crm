@@ -67,7 +67,7 @@ export const SalesPersonNotInGroup = () => {
               color: "#4caf50",
             }}
           >
-            row.member_details.not_user
+            row.member_details
           </div>
         ),
       }))
