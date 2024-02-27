@@ -149,7 +149,7 @@ export const BulkCustomerAssign = (props) => {
       value: "West Bengal",
     },
     {
-      value: "New Delhi",
+      value: "Delhi",
     },
     {
       value: "Jammu & Kashmir",
