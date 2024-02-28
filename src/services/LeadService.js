@@ -147,9 +147,11 @@ const createFollowUpLeads = (data) => {
 };
 
 // Generic function to get order book data
-const getAllFollowUp = ({ typeValue, assignToFilter }) => {
-  let url = `/api/lead/list-followup/?type=${typeValue}`;
-  if (assignToFilter) url += `&user__email=${assignToFilter}`;
+const getAllFollowUp = ({ typeValue, page = 1, assignToFilter }) => {
+  let url = `/api/lead/list-followup/?type=${typeValue}&page=${page}`;
+  if (assignToFilter) {
+    url += `&user__email=${assignToFilter}`;
+  }
   return CustomAxios.get(url);
 };
 
