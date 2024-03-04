@@ -51,8 +51,7 @@ export const Home = () => {
     currentDate.getMonth() + 1,
     0
   );
-  console.log("initialEndDate", initialEndDate);
-  console.log("initialStartDate", initialStartDate);
+
   const [selectedDate, setSelectedDate] = useState("This Month");
   const [endDate, setEndDate] = useState(initialEndDate);
   const [startDate, setStartDate] = useState(initialStartDate); // set default value as current date
@@ -589,8 +588,6 @@ export const Home = () => {
       const StartDate = adjustedStartDate.toISOString().split("T")[0];
       const EndDate = adjustedEndDate.toISOString().split("T")[0];
 
-      console.log("StartDate inside api", StartDate);
-      console.log("EndDate inside api", EndDate);
       const response = await DashboardService.getCallPerformanceData(
         StartDate,
         EndDate
