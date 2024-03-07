@@ -122,7 +122,10 @@ export const SafetyStockView = () => {
               </TableHead>
               <TableBody>
                 {safetyStockData.map((row, index) => (
-                  <StyledTableRow key={index}>
+                  <StyledTableRow
+                    key={index}
+                    data-quantity={getRowColor(row.quantity)}
+                  >
                     <StyledTableCell align="center">{row.id}</StyledTableCell>
                     <StyledTableCell align="center">
                       {row.seller_account}
@@ -152,7 +155,6 @@ export const SafetyStockView = () => {
       </Grid>
 
       <Popup
-        fullScreen={true}
         title="Create Safety Stock"
         openPopup={openPopupCreate}
         setOpenPopup={setOpenPopupCreate}
@@ -189,6 +191,13 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
+const getRowColor = (quantity) => {
+  if (quantity < 10) return "low";
+  if (quantity >= 10 && quantity <= 50) return "medium";
+  if (quantity > 50 && quantity <= 100) return "high";
+  return "default";
+};
+
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
@@ -196,5 +205,17 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   // hide last border
   "&:last-child td, &:last-child th": {
     border: 0,
+  },
+  '&[data-quantity="low"]': {
+    backgroundColor: "#FFCDD2",
+  },
+  '&[data-quantity="medium"]': {
+    backgroundColor: "#FFF59D",
+  },
+  '&[data-quantity="high"]': {
+    backgroundColor: "#BBDEFB",
+  },
+  '&[data-quantity="default"]': {
+    // Default background
   },
 }));
