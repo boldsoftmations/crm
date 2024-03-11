@@ -67,7 +67,7 @@ export const SafetyStockCreate = ({ setOpenPopup, onCreateSuccess }) => {
       setOpenPopup(false);
     } catch (error) {
       console.error("Error creating safety stock", error);
-      setError("Failed to create safety stock");
+      setError("Product with this seller unit already exists");
     } finally {
       setLoading(false);
     }
