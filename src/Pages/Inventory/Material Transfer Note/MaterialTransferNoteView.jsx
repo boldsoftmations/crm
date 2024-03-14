@@ -8,7 +8,6 @@ import InventoryServices from "../../../services/InventoryService";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useSelector } from "react-redux";
 import { MaterialTransferNoteCreate } from "./MaterialTransferNoteCreate";
-import { MaterialTransferNoteUpdate } from "./MaterialTransferNoteUpdate";
 import InvoiceServices from "../../../services/InvoiceService";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { CustomTable } from "../../../Components/CustomTable";
@@ -27,7 +26,6 @@ import { MaterialTransferNotePDF } from "./MaterialTransferNotePDF";
 import { MaterialTransferAccept } from "./MaterialTransferAccept";
 
 export const MaterialTransferNoteView = () => {
-  const [openUpdatePopup, setOpenUpdatePopup] = useState(false);
   const [openCreatePopup, setOpenCreatePopup] = useState(false);
   const [openAcceptPopup, setOpenAcceptPopup] = useState(false);
   const [open, setOpen] = useState(false);
@@ -37,7 +35,6 @@ export const MaterialTransferNoteView = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [acceptedFilter, setAcceptedFilter] = useState("");
-  const [idForEdit, setIDForEdit] = useState("");
   const [sellerOption, setSellerOption] = useState(null);
   const userData = useSelector((state) => state.auth.profile);
   const [exportData, setExportData] = useState([]);
@@ -128,11 +125,6 @@ export const MaterialTransferNoteView = () => {
     } finally {
       setOpen(false);
     }
-  };
-
-  const handleEdit = (item) => {
-    setIDForEdit(item);
-    setOpenUpdatePopup(true);
   };
 
   const handleDownloadPdf = (item) => {
@@ -227,6 +219,7 @@ export const MaterialTransferNoteView = () => {
     accepted: row.accepted,
   }));
 
+  // Usage
   const isAcceptedEdit =
     userData.groups.includes("Accounts") ||
     userData.groups.includes("Production") ||
@@ -387,7 +380,6 @@ export const MaterialTransferNoteView = () => {
             </Grid>
           </Grid>
         </Box>
-
         <CustomTable
           headers={Tableheaders}
           data={Tabledata}
@@ -395,15 +387,9 @@ export const MaterialTransferNoteView = () => {
             isAcceptedView && filteredMaterialTransferNote ? handleAccept : null
           }
           openInPopup2={handleDownloadPdf}
-          openInPopup3={
-            isAcceptedEdit && filteredMaterialTransferNote ? handleEdit : null
-          }
-          openInPopup4={null}
-          ButtonText={"Download"}
-          ButtonText1={
-            isAcceptedEdit && filteredMaterialTransferNote ? "Edit" : ""
-          }
+          ButtonText="Download"
         />
+
         <CustomPagination
           currentPage={currentPage}
           pageCount={pageCount}
@@ -412,7 +398,7 @@ export const MaterialTransferNoteView = () => {
       </div>
 
       <Popup
-        fullScreen={true}
+        maxWidth="xl"
         title={"Create Material Transfer Note"}
         openPopup={openCreatePopup}
         setOpenPopup={setOpenCreatePopup}
@@ -423,19 +409,7 @@ export const MaterialTransferNoteView = () => {
           sellerOption={sellerOption}
         />
       </Popup>
-      <Popup
-        fullScreen={true}
-        title={"Update Material Transfer Note"}
-        openPopup={openUpdatePopup}
-        setOpenPopup={setOpenUpdatePopup}
-      >
-        <MaterialTransferNoteUpdate
-          setOpenUpdatePopup={setOpenUpdatePopup}
-          sellerOption={sellerOption}
-          getAllMaterialTransferNoteDetails={getAllMaterialTransferNoteDetails}
-          idForEdit={idForEdit}
-        />
-      </Popup>
+
       <Popup
         maxWidth="xl"
         title={"View Material Transfer Note"}
