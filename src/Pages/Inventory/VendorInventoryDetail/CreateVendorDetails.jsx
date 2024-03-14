@@ -38,6 +38,7 @@ export const CreateVendorDetails = (props) => {
     pan_number: "",
     total_sales_turnover: "",
     country: "",
+    vendor_source: "",
   });
   const [pinCodeData, setPinCodeData] = useState([]);
   const [idForEdit, setIdForEdit] = useState("");
@@ -218,6 +219,25 @@ export const CreateVendorDetails = (props) => {
               }
               onChange={(event, value) => handleInputChange(event, value)}
               label={"Enter Country Name"}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomAutocomplete
+              size="small"
+              id="custom-demo"
+              options={[
+                { name: "Vendor" },
+                { name: "Job Worker" },
+                { name: "Vendor/Job Worker" },
+              ]}
+              getOptionLabel={(option) => option.name}
+              value={
+                inputValue.vendor_source
+                  ? { name: inputValue.vendor_source }
+                  : null
+              }
+              onChange={(event, value) => handleInputChange(event, value)}
+              label={"Source"}
             />
           </Grid>
           <Grid item xs={12} sm={4}>

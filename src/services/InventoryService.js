@@ -1,6 +1,6 @@
 import CustomAxios from "./api";
 
-const getAllVendorData = (page, searchValue) => {
+const getAllVendorData = (page, searchValue,sourceFilter) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
 
@@ -11,7 +11,9 @@ const getAllVendorData = (page, searchValue) => {
   if (searchValue) {
     params.append("search", searchValue);
   }
-
+  if (sourceFilter) {
+    params.append("source", sourceFilter);
+  }
   // Sending a GET request with query parameters
   return CustomAxios.get(`api/inventory/list-vendor/?${params.toString()}`);
 };
@@ -646,6 +648,17 @@ const updateCurrencyData = (id, data) => {
   const updateSafetyStockData =(id,data) => {
     return CustomAxios.patch(`/api/inventory/safety-stock/${id}/`,data);
   }
+
+  const getChalan = () => {
+    return CustomAxios.get(`/api/inventory/challan/`);
+  }
+  const createChalan = (data) => {
+    return CustomAxios.post(`/api/inventory/challan/`, data);
+  }
+const updateChalan = (id, data) => {
+  return CustomAxios.patch(`/api/inventory/challan/${id}/`, data);
+}
+
 const InventoryServices = {
   getAllVendorData,
   createVendorData,
@@ -736,7 +749,10 @@ const InventoryServices = {
   getAllStoresInventoryDetails,
   getAllSafetyStockData,
   createSafetyStockData,
-  updateSafetyStockData
+  updateSafetyStockData,
+  getChalan,
+  createChalan,
+  updateChalan
 };
 
 export default InventoryServices;

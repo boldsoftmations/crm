@@ -86,6 +86,7 @@ import { SalesPersonNotInGroup } from "../Pages/WhatsappGroup/SalesPersonNotInGr
 import { RetailCustomerData } from "../Pages/RetailCustomerData";
 import { DashboardLeadData } from "../Pages/DashboardLeadData";
 import { Automation } from "../Pages/WhatsappGroup/Automation";
+import { ChalanView } from "../Pages/Inventory/VendorInventoryDetail/ChalanView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -239,6 +240,10 @@ export const RouteScreen = () => {
             <Route
               path="/inventory/view-purchase-invoice"
               element={<PurchaseInvoiceView />}
+            />
+            <Route
+              path="/inventory/chalan-view"
+              element={<ChalanView />}
             />
             <Route
               path="/inventory/view-stores-inventory"

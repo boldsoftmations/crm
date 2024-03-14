@@ -801,6 +801,19 @@ export const ListItems = (props) => {
                   primary="Purchase Register"
                 />
               </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/inventory/chalan-view"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  inset
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  primary="Job Work Chalan"
+                />
+              </ListItem>
             </List>
           </Collapse>
 

@@ -227,22 +227,24 @@ export const CustomTable = ({
                       {ButtonText}
                     </div>
                   )}
-                  {openInPopup3 && (
-                    <div
-                      style={{
-                        display: "inline-block",
-                        // padding: "px 6px",
-                        // border: "1px solid #28a745",
-                        // borderRadius: "4px",
-                        color: "#5e35b1",
-                        cursor: "pointer",
-                        marginRight: "8px",
-                      }}
-                      onClick={() => openInPopup3(row)}
-                    >
-                      {ButtonText1}
-                    </div>
-                  )}
+                  {openInPopup3 &&
+                    (row.vendor_source === "Job Worker" ||
+                      row.vendor_source === "Vendor/Job Worker") && (
+                      <div
+                        style={{
+                          display: "inline-block",
+                          // padding: "px 6px",
+                          // border: "1px solid #28a745",
+                          // borderRadius: "4px",
+                          color: "#5e35b1",
+                          cursor: "pointer",
+                          marginRight: "8px",
+                        }}
+                        onClick={() => openInPopup3(row)}
+                      >
+                        {ButtonText1}
+                      </div>
+                    )}
                   {openInPopup4 && (
                     <div
                       style={{

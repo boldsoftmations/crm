@@ -34,25 +34,19 @@ export const UpdateVendorDetails = (props) => {
     }
   };
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-
-    if (name) {
+  const handleInputChange = (event, newValue) => {
+    // Direct handling for Autocomplete components
+    if (
+      typeof event === "string" &&
+      newValue &&
+      newValue.hasOwnProperty("name")
+    ) {
+      // For Autocomplete, 'event' is actually the field name in this case
+      setInputValue({ ...inputValue, [event]: newValue.name });
+    } else if (event.target) {
+      // Handling regular input fields
+      const { name, value } = event.target;
       setInputValue({ ...inputValue, [name]: value });
-    } else {
-      setInputValue({
-        ...inputValue,
-        country: event.target.textContent,
-      });
-    }
-
-    if (name === "pincode") {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      timeoutRef.current = setTimeout(() => {
-        validatePinCode(value);
-      }, 500);
     }
   };
 
@@ -80,6 +74,7 @@ export const UpdateVendorDetails = (props) => {
       const req = {
         type: typeData,
         name: inputValue.name,
+        vendor_source: inputValue.vendor_source,
         address: inputValue.address,
         pincode: inputValue.pincode,
         state:
@@ -183,6 +178,27 @@ export const UpdateVendorDetails = (props) => {
               label={
                 typeData === "International" ? "Enter Country Name" : "Country"
               }
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomAutocomplete
+              size="small"
+              id="custom-demo"
+              options={[
+                { name: "Vendor" },
+                { name: "Job Worker" },
+                { name: "Vendor/Job Worker" },
+              ]}
+              getOptionLabel={(option) => option.name}
+              value={
+                inputValue.vendor_source
+                  ? { name: inputValue.vendor_source }
+                  : null
+              }
+              onChange={(event, value) =>
+                handleInputChange("vendor_source", value)
+              }
+              label={"Source"}
             />
           </Grid>
           <Grid item xs={12} sm={2}>
