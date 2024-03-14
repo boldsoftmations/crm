@@ -11,12 +11,17 @@ import {
   Paper,
   Switch,
   Button,
+  Typography,
+  Collapse,
+  IconButton,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material/styles";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "./../../../services/InventoryService";
 import { CustomPagination } from "../../../Components/CustomPagination";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 export const ChalanView = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +29,7 @@ export const ChalanView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+  const [open, setOpen] = useState({});
 
   useEffect(() => {
     getChalanDetails(currentPage);
@@ -58,6 +64,13 @@ export const ChalanView = () => {
 
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
+  };
+
+  const handleToggle = (chalanId) => {
+    setOpen((prevOpen) => ({
+      ...prevOpen,
+      [chalanId]: !prevOpen[chalanId],
+    }));
   };
 
   const filteredChalanData = Array.isArray(chalanData)
@@ -109,6 +122,7 @@ export const ChalanView = () => {
             >
               <TableHead>
                 <StyledTableRow>
+                  <StyledTableCell align="center">Toggle</StyledTableCell>
                   <StyledTableCell align="center">
                     Buyer Account
                   </StyledTableCell>
@@ -123,38 +137,109 @@ export const ChalanView = () => {
                 </StyledTableRow>
               </TableHead>
               <TableBody>
-                {filteredChalanData.map((row, index) => (
-                  <StyledTableRow key={index}>
-                    <StyledTableCell align="center">
-                      {row.buyer_account}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {row.job_worker}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {row.challan_no}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {row.total_amount}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {row.transpotation_cost}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      <Switch
-                        checked={row.is_accepted}
-                        inputProps={{ "aria-label": "controlled" }}
-                      />
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      <Button
-                        color="primary"
-                        onClick={() => handleAcceptClick(row.id)}
+                {filteredChalanData.map((chalan) => (
+                  <React.Fragment key={chalan.id}>
+                    <StyledTableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+                      <StyledTableCell>
+                        <IconButton
+                          aria-label="expand row"
+                          size="small"
+                          onClick={() => handleToggle(chalan.id)}
+                        >
+                          {open[chalan.id] ? (
+                            <KeyboardArrowUpIcon />
+                          ) : (
+                            <KeyboardArrowDownIcon />
+                          )}
+                        </IconButton>
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {chalan.buyer_account}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {chalan.job_worker}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {chalan.challan_no}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {chalan.total_amount}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {chalan.transpotation_cost}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Switch
+                          checked={chalan.is_accepted}
+                          inputProps={{ "aria-label": "controlled" }}
+                        />
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Button
+                          color="primary"
+                          onClick={() => handleAcceptClick(chalan.id)}
+                        >
+                          Accept
+                        </Button>
+                      </StyledTableCell>
+                    </StyledTableRow>
+                    <TableRow>
+                      <TableCell
+                        style={{ paddingBottom: 0, paddingTop: 0 }}
+                        colSpan={8}
                       >
-                        Accept
-                      </Button>
-                    </StyledTableCell>
-                  </StyledTableRow>
+                        <Collapse
+                          in={open[chalan.id]}
+                          timeout="auto"
+                          unmountOnExit
+                        >
+                          <Box margin={1}>
+                            <Typography
+                              variant="h6"
+                              gutterBottom
+                              component="div"
+                            >
+                              Products
+                            </Typography>
+                            <Table size="small" aria-label="products">
+                              <TableHead>
+                                <TableRow>
+                                  <TableCell>Product</TableCell>
+                                  <TableCell>GRN</TableCell>
+                                  <TableCell>Description</TableCell>
+                                  <TableCell>Chalan</TableCell>
+                                  <TableCell align="right">Quantity</TableCell>
+                                  <TableCell align="right">Rate</TableCell>
+                                  <TableCell align="right">Amount</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {chalan.products.map((product) => (
+                                  <TableRow key={product.product}>
+                                    <TableCell component="th" scope="row">
+                                      {product.product}
+                                    </TableCell>
+                                    <TableCell>{product.grn}</TableCell>
+                                    <TableCell>{product.description}</TableCell>
+                                    <TableCell>{product.challan}</TableCell>
+                                    <TableCell align="right">
+                                      {product.quantity}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                      {product.rate}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                      {product.amount}
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </Box>
+                        </Collapse>
+                      </TableCell>
+                    </TableRow>
+                  </React.Fragment>
                 ))}
               </TableBody>
             </Table>
