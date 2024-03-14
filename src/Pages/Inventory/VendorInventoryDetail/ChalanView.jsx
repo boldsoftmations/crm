@@ -16,25 +16,29 @@ import { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material/styles";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "./../../../services/InventoryService";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { CustomPagination } from "../../../Components/CustomPagination";
 
 export const ChalanView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [chalanData, setChalanData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [pageCount, setPageCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
-    getChalanDetails();
-  }, []);
+    getChalanDetails(currentPage);
+  }, [currentPage]);
 
-  const getChalanDetails = async () => {
+  const getChalanDetails = async (page) => {
     setIsLoading(true);
     try {
-      const response = await InventoryServices.getChalan();
+      const response = await InventoryServices.getChalan(page);
 
       if (response && response.data.results) {
         setChalanData(response.data.results);
       }
+      const total = response.data.count;
+      setPageCount(Math.ceil(total / 25));
     } catch (err) {
       console.error("Error fetching Chalan data", err);
     } finally {
@@ -50,6 +54,10 @@ export const ChalanView = () => {
     } catch (err) {
       console.error("Error updating Chalan", err);
     }
+  };
+
+  const handlePageClick = (event, value) => {
+    setCurrentPage(value);
   };
 
   const filteredChalanData = Array.isArray(chalanData)
@@ -151,6 +159,10 @@ export const ChalanView = () => {
               </TableBody>
             </Table>
           </TableContainer>
+          <CustomPagination
+            pageCount={pageCount}
+            handlePageClick={handlePageClick}
+          />
         </Paper>
       </Grid>
     </>

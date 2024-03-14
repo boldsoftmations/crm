@@ -649,8 +649,13 @@ const updateCurrencyData = (id, data) => {
     return CustomAxios.patch(`/api/inventory/safety-stock/${id}/`,data);
   }
 
-  const getChalan = () => {
-    return CustomAxios.get(`/api/inventory/challan/`);
+  const getChalan = (page) => {
+    const params = new URLSearchParams();
+
+    if (page) {
+      params.append("page", page);
+    }
+    return CustomAxios.get(`/api/inventory/challan/?${params.toString()}`);
   }
   const createChalan = (data) => {
     return CustomAxios.post(`/api/inventory/challan/`, data);
