@@ -354,7 +354,7 @@ export const MaterialRequisitionFormView = () => {
         </Paper>
       </Grid>
       <Popup
-        fullScreen={true}
+        maxWidth="xl"
         title={"Create Material Requisition Details"}
         openPopup={openPopup2}
         setOpenPopup={setOpenPopup2}
@@ -369,7 +369,7 @@ export const MaterialRequisitionFormView = () => {
         />
       </Popup>
       <Popup
-        fullScreen={true}
+        maxWidth="xl"
         title={"Update Material Requisition Details"}
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
