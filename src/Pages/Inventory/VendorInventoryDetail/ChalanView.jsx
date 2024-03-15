@@ -204,8 +204,9 @@ export const ChalanView = () => {
                             <Table size="small" aria-label="products">
                               <TableHead>
                                 <TableRow>
-                                  <TableCell>Product</TableCell>
                                   <TableCell>GRN</TableCell>
+                                  <TableCell>Product</TableCell>
+                                  <TableCell>Unit</TableCell>
                                   <TableCell>Description</TableCell>
                                   <TableCell>Chalan</TableCell>
                                   <TableCell align="right">Quantity</TableCell>
@@ -216,10 +217,11 @@ export const ChalanView = () => {
                               <TableBody>
                                 {chalan.products.map((product) => (
                                   <TableRow key={product.product}>
+                                    <TableCell>{product.grn}</TableCell>
                                     <TableCell component="th" scope="row">
                                       {product.product}
                                     </TableCell>
-                                    <TableCell>{product.grn}</TableCell>
+                                    <TableCell>{product.unit}</TableCell>
                                     <TableCell>{product.description}</TableCell>
                                     <TableCell>{product.challan}</TableCell>
                                     <TableCell align="right">
