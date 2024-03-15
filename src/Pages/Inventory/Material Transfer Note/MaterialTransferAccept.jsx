@@ -85,7 +85,7 @@ export const MaterialTransferAccept = ({
               <td>
                 <strong>Date</strong>
               </td>
-              <td>{materialTransferNoteByID.date}</td>
+              <td>{materialTransferNoteByID.created_on}</td>
             </tr>
             <tr>
               <td>

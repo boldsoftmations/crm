@@ -1,5 +1,24 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import jsPDF from "jspdf";
+import {
+  Box,
+  Grid,
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableCell,
+  Switch,
+  Button,
+  IconButton,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
+import { tableCellClasses } from "@mui/material/TableCell";
+import { styled } from "@mui/material/styles";
 import { CSVLink } from "react-csv";
 import { pdf } from "@react-pdf/renderer";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -10,17 +29,6 @@ import { useSelector } from "react-redux";
 import { MaterialTransferNoteCreate } from "./MaterialTransferNoteCreate";
 import InvoiceServices from "../../../services/InvoiceService";
 import { CustomPagination } from "../../../Components/CustomPagination";
-import { CustomTable } from "../../../Components/CustomTable";
-import {
-  Box,
-  Button,
-  FormControl,
-  Grid,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
 import CustomTextField from "../../../Components/CustomTextField";
 import { MaterialTransferNotePDF } from "./MaterialTransferNotePDF";
 import { MaterialTransferAccept } from "./MaterialTransferAccept";
@@ -196,29 +204,6 @@ export const MaterialTransferNoteView = () => {
     [acceptedFilter, searchQuery]
   );
 
-  const Tableheaders = [
-    "ID",
-    "USER",
-    "SELLER UNIT",
-    "DATE",
-    "PRODUCT",
-    "UNIT",
-    "QUANTITY",
-    "ACCEPTED",
-    "ACTION",
-  ];
-
-  const Tabledata = materialTransferNote.map((row, i) => ({
-    id: row.id,
-    user: row.user,
-    seller_account: row.seller_account,
-    date: row.created_on,
-    product: row.product,
-    unit: row.unit,
-    quantity: row.quantity,
-    accepted: row.accepted,
-  }));
-
   // Usage
   const isAcceptedEdit =
     userData.groups.includes("Accounts") ||
@@ -380,16 +365,84 @@ export const MaterialTransferNoteView = () => {
             </Grid>
           </Grid>
         </Box>
-        <CustomTable
-          headers={Tableheaders}
-          data={Tabledata}
-          openInPopup={
-            isAcceptedView && filteredMaterialTransferNote ? handleAccept : null
-          }
-          openInPopup2={handleDownloadPdf}
-          ButtonText="Download"
-        />
+        <TableContainer
+          sx={{
+            maxHeight: 400,
+            "&::-webkit-scrollbar": {
+              width: 15,
+            },
+            "&::-webkit-scrollbar-track": {
+              backgroundColor: "#f2f2f2",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "#aaa9ac",
+            },
+          }}
+        >
+          <Table sx={{ minWidth: 1200 }} stickyHeader aria-label="sticky table">
+            <TableHead>
+              <StyledTableRow>
+                <StyledTableCell align="center">User</StyledTableCell>
+                <StyledTableCell align="center">Seller Account</StyledTableCell>
+                <StyledTableCell align="center">Product</StyledTableCell>
+                <StyledTableCell align="center">Unit</StyledTableCell>
+                <StyledTableCell align="center">Quantity</StyledTableCell>
+                <StyledTableCell align="center">Date</StyledTableCell>
+                <StyledTableCell align="center">Accepted</StyledTableCell>
+                <StyledTableCell align="center">Action</StyledTableCell>
+              </StyledTableRow>
+            </TableHead>
+            <TableBody>
+              {materialTransferNote.map((mtnData) => (
+                <React.Fragment key={mtnData.id}>
+                  <StyledTableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+                    <StyledTableCell align="center">
+                      {mtnData.user}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {mtnData.seller_account}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {mtnData.product}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {mtnData.unit}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {mtnData.quantity}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {mtnData.created_on}
+                    </StyledTableCell>
 
+                    <StyledTableCell align="center">
+                      <Switch
+                        checked={mtnData.accepted}
+                        inputProps={{ "aria-label": "controlled" }}
+                      />
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {isAcceptedView && mtnData.accepted === false && (
+                        <Button
+                          color="success"
+                          onClick={() => handleAccept(mtnData)}
+                        >
+                          Accept
+                        </Button>
+                      )}
+                      <Button
+                        color="primary"
+                        onClick={() => handleDownloadPdf(mtnData)}
+                      >
+                        Downlaod
+                      </Button>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                </React.Fragment>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
         <CustomPagination
           currentPage={currentPage}
           pageCount={pageCount}
@@ -430,3 +483,25 @@ const AcceptedOption = [
   { label: "Accepted", value: "true" },
   { label: "Not Accepted", value: "false" },
 ];
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+    padding: 0, // Remove padding from header cells
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+    padding: 0, // Remove padding from body cells
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));
