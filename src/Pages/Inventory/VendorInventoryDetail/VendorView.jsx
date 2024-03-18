@@ -103,7 +103,7 @@ export const VendorView = () => {
   const sourceFilterOptions = [
     { label: "Vendor", value: "Vendor" },
     { label: "Job Worker", value: "Job Worker" },
-    { label: "Vendor/ Job Worker", value: "Vendor/ Job Worker" },
+    { label: "Vendor/ Job Worker", value: "Vendor/Job Worker" },
   ];
 
   const Tabledata = vendorData.map((row) => ({
