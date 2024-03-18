@@ -20,7 +20,6 @@ export const MaterialTransferNoteCreate = (props) => {
   const users = data.profile;
   const [materialTransferNoteDetails, setMaterialTransferNoteDetails] =
     useState([]);
-  const [chalanOption, setChalanOption] = useState([]);
 
   const handleSelectChange = (name, value) => {
     let updates = { [name]: value };
@@ -52,27 +51,6 @@ export const MaterialTransferNoteCreate = (props) => {
     getProduct();
   }, []);
 
-  useEffect(() => {
-    if (materialTransferNoteDetails.source_type === "Job Worker") {
-      getChalanDetails();
-    }
-  }, [materialTransferNoteDetails.source_type]);
-
-  const getChalanDetails = async () => {
-    setOpen(true);
-    try {
-      const response = await InventoryServices.getChalan();
-      console.log("response", response);
-      if (response && response.data.results) {
-        setChalanOption(response.data.results);
-      }
-    } catch (err) {
-      console.error("Error fetching Chalan data", err);
-    } finally {
-      setOpen(false);
-    }
-  };
-
   const getProduct = async () => {
     setOpen(true);
     try {
@@ -92,31 +70,12 @@ export const MaterialTransferNoteCreate = (props) => {
     e.preventDefault();
     setOpen(true);
 
-    const isUnitTransfer =
-      materialTransferNoteDetails.source_type === "Unit Transfer";
-    const isJobWorker =
-      materialTransferNoteDetails.source_type === "Job Worker";
-    const ManuFacturing =
-      materialTransferNoteDetails.source_type === "Manufacturing";
-
     const requestPayload = {
-      source: materialTransferNoteDetails.source,
+      seller_account: materialTransferNoteDetails.seller_account,
       user: users.email,
       product: materialTransferNoteDetails.product,
       quantity: materialTransferNoteDetails.quantity,
     };
-
-    if (isUnitTransfer) {
-      requestPayload.from_unit = materialTransferNoteDetails.from_unit;
-      requestPayload.to_unit = materialTransferNoteDetails.to_unit;
-    } else if (isJobWorker) {
-      requestPayload.source_key = materialTransferNoteDetails.source_key;
-      requestPayload.seller_account =
-        materialTransferNoteDetails.seller_account;
-    } else if (ManuFacturing) {
-      requestPayload.seller_account =
-        materialTransferNoteDetails.seller_account;
-    }
 
     try {
       await InventoryServices.createMaterialTransferNoteData(requestPayload);
@@ -168,92 +127,23 @@ export const MaterialTransferNoteCreate = (props) => {
           }
         />
         <Grid container spacing={2}>
-          {/* Source Type - Always full width on XS for better touch targets */}
           <Grid item xs={12} sm={6} md={3}>
             <CustomAutocomplete
               size="small"
               disablePortal
-              id="source-type-combo-box"
-              onChange={(event, value) => handleSelectChange("source", value)}
-              options={SourceOption}
+              id="seller-account-combo-box"
+              onChange={(event, value) =>
+                handleSelectChange("seller_account", value)
+              }
+              options={sellerOption.map((option) => option.unit)}
               getOptionLabel={(option) => option}
-              sx={{ minWidth: 120 }} // Adjust minWidth for smaller screens
-              label="Source Type"
+              sx={{ minWidth: 120 }}
+              label="Seller Account"
             />
           </Grid>
 
-          {/* Conditionally rendered based on source_type */}
-          {materialTransferNoteDetails.source_type === "Job Worker" && (
-            <Grid item xs={12} sm={6} md={3}>
-              <CustomAutocomplete
-                size="small"
-                disablePortal
-                id="challan-no-combo-box"
-                onChange={(event, value) =>
-                  handleSelectChange("source_key", value)
-                }
-                options={chalanOption}
-                getOptionLabel={(option) =>
-                  `${option.job_worker} ${option.challan_no}`
-                }
-                sx={{ minWidth: 120 }}
-                label="Challan Number"
-              />
-            </Grid>
-          )}
-
-          {materialTransferNoteDetails.source_type === "Unit Transfer" ? (
-            <>
-              {/* From Seller Account */}
-              <Grid item xs={12} sm={6} md={3}>
-                <CustomAutocomplete
-                  size="small"
-                  disablePortal
-                  id="from-seller-account-combo-box"
-                  onChange={(event, value) =>
-                    handleSelectChange("from_unit", value)
-                  }
-                  options={sellerOption.map((option) => option.unit)}
-                  getOptionLabel={(option) => option}
-                  sx={{ minWidth: 120 }}
-                  label="From Unit"
-                />
-              </Grid>
-              {/* To Seller Account */}
-              <Grid item xs={12} sm={6} md={3}>
-                <CustomAutocomplete
-                  size="small"
-                  disablePortal
-                  id="to-seller-account-combo-box"
-                  onChange={(event, value) =>
-                    handleSelectChange("to_unit", value)
-                  }
-                  options={sellerOption.map((option) => option.unit)}
-                  getOptionLabel={(option) => option}
-                  sx={{ minWidth: 120 }}
-                  label="To Unit"
-                />
-              </Grid>
-            </>
-          ) : (
-            <Grid item xs={12} sm={6} md={3}>
-              <CustomAutocomplete
-                size="small"
-                disablePortal
-                id="seller-account-combo-box"
-                onChange={(event, value) =>
-                  handleSelectChange("seller_account", value)
-                }
-                options={sellerOption.map((option) => option.unit)}
-                getOptionLabel={(option) => option}
-                sx={{ minWidth: 120 }}
-                label="Seller Account"
-              />
-            </Grid>
-          )}
-
           {/* Product Name */}
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={6}>
             <CustomAutocomplete
               size="small"
               disablePortal
@@ -277,7 +167,7 @@ export const MaterialTransferNoteCreate = (props) => {
               value={materialTransferNoteDetails.product__unit || ""}
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={4}>
             <CustomTextField
               fullWidth
               name="quantity"
@@ -302,5 +192,3 @@ export const MaterialTransferNoteCreate = (props) => {
     </div>
   );
 };
-
-const SourceOption = ["Manufacturing", "Job Worker", "Unit Transfer"];
