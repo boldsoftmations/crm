@@ -87,6 +87,7 @@ import { RetailCustomerData } from "../Pages/RetailCustomerData";
 import { DashboardLeadData } from "../Pages/DashboardLeadData";
 import { Automation } from "../Pages/WhatsappGroup/Automation";
 import { ChalanView } from "../Pages/Inventory/VendorInventoryDetail/ChalanView";
+import { SourceBasedGRNView } from "../Pages/Inventory/SourceBasedGRN/SourceBasedGRNView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -293,6 +294,7 @@ export const RouteScreen = () => {
               path="/inventory/view-weekly-production"
               element={<WeeklyProductionReport />}
             />
+            <Route path="/inventory/source-based-grn" element={<SourceBasedGRNView />} />
             <Route path="/inventory/view-currency" element={<CurrencyView />} />
             <Route
               path="/inventory/view-safety-stock"

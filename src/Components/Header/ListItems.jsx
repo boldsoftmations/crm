@@ -958,6 +958,19 @@ export const ListItems = (props) => {
               <ListItem
                 button
                 component={RouterLink}
+                to="/inventory/source-based-grn"
+                style={{ width: 300 }}
+              >
+                <ListItemText
+                  component={Button}
+                  onClick={() => setOpen(false)}
+                  inset
+                  primary="Source Based GRN"
+                />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
                 to="/inventory/view-packing-list"
                 style={{ width: 300 }}
               >
