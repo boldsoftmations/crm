@@ -55,8 +55,6 @@ export const CreateChalan = ({
         product: "",
         quantity: "",
         unit: "",
-        amount: "",
-        rate: "",
       },
     ],
   });
@@ -426,7 +424,7 @@ export const CreateChalan = ({
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={2}>
+                {/* <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
                     name="rate"
@@ -449,7 +447,7 @@ export const CreateChalan = ({
                     variant="outlined"
                     value={input.amount || ""}
                   />
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12} sm={1} alignContent="right">
                   {index !== 0 && (
                     <Button
