@@ -88,6 +88,7 @@ import { DashboardLeadData } from "../Pages/DashboardLeadData";
 import { Automation } from "../Pages/WhatsappGroup/Automation";
 import { ChalanView } from "../Pages/Inventory/VendorInventoryDetail/ChalanView";
 import { SourceBasedGRNView } from "../Pages/Inventory/SourceBasedGRN/SourceBasedGRNView";
+import { ChalanInvoiceView } from "../Pages/Inventory/VendorInventoryDetail/ChalanInvoiceView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -245,6 +246,10 @@ export const RouteScreen = () => {
             <Route
               path="/inventory/chalan-view"
               element={<ChalanView />}
+            />
+             <Route
+              path="/inventory/chalan-invoice"
+              element={<ChalanInvoiceView />}
             />
             <Route
               path="/inventory/view-stores-inventory"

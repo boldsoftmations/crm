@@ -9,8 +9,6 @@ import {
   TableRow,
   TableCell,
   Paper,
-  Switch,
-  Button,
   Typography,
   Collapse,
   IconButton,
@@ -18,69 +16,58 @@ import {
 import { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material/styles";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import InventoryServices from "./../../../services/InventoryService";
+import InventoryServices from "../../../services/InventoryService";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { ChalanInvoiceCreate } from "./ChalanInvoiceCreate";
-import { Popup } from "../../../Components/Popup";
 
-export const ChalanView = () => {
+export const ChalanInvoiceView = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [chalanData, setChalanData] = useState([]);
+  const [invoiceData, setInvoiceData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [open, setOpen] = useState({});
-  const [openPopup, setOpenPopup] = useState(false);
 
   useEffect(() => {
-    getChalanDetails(currentPage);
+    getInvoiceDetails(currentPage);
   }, [currentPage]);
 
-  const getChalanDetails = async (page) => {
+  const getInvoiceDetails = async (page) => {
     setIsLoading(true);
     try {
-      const response = await InventoryServices.getChalan(page);
+      const response = await InventoryServices.getChallanInvoice(page);
 
       if (response && response.data.results) {
-        setChalanData(response.data.results);
+        setInvoiceData(response.data.results);
       }
       const total = response.data.count;
       setPageCount(Math.ceil(total / 25));
     } catch (err) {
-      console.error("Error fetching Chalan data", err);
+      console.error("Error fetching invoice data", err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // const handleAcceptClick = async (id) => {
-  //   const data = { is_accepted: true };
-  //   try {
-  //     await InventoryServices.updateChalan(id, data);
-  //     getChalanDetails();
-  //   } catch (err) {
-  //     console.error("Error updating Chalan", err);
-  //   }
-  // };
-
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
   };
 
-  const handleToggle = (chalanId) => {
+  const handleToggle = (invoiceId) => {
     setOpen((prevOpen) => ({
       ...prevOpen,
-      [chalanId]: !prevOpen[chalanId],
+      [invoiceId]: !prevOpen[invoiceId],
     }));
   };
 
-  const filteredChalanData = Array.isArray(chalanData)
-    ? chalanData.filter(
-        (chalan) =>
-          chalan.buyer_account &&
-          chalan.buyer_account.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredInvoiceData = Array.isArray(invoiceData)
+    ? invoiceData.filter(
+        (invoice) =>
+          invoice.buyer_account &&
+          invoice.buyer_account
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
       )
     : [];
 
@@ -100,21 +87,8 @@ export const ChalanView = () => {
                 textAlign: "center",
               }}
             >
-              Job Work Chalan
+              Chalan Invoice
             </h3>
-            <div>
-              <Button
-                variant="contained"
-                onClick={() => setOpenPopup(true)}
-                sx={{
-                  height: "40px",
-                  alignSelf: "center",
-                  marginLeft: "400px",
-                }}
-              >
-                Chalan Invoice
-              </Button>
-            </div>
           </Box>
 
           <TableContainer
@@ -140,20 +114,22 @@ export const ChalanView = () => {
                 <StyledTableRow>
                   <StyledTableCell align="center">Toggle</StyledTableCell>
                   <StyledTableCell align="center">
-                    Buyer Account
+                    Challan Number
                   </StyledTableCell>
                   <StyledTableCell align="center">Job Worker</StyledTableCell>
-                  <StyledTableCell align="center">Challan No</StyledTableCell>
-                  <StyledTableCell align="center">Total Amount</StyledTableCell>
                   <StyledTableCell align="center">
-                    Transpotation Cost
+                    Buyer Account
                   </StyledTableCell>
-                  <StyledTableCell align="center">Accepted</StyledTableCell>
-                  {/* <StyledTableCell align="center">Action</StyledTableCell> */}
+                  <StyledTableCell align="center">Invoice No</StyledTableCell>
+                  <StyledTableCell align="center">
+                    Service Charges
+                  </StyledTableCell>
+                  <StyledTableCell align="center">Service GST</StyledTableCell>
+                  <StyledTableCell align="center">Total Amount</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
               <TableBody>
-                {filteredChalanData.map((chalan) => (
+                {filteredInvoiceData.map((chalan) => (
                   <React.Fragment key={chalan.id}>
                     <StyledTableRow sx={{ "& > *": { borderBottom: "unset" } }}>
                       <StyledTableCell>
@@ -170,34 +146,26 @@ export const ChalanView = () => {
                         </IconButton>
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {chalan.buyer_account}
+                        {chalan.challan}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {chalan.job_worker}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {chalan.challan_no}
+                        {chalan.buyer_account}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {chalan.invoice_no}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {chalan.service_charge}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {chalan.service_gst}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {chalan.total_amount}
                       </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {chalan.transpotation_cost}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        <Switch
-                          checked={chalan.is_accepted}
-                          inputProps={{ "aria-label": "controlled" }}
-                        />
-                      </StyledTableCell>
-                      {/* <StyledTableCell align="center">
-                        <Button
-                          color="primary"
-                          onClick={() => handleAcceptClick(chalan.id)}
-                        >
-                          Accept
-                        </Button>
-                      </StyledTableCell> */}
                     </StyledTableRow>
                     <TableRow>
                       <TableCell
@@ -220,31 +188,29 @@ export const ChalanView = () => {
                             <Table size="small" aria-label="products">
                               <TableHead>
                                 <TableRow>
-                                  <TableCell>GRN</TableCell>
                                   <TableCell>Product</TableCell>
                                   <TableCell>Unit</TableCell>
                                   <TableCell>Description</TableCell>
-                                  <TableCell>Chalan</TableCell>
                                   <TableCell align="right">Quantity</TableCell>
-                                  <TableCell align="right">Rate</TableCell>
+                                  <TableCell align="right">
+                                    Consumption Rate
+                                  </TableCell>
                                   <TableCell align="right">Amount</TableCell>
                                 </TableRow>
                               </TableHead>
                               <TableBody>
                                 {chalan.products.map((product) => (
                                   <TableRow key={product.product}>
-                                    <TableCell>{product.grn}</TableCell>
                                     <TableCell component="th" scope="row">
                                       {product.product}
                                     </TableCell>
                                     <TableCell>{product.unit}</TableCell>
                                     <TableCell>{product.description}</TableCell>
-                                    <TableCell>{product.challan}</TableCell>
                                     <TableCell align="right">
                                       {product.quantity}
                                     </TableCell>
                                     <TableCell align="right">
-                                      {product.rate}
+                                      {product.cunsuption_rate}
                                     </TableCell>
                                     <TableCell align="right">
                                       {product.amount}
@@ -262,18 +228,6 @@ export const ChalanView = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          <Popup
-            openPopup={openPopup}
-            setOpenPopup={setOpenPopup}
-            title={"Create Chalan Invoice"}
-            maxWidth="md"
-          >
-            <ChalanInvoiceCreate
-              openPopup={openPopup}
-              setOpenPopup={setOpenPopup}
-            />
-          </Popup>
-
           <CustomPagination
             pageCount={pageCount}
             handlePageClick={handlePageClick}

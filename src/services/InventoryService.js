@@ -688,6 +688,18 @@ const updateChalan = (id, data) => {
   return CustomAxios.patch(`/api/inventory/challan/${id}/`, data);
 }
 
+const getChallanInvoice = (page) => {
+  const params = new URLSearchParams();
+
+  if (page) {
+    params.append("page", page);
+  }
+  return CustomAxios.get(`/api/inventory/challan-invoice/?${params.toString()}`);
+}
+const createChalanInvoice = (data) => {
+  return CustomAxios.post(`/api/inventory/challan-invoice/`, data);
+}
+
 const InventoryServices = {
   getAllVendorData,
   createVendorData,
@@ -784,7 +796,9 @@ const InventoryServices = {
   updateSafetyStockData,
   getChalan,
   createChalan,
-  updateChalan
+  updateChalan,
+  getChallanInvoice,
+  createChalanInvoice
 };
 
 export default InventoryServices;
