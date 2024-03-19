@@ -117,6 +117,8 @@ export const StoresInventoryView = () => {
 
   const Tableheaders = [
     "PRODUCT",
+    "SOURCE",
+    "SOURCE KEY",
     "SELLER STATE",
     "DESCRIPTION",
     "DATE",
@@ -129,6 +131,8 @@ export const StoresInventoryView = () => {
 
   const Tabledata = storesInventoryData.map((row, i) => ({
     product: row.product,
+    source: row.source,
+    source_key: row.source_key,
     seller_account: row.seller_account,
     description: row.description,
     created_on: row.created_on,
