@@ -29,8 +29,11 @@ export const SourceBasedGRNCreate = (props) => {
     transport_cost: "",
     grn_source: "",
     challan_no: "",
+    seller_account: "",
   });
-  const [chalanOption, setChalanOption] = useState([]);
+  const [invoiceData, setInvoiceData] = useState([]);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [pageCount, setPageCount] = useState(0);
 
   const addFields = () => {
     let newfield = {
@@ -100,28 +103,30 @@ export const SourceBasedGRNCreate = (props) => {
 
   useEffect(() => {
     getProduct();
+    getInvoiceDetails();
   }, []);
 
+  const getInvoiceDetails = async (page) => {
+    // setIsLoading(true);
+    try {
+      const response = await InventoryServices.getChallanInvoice(page);
+
+      if (response && response.data.results) {
+        setInvoiceData(response.data.results);
+      }
+      const total = response.data.count;
+      setPageCount(Math.ceil(total / 25));
+    } catch (err) {
+      console.error("Error fetching invoice data", err);
+    } finally {
+      // setIsLoading(false);
+    }
+  };
   useEffect(() => {
     if (sourceBasedGrnData.source_type === "Job Worker") {
       getChalanDetails();
     }
   }, [sourceBasedGrnData.source_type]);
-
-  const getChalanDetails = async () => {
-    setOpen(true);
-    try {
-      const response = await InventoryServices.getChalan();
-      console.log("response", response);
-      if (response && response.data.results) {
-        setChalanOption(response.data.results);
-      }
-    } catch (err) {
-      console.error("Error fetching Chalan data", err);
-    } finally {
-      setOpen(false);
-    }
-  };
 
   const getProduct = async () => {
     setOpen(true);
@@ -135,6 +140,38 @@ export const SourceBasedGRNCreate = (props) => {
       console.error("error potential", err);
     } finally {
       setOpen(false);
+    }
+  };
+
+  const handleInvoiceChange = (value) => {
+    const selectedInvoice = invoiceData.find(
+      (invoice) => invoice.invoice_no === value
+    );
+    setSelectedInvoice(selectedInvoice);
+    console.log("Selected Invoice:", selectedInvoice);
+    if (selectedInvoice) {
+      setSourceBasedGrnData((prev) => ({
+        ...prev,
+        transport_cost: selectedInvoice.transport_cost,
+        grn_source: selectedInvoice.buyer_account,
+        invoice_no: selectedInvoice.invoice_no,
+        total_amount: selectedInvoice.total_amount,
+        seller_account: selectedInvoice.buyer_account,
+      }));
+      const transformedProducts = selectedInvoice.products.map((product) => ({
+        product: product.product,
+        quantity: product.quantity,
+        unit: product.unit,
+        total_amount: product.total_amount,
+      }));
+      setProducts(transformedProducts);
+    } else {
+      setSourceBasedGrnData((prev) => ({
+        ...prev,
+        transport_cost: "",
+        seller_account: "",
+      }));
+      setProducts([{ product: "", quantity: "", unit: "" }]);
     }
   };
 
@@ -175,12 +212,16 @@ export const SourceBasedGRNCreate = (props) => {
         challan_no: sourceBasedGrnData.challan_no,
         source_key: sourceBasedGrnData.source_key,
         seller_account: sourceBasedGrnData.seller_account,
+        invoice_no: sourceBasedGrnData.invoice_no,
+        transport_cost: sourceBasedGrnData.transport_cost,
+        total_amount: sourceBasedGrnData.total_amount,
         products: products.map((product) => ({
           products: product.product,
           unit: product.unit,
           order_quantity: parseInt(product.quantity, 10),
           rate: parseFloat(product.rate),
           amount: parseInt(product.amount),
+          total_amount: parseFloat(product.total_amount),
           qa_accepted: parseInt(product.quantity, 10),
           qa_rejected: 0,
         })),
@@ -260,16 +301,12 @@ export const SourceBasedGRNCreate = (props) => {
               <CustomAutocomplete
                 size="small"
                 disablePortal
-                id="challan-no-combo-box"
-                onChange={(event, value) =>
-                  handleSelectChange("source_key", value)
-                }
-                options={chalanOption}
-                getOptionLabel={(option) =>
-                  `${option.job_worker} ${option.challan_no}`
-                }
+                id="invoice-number-combo-box"
+                onChange={(event, value) => handleInvoiceChange(value)}
+                options={invoiceData.map((option) => option.invoice_no)}
+                getOptionLabel={(option) => option}
                 sx={{ minWidth: 120 }}
-                label="Challan Number"
+                label="Invoice Number"
               />
             </Grid>
           )}
@@ -322,6 +359,7 @@ export const SourceBasedGRNCreate = (props) => {
                 size="small"
                 disablePortal
                 id="seller-account-combo-box"
+                value={sourceBasedGrnData.grn_source}
                 onChange={(event, value) =>
                   handleSelectChange("seller_account", value)
                 }
