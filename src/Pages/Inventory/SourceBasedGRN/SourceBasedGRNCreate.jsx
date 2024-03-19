@@ -31,6 +31,7 @@ export const SourceBasedGRNCreate = (props) => {
     challan_no: "",
     seller_account: "",
   });
+  const [chalanOption, setChalanOption] = useState([]);
   const [invoiceData, setInvoiceData] = useState([]);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [pageCount, setPageCount] = useState(0);
@@ -127,6 +128,21 @@ export const SourceBasedGRNCreate = (props) => {
       getChalanDetails();
     }
   }, [sourceBasedGrnData.source_type]);
+
+  const getChalanDetails = async () => {
+    setOpen(true);
+    try {
+      const response = await InventoryServices.getChalan();
+      console.log("response", response);
+      if (response && response.data.results) {
+        setChalanOption(response.data.results);
+      }
+    } catch (err) {
+      console.error("Error fetching Chalan data", err);
+    } finally {
+      setOpen(false);
+    }
+  };
 
   const getProduct = async () => {
     setOpen(true);
