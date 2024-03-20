@@ -78,7 +78,24 @@ export const SourceBasedGRNCreate = (props) => {
     if (name === "source") {
       updates.source_type = value;
       // Reset fields when source type changes
-      setSourceBasedGrnData({ source_type: value });
+      setSourceBasedGrnData({
+        source_type: value,
+        product: "",
+        unit: "",
+        quantity: "",
+        transport_cost: "",
+        grn_source: "",
+        challan_no: "",
+        seller_account: "",
+      });
+      setProducts([
+        {
+          product: "",
+          quantity: "",
+          unit: "",
+        },
+      ]);
+      setSelectedInvoice(null);
     } else if (name === "product") {
       const selectedProduct = productOption.find(
         (item) => item.product__name === value
