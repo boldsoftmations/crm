@@ -75,7 +75,6 @@ export const SourceBasedGRNCreate = (props) => {
 
   const handleSelectChange = (name, value) => {
     let updates = { [name]: value };
-
     if (name === "source") {
       updates.source_type = value;
       // Reset fields when source type changes
@@ -301,7 +300,12 @@ export const SourceBasedGRNCreate = (props) => {
           }
         />
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={sourceBasedGrnData.source_type === "Job Worker" ? 4 : 3}
+          >
             <CustomAutocomplete
               size="small"
               id="source-type-combo-box"
@@ -313,7 +317,7 @@ export const SourceBasedGRNCreate = (props) => {
             />
           </Grid>
           {sourceBasedGrnData.source_type === "Job Worker" && (
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={4}>
               <CustomAutocomplete
                 size="small"
                 disablePortal
@@ -357,7 +361,7 @@ export const SourceBasedGRNCreate = (props) => {
                   label="To Unit"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6} md={3}>
                 <CustomTextField
                   fullWidth
                   name="transport_cost"
@@ -370,7 +374,7 @@ export const SourceBasedGRNCreate = (props) => {
               </Grid>
             </>
           ) : (
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={4}>
               <CustomAutocomplete
                 size="small"
                 disablePortal
@@ -426,18 +430,26 @@ export const SourceBasedGRNCreate = (props) => {
                   readOnly
                 />
               </Grid>
-              <Grid item xs={12} sm={2}>
-                <Button onClick={() => removeFields(index)} variant="contained">
-                  Remove
-                </Button>
-              </Grid>
+              {index !== 0 &&
+                sourceBasedGrnData.source_type !== "Job Worker" && (
+                  <Grid item xs={12} sm={2}>
+                    <Button
+                      onClick={() => removeFields(index)}
+                      variant="contained"
+                    >
+                      Remove
+                    </Button>
+                  </Grid>
+                )}
             </>
           ))}
-          <Grid item xs={12}>
-            <Button onClick={addFields} variant="contained">
-              Add Product
-            </Button>
-          </Grid>
+          {sourceBasedGrnData.source_type !== "Job Worker" && (
+            <Grid item xs={12}>
+              <Button onClick={addFields} variant="contained">
+                Add Product
+              </Button>
+            </Grid>
+          )}
         </Grid>
 
         <Button

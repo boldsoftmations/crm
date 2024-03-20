@@ -177,7 +177,7 @@ export const SourceBasedGRNView = () => {
         openPopup={openCreatePopup}
         setOpenPopup={setOpenCreatePopup}
         maxWidth="xl"
-        title={"View Source Based GRN"}
+        title={"Create Source Based GRN"}
       >
         <SourceBasedGRNCreate
           idForEdit={idForEdit}
