@@ -4,6 +4,7 @@ import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
 
 export const ChalanInvoiceCreate = ({ setOpenPopup, challanNumbers }) => {
+  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     challan: challanNumbers.challan_no,
     job_worker: challanNumbers.job_worker,
@@ -14,7 +15,7 @@ export const ChalanInvoiceCreate = ({ setOpenPopup, challanNumbers }) => {
     products: challanNumbers.products.map((product) => ({
       product: product.product,
       quantity: product.quantity,
-      consumption_rate: "",
+      cunsuption_rate: "",
       amount: "", //
     })),
   });
@@ -32,9 +33,9 @@ export const ChalanInvoiceCreate = ({ setOpenPopup, challanNumbers }) => {
       const updatedProducts = prev.products.map((product, idx) => {
         if (idx === index) {
           const updatedProduct = { ...product, [name]: parsedValue };
-          if (name === "consumption_rate" || name === "quantity") {
+          if (name === "cunsuption_rate" || name === "quantity") {
             updatedProduct.amount =
-              updatedProduct.quantity * updatedProduct.consumption_rate;
+              updatedProduct.quantity * updatedProduct.cunsuption_rate;
           }
           return updatedProduct;
         }
@@ -47,6 +48,7 @@ export const ChalanInvoiceCreate = ({ setOpenPopup, challanNumbers }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setOpen(true);
     try {
       const preparedFormData = {
         challan: formData.challan,
@@ -58,11 +60,10 @@ export const ChalanInvoiceCreate = ({ setOpenPopup, challanNumbers }) => {
         products: formData.products.map((product) => ({
           product: product.product,
           quantity: parseInt(product.quantity, 10),
-          cunsuption_rate: parseInt(product.cunsumption_rate, 10),
+          cunsuption_rate: parseInt(product.cunsuption_rate, 10),
           amount: parseInt(product.amount, 10),
         })),
       };
-
       const response = await InventoryServices.createChalanInvoice(
         preparedFormData
       );
@@ -70,6 +71,8 @@ export const ChalanInvoiceCreate = ({ setOpenPopup, challanNumbers }) => {
       setOpenPopup(false);
     } catch (error) {
       console.error("Failed to create chalan invoice", error);
+    } finally {
+      setOpen(false);
     }
   };
 
@@ -155,8 +158,8 @@ export const ChalanInvoiceCreate = ({ setOpenPopup, challanNumbers }) => {
                 fullWidth
                 size="small"
                 label="Consumption Rate"
-                name="consumption_rate"
-                value={product.consumption_rate}
+                name="cunsuption_rate"
+                value={product.cunsuption_rate}
                 onChange={(e) => handleProductChange(e, index)}
               />
             </Grid>
@@ -174,8 +177,8 @@ export const ChalanInvoiceCreate = ({ setOpenPopup, challanNumbers }) => {
         ))}
 
         <Grid item xs={12}>
-          <Button type="submit" variant="contained" color="primary">
-            Create Invoice
+          <Button fullWidth type="submit" variant="contained" color="primary">
+            Create Challan Invoice
           </Button>
         </Grid>
       </Grid>
