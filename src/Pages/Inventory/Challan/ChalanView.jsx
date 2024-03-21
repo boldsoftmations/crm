@@ -33,6 +33,7 @@ export const ChalanView = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [open, setOpen] = useState({});
   const [openPopup, setOpenPopup] = useState(false);
+  const [challanNumbers, setChallanNumbers] = useState([]);
 
   useEffect(() => {
     getChalanDetails(currentPage);
@@ -76,6 +77,10 @@ export const ChalanView = () => {
     }));
   };
 
+  const handleChallanCreate = (chalan) => {
+    setOpenPopup(true);
+    setChallanNumbers(chalan);
+  };
   const filteredChalanData = Array.isArray(chalanData)
     ? chalanData.filter(
         (chalan) =>
@@ -102,19 +107,7 @@ export const ChalanView = () => {
             >
               Job Work Chalan
             </h3>
-            <div>
-              <Button
-                variant="contained"
-                onClick={() => setOpenPopup(true)}
-                sx={{
-                  height: "40px",
-                  alignSelf: "center",
-                  marginLeft: "400px",
-                }}
-              >
-                Chalan Invoice
-              </Button>
-            </div>
+            <div></div>
           </Box>
 
           <TableContainer
@@ -149,7 +142,7 @@ export const ChalanView = () => {
                     Transpotation Cost
                   </StyledTableCell>
                   <StyledTableCell align="center">Accepted</StyledTableCell>
-                  {/* <StyledTableCell align="center">Action</StyledTableCell> */}
+                  <StyledTableCell align="center">Action</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
               <TableBody>
@@ -198,6 +191,15 @@ export const ChalanView = () => {
                           Accept
                         </Button>
                       </StyledTableCell> */}
+                      <StyledTableCell align="center">
+                        <Button
+                          variant="text"
+                          color="primary"
+                          onClick={() => handleChallanCreate(chalan)}
+                        >
+                          Challan Create
+                        </Button>
+                      </StyledTableCell>
                     </StyledTableRow>
                     <TableRow>
                       <TableCell
@@ -269,8 +271,8 @@ export const ChalanView = () => {
             maxWidth="md"
           >
             <ChalanInvoiceCreate
-              openPopup={openPopup}
               setOpenPopup={setOpenPopup}
+              challanNumbers={challanNumbers}
             />
           </Popup>
 

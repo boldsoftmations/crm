@@ -1,147 +1,71 @@
-import React, { useState, useEffect } from "react";
-import { Button, Grid, IconButton } from "@mui/material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import React, { useState } from "react";
+import { Button, Grid } from "@mui/material";
 import InventoryServices from "../../../services/InventoryService";
-import ProductService from "../../../services/ProductService";
-import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import CustomTextField from "../../../Components/CustomTextField";
 
-export const ChalanInvoiceCreate = (setOpenPopup) => {
+export const ChalanInvoiceCreate = ({ setOpenPopup, challanNumbers }) => {
   const [formData, setFormData] = useState({
-    challan: "",
-    job_worker: "",
-    buyer_account: "",
+    challan: challanNumbers.challan_no,
+    job_worker: challanNumbers.job_worker,
+    buyer_account: challanNumbers.buyer_account,
     service_charge: "",
     transport_cost: "",
     invoice_no: "",
-    products: [{ product: "", quantity: "", cunsuption_rate: "", amount: "" }],
+    products: challanNumbers.products.map((product) => ({
+      product: product.product,
+      quantity: product.quantity,
+      consumption_rate: "",
+      amount: "", //
+    })),
   });
-  const [challanNumbers, setChallanNumbers] = useState([]);
-  const [productOption, setProductOption] = useState([]);
 
-  useEffect(() => {
-    const fetchAllChallanNumbers = async (page = 1, allChallans = []) => {
-      try {
-        const response = await InventoryServices.getChalan(page);
-        const newChallans = response.data.results.filter(
-          (challan) => !challan.is_accepted
-        );
-        const combinedChallans = [...allChallans, ...newChallans];
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-        if (response.data.next) {
-          fetchAllChallanNumbers(page + 1, combinedChallans);
-        } else {
-          setChallanNumbers(combinedChallans);
+  const handleProductChange = (e, index) => {
+    const { name, value } = e.target;
+    const parsedValue = parseFloat(value) || 0;
+
+    setFormData((prev) => {
+      const updatedProducts = prev.products.map((product, idx) => {
+        if (idx === index) {
+          const updatedProduct = { ...product, [name]: parsedValue };
+          if (name === "consumption_rate" || name === "quantity") {
+            updatedProduct.amount =
+              updatedProduct.quantity * updatedProduct.consumption_rate;
+          }
+          return updatedProduct;
         }
-      } catch (error) {
-        console.error("Failed to fetch challan numbers", error);
-      }
-    };
+        return product;
+      });
 
-    fetchAllChallanNumbers();
-  }, []);
-
-  useEffect(() => {
-    createChalanInvoice();
-  }, []);
-
-  const createChalanInvoice = async (formData) => {
-    try {
-      const response = await InventoryServices.createChalanInvoice(formData);
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  useEffect(() => {
-    getProduct();
-  }, []);
-
-  const getProduct = async () => {
-    try {
-      const res = await ProductService.getAllProduct();
-      setProductOption(res.data);
-    } catch (err) {
-      console.error("error potential", err);
-    }
-  };
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
-
-  const handleChallanChange = async (newValue) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      challan: newValue,
-    }));
-    const selectedChallan = challanNumbers.find(
-      (challan) => challan.challan_no === newValue
-    );
-
-    if (selectedChallan) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        job_worker: selectedChallan.job_worker,
-        buyer_account: selectedChallan.buyer_account,
-      }));
-    }
-  };
-
-  const handleProductChange = (index, event) => {
-    const updatedProducts = [...formData.products];
-    updatedProducts[index][event.target.name] = event.target.value;
-    setFormData({ ...formData, products: updatedProducts });
-  };
-
-  const addProductField = () => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      products: [
-        ...prevFormData.products,
-        { product: "", quantity: "", cunsuption_rate: "", amount: "" },
-      ],
-    }));
-  };
-
-  const removeProductField = (index) => {
-    const filteredProducts = [...formData.products];
-    filteredProducts.splice(index, 1);
-    setFormData({ ...formData, products: filteredProducts });
-  };
-
-  const handleProductAutocompleteChange = (index, value) => {
-    const updatedProducts = formData.products.map((item, idx) => {
-      if (idx === index) {
-        return { ...item, product: value };
-      }
-      return item;
+      return { ...prev, products: updatedProducts };
     });
-    setFormData({ ...formData, products: updatedProducts });
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       const preparedFormData = {
-        ...formData,
+        challan: formData.challan,
+        job_worker: formData.job_worker,
+        buyer_account: formData.buyer_account,
+        invoice_no: formData.invoice_no,
         service_charge: parseInt(formData.service_charge, 10),
         transport_cost: parseInt(formData.transport_cost, 10),
         products: formData.products.map((product) => ({
-          ...product,
+          product: product.product,
           quantity: parseInt(product.quantity, 10),
-          cunsuption_rate: parseInt(product.cunsuption_rate, 10),
+          cunsuption_rate: parseInt(product.cunsumption_rate, 10),
           amount: parseInt(product.amount, 10),
         })),
       };
 
-      const response = await createChalanInvoice(preparedFormData);
+      const response = await InventoryServices.createChalanInvoice(
+        preparedFormData
+      );
       console.log("Invoice Created:", response);
       setOpenPopup(false);
     } catch (error) {
@@ -153,55 +77,36 @@ export const ChalanInvoiceCreate = (setOpenPopup) => {
     <form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
-          <CustomAutocomplete
+          <CustomTextField
+            size="small"
             fullWidth
-            options={challanNumbers.map((option) => option.challan_no)}
-            renderInput={(params) => (
-              <CustomTextField {...params} label="Challan Number" />
-            )}
-            onChange={(event, newValue) => handleChallanChange(newValue)}
+            label="Challan Invoice No"
+            value={formData.challan}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <CustomTextField
+            size="small"
             fullWidth
             label="Job Worker"
-            name="jobWorker"
             value={formData.job_worker}
-            onChange={handleChange}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <CustomAutocomplete
+          <CustomTextField
             size="small"
-            disablePortal
-            id="buyer-account-combo-box"
-            value={formData.buyer_account}
-            onChange={() => {}}
-            options={challanNumbers.map((option) => option.buyer_account)}
-            getOptionLabel={(option) => option || ""}
-            sx={{ minWidth: 300 }}
+            fullWidth
             label="Buyer Account"
-            isOptionEqualToValue={(option, value) => option === value}
-            renderInput={(params) => (
-              <CustomTextField
-                {...params}
-                label="Buyer Account"
-                inputProps={{
-                  ...params.inputProps,
-                  readOnly: true,
-                }}
-              />
-            )}
+            value={formData.buyer_account}
           />
         </Grid>
 
         <Grid item xs={12} sm={6}>
           <CustomTextField
             fullWidth
+            size="small"
             label="Service Charge"
             name="service_charge"
-            type="number"
             value={formData.service_charge}
             onChange={handleChange}
           />
@@ -209,9 +114,9 @@ export const ChalanInvoiceCreate = (setOpenPopup) => {
         <Grid item xs={12} sm={6}>
           <CustomTextField
             fullWidth
+            size="small"
             label="Transport Cost"
             name="transport_cost"
-            type="number"
             value={formData.transport_cost}
             onChange={handleChange}
           />
@@ -219,6 +124,7 @@ export const ChalanInvoiceCreate = (setOpenPopup) => {
         <Grid item xs={12} sm={6}>
           <CustomTextField
             fullWidth
+            size="small"
             label="Invoice No"
             name="invoice_no"
             value={formData.invoice_no}
@@ -227,63 +133,42 @@ export const ChalanInvoiceCreate = (setOpenPopup) => {
         </Grid>
         {formData.products.map((product, index) => (
           <React.Fragment key={index}>
-            <Grid item xs={2}>
-              <CustomAutocomplete
-                name="product"
+            <Grid item xs={12} sm={4}>
+              <CustomTextField
+                fullWidth
                 size="small"
-                disablePortal
-                id={`combo-box-demo-${index}`}
-                value={product.product}
-                onChange={(event, value) =>
-                  handleProductAutocompleteChange(index, value)
-                }
-                options={productOption.map((option) => option.name)}
-                getOptionLabel={(option) => option}
                 label="Product"
+                value={product.product}
               />
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={12} sm={2}>
               <CustomTextField
                 fullWidth
                 size="small"
                 label="Quantity"
-                name="quantity"
                 type="number"
                 value={product.quantity}
-                onChange={(e) => handleProductChange(index, e)}
               />
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={12} sm={3}>
               <CustomTextField
                 fullWidth
                 size="small"
                 label="Consumption Rate"
-                name="cunsuption_rate"
-                type="number"
-                value={product.cunsuption_rate}
-                onChange={(e) => handleProductChange(index, e)}
+                name="consumption_rate"
+                value={product.consumption_rate}
+                onChange={(e) => handleProductChange(e, index)}
               />
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={12} sm={3}>
               <CustomTextField
                 fullWidth
                 size="small"
                 label="Amount"
                 name="amount"
-                type="number"
                 value={product.amount}
-                onChange={(e) => handleProductChange(index, e)}
+                onChange={(e) => handleProductChange(e, index)}
               />
-            </Grid>
-            <Grid item xs={1}>
-              <IconButton onClick={() => addProductField()}>
-                <AddCircleOutlineIcon />
-              </IconButton>
-              {index > 0 && (
-                <IconButton onClick={() => removeProductField(index)}>
-                  <RemoveCircleOutlineIcon />
-                </IconButton>
-              )}
             </Grid>
           </React.Fragment>
         ))}
