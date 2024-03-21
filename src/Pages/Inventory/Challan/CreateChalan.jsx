@@ -40,7 +40,7 @@ export const CreateChalan = ({
   const today = new Date().toISOString().slice(0, 10);
   const [inputValues, setInputValues] = useState({
     created_by: userData.email,
-    schedule_date: "",
+    schedule_date: today,
     job_worker: recordForEdit.name,
     vendor_type: recordForEdit.type,
     vendor_contact_person: "",
@@ -400,7 +400,7 @@ export const CreateChalan = ({
                     label="Product"
                   />
                 </Grid>
-                <Grid item xs={12} sm={2}>
+                <Grid item xs={12} sm={3}>
                   <CustomTextField
                     fullWidth
                     name="unit"
@@ -410,7 +410,7 @@ export const CreateChalan = ({
                     value={input.unit ? input.unit : ""}
                   />
                 </Grid>
-                <Grid item xs={12} sm={2}>
+                <Grid item xs={12} sm={3}>
                   <CustomTextField
                     fullWidth
                     name="quantity"
