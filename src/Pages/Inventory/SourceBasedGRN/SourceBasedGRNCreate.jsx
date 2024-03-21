@@ -189,6 +189,7 @@ export const SourceBasedGRNCreate = (props) => {
         invoice_no: selectedInvoice.invoice_no,
         total_amount: selectedInvoice.total_amount,
         seller_account: selectedInvoice.buyer_account,
+        challan_no: selectedInvoice.challan,
       }));
       const transformedProducts = selectedInvoice.products.map((product) => ({
         product: product.product,
