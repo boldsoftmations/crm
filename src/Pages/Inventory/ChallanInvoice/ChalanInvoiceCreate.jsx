@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Grid, IconButton } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import InventoryServices from "./../../../services/InventoryService";
+import InventoryServices from "../../../services/InventoryService";
 import ProductService from "../../../services/ProductService";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import CustomTextField from "../../../Components/CustomTextField";

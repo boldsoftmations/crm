@@ -13,8 +13,8 @@ import { CustomTable } from "../../../Components/CustomTable";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { PurchaseOrderCreate } from "../Purchase Order/PurchaseOrderCreate";
 import CustomTextField from "../../../Components/CustomTextField";
-import { CreateChalan } from "./CreateChalan";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { CreateChalan } from "../Challan/CreateChalan";
 
 export const VendorView = () => {
   const dispatch = useDispatch();

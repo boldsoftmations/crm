@@ -86,9 +86,9 @@ import { SalesPersonNotInGroup } from "../Pages/WhatsappGroup/SalesPersonNotInGr
 import { RetailCustomerData } from "../Pages/RetailCustomerData";
 import { DashboardLeadData } from "../Pages/DashboardLeadData";
 import { Automation } from "../Pages/WhatsappGroup/Automation";
-import { ChalanView } from "../Pages/Inventory/VendorInventoryDetail/ChalanView";
 import { SourceBasedGRNView } from "../Pages/Inventory/SourceBasedGRN/SourceBasedGRNView";
-import { ChalanInvoiceView } from "../Pages/Inventory/VendorInventoryDetail/ChalanInvoiceView";
+import { ChalanInvoiceView } from "../Pages/Inventory/ChallanInvoice/ChalanInvoiceView";
+import { ChalanView } from "../Pages/Inventory/Challan/ChalanView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -116,8 +116,14 @@ export const RouteScreen = () => {
               exact
               element={<TeamWiseDashboard />}
             />
-           <Route path="/user/retailer-data" element={<RetailCustomerData />} />
-           <Route path="/user/dasboard-lead-data" element={<DashboardLeadData />} />
+            <Route
+              path="/user/retailer-data"
+              element={<RetailCustomerData />}
+            />
+            <Route
+              path="/user/dasboard-lead-data"
+              element={<DashboardLeadData />}
+            />
             <Route path="/user/dashoard" element={<Dashboard />} />
             <Route path="/user/profile" exact element={<Profile />} />
             <Route
@@ -243,11 +249,8 @@ export const RouteScreen = () => {
               path="/inventory/view-purchase-invoice"
               element={<PurchaseInvoiceView />}
             />
+            <Route path="/inventory/chalan-view" element={<ChalanView />} />
             <Route
-              path="/inventory/chalan-view"
-              element={<ChalanView />}
-            />
-             <Route
               path="/inventory/chalan-invoice"
               element={<ChalanInvoiceView />}
             />
@@ -299,7 +302,10 @@ export const RouteScreen = () => {
               path="/inventory/view-weekly-production"
               element={<WeeklyProductionReport />}
             />
-            <Route path="/inventory/source-based-grn" element={<SourceBasedGRNView />} />
+            <Route
+              path="/inventory/source-based-grn"
+              element={<SourceBasedGRNView />}
+            />
             <Route path="/inventory/view-currency" element={<CurrencyView />} />
             <Route
               path="/inventory/view-safety-stock"
@@ -324,28 +330,28 @@ export const RouteScreen = () => {
             <Route path="/user/sale-review" element={<DailySaleReviewView />} />
             <Route path="/" element={<Home />} />
             <Route path="/hr-model" element={<HrModelTabs />} />
+            <Route path="/hr-model/designation" element={<DesignationView />} />
+            <Route path="/hr-model/department" element={<DepartmentView />} />
+            <Route path="/hr-model/department" element={<DepartmentView />} />
+            <Route path="/hr-model/source" element={<SourceView />} />
             <Route
-              path="/hr-model/designation"
-              element={<DesignationView />}
+              path="/customers/whatsapp-group"
+              element={<WhatsappGroupView />}
             />
             <Route
-              path="/hr-model/department"
-              element={<DepartmentView />}
+              path="/customers/not-in-whatsapp-group"
+              element={<CustomerNotInGroup />}
             />
             <Route
-              path="/hr-model/department"
-              element={<DepartmentView />}
+              path="/customers/no-sales-person-group"
+              element={<SalesPersonNotInGroup />}
             />
-              <Route
-              path="/hr-model/source"
-              element={<SourceView />}
+            <Route
+              path="/customers/no-whatsapp-group"
+              element={<CustomerNoWhatsappGroup />}
             />
-            <Route path="/customers/whatsapp-group" element={<WhatsappGroupView />} />
-            <Route path="/customers/not-in-whatsapp-group" element={<CustomerNotInGroup />} />
-            <Route path="/customers/no-sales-person-group" element={<SalesPersonNotInGroup />} />
-            <Route path="/customers/no-whatsapp-group" element={<CustomerNoWhatsappGroup />} />
-            <Route path="/customers/whatsapp" element={<WhatsappGroup/>} />
-            <Route path="/customers/automation" element={<Automation/>} />
+            <Route path="/customers/whatsapp" element={<WhatsappGroup />} />
+            <Route path="/customers/automation" element={<Automation />} />
           </>
         )}
         <Route path="*" element={<Auths />} />

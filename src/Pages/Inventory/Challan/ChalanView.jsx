@@ -18,12 +18,12 @@ import {
 import { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material/styles";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import InventoryServices from "./../../../services/InventoryService";
+import InventoryServices from "../../../services/InventoryService";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { ChalanInvoiceCreate } from "./ChalanInvoiceCreate";
 import { Popup } from "../../../Components/Popup";
+import { ChalanInvoiceCreate } from "../ChallanInvoice/ChalanInvoiceCreate";
 
 export const ChalanView = () => {
   const [isLoading, setIsLoading] = useState(false);
