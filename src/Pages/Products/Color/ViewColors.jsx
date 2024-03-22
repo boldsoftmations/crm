@@ -9,10 +9,10 @@ import { CreateColor } from "./CreateColor";
 import { UpdateColor } from "./UpdateColor";
 import { Popup } from "./../../../Components/Popup";
 import { ErrorMessage } from "./../../../Components/ErrorMessage/ErrorMessage";
-import { CustomSearch } from "./../../../Components/CustomSearch";
 import { CustomLoader } from "./../../../Components/CustomLoader";
 import { CustomPagination } from "./../../../Components/CustomPagination";
 import { CustomTable } from "../../../Components/CustomTable";
+import CustomTextField from "../../../Components/CustomTextField";
 
 export const ViewColors = () => {
   const [allColor, setAllColor] = useState([]);
@@ -65,16 +65,10 @@ export const ViewColors = () => {
     getColours();
   }, []);
 
-  const handleInputChange = (event) => {
-    setSearchQuery(event.target.value);
-    getSearchData(event.target.value);
-  };
-
-  const getSearchData = async (value) => {
+  const getSearchData = async () => {
     try {
       setOpen(true);
-      const filterSearch = value;
-      const response = await ProductService.getAllSearchColour(filterSearch);
+      const response = await ProductService.getAllSearchColour(searchQuery);
       if (response) {
         setAllColor(response.data.results);
         const total = response.data.count;
@@ -132,6 +126,10 @@ export const ViewColors = () => {
     setRecordForEdit(item.id);
     setOpenPopup(true);
   };
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
   const TableHeader = ["ID", "COLOUR", "ACTION"];
   const TableData = allColor.map((value) => value);
 
@@ -143,21 +141,59 @@ export const ViewColors = () => {
         <ErrorMessage errRef={errRef} errMsg={errMsg} />
         <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
           <Box display="flex">
-            <Box flexGrow={0.9}>
-              <CustomSearch
-                filterSelectedQuery={searchQuery}
-                handleInputChange={handleInputChange}
-                getResetData={getResetData}
-              />
+            <Box
+              sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}
+            >
+              <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                sx={{ marginRight: 5, marginLeft: 5 }}
+              >
+                <Grid item xs={12} sm={6}>
+                  <CustomTextField
+                    size="small"
+                    label="Search"
+                    variant="outlined"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={getSearchData}
+                    fullWidth
+                  >
+                    Search
+                  </Button>
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setCurrentPage(1);
+                      getResetData(1, "");
+                    }}
+                    fullWidth
+                  >
+                    Reset
+                  </Button>
+                </Grid>
+              </Grid>
             </Box>
-            <Box flexGrow={2}>
+            <Box display="flex" justifyContent="center" marginBottom="10px">
               <h3
                 style={{
-                  textAlign: "left",
                   marginBottom: "1em",
                   fontSize: "24px",
                   color: "rgb(34, 34, 34)",
                   fontWeight: 800,
+                  textAlign: "center",
                 }}
               >
                 Colour
