@@ -110,14 +110,10 @@ export const CreateLeadsProformaInvoice = (props) => {
 
   const getLeadsData = async (recordForEdit) => {
     try {
-      setOpen(true);
       const res = await LeadServices.getLeadsById(recordForEdit);
       setLeads(res.data);
-
-      setOpen(false);
     } catch (error) {
       console.log("error", error);
-      setOpen(false);
     }
   };
 
