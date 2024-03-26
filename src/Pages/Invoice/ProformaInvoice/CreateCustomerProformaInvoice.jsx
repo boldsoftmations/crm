@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Alert,
   Box,
   Button,
   Checkbox,
@@ -11,7 +10,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Snackbar,
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -20,13 +18,15 @@ import Chip from "@mui/material/Chip";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import CustomerServices from "../../../services/CustomerService";
-import ProductService from "../../../services/ProductService";
 import InvoiceServices from "../../../services/InvoiceService";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { Popup } from "../../../Components/Popup";
 import { UpdateCompanyDetails } from "../../Cutomers/CompanyDetails/UpdateCompanyDetails";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import useDynamicFormFields from "../../../Components/useDynamicFormFields ";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -49,23 +49,22 @@ const values = {
 
 export const CreateCustomerProformaInvoice = (props) => {
   const { setOpenPopup, recordForEdit } = props;
-  const navigate = useNavigate();
-  const [openPopup2, setOpenPopup2] = useState(false);
-  const [openPopup3, setOpenPopup3] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState([]);
-  const [selectedSellerData, setSelectedSellerData] = useState("");
-  const [product, setProduct] = useState([]);
-  const [paymentTermData, setPaymentTermData] = useState([]);
-  const [deliveryTermData, setDeliveryTermData] = useState([]);
-  const [customerData, setCustomerData] = useState([]);
-  const [contactOptions, setContactOptions] = useState([]);
-  const [warehouseOptions, setWarehouseOptions] = useState([]);
-  const [contactData, setContactData] = useState([]);
-  const [warehouseData, setWarehouseData] = useState([]);
-  const [checked, setChecked] = useState(true);
-  const [priceApproval, setPriceApproval] = useState(false);
-  const [products, setProducts] = useState([
+  const {
+    handleSuccess,
+    handleError,
+    openSnackbar,
+    errorMessages,
+    currentErrorIndex,
+    handleCloseSnackbar,
+  } = useNotificationHandling();
+  const {
+    handleAutocompleteChange,
+    handleFormChange,
+    addFields,
+    removeFields,
+    products,
+    productOption,
+  } = useDynamicFormFields([
     {
       product: "",
       unit: "",
@@ -75,47 +74,32 @@ export const CreateCustomerProformaInvoice = (props) => {
       special_instructions: "",
     },
   ]);
-  const data = useSelector((state) => state.auth);
-  const users = data.profile;
-  const sellerData = data.sellerAccount;
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [errorMessages, setErrorMessages] = useState([]);
-  const [currentErrorIndex, setCurrentErrorIndex] = useState(0);
+  const navigate = useNavigate();
+  const [openPopup2, setOpenPopup2] = useState(false);
+  const [openPopup3, setOpenPopup3] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState([]);
+  const [selectedSellerData, setSelectedSellerData] = useState("");
+  const [paymentTermData, setPaymentTermData] = useState([]);
+  const [deliveryTermData, setDeliveryTermData] = useState([]);
+  const [customerData, setCustomerData] = useState([]);
+  const [contactOptions, setContactOptions] = useState([]);
+  const [warehouseOptions, setWarehouseOptions] = useState([]);
+  const [contactData, setContactData] = useState([]);
+  const [warehouseData, setWarehouseData] = useState([]);
+  const [checked, setChecked] = useState(true);
+  const [priceApproval, setPriceApproval] = useState(false);
+  const [sellerData, setSellerData] = useState([]);
+  const { profile: users } = useSelector((state) => state.auth);
 
-  const handleAutocompleteChange = (index, event, value) => {
-    let data = [...products];
-    const productObj = product.find((item) => item.product === value);
-    console.log("productObj", productObj);
-    data[index]["product"] = value;
-    data[index]["unit"] = productObj ? productObj.unit : "";
-    setProducts(data);
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setInputValue({ ...inputValue, [name]: value });
   };
 
-  const handleFormChange = (index, event) => {
-    let data = [...products];
-    data[index][event.target.name ? event.target.name : "product"] = event
-      .target.value
-      ? event.target.value
-      : event.target.textContent;
-    setProducts(data);
-  };
-
-  const addFields = () => {
-    let newfield = {
-      product: "",
-      unit: "",
-      quantity: "",
-      rate: "",
-      requested_date: values.someDate,
-      special_instructions: "",
-    };
-    setProducts([...products, newfield]);
-  };
-
-  const removeFields = (index) => {
-    let data = [...products];
-    data.splice(index, 1);
-    setProducts(data);
+  const openInPopup = () => {
+    setOpenPopup3(true);
+    setOpenPopup2(false);
   };
 
   useEffect(() => {
@@ -123,6 +107,20 @@ export const CreateCustomerProformaInvoice = (props) => {
     getContactsDetailsByID();
   }, [openPopup3]);
 
+  useEffect(() => {
+    getAllSellerAccountsDetails();
+  }, []);
+
+  const getAllSellerAccountsDetails = async () => {
+    try {
+      const response = await InvoiceServices.getAllPaginateSellerAccountData(
+        "all"
+      );
+      setSellerData(response.data);
+    } catch (error) {
+      console.log("Error fetching seller account data:", error);
+    }
+  };
   const getContactsDetailsByID = async () => {
     try {
       setOpen(true);
@@ -153,143 +151,90 @@ export const CreateCustomerProformaInvoice = (props) => {
     }
   };
 
-  useEffect(() => {
-    getProduct();
-  }, []);
-
-  const getProduct = async () => {
-    try {
-      setOpen(true);
-      const res = await ProductService.getAllValidPriceList("all");
-      setProduct(res.data);
-      setOpen(false);
-    } catch (err) {
-      console.error("error potential", err);
-      setOpen(false);
-    }
-  };
-
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setInputValue({ ...inputValue, [name]: value });
-  };
-
-  const extractErrorMessages = (data) => {
-    let messages = [];
-    if (data.errors) {
-      for (const [key, value] of Object.entries(data.errors)) {
-        // Assuming each key has an array of messages, concatenate them.
-        value.forEach((msg) => {
-          messages.push(`${key}: ${msg}`);
-        });
-      }
-    }
-    return messages;
-  };
-
   const createCustomerProformaInvoiceDetails = async (e) => {
+    e.preventDefault();
+
+    const isValidData =
+      contactData.contact !== null &&
+      warehouseData.address !== null &&
+      warehouseData.state !== null &&
+      warehouseData.city !== null &&
+      warehouseData.pincode !== null;
+
+    const req = {
+      type: "Customer",
+      raised_by: users.email,
+      raised_by_first_name: users.first_name,
+      raised_by_last_name: users.last_name,
+      seller_account: selectedSellerData.unit,
+      seller_address: selectedSellerData.address,
+      seller_pincode: selectedSellerData.pincode,
+      seller_state: selectedSellerData.state,
+      seller_city: selectedSellerData.city,
+      seller_gst: selectedSellerData.gst_number,
+      seller_pan: selectedSellerData.pan_number,
+      seller_state_code: selectedSellerData.state_code,
+      seller_cin: selectedSellerData.cin_number,
+      seller_email: selectedSellerData.email,
+      seller_contact: selectedSellerData.contact,
+      seller_bank_name: selectedSellerData.bank_name,
+      seller_account_no: selectedSellerData.current_account_no,
+      seller_ifsc_code: selectedSellerData.ifsc_code,
+      seller_branch: selectedSellerData.branch,
+      company: customerData.id,
+      company_name: customerData.name,
+      contact: contactData.contact,
+      contact_person_name: contactData.name,
+      alternate_contact: contactData.alternate_contact,
+      company_name: customerData.name,
+      gst_number: customerData.gst_number || null,
+      pan_number: customerData.pan_number,
+      billing_address: customerData.address,
+      billing_state: customerData.state,
+      billing_city: customerData.city,
+      billing_pincode: customerData.pincode,
+      address: warehouseData.address,
+      pincode: warehouseData.pincode,
+      state: warehouseData.state,
+      city: warehouseData.city,
+      place_of_supply: inputValue.place_of_supply,
+      transporter_name: inputValue.transporter_name,
+      buyer_order_no: checked === true ? "verbal" : inputValue.buyer_order_no,
+      buyer_order_date: inputValue.buyer_order_date,
+      payment_terms: paymentTermData,
+      delivery_terms: deliveryTermData,
+      status: priceApproval ? "Price Approval" : "Approved",
+      price_approval: priceApproval,
+      products: products,
+    };
+
     try {
-      e.preventDefault();
-      const req = {
-        type: "Customer",
-        raised_by: users.email,
-        raised_by_first_name: users.first_name,
-        raised_by_last_name: users.last_name,
-        seller_account: selectedSellerData.unit,
-        seller_address: selectedSellerData.address,
-        seller_pincode: selectedSellerData.pincode,
-        seller_state: selectedSellerData.state,
-        seller_city: selectedSellerData.city,
-        seller_gst: selectedSellerData.gst_number,
-        seller_pan: selectedSellerData.pan_number,
-        seller_state_code: selectedSellerData.state_code,
-        seller_cin: selectedSellerData.cin_number,
-        seller_email: selectedSellerData.email,
-        seller_contact: selectedSellerData.contact,
-        seller_bank_name: selectedSellerData.bank_name,
-        seller_account_no: selectedSellerData.current_account_no,
-        seller_ifsc_code: selectedSellerData.ifsc_code,
-        seller_branch: selectedSellerData.branch,
-        company: customerData.id,
-        company_name: customerData.name,
-        contact: contactData.contact,
-        contact_person_name: contactData.name,
-        alternate_contact: contactData.alternate_contact,
-        company_name: customerData.name,
-        gst_number: customerData.gst_number || null,
-        pan_number: customerData.pan_number,
-        billing_address: customerData.address,
-        billing_state: customerData.state,
-        billing_city: customerData.city,
-        billing_pincode: customerData.pincode,
-        address: warehouseData.address,
-        pincode: warehouseData.pincode,
-        state: warehouseData.state,
-        city: warehouseData.city,
-        place_of_supply: inputValue.place_of_supply,
-        transporter_name: inputValue.transporter_name,
-        buyer_order_no: checked === true ? "verbal" : inputValue.buyer_order_no,
-        buyer_order_date: inputValue.buyer_order_date,
-        payment_terms: paymentTermData,
-        delivery_terms: deliveryTermData,
-        status: priceApproval ? "Price Approval" : "Approved",
-        price_approval: priceApproval,
-        products: products,
-      };
       setOpen(true);
-      if (
-        contactData.contact !== null &&
-        warehouseData.address !== null &&
-        warehouseData.state !== null &&
-        warehouseData.city !== null &&
-        warehouseData.pincode !== null
-      ) {
-        await InvoiceServices.createCustomerProformaInvoiceData(req);
-        setOpenPopup(false);
-        navigate("/invoice/active-pi");
-      } else {
+      if (!isValidData) {
         setOpenPopup2(true);
+        return; // Exit if data validation fails
       }
-      setOpen(false);
+
+      // Perform the API call if data is valid
+      await InvoiceServices.createCustomerProformaInvoiceData(req);
+      handleSuccess(); // Handle the success scenario
+      navigate("/invoice/active-pi");
     } catch (error) {
-      console.log("creating Customer PI error", error);
-      const newErrors = extractErrorMessages(error.response.data);
-      setErrorMessages(newErrors);
-      setCurrentErrorIndex(0); // Reset the error index when new errors arrive
-      setOpenSnackbar((prevOpen) => !prevOpen);
-      // setOpenSnackbar(true);
-      // setOpenPopup2(true);
+      handleError(error); // Handle errors from the API call
     } finally {
-      setOpen(false);
+      setOpen(false); // Always close the loader
     }
   };
-
-  const openInPopup = () => {
-    setOpenPopup3(true);
-    setOpenPopup2(false);
-  };
-
-  const handleCloseSnackbar = useCallback(() => {
-    if (currentErrorIndex < errorMessages.length - 1) {
-      setCurrentErrorIndex((prevIndex) => prevIndex + 1);
-    } else {
-      setOpenSnackbar(false);
-      setCurrentErrorIndex(0); // Reset for any future errors
-    }
-  }, [currentErrorIndex, errorMessages.length]);
 
   return (
     <div>
-      <Snackbar
+      <MessageAlert
         open={openSnackbar}
-        autoHideDuration={6000}
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="error">
-          {errorMessages[currentErrorIndex]}
-        </Alert>
-      </Snackbar>
+        severity="error"
+        message={errorMessages[currentErrorIndex]}
+      />
+
       <CustomLoader open={open} />
       <Box
         component="form"
@@ -650,7 +595,7 @@ export const CreateCustomerProformaInvoice = (props) => {
                     onChange={(event, value) =>
                       handleAutocompleteChange(index, event, value)
                     }
-                    options={product.map((option) => option.product)}
+                    options={productOption.map((option) => option.product)}
                     getOptionLabel={(option) => option}
                     sx={{ minWidth: 300 }}
                     label="Product Name"

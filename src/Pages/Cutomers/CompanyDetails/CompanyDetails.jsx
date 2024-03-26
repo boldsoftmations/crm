@@ -16,14 +16,11 @@ import { UpdateAllCompanyDetails } from "./UpdateAllCompanyDetails";
 import { CreateCompanyDetails } from "./CreateCompanyDetails";
 import { Popup } from "./../../../Components/Popup";
 import CustomerServices from "../../../services/CustomerService";
-import { useDispatch, useSelector } from "react-redux";
-import { getSellerAccountData } from "../../../Redux/Action/Action";
-import InvoiceServices from "../../../services/InvoiceService";
+import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { BulkCustomerAssign } from "./BulkCustomerAssign";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { CustomerActivityCreate } from "../../FollowUp/CustomerActivityCreate";
-import ProductService from "../../../services/ProductService";
 import { CreateCustomerProformaInvoice } from "./../../Invoice/ProformaInvoice/CreateCustomerProformaInvoice";
 import { CSVLink } from "react-csv";
 import { Helmet } from "react-helmet";
@@ -32,10 +29,11 @@ import { CustomerPotentialCreate } from "../CustomerPotential/CustomerPotentialC
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
 export const CompanyDetails = () => {
-  const dispatch = useDispatch();
-  const [openPopup, setOpenPopup] = useState(false);
-  const [openPopup2, setOpenPopup2] = useState(false);
-  const [openPopup3, setOpenPopup3] = useState(false);
+  const [openPopupOfUpdateCustomer, setOpenPopupOfUpdateCustomer] =
+    useState(false);
+  const [openPopupOfCreateCustomer, setOpenPopupOfCreateCustomer] =
+    useState(false);
+  const [openPopupInvoice, setOpenPopupInvoice] = useState(false);
   const [openPopupActivity, setOpenPopupActivity] = useState(false);
   const [openPopupPotential, setOpenPopupPotential] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -45,7 +43,6 @@ export const CompanyDetails = () => {
   const [recordForEdit, setRecordForEdit] = useState();
   const [pageCount, setpageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [product, setProduct] = useState([]);
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [exportData, setExportData] = useState([]);
@@ -158,58 +155,28 @@ export const CompanyDetails = () => {
     }
   };
 
-  const openInPopup = (item) => {
+  const openInPopupOfUpdateCustomer = (item) => {
     setRecordForEdit(item.id);
-    setOpenPopup(true);
+    setOpenPopupOfUpdateCustomer(true);
   };
 
-  const openInPopup2 = (item) => {
+  const openInPopupInvoice = (item) => {
     setRecordForEdit(item.id);
-    setOpenPopup3(true);
+    setOpenPopupInvoice(true);
   };
 
-  const openInPopup3 = (item) => {
+  const openInPopupActivity = (item) => {
     setRecordForEdit(item.id);
     setOpenPopupActivity(true);
   };
 
-  const openInPopup4 = (item) => {
+  const openInPopupPotential = (item) => {
     setRecordForEdit(item.id);
     setOpenPopupPotential(true);
   };
 
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
-  };
-
-  useEffect(() => {
-    getAllSellerAccountsDetails();
-    getProduct();
-  }, []);
-
-  const getAllSellerAccountsDetails = async () => {
-    try {
-      setOpen(true);
-      const response = await InvoiceServices.getAllPaginateSellerAccountData(
-        "all"
-      );
-      dispatch(getSellerAccountData(response.data));
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-    }
-  };
-
-  const getProduct = async () => {
-    try {
-      setOpen(true);
-      const res = await ProductService.getAllProduct();
-      setProduct(res.data);
-      setOpen(false);
-    } catch (err) {
-      console.error("error potential", err);
-      setOpen(false);
-    }
   };
 
   useEffect(() => {
@@ -248,15 +215,6 @@ export const CompanyDetails = () => {
     setSearchQuery(event.target.value);
   };
 
-  const handleSearch = () => {
-    getAllCompanyDetails(
-      currentPage,
-      statusFilter,
-      filterSelectedQuery,
-      searchQuery
-    );
-  };
-
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
   };
@@ -271,17 +229,6 @@ export const CompanyDetails = () => {
     "STATUS",
     "ACTION",
   ];
-
-  const Tabledata = companyData.map((value) => ({
-    id: value.id,
-    name: value.name,
-    assigned_to: value.assigned_to,
-    pan_number: value.pan_number,
-    gst_number: value.gst_number,
-    city: value.city,
-    state: value.state,
-    status: value.status,
-  }));
 
   const isStatusFilterEnabled =
     userData.groups.includes("Director") ||
@@ -422,7 +369,7 @@ export const CompanyDetails = () => {
                 {userData.groups.includes("Accounts") && (
                   <Button
                     variant="contained"
-                    onClick={() => setOpenPopup2(true)}
+                    onClick={() => setOpenPopupOfCreateCustomer(true)}
                   >
                     Add
                   </Button>
@@ -569,7 +516,7 @@ export const CompanyDetails = () => {
                     <StyledTableCell align="center">
                       <Button
                         sx={{ color: "#1976d2" }}
-                        onClick={() => openInPopup(row)}
+                        onClick={() => openInPopupOfUpdateCustomer(row)}
                       >
                         View,
                       </Button>
@@ -578,21 +525,21 @@ export const CompanyDetails = () => {
                       ) && (
                         <Button
                           sx={{ color: "#28a745" }}
-                          onClick={() => openInPopup2(row)}
+                          onClick={() => openInPopupInvoice(row)}
                         >
                           PI,
                         </Button>
                       )}
                       <Button
                         sx={{ color: "#5e35b1" }}
-                        onClick={() => openInPopup3(row)}
+                        onClick={() => openInPopupActivity(row)}
                       >
                         Activity,
                       </Button>
                       {row.is_potential_completed === false && (
                         <Button
                           sx={{ color: "#eb5042" }}
-                          onClick={() => openInPopup4(row)}
+                          onClick={() => openInPopupPotential(row)}
                         >
                           Potential
                         </Button>
@@ -623,36 +570,35 @@ export const CompanyDetails = () => {
       <Popup
         fullScreen={true}
         title={"Create Customer Details"}
-        openPopup={openPopup2}
-        setOpenPopup={setOpenPopup2}
+        openPopup={openPopupOfCreateCustomer}
+        setOpenPopup={setOpenPopupOfCreateCustomer}
       >
         <CreateCompanyDetails
-          setOpenPopup={setOpenPopup2}
+          setOpenPopup={setOpenPopupOfCreateCustomer}
           getAllCompanyDetails={getAllCompanyDetails}
         />
       </Popup>
       <Popup
         fullScreen={true}
         title={"Update Customer"}
-        openPopup={openPopup}
-        setOpenPopup={setOpenPopup}
+        openPopup={openPopupOfUpdateCustomer}
+        setOpenPopup={setOpenPopupOfUpdateCustomer}
       >
         <UpdateAllCompanyDetails
-          setOpenPopup={setOpenPopup}
+          setOpenPopup={setOpenPopupOfUpdateCustomer}
           getAllCompanyDetails={getAllCompanyDetails}
           recordForEdit={recordForEdit}
-          product={product}
         />
       </Popup>
       <Popup
         fullScreen={true}
         title={"Create Customer Proforma Invoice"}
-        openPopup={openPopup3}
-        setOpenPopup={setOpenPopup3}
+        openPopup={openPopupInvoice}
+        setOpenPopup={setOpenPopupInvoice}
       >
         <CreateCustomerProformaInvoice
           recordForEdit={recordForEdit}
-          setOpenPopup={setOpenPopup3}
+          setOpenPopup={setOpenPopupInvoice}
         />
       </Popup>
       <Popup
@@ -685,8 +631,8 @@ export const CompanyDetails = () => {
         setOpenPopup={setOpenPopupPotential}
       >
         <CustomerPotentialCreate
+          getCompanyDetailsByID={getAllCompanyDetails}
           recordForEdit={recordForEdit}
-          product={product}
           setOpenModal={setOpenPopupPotential}
         />
       </Popup>

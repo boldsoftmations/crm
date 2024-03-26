@@ -177,7 +177,32 @@ export const Header = () => {
                 <ExpandMoreIcon />
               </IconButton>
 
-              {/* Menu Items */}
+              <Menu
+                id="menu-appbar"
+                // anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={anchorEl}
+                onClose={handleClose}
+              >
+                <MenuItem
+                  component={RouterLink}
+                  to={"/user/profile"}
+                  onClick={handleClose}
+                >
+                  Profile
+                </MenuItem>
+                <MenuItem component={RouterLink} to={"/"} onClick={logout}>
+                  Logout
+                </MenuItem>
+              </Menu>
             </>
           </Toolbar>
         </AppBar>
