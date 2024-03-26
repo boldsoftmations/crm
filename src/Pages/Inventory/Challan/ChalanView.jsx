@@ -273,6 +273,7 @@ export const ChalanView = () => {
             <ChalanInvoiceCreate
               setOpenPopup={setOpenPopup}
               challanNumbers={challanNumbers}
+              getChalanDetails={getChalanDetails}
             />
           </Popup>
 
