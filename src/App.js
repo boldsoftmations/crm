@@ -9,9 +9,9 @@ function App() {
   return (
     <BrowserRouter basename="/crm">
       <Header />
-      <div className="appcontainer">
+      <main id="app">
         <RouteScreen />
-      </div>
+      </main>
     </BrowserRouter>
   );
 }

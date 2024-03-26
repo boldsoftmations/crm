@@ -268,7 +268,7 @@ export const ChalanView = () => {
             openPopup={openPopup}
             setOpenPopup={setOpenPopup}
             title={"Create Chalan Invoice"}
-            maxWidth="md"
+            maxWidth="xl"
           >
             <ChalanInvoiceCreate
               setOpenPopup={setOpenPopup}
