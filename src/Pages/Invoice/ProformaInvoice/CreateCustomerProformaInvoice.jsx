@@ -123,14 +123,12 @@ export const CreateCustomerProformaInvoice = (props) => {
   };
   const getContactsDetailsByID = async () => {
     try {
-      setOpen(true);
       const [contactResponse, warehouseResponse] = await Promise.all([
         CustomerServices.getCompanyDataByIdWithType(recordForEdit, "contacts"),
         CustomerServices.getCompanyDataByIdWithType(recordForEdit, "warehouse"),
       ]);
       setContactOptions(contactResponse.data.contacts);
       setWarehouseOptions(warehouseResponse.data.warehouse);
-      setOpen(false);
     } catch (err) {
       setOpen(false);
       console.log("company data by id error", err);
@@ -139,14 +137,9 @@ export const CreateCustomerProformaInvoice = (props) => {
 
   const getAllCompanyDetailsByID = async () => {
     try {
-      setOpen(true);
-
       const response = await CustomerServices.getCompanyDataById(recordForEdit);
       setCustomerData(response.data);
-
-      setOpen(false);
     } catch (err) {
-      setOpen(false);
       console.log("company data by id error", err);
     }
   };
