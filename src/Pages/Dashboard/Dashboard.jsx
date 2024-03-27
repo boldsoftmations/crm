@@ -111,21 +111,26 @@ export function Dashboard() {
     setActiveTab(index);
   };
 
+  const specialAccessEmails = new Set([
+    "devannsh@glutape.com",
+    "mahesh@glutaoe.com",
+  ]);
+  const hasSpecialAccess =
+    specialAccessEmails.has(userData.email) ||
+    userData.groups.some((group) =>
+      ["Accounts", "Accounts Executive", "Director"].includes(group)
+    );
+
   const tabs = [
     { label: "OrderBook Summary" },
-    { label: "Current OrderBook(Finish Good)" },
-    { label: "Current OrderBook(Raw Material)" },
-    { label: "Current Month Sales(Finish Good)" },
-    { label: "Current Month Sales(Raw Material)" },
-    { label: "Sales Person Summary" },
-    { label: "Forecast Turnover" },
-    { label: "Description Wise Turnover" },
-    ...(userData.email === "devannsh@glutape.com" ||
-    userData.email === "mahesh@glutaoe.com" ||
-    userData.groups.includes("Accounts") ||
-    userData.groups.includes("Accounts Executive")
-      ? [{ label: "Daily Profitability Report" }]
-      : []),
+    { label: "OrderBook FG" }, // FG = Finish Good
+    { label: "OrderBook RM" }, // RM = Raw Material
+    { label: "Sales FG" }, // Current Month Sales (Finish Good)
+    { label: "Sales RM" }, // Current Month Sales (Raw Material)
+    { label: "Sales P. Summary" }, // Previously Sales Person Summary
+    { label: "Forecast T." }, // Forecast Turnover
+    { label: "Description T." }, // Description Wise Turnover
+    ...(hasSpecialAccess ? [{ label: "Profit Report" }] : []), // Daily Profitability Report
   ];
 
   useEffect(() => {
