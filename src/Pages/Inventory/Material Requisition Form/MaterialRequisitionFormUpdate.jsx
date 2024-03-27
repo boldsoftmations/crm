@@ -1,20 +1,14 @@
-import {
-  Box,
-  Button,
-  Chip,
-  Divider,
-  Grid,
-  IconButton,
-  Snackbar,
-} from "@mui/material";
-import React, { useEffect, useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
+import { Box, Button, Chip, Divider, Grid } from "@mui/material";
+import React, { useMemo, useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import useDynamicFormFields from "../../../Components/useDynamicFormFields ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -30,163 +24,98 @@ export const MaterialRequisitionFormUpdate = (props) => {
     getAllMaterialRequisitionFormDetails,
     idForEdit,
     storesInventoryData,
-    sellerOption,
   } = props;
-  const [materialRequisitionDataByID, setMaterialRequisitionDataByID] =
-    useState([]);
   const [open, setOpen] = useState(false);
-  const [error, setError] = useState(null);
   const data = useSelector((state) => state.auth);
-  const [selectedSellerData, setSelectedSellerData] = useState(null);
   const users = data.profile;
-  const [products, setProducts] = useState([
-    {
-      product: "",
-      quantity: "",
-      unit: "",
-    },
-  ]);
-
-  const handleAutocompleteChange = (index, event, value) => {
-    let data = [...products];
-    const productObj = storesInventoryData.find(
-      (item) => item.product__name === value
-    );
-
-    data[index]["product"] = value;
-    data[index]["unit"] = productObj ? productObj.product__unit : "";
-    setProducts(data);
-  };
-
-  const handleFormChange = (index, event) => {
-    let data = [...products];
-    data[index][event.target.name] = event.target.value;
-
-    setProducts(data);
-  };
-
-  const addFields = () => {
-    let newfield = {
-      product: "",
-      quantity: "",
-      unit: "",
-    };
-    setProducts([...products, newfield]);
-  };
-
-  const removeFields = (index) => {
-    let data = [...products];
-    data.splice(index, 1);
-    setProducts(data);
-  };
-
-  useEffect(() => {
-    if (idForEdit) getMaterialRequisitionFormDetailsByID();
-  }, [idForEdit]);
-
-  const getMaterialRequisitionFormDetailsByID = async () => {
-    try {
-      setOpen(true);
-      const response =
-        await InventoryServices.getMaterialRequisitionFormDataById(idForEdit);
-      setSelectedSellerData(response.data.seller_account);
-      setMaterialRequisitionDataByID(response.data);
-      var arr = response.data.products_data.map((fruit) => ({
-        product: fruit.product,
-        quantity: fruit.quantity,
-        unit: fruit.unit,
-      }));
-      setProducts(arr);
-
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-      console.log("company data by id error", err);
-    }
-  };
+  const productOption = useMemo(
+    () =>
+      storesInventoryData.map((data) => ({
+        product: data.product__name,
+        unit: data.product__unit,
+        quantity: data.quantity,
+      })),
+    [storesInventoryData]
+  );
+  const initialFields = useMemo(
+    () =>
+      idForEdit.products_data.map((data) => ({
+        product: data.product,
+        unit: data.unit, // Assuming this correction is needed
+        quantity: data.quantity, // Assuming this correction is needed
+      })),
+    [idForEdit]
+  );
+  const {
+    handleSuccess,
+    handleError,
+    openSnackbar,
+    errorMessages,
+    currentErrorIndex,
+    handleCloseSnackbar,
+  } = useNotificationHandling();
+  const {
+    handleAutocompleteChange,
+    handleFormChange,
+    addFields,
+    removeFields,
+    products,
+  } = useDynamicFormFields(initialFields, productOption);
 
   const updateMaterialRequisitionFormDetails = async (e) => {
     try {
       e.preventDefault();
       setOpen(true);
-      const req = {
-        seller_account: selectedSellerData,
-        user: materialRequisitionDataByID.user,
+      const payload = {
+        seller_account: idForEdit.seller_account,
+        user: idForEdit.user,
         products_data: products,
       };
-      await InventoryServices.updateMaterialRequisitionFormData(idForEdit, req);
-
-      setOpenPopup(false);
-      getAllMaterialRequisitionFormDetails();
-      setOpen(false);
-    } catch (error) {
-      setError(
-        error.response.data.errors
-          ? error.response.data.errors.non_field_errors
-          : ""
+      await InventoryServices.updateMaterialRequisitionFormData(
+        idForEdit.id,
+        payload
       );
-      setOpen(false);
+      setOpenPopup(false);
+      handleSuccess();
+      getAllMaterialRequisitionFormDetails();
+    } catch (error) {
+      handleError(error); // Handle errors from the API call
+    } finally {
+      setOpen(false); // Always close the loader
     }
-  };
-
-  const handleCloseSnackbar = () => {
-    setError(null);
   };
 
   return (
     <div>
+      <MessageAlert
+        open={openSnackbar}
+        onClose={handleCloseSnackbar}
+        severity="error"
+        message={errorMessages[currentErrorIndex]}
+      />
       <CustomLoader open={open} />
-
       <Box
         component="form"
         noValidate
         onSubmit={(e) => updateMaterialRequisitionFormDetails(e)}
       >
-        <Snackbar
-          open={Boolean(error)}
-          onClose={handleCloseSnackbar}
-          message={error}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              sx={{ p: 0.5 }}
-              onClick={handleCloseSnackbar}
-            >
-              <CloseIcon />
-            </IconButton>
-          }
-        />
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
-            <CustomAutocomplete
-              name="seller_account"
+            <CustomTextField
+              fullWidth
               size="small"
-              disablePortal
-              id="combo-box-demo"
-              value={selectedSellerData}
-              onChange={(event, value) => setSelectedSellerData(value)}
-              options={
-                sellerOption && sellerOption.map((option) => option.unit)
-              }
-              getOptionLabel={(option) => option}
-              sx={{ minWidth: 300 }}
               label="Seller Account"
+              variant="outlined"
+              value={idForEdit.seller_account || ""}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <CustomTextField
               fullWidth
               size="small"
-              name="packing_list_no"
-              label="Packing List No."
+              label="User"
               variant="outlined"
-              value={
-                materialRequisitionDataByID.user
-                  ? materialRequisitionDataByID.user
-                  : ""
-              }
+              value={idForEdit.user || ""}
             />
           </Grid>
           <Grid item xs={12}>
@@ -199,7 +128,7 @@ export const MaterialRequisitionFormUpdate = (props) => {
           {products.map((input, index) => {
             return (
               <>
-                <Grid key={index} item xs={12} sm={4}>
+                <Grid key={index} item xs={12} sm={5}>
                   <CustomAutocomplete
                     name="product"
                     size="small"
@@ -217,10 +146,9 @@ export const MaterialRequisitionFormUpdate = (props) => {
                     label="Product Name"
                   />
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
-                    name="unit"
                     size="small"
                     label="Unit"
                     variant="outlined"
@@ -239,14 +167,7 @@ export const MaterialRequisitionFormUpdate = (props) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={1} alignContent="right">
-                  <Button
-                    onClick={addFields}
-                    variant="contained"
-                    sx={{ marginRight: "1em" }}
-                  >
-                    Add More...
-                  </Button>
+                <Grid item xs={12} sm={2} alignContent="right">
                   {index !== 0 && (
                     <Button
                       disabled={index === 0}
@@ -260,9 +181,18 @@ export const MaterialRequisitionFormUpdate = (props) => {
               </>
             );
           })}
+          <Grid item xs={12} sm={4} alignContent="right">
+            <Button
+              onClick={addFields}
+              variant="contained"
+              sx={{ marginRight: "1em" }}
+            >
+              Add More...
+            </Button>
+          </Grid>
         </Grid>
-        {materialRequisitionDataByID.accepted === false ||
-        users.groups.includes("Accounts") ? (
+
+        {idForEdit.accepted === false || users.groups.includes("Accounts") ? (
           <Button
             type="submit"
             fullWidth

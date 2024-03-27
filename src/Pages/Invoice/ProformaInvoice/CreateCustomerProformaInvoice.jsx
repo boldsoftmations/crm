@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Button,
@@ -27,6 +27,7 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import useDynamicFormFields from "../../../Components/useDynamicFormFields ";
+import ProductService from "../../../services/ProductService";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -49,6 +50,7 @@ const values = {
 
 export const CreateCustomerProformaInvoice = (props) => {
   const { setOpenPopup, recordForEdit } = props;
+  const [productOption, setProductOption] = useState([]);
   const {
     handleSuccess,
     handleError,
@@ -63,17 +65,20 @@ export const CreateCustomerProformaInvoice = (props) => {
     addFields,
     removeFields,
     products,
+  } = useDynamicFormFields(
+    [
+      {
+        product: "",
+        unit: "",
+        quantity: "",
+        rate: "",
+        requested_date: values.someDate,
+        special_instructions: "",
+      },
+    ],
     productOption,
-  } = useDynamicFormFields([
-    {
-      product: "",
-      unit: "",
-      quantity: "",
-      rate: "",
-      requested_date: values.someDate,
-      special_instructions: "",
-    },
-  ]);
+    true
+  );
   const navigate = useNavigate();
   const [openPopup2, setOpenPopup2] = useState(false);
   const [openPopup3, setOpenPopup3] = useState(false);
@@ -109,6 +114,16 @@ export const CreateCustomerProformaInvoice = (props) => {
 
   useEffect(() => {
     getAllSellerAccountsDetails();
+    getProduct();
+  }, []);
+
+  const getProduct = useCallback(async () => {
+    try {
+      const res = await ProductService.getAllValidPriceList("all");
+      setProductOption(res.data);
+    } catch (err) {
+      console.error("error potential", err);
+    }
   }, []);
 
   const getAllSellerAccountsDetails = async () => {
@@ -154,7 +169,7 @@ export const CreateCustomerProformaInvoice = (props) => {
       warehouseData.city !== null &&
       warehouseData.pincode !== null;
 
-    const req = {
+    const payload = {
       type: "Customer",
       raised_by: users.email,
       raised_by_first_name: users.first_name,
@@ -209,7 +224,7 @@ export const CreateCustomerProformaInvoice = (props) => {
       }
 
       // Perform the API call if data is valid
-      await InvoiceServices.createCustomerProformaInvoiceData(req);
+      await InvoiceServices.createCustomerProformaInvoiceData(payload);
       handleSuccess(); // Handle the success scenario
       navigate("/invoice/active-pi");
     } catch (error) {
@@ -612,7 +627,7 @@ export const CreateCustomerProformaInvoice = (props) => {
                     size="small"
                     label="Unit"
                     variant="outlined"
-                    value={input.unit ? input.unit : ""}
+                    value={input.unit || ""}
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
@@ -673,13 +688,6 @@ export const CreateCustomerProformaInvoice = (props) => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={4} alignContent="right">
-                  <Button
-                    onClick={addFields}
-                    variant="contained"
-                    sx={{ marginRight: "1em" }}
-                  >
-                    Add More...
-                  </Button>
                   {index !== 0 && (
                     <Button
                       disabled={index === 0}
@@ -693,6 +701,15 @@ export const CreateCustomerProformaInvoice = (props) => {
               </>
             );
           })}
+          <Grid item xs={12} sm={4} alignContent="right">
+            <Button
+              onClick={addFields}
+              variant="contained"
+              sx={{ marginRight: "1em" }}
+            >
+              Add More...
+            </Button>
+          </Grid>
         </Grid>
         <Button
           type="submit"

@@ -59,7 +59,7 @@ export const MaterialRequisitionFormView = () => {
   const [idForEdit, setIDForEdit] = useState("");
   const [storesInventoryData, setStoresInventoryData] = useState([]);
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [sellerOption, setSellerOption] = useState(null);
+
   const users = useSelector((state) => state.auth.profile);
   const [exportData, setExportData] = useState([]);
   const csvLinkRef = useRef(null);
@@ -126,24 +126,8 @@ export const MaterialRequisitionFormView = () => {
   };
 
   useEffect(() => {
-    getAllSellerAccountsDetails();
     getAllStoresInventoryDetails();
   }, []);
-
-  const getAllSellerAccountsDetails = async () => {
-    try {
-      setOpen(true);
-      const data = users.groups.includes("Production Delhi")
-        ? "Delhi"
-        : "Maharashtra";
-      const response = await InvoiceServices.getfilterSellerAccountData(data);
-      setSellerOption(response.data.results);
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-      console.log("err", err);
-    }
-  };
 
   const getAllStoresInventoryDetails = async () => {
     try {
@@ -345,7 +329,8 @@ export const MaterialRequisitionFormView = () => {
               </Grid>
               <Grid item xs={12} sm={3}>
                 {(users.groups.includes("Production") ||
-                  users.groups.includes("Production Delhi")) && (
+                  users.groups.includes("Production Delhi") ||
+                  users.groups.includes("Director")) && (
                   <Button
                     onClick={() => setOpenPopup2(true)}
                     variant="contained"
@@ -448,7 +433,6 @@ export const MaterialRequisitionFormView = () => {
       >
         <MaterialRequisitionFormCreate
           storesInventoryData={storesInventoryData}
-          sellerOption={sellerOption}
           getAllMaterialRequisitionFormDetails={
             getAllMaterialRequisitionFormDetails
           }
@@ -463,7 +447,6 @@ export const MaterialRequisitionFormView = () => {
       >
         <MaterialRequisitionFormUpdate
           setOpenPopup={setOpenPopup}
-          sellerOption={sellerOption}
           storesInventoryData={storesInventoryData}
           getAllMaterialRequisitionFormDetails={
             getAllMaterialRequisitionFormDetails
@@ -582,10 +565,11 @@ function Row(props) {
         <StyledTableCell align="center">
           {(users.groups.includes("Accounts") ||
             users.groups.includes("Production") ||
-            users.groups.includes("Production Delhi")) &&
+            users.groups.includes("Production Delhi") ||
+            users.groups.includes("Director")) &&
             row.accepted === false && (
               <Button
-                onClick={() => openInPopup(row.id)}
+                onClick={() => openInPopup(row)}
                 // variant="contained"
                 color="success"
               >
@@ -605,7 +589,8 @@ function Row(props) {
           </Button>
 
           {(users.groups.includes("Stores") ||
-            users.groups.includes("Stores Delhi")) &&
+            users.groups.includes("Stores Delhi") ||
+            users.groups.includes("Director")) &&
             row.accepted === false && (
               <Button
                 onClick={() => {

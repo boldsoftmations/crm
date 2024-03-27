@@ -421,7 +421,9 @@ function Row(props) {
           />
         </StyledTableCell>
         <StyledTableCell align="center">
-          {users.groups.includes("Accounts") && row.approved === false ? (
+          {(users.groups.includes("Accounts") ||
+            users.groups.includes("Director")) &&
+          row.approved === false ? (
             <Button
               onClick={() => updateBillofMaterialsDetails(row)}
               color="success"
@@ -429,8 +431,10 @@ function Row(props) {
               Accept
             </Button>
           ) : null}
-          {users.groups.includes("Production") && row.approved === false ? (
-            <Button onClick={() => openInPopup(row.id)}>Edit</Button>
+          {(users.groups.includes("Production") ||
+            users.groups.includes("Director")) &&
+          row.approved === false ? (
+            <Button onClick={() => openInPopup(row)}>Edit</Button>
           ) : null}
         </StyledTableCell>
       </StyledTableRow>

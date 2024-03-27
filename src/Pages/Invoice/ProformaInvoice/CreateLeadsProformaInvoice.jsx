@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Button,
@@ -22,6 +22,7 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import useDynamicFormFields from "../../../Components/useDynamicFormFields ";
+import ProductService from "../../../services/ProductService";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -44,6 +45,7 @@ const values = {
 
 export const CreateLeadsProformaInvoice = (props) => {
   const { setOpenPopup, leadsByID } = props;
+  const [productOption, setProductOption] = useState([]);
   const {
     handleSuccess,
     handleError,
@@ -58,17 +60,20 @@ export const CreateLeadsProformaInvoice = (props) => {
     addFields,
     removeFields,
     products,
+  } = useDynamicFormFields(
+    [
+      {
+        product: "",
+        unit: "",
+        quantity: "",
+        rate: "",
+        requested_date: values.someDate,
+        special_instructions: "",
+      },
+    ],
     productOption,
-  } = useDynamicFormFields([
-    {
-      product: "",
-      unit: "",
-      quantity: "",
-      rate: "",
-      requested_date: values.someDate,
-      special_instructions: "",
-    },
-  ]);
+    true
+  );
   const navigate = useNavigate();
   const [openPopup2, setOpenPopup2] = useState(false);
   const [openPopup3, setOpenPopup3] = useState(false);
@@ -91,6 +96,16 @@ export const CreateLeadsProformaInvoice = (props) => {
 
   useEffect(() => {
     getAllSellerAccountsDetails();
+    getProduct();
+  }, []);
+
+  const getProduct = useCallback(async () => {
+    try {
+      const res = await ProductService.getAllValidPriceList("all");
+      setProductOption(res.data);
+    } catch (err) {
+      console.error("error potential", err);
+    }
   }, []);
 
   const getAllSellerAccountsDetails = async () => {
@@ -119,7 +134,7 @@ export const CreateLeadsProformaInvoice = (props) => {
 
   const createLeadProformaInvoiceDetails = async (e) => {
     e.preventDefault();
-    const req = {
+    const payload = {
       type: "Lead",
       raised_by: users.email,
       raised_by_first_name: users.first_name,
@@ -175,7 +190,7 @@ export const CreateLeadsProformaInvoice = (props) => {
         setOpenPopup2(true); // Assuming this opens a popup to edit lead details
         return;
       }
-      await InvoiceServices.createLeadsProformaInvoiceData(req);
+      await InvoiceServices.createLeadsProformaInvoiceData(payload);
       handleSuccess("Proforma Invoice created successfully!");
       navigate("/invoice/active-pi"); // Assuming `navigate` comes from `useNavigate` hook from react-router-dom
     } catch (error) {
@@ -517,7 +532,7 @@ export const CreateLeadsProformaInvoice = (props) => {
                     size="small"
                     label="Unit"
                     variant="outlined"
-                    value={input.unit ? input.unit : ""}
+                    value={input.unit || ""}
                   />
                 </Grid>
                 <Grid item xs={12} sm={3}>
@@ -551,11 +566,7 @@ export const CreateLeadsProformaInvoice = (props) => {
                     size="small"
                     label="Request Date"
                     variant="outlined"
-                    value={
-                      input.requested_date
-                        ? input.requested_date
-                        : values.someDate
-                    }
+                    value={input.requested_date || values.someDate}
                     onChange={(event) => handleFormChange(index, event)}
                     InputLabelProps={{
                       shrink: true,
@@ -569,22 +580,11 @@ export const CreateLeadsProformaInvoice = (props) => {
                     size="small"
                     label="Special Instructions"
                     variant="outlined"
-                    value={
-                      input.special_instructions
-                        ? input.special_instructions
-                        : ""
-                    }
+                    value={input.special_instructions || ""}
                     onChange={(event) => handleFormChange(index, event)}
                   />
                 </Grid>
                 <Grid item xs={12} sm={4} alignContent="right">
-                  <Button
-                    onClick={addFields}
-                    variant="contained"
-                    sx={{ marginRight: "1em" }}
-                  >
-                    Add More...
-                  </Button>
                   {index !== 0 && (
                     <Button
                       disabled={index === 0}
@@ -598,6 +598,15 @@ export const CreateLeadsProformaInvoice = (props) => {
               </>
             );
           })}
+          <Grid item xs={12} sm={4} alignContent="right">
+            <Button
+              onClick={addFields}
+              variant="contained"
+              sx={{ marginRight: "1em" }}
+            >
+              Add More...
+            </Button>
+          </Grid>
         </Grid>
         <Button
           type="submit"

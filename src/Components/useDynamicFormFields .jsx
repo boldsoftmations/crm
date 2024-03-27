@@ -1,26 +1,15 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
-import ProductService from "../services/ProductService";
+import { useState, useCallback, useMemo } from "react";
 
 const values = {
   someDate: new Date().toISOString().substring(0, 10),
 };
 
-const useDynamicFormFields = (initialFields) => {
+const useDynamicFormFields = (
+  initialFields,
+  productOption,
+  includeAmount = false
+) => {
   const [products, setProducts] = useState(initialFields);
-  const [productOption, setProductOption] = useState([]);
-
-  useEffect(() => {
-    getProduct();
-  }, []);
-
-  const getProduct = useCallback(async () => {
-    try {
-      const res = await ProductService.getAllValidPriceList("all");
-      setProductOption(res.data);
-    } catch (err) {
-      console.error("error potential", err);
-    }
-  }, []);
 
   const handleAutocompleteChange = useCallback(
     (index, event, value) => {
@@ -39,17 +28,14 @@ const useDynamicFormFields = (initialFields) => {
   const handleFormChange = useCallback(
     (index, event) => {
       let data = [...products];
-      data[index][event.target.name ? event.target.name : "product"] = event
-        .target.value
-        ? event.target.value
-        : event.target.textContent;
+      data[index][event.target.name] = event.target.value;
       setProducts(data);
     },
     [products]
   );
 
   const addFields = useCallback(() => {
-    let newfield = {
+    let newField = {
       product: "",
       unit: "",
       quantity: "",
@@ -57,22 +43,33 @@ const useDynamicFormFields = (initialFields) => {
       requested_date: values.someDate,
       special_instructions: "",
     };
-    setProducts((prevProducts) => [...prevProducts, newfield]);
+    setProducts((prevProducts) => [...prevProducts, newField]);
   }, []);
 
   const removeFields = useCallback((index) => {
     setProducts((prevProducts) => prevProducts.filter((_, i) => i !== index));
   }, []);
 
-  const memoizedProducts = useMemo(() => products, [products]);
+  // Optionally calculate amounts for each product
+  const productsWithOptionalAmount = useMemo(() => {
+    if (!includeAmount) {
+      return products;
+    }
+    return products.map((product) => ({
+      ...product,
+      amount:
+        product.quantity && product.rate
+          ? (Number(product.quantity) * Number(product.rate)).toFixed(2)
+          : "0.00",
+    }));
+  }, [products, includeAmount]);
 
   return {
-    products: memoizedProducts,
+    products: productsWithOptionalAmount,
     handleAutocompleteChange,
     handleFormChange,
     addFields,
     removeFields,
-    productOption,
   };
 };
 
