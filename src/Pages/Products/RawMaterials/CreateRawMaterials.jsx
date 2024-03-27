@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { number } from "prop-types";
 
 export const CreateRawMaterials = (props) => {
   const { setOpenPopup, getrawMaterials } = props;
@@ -16,6 +17,7 @@ export const CreateRawMaterials = (props) => {
   const [unit, setUnit] = useState([]);
   const [color, setColor] = useState([]);
   const [productCode, setProductCode] = useState([]);
+  const [shelfLife, setShelfLife] = useState([]);
   const [rawMaterials, setRawMaterials] = useState([]);
 
   const [open, setOpen] = useState(false);
@@ -29,7 +31,11 @@ export const CreateRawMaterials = (props) => {
   const unitData = user.unitAllData;
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setRawMaterials({ ...rawMaterials, [name]: value });
+    if (name === "shelfLife") {
+      setShelfLife(value);
+    } else {
+      setRawMaterials({ ...rawMaterials, [name]: value });
+    }
   };
   function searchBrand(nameKey, myArray) {
     for (var i = 0; i < myArray.length; i++) {
@@ -66,6 +72,7 @@ export const CreateRawMaterials = (props) => {
         brand: brand,
         productcode: productCode,
         description: description,
+        shelf_life: shelfLife,
         hsn_code: rawMaterials.hsn_code,
         gst: rawMaterials.gst,
         cgst: GST,
@@ -73,6 +80,7 @@ export const CreateRawMaterials = (props) => {
         type: "raw-materials",
       };
       await ProductService.createRawMaterials(data);
+      console.log(rawMaterials); // Log to see if shelf_life is present and correct
 
       setOpenPopup(false);
       setOpen(false);
@@ -201,6 +209,18 @@ export const CreateRawMaterials = (props) => {
               label="Description"
               variant="outlined"
               value={description ? description : ""}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              type="number"
+              name="shelfLife"
+              label="Shelf Life (Months)"
+              variant="outlined"
+              value={shelfLife ? shelfLife : ""}
+              onChange={handleInputChange}
             />
           </Grid>
           <Grid item xs={12} sm={6}>

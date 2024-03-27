@@ -259,6 +259,7 @@ export const ViewRawMaterials = () => {
     "UNIT",
     "PRODUCT CODE",
     "DESCRIPTION",
+    "SHELF LIFE",
     "HSN CODE",
     "GST%",
     "ACTION",
@@ -270,6 +271,7 @@ export const ViewRawMaterials = () => {
     unit: value.unit,
     productcode: value.productcode,
     description: value.description,
+    shelf_life: value.shelf_life,
     hsn_code: value.hsn_code,
     gst: value.gst,
   }));

@@ -9,7 +9,7 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 export const UpdateRawMaterials = (props) => {
   const { recordForEdit, setOpenPopup, getrawMaterials } = props;
-
+  const [shelfLife, setShelfLife] = useState("");
   const [rawMaterial, setRawMaterial] = useState([]);
   const [brand, setBrand] = useState([]);
   const [color, setColor] = useState([]);
@@ -56,7 +56,8 @@ export const UpdateRawMaterials = (props) => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setRawMaterial({ ...rawMaterial, [name]: value });
+    const updatedValue = name === "shelf_life" ? Number(value) : value;
+    setRawMaterial({ ...rawMaterial, [name]: updatedValue });
   };
 
   const getRawMaterialData = async (recordForEdit) => {
@@ -68,6 +69,7 @@ export const UpdateRawMaterials = (props) => {
       setBrand(res.data);
       setColor(res.data);
       setUnit(res.data);
+      setShelfLife(res.data.shelf_life);
       setOpen(false);
     } catch (error) {
       console.log("error", error);
@@ -87,6 +89,7 @@ export const UpdateRawMaterials = (props) => {
         brand: brandValue,
         productcode: productCodeValue,
         description: description,
+        shelf_life: shelfLife,
         hsn_code: rawMaterial.hsn_code,
         gst: rawMaterial.gst,
         cgst: GST,
@@ -242,6 +245,18 @@ export const UpdateRawMaterials = (props) => {
               label="Description"
               variant="outlined"
               value={description ? description : ""}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              type="number"
+              name="shelfLife"
+              label="Shelf Life (Months)"
+              variant="outlined"
+              value={shelfLife}
+              onChange={(e) => setShelfLife(e.target.value)}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
