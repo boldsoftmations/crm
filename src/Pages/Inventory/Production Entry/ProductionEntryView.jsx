@@ -288,6 +288,7 @@ function Row(props) {
                     <TableCell align="center">PRODUCT</TableCell>
                     <TableCell align="center">UNIT</TableCell>
                     <TableCell align="center">QUANTITY</TableCell>
+                    <TableCell align="center">BATCH</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -301,6 +302,9 @@ function Row(props) {
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {historyRow.quantity}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {historyRow.batch_no}
                       </StyledTableCell>
                     </StyledTableRow>
                   ))}
