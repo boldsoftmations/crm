@@ -185,6 +185,7 @@ export const ProductionInventoryView = () => {
     "PRODUCT",
     "SELLER STATE",
     "DESCRIPTION",
+    "SOURCE",
     "DATE",
     "UNIT",
     "QUANTITY",
@@ -197,6 +198,7 @@ export const ProductionInventoryView = () => {
     product: row.product,
     seller_account: row.seller_account,
     description: row.description,
+    source_key: row.source_key,
     created_on: row.created_on,
     unit: row.unit,
     quantity: row.quantity,
@@ -271,6 +273,7 @@ export const ProductionInventoryView = () => {
             data={Tabledata}
             openInPopup={null}
             openInPopup2={null}
+            Styles={{ paddingLeft: "10px", paddingRight: "10px" }}
           />
 
           <CustomPagination

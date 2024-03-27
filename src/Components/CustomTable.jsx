@@ -70,7 +70,7 @@ export const CustomTable = ({
             ))}
           </div>
         </div>
-        <div style={{ display: "table-row-group" }}>
+        <div style={{ display: "table-row-group", color: "#000000" }}>
           {data.map((row, index) => {
             return (
               <div
