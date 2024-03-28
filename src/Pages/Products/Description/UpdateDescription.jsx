@@ -1,5 +1,5 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
@@ -24,19 +24,6 @@ export const UpdateDescription = (props) => {
   const [description, setDescription] = useState(recordForEdit);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-
-  const getdescription = async (recordForEdit) => {
-    try {
-      setOpen(true);
-      const res = await ProductService.getDescriptionById(recordForEdit);
-
-      setDescription(res.data);
-      setOpen(false);
-    } catch (error) {
-      console.log("error", error);
-      setOpen(false);
-    }
-  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -71,10 +58,6 @@ export const UpdateDescription = (props) => {
       setOpen(false); // Always close the loader
     }
   };
-
-  useEffect(() => {
-    if (recordForEdit) getdescription(recordForEdit);
-  }, [recordForEdit]);
 
   return (
     <>
