@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-
 import ProductService from "../../../services/ProductService";
-
 import { Box, Grid, Button } from "@mui/material";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -15,7 +13,7 @@ export const UpdateFinishGoods = (props) => {
   const [color, setColor] = useState([]);
   const [productCode, setProductCode] = useState([]);
   const [unit, setUnit] = useState([]);
-
+  const [shelfLife, setShelfLife] = useState("");
   const [packingUnit, setPackingUnit] = useState([]);
 
   const errRef = useRef();
@@ -86,7 +84,11 @@ export const UpdateFinishGoods = (props) => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFinishGoods({ ...finishGoods, [name]: value });
+    if (name === "shelfLife") {
+      setShelfLife(value);
+    } else {
+      setFinishGoods({ ...finishGoods, [name]: value });
+    }
   };
 
   const getFinishGoodData = async (recordForEdit) => {
@@ -99,6 +101,7 @@ export const UpdateFinishGoods = (props) => {
       setColor(res.data);
       setPackingUnit(res.data);
       setUnit(res.data);
+      setShelfLife(res.data.shelf_life);
       setBasicUnit(res.data);
       setOpen(false);
     } catch (error) {
@@ -123,6 +126,7 @@ export const UpdateFinishGoods = (props) => {
         brand: brandValue,
         productcode: productCodeValue,
         description: description,
+        shelf_life: shelfLife,
         hsn_code: finishGoods.hsn_code,
         gst: finishGoods.gst,
         cgst: GST,
@@ -325,6 +329,18 @@ export const UpdateFinishGoods = (props) => {
               label="Description"
               variant="outlined"
               value={description ? description : ""}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              type="number"
+              name="shelfLife"
+              label="Shelf Life (Months)"
+              variant="outlined"
+              value={shelfLife}
+              onChange={(e) => setShelfLife(e.target.value)}
             />
           </Grid>
           <Grid item xs={12} sm={6}>

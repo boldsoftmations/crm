@@ -1,9 +1,6 @@
 import { Box, Button, Grid } from "@mui/material";
-
 import React, { useRef, useState } from "react";
-
 import ProductService from "../../../services/ProductService";
-
 import "../../CommonStyle.css";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -12,9 +9,8 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
 export const CreateFinishGoods = (props) => {
   const { setOpenPopup, getFinishGoods } = props;
-
   const [brand, setBrand] = useState([]);
-
+  const [shelfLife, setShelfLife] = useState([]);
   const [unit, setUnit] = useState([]);
   const [packingUnit, setPackingUnit] = useState([]);
   const [basicUnit, setBasicUnit] = useState([]);
@@ -34,8 +30,13 @@ export const CreateFinishGoods = (props) => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFinishGoods({ ...finishGoods, [name]: value });
+    if (name === "shelfLife") {
+      setShelfLife(value);
+    } else {
+      setFinishGoods({ ...finishGoods, [name]: value });
+    }
   };
+
   function searchBrand(nameKey, myArray) {
     for (var i = 0; i < myArray.length; i++) {
       if (myArray[i].name === nameKey) {
@@ -92,6 +93,7 @@ export const CreateFinishGoods = (props) => {
         brand: brand,
         productcode: productCode,
         description: description,
+        shelf_life: shelfLife,
         hsn_code: finishGoods.hsn_code,
         gst: finishGoods.gst,
         cgst: GST,
@@ -277,6 +279,18 @@ export const CreateFinishGoods = (props) => {
               label="Description"
               variant="outlined"
               value={description ? description : ""}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              type="number"
+              name="shelfLife"
+              label="Shelf Life (Months)"
+              variant="outlined"
+              value={shelfLife ? shelfLife : ""}
+              onChange={handleInputChange}
             />
           </Grid>
           <Grid item xs={12} sm={6}>

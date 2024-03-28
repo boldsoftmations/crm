@@ -60,6 +60,7 @@ export const ViewFinishGoods = () => {
     { label: "BRAND", key: "brand" },
     { label: "SIZE", key: "size" },
     { label: "DESCRIPTION", key: "description" },
+    { label: "SHELF LIFE", key: "shelf_life" },
     { label: "ADD.DESCRIPTION", key: "additional_description" },
     { label: "PACKING UNIT", key: "packing_unit" },
     { label: "PACKING UNIT QUANTITY", key: "packing_unit_quantity" },
@@ -94,6 +95,7 @@ export const ViewFinishGoods = () => {
           brand: row.brand,
           size: row.size,
           description: row.description,
+          shelf_life: row.shelf_life,
           additional_description: row.additional_description,
           packing_unit: row.packing_unit,
           packing_unit_quantity: row.packing_unit_quantity,
@@ -135,7 +137,7 @@ export const ViewFinishGoods = () => {
 
   const getBrandList = async () => {
     try {
-      const res = await ProductService.getAllPaginateBrand("all");
+      const res = await ProductService.getAllBrand("all");
       dispatch(getBrandData(res.data));
     } catch (err) {
       console.log("error finishGoods :>> ", err);
@@ -295,6 +297,7 @@ export const ViewFinishGoods = () => {
     "BRAND",
     "PRODUCT CODE",
     "DESCRIPTION",
+    "SHELF LIFE",
     "HSN CODE",
     "GST%",
     "ACTION",
@@ -307,6 +310,7 @@ export const ViewFinishGoods = () => {
     brand: value.brand,
     productcode: value.productcode,
     description: value.description,
+    shelf_life: value.shelf_life,
     hsn_code: value.hsn_code,
     gst: value.gst,
   }));
