@@ -125,6 +125,7 @@ export const StoresInventoryView = () => {
     "UNIT",
     "QUANTITY",
     "PENDING QUANTITY",
+    "EXPIRY DATE",
     "RATE",
     "AMOUNT",
   ];
@@ -139,6 +140,7 @@ export const StoresInventoryView = () => {
     unit: row.unit,
     quantity: row.quantity,
     pending_quantity: row.pending_quantity,
+    expiry_date: row.expiry_date,
     rate: row.rate,
     amount: row.amount,
   }));
