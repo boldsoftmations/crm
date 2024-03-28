@@ -6,7 +6,7 @@ export const MessageAlert = ({ open, onClose, severity, message }) => {
   return (
     <Snackbar
       open={open}
-      autoHideDuration={6000}
+      autoHideDuration={8000} // Increased to 8000 milliseconds (8 seconds)
       onClose={onClose}
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
     >
