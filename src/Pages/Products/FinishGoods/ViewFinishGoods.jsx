@@ -128,7 +128,7 @@ export const ViewFinishGoods = () => {
 
   const getPackingUnits = async () => {
     try {
-      const res = await ProductService.getAllPaginatePackingUnit("all");
+      const res = await ProductService.getAllPackingUnit("all");
       dispatch(getPackingUnitData(res.data));
     } catch (err) {
       console.log("error PackingUnit finishGoods", err);

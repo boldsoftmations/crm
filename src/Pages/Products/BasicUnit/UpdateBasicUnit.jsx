@@ -10,14 +10,8 @@ export const UpdateBasicUnit = (props) => {
   const { recordForEdit, setOpenPopup, getBasicUnit } = props;
   const [open, setOpen] = useState(false);
   const [brand, setBrand] = useState(recordForEdit);
-  const {
-    handleSuccess,
-    handleError,
-    openSnackbar,
-    errorMessages,
-    currentErrorIndex,
-    handleCloseSnackbar,
-  } = useNotificationHandling();
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -33,10 +27,15 @@ export const UpdateBasicUnit = (props) => {
         short_name: brand.short_name,
       };
       if (recordForEdit) {
-        await ProductService.updateBasicUnit(brand.id, data);
-        setOpenPopup(false);
-        handleSuccess();
-        getBasicUnit();
+        const response = await ProductService.updateBasicUnit(brand.id, data);
+        const successMessage =
+          response.data.message || "Basic Unit updated successfully";
+        handleSuccess(successMessage);
+
+        setTimeout(() => {
+          setOpenPopup(false);
+          getBasicUnit();
+        }, 300);
       }
     } catch (error) {
       handleError(error); // Handle errors from the API call
@@ -48,10 +47,10 @@ export const UpdateBasicUnit = (props) => {
   return (
     <>
       <MessageAlert
-        open={openSnackbar}
+        open={alertInfo.open}
         onClose={handleCloseSnackbar}
-        severity="error"
-        message={errorMessages[currentErrorIndex]}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
       />
       <CustomLoader open={open} />
       <Box component="form" noValidate onSubmit={(e) => updatesBrand(e)}>

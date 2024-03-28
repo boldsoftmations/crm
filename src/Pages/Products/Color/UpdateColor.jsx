@@ -10,14 +10,8 @@ export const UpdateColor = (props) => {
   const { recordForEdit, setOpenPopup, getColours } = props;
   const [open, setOpen] = useState(false);
   const [colour, setColour] = useState(recordForEdit);
-  const {
-    handleSuccess,
-    handleError,
-    openSnackbar,
-    errorMessages,
-    currentErrorIndex,
-    handleCloseSnackbar,
-  } = useNotificationHandling();
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -32,10 +26,15 @@ export const UpdateColor = (props) => {
         name: colour.name,
       };
       if (recordForEdit) {
-        await ProductService.updateColour(colour.id, data);
-        setOpenPopup(false);
-        handleSuccess();
-        getColours();
+        const response = await ProductService.updateColour(colour.id, data);
+        const successMessage =
+          response.data.message || "Colour updated successfully";
+        handleSuccess(successMessage);
+
+        setTimeout(() => {
+          setOpenPopup(false);
+          getColours();
+        }, 300);
       }
     } catch (error) {
       handleError(error); // Handle errors from the API call
@@ -47,10 +46,10 @@ export const UpdateColor = (props) => {
   return (
     <>
       <MessageAlert
-        open={openSnackbar}
+        open={alertInfo.open}
         onClose={handleCloseSnackbar}
-        severity="error"
-        message={errorMessages[currentErrorIndex]}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
       />
       <CustomLoader open={open} />
       <Box component="form" noValidate onSubmit={(e) => updateColour(e)}>

@@ -10,14 +10,8 @@ export const CreateBasicUnit = (props) => {
   const { setOpenPopup, getBasicUnit } = props;
   const [brand, setBrand] = useState([]);
   const [open, setOpen] = useState(false);
-  const {
-    handleSuccess,
-    handleError,
-    openSnackbar,
-    errorMessages,
-    currentErrorIndex,
-    handleCloseSnackbar,
-  } = useNotificationHandling();
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -33,10 +27,15 @@ export const CreateBasicUnit = (props) => {
         short_name: brand.shortName,
       };
 
-      await ProductService.createBasicUnit(data);
-      setOpenPopup(false);
-      handleSuccess();
-      getBasicUnit();
+      const response = await ProductService.createBasicUnit(data);
+      const successMessage =
+        response.data.message || "Basic Unit Created successfully";
+      handleSuccess(successMessage);
+
+      setTimeout(() => {
+        setOpenPopup(false);
+        getBasicUnit();
+      }, 300);
     } catch (error) {
       handleError(error); // Handle errors from the API call
     } finally {
@@ -47,10 +46,10 @@ export const CreateBasicUnit = (props) => {
   return (
     <>
       <MessageAlert
-        open={openSnackbar}
+        open={alertInfo.open}
         onClose={handleCloseSnackbar}
-        severity="error"
-        message={errorMessages[currentErrorIndex]}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
       />
       <CustomLoader open={open} />
       <Box component="form" noValidate onSubmit={(e) => createBrand(e)}>

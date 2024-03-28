@@ -10,12 +10,8 @@ export const UpdateBrand = (props) => {
   const { recordForEdit, setOpenPopup, getBrandList } = props;
   const [open, setOpen] = useState(false);
   const [brand, setBrand] = useState(recordForEdit);
-  const {
-    handleSuccess,
-    handleError,
-    handleCloseSnackbar,
-    alertInfo, // Make sure this line is added
-  } = useNotificationHandling();
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;

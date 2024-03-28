@@ -10,14 +10,8 @@ export const CreateColor = (props) => {
   const { setOpenPopup, getColours } = props;
   const [colour, setColour] = useState("");
   const [open, setOpen] = useState(false);
-  const {
-    handleSuccess,
-    handleError,
-    openSnackbar,
-    errorMessages,
-    currentErrorIndex,
-    handleCloseSnackbar,
-  } = useNotificationHandling();
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const createColours = async (e) => {
     try {
@@ -27,11 +21,15 @@ export const CreateColor = (props) => {
       };
 
       setOpen(true);
-      await ProductService.createColour(req);
+      const response = await ProductService.createColour(req);
+      const successMessage =
+        response.data.message || "Colour Created successfully";
+      handleSuccess(successMessage);
 
-      setOpenPopup(false);
-      handleSuccess();
-      getColours();
+      setTimeout(() => {
+        setOpenPopup(false);
+        getColours();
+      }, 300);
     } catch (error) {
       handleError(error); // Handle errors from the API call
     } finally {
@@ -42,10 +40,10 @@ export const CreateColor = (props) => {
   return (
     <>
       <MessageAlert
-        open={openSnackbar}
+        open={alertInfo.open}
         onClose={handleCloseSnackbar}
-        severity="error"
-        message={errorMessages[currentErrorIndex]}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
       />
       <CustomLoader open={open} />
       <Box component="form" noValidate onSubmit={(e) => createColours(e)}>
