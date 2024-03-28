@@ -115,8 +115,15 @@ const updatePackingUnit = (id, data) => {
   return CustomAxios.patch(`/api/product/packing-unit/${id}`, data);
 };
 
-const getAllDescription = () => {
-  return CustomAxios.get("/api/product/description");
+const getAllDescription = (page, searchQuery) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (searchQuery) {
+    params.append("search", searchQuery);
+  }
+  return CustomAxios.get(`api/product/description/?${params.toString()}`);
 };
 
 const getYesDescription = () => {

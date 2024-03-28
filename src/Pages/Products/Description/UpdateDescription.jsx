@@ -21,7 +21,7 @@ import { MessageAlert } from "../../../Components/MessageAlert";
 export const UpdateDescription = (props) => {
   const { recordForEdit, setOpenPopup, getDescriptions } = props;
   const [open, setOpen] = useState(false);
-  const [description, setDescription] = useState([]);
+  const [description, setDescription] = useState(recordForEdit);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
@@ -94,7 +94,7 @@ export const UpdateDescription = (props) => {
               size="small"
               label="Id"
               variant="outlined"
-              value={recordForEdit ? recordForEdit : ""}
+              value={recordForEdit.id || ""}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -104,7 +104,7 @@ export const UpdateDescription = (props) => {
               size="small"
               label="Description"
               variant="outlined"
-              value={description.name ? description.name : ""}
+              value={description.name || ""}
               onChange={handleInputChange}
             />
           </Grid>
@@ -115,7 +115,7 @@ export const UpdateDescription = (props) => {
               size="small"
               label="Consumable"
               variant="outlined"
-              value={description.consumable ? description.consumable : ""}
+              value={description.consumable || ""}
             />
           </Grid>
         </Grid>
