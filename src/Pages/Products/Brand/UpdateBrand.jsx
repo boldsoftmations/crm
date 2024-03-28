@@ -13,10 +13,8 @@ export const UpdateBrand = (props) => {
   const {
     handleSuccess,
     handleError,
-    openSnackbar,
-    errorMessages,
-    currentErrorIndex,
     handleCloseSnackbar,
+    alertInfo, // Make sure this line is added
   } = useNotificationHandling();
 
   const handleInputChange = (event) => {
@@ -34,11 +32,16 @@ export const UpdateBrand = (props) => {
       };
 
       if (recordForEdit) {
-        await ProductService.updateBrand(brand.id, data);
+        const response = await ProductService.updateBrand(brand.id, data);
+        // Example adjustment for fallback success message
+        const successMessage =
+          response.data.message || "Brand updated successfully";
+        handleSuccess(successMessage);
 
-        setOpenPopup(false);
-        handleSuccess();
-        getBrandList();
+        setTimeout(() => {
+          setOpenPopup(false);
+          getBrandList();
+        }, 300); // Adjust delay as needed
       }
     } catch (error) {
       handleError(error); // Handle errors from the API call
@@ -50,11 +53,12 @@ export const UpdateBrand = (props) => {
   return (
     <>
       <MessageAlert
-        open={openSnackbar}
+        open={alertInfo.open} // Updated to use alertInfo.open
         onClose={handleCloseSnackbar}
-        severity="error"
-        message={errorMessages[currentErrorIndex]}
+        severity={alertInfo.severity} // Updated to use alertInfo.severity
+        message={alertInfo.message} // Updated to use alertInfo.message
       />
+
       <CustomLoader open={open} />
       <Box component="form" noValidate onSubmit={(e) => updatesBrand(e)}>
         <Grid container spacing={2}>

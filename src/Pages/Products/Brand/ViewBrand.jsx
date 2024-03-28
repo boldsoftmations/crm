@@ -23,11 +23,10 @@ export const ViewBrand = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
   const {
+    handleSuccess,
     handleError,
-    openSnackbar,
-    errorMessages,
-    currentErrorIndex,
     handleCloseSnackbar,
+    alertInfo, // Make sure this line is added
   } = useNotificationHandling();
 
   useEffect(() => {
@@ -71,10 +70,10 @@ export const ViewBrand = () => {
   return (
     <>
       <MessageAlert
-        open={openSnackbar}
+        open={alertInfo.open} // Updated to use alertInfo.open
         onClose={handleCloseSnackbar}
-        severity="error"
-        message={errorMessages[currentErrorIndex]}
+        severity={alertInfo.severity} // Updated to use alertInfo.severity
+        message={alertInfo.message} // Updated to use alertInfo.message
       />
       <CustomLoader open={open} />
 

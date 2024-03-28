@@ -13,10 +13,8 @@ export const CreateBrand = (props) => {
   const {
     handleSuccess,
     handleError,
-    openSnackbar,
-    errorMessages,
-    currentErrorIndex,
     handleCloseSnackbar,
+    alertInfo, // Make sure this line is added
   } = useNotificationHandling();
 
   const handleInputChange = (event) => {
@@ -33,10 +31,15 @@ export const CreateBrand = (props) => {
         short_name: brand.shortName,
       };
 
-      await ProductService.createBrand(data);
-      setOpenPopup(false);
-      handleSuccess();
-      getBrandList();
+      const response = await ProductService.createBrand(data);
+      const successMessage =
+        response.data.message || "Brand Created successfully";
+      handleSuccess(successMessage);
+
+      setTimeout(() => {
+        setOpenPopup(false);
+        getBrandList();
+      }, 300); // Adjust delay as needed
     } catch (error) {
       handleError(error); // Handle errors from the API call
     } finally {
@@ -47,10 +50,10 @@ export const CreateBrand = (props) => {
   return (
     <>
       <MessageAlert
-        open={openSnackbar}
+        open={alertInfo.open} // Updated to use alertInfo.open
         onClose={handleCloseSnackbar}
-        severity="error"
-        message={errorMessages[currentErrorIndex]}
+        severity={alertInfo.severity} // Updated to use alertInfo.severity
+        message={alertInfo.message} // Updated to use alertInfo.message
       />
       <CustomLoader open={open} />
       <Box component="form" noValidate onSubmit={(e) => createBrand(e)}>
