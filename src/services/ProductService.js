@@ -119,20 +119,6 @@ const getAllDescription = () => {
   return CustomAxios.get("/api/product/description");
 };
 
-const getAllSearchDescription = (search) => {
-  return CustomAxios.get(`/api/product/description/?search=${search}`);
-};
-
-const getDescriptionPaginateWithSearch = (currentPage, search) => {
-  return CustomAxios.get(
-    `/api/product/description/?page=${currentPage}&search=${search}`
-  );
-};
-
-const getDescriptionPaginate = (currentPage) => {
-  return CustomAxios.get(`/api/product/description/?page=${currentPage}`);
-};
-
 const getYesDescription = () => {
   return CustomAxios.get("/api/product/description-yes");
 };
@@ -337,9 +323,6 @@ const ProductService = {
   getPackingUnitById,
   updatePackingUnit,
   getAllDescription,
-  getAllSearchDescription,
-  getDescriptionPaginateWithSearch,
-  getDescriptionPaginate,
   getYesDescription,
   getNoDescription,
   createDescription,
