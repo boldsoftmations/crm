@@ -1,9 +1,7 @@
-import { Autocomplete, Box, Button, Grid } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import { useRef, useState } from "react";
 import React, { useEffect } from "react";
-
 import ProductService from "../../../services/ProductService";
-
 import "../../CommonStyle.css";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -24,6 +22,7 @@ export const UpdateConsumable = (props) => {
   const brandData = user.brandAllData;
   const unitData = user.unitAllData;
   const unitval = unit.unit ? unit.unit : unit;
+  const [shelfLife, setShelfLife] = useState("");
   function searchBrand(nameKey, myArray) {
     for (let i = 0; i < myArray.length; i++) {
       if (myArray[i].name === nameKey) {
@@ -63,14 +62,10 @@ export const UpdateConsumable = (props) => {
 
   const getYesDescriptionData = async () => {
     try {
-      setOpen(true);
       const res = await ProductService.getYesDescription();
       setDescription(res.data);
-
-      setOpen(false);
     } catch (error) {
       console.log("error", error);
-      setOpen(false);
     }
   };
 
@@ -81,6 +76,7 @@ export const UpdateConsumable = (props) => {
       setConsumable(res.data);
       setSelectedDescription(res.data);
       setUnit(res.data);
+      setShelfLife(res.data.shelf_life);
       setBrand(res.data);
       setOpen(false);
     } catch (error) {
@@ -91,7 +87,8 @@ export const UpdateConsumable = (props) => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setConsumable({ ...consumable, [name]: value });
+    const updatedValue = name === "shelf_life" ? Number(value) : value;
+    setConsumable({ ...consumable, [name]: updatedValue });
   };
 
   const updatesconsumable = async (e) => {
@@ -104,6 +101,7 @@ export const UpdateConsumable = (props) => {
         unit: unitval,
         description: descriptionval,
         additional_description: consumable.addDsc,
+        shelf_life: shelfLife,
         brand: brandval,
         hsn_code: consumable.hsn_code,
         gst: consumable.gst,
@@ -255,6 +253,18 @@ export const UpdateConsumable = (props) => {
                   : ""
               }
               onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              type="number"
+              name="shelfLife"
+              label="Shelf Life (Months)"
+              variant="outlined"
+              value={shelfLife}
+              onChange={(e) => setShelfLife(e.target.value)}
             />
           </Grid>
           <Grid item xs={12} sm={6}>

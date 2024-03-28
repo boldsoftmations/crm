@@ -50,6 +50,7 @@ export const ViewConsumable = () => {
     { label: "SIZE", key: "size" },
     { label: "DESCRIPTION", key: "description" },
     { label: "ADD.DESCRIPTION", key: "additional_description" },
+    { label: "SHELF LIFE", key: "shelf_life" },
     { label: "HSN CODE", key: "hsn_code" },
     { label: "GST%", key: "gst" },
     { label: "SGST", key: "sgst" },
@@ -78,6 +79,7 @@ export const ViewConsumable = () => {
           size: row.size,
           description: row.description,
           additional_description: row.additional_description,
+          shelf_life: row.shelf_life,
           hsn_code: row.hsn_code,
           gst: row.gst,
           sgst: row.sgst,
@@ -102,7 +104,7 @@ export const ViewConsumable = () => {
 
   const getBrandList = async () => {
     try {
-      const res = await ProductService.getAllPaginateBrand("all");
+      const res = await ProductService.getAllBrand("all");
       dispatch(getBrandData(res.data));
     } catch (err) {
       console.log("error finishGoods :>> ", err);
@@ -231,6 +233,7 @@ export const ViewConsumable = () => {
     "BRAND",
     "SIZE",
     "ADDITIONAL DESC",
+    "SHELF LIFE",
     "HSN CODE",
     "GST%",
     "ACTION",
@@ -243,6 +246,7 @@ export const ViewConsumable = () => {
     brand: value.brand,
     size: value.size,
     additional_description: value.additional_description,
+    shelf_life: value.shelf_life,
     hsn_code: value.hsn_code,
     gst: value.gst,
   }));

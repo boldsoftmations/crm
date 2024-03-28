@@ -18,6 +18,7 @@ export const CreateConsumable = (props) => {
   const [unit, setUnit] = useState([]);
   const [consumable, setConsumable] = useState([]);
   const [open, setOpen] = useState(false);
+  const [shelfLife, setShelfLife] = useState([]);
 
   const errRef = useRef();
   const [errMsg, setErrMsg] = useState("");
@@ -26,7 +27,11 @@ export const CreateConsumable = (props) => {
   const unitData = user.unitAllData;
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setConsumable({ ...consumable, [name]: value });
+    if (name === "shelfLife") {
+      setShelfLife(value);
+    } else {
+      setConsumable({ ...consumable, [name]: value });
+    }
   };
   function searchBrand(nameKey, myArray) {
     for (var i = 0; i < myArray.length; i++) {
@@ -57,14 +62,10 @@ export const CreateConsumable = (props) => {
 
   const getYesDescriptionData = async () => {
     try {
-      setOpen(true);
       const res = await ProductService.getYesDescription();
       seAllDescription(res.data);
-
-      setOpen(false);
     } catch (error) {
-      console.log("error", error);
-      setOpen(false);
+      console.log("error in Description Api", error);
     }
   };
 
@@ -79,6 +80,7 @@ export const CreateConsumable = (props) => {
         brand: brand,
         size: consumable.size,
         additional_description: consumable.addDsc,
+        shelf_life: shelfLife,
         hsn_code: consumable.hsn_code,
         gst: consumable.gst,
         cgst: GST,
@@ -167,6 +169,18 @@ export const CreateConsumable = (props) => {
               label="Additional Description"
               variant="outlined"
               value={consumable.addDsc}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              type="number"
+              name="shelfLife"
+              label="Shelf Life (Months)"
+              variant="outlined"
+              value={shelfLife ? shelfLife : ""}
               onChange={handleInputChange}
             />
           </Grid>
