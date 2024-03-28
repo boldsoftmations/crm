@@ -92,16 +92,15 @@ const updateUnit = (id, data) => {
   return CustomAxios.patch(`/api/product/unit/${id}`, data);
 };
 
-const getAllPackingUnit = () => {
-  return CustomAxios.get("/api/product/packing-unit");
-};
-
-const getAllPaginatePackingUnit = (all) => {
-  return CustomAxios.get(`/api/product/packing-unit/?page=${all}`);
-};
-
-const getAllSearchPackingUnit = (search) => {
-  return CustomAxios.get(`/api/product/packing-unit/?search=${search}`);
+const getAllPackingUnit = (page, searchQuery) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (searchQuery) {
+    params.append("search", searchQuery);
+  }
+  return CustomAxios.get(`api/product/packing-unit/?${params.toString()}`);
 };
 
 const createPackingUnit = (data) => {
@@ -334,8 +333,6 @@ const ProductService = {
   getUnitById,
   updateUnit,
   getAllPackingUnit,
-  getAllPaginatePackingUnit,
-  getAllSearchPackingUnit,
   createPackingUnit,
   getPackingUnitById,
   updatePackingUnit,
