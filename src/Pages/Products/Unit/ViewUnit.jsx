@@ -1,86 +1,66 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Grid, Button, Paper, Box } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import "../../CommonStyle.css";
 import ProductService from "../../../services/ProductService";
 import { CreateUnit } from "./CreateUnit";
 import { UpdateUnit } from "./UpdateUnit";
 import { Popup } from "./../../../Components/Popup";
-import { ErrorMessage } from "./../../../Components/ErrorMessage/ErrorMessage";
 import { CustomLoader } from "./../../../Components/CustomLoader";
-import { CustomSearch } from "./../../../Components/CustomSearch";
 import { CustomTable } from "../../../Components/CustomTable";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import SearchComponent from "../../../Components/SearchComponent ";
+import { CustomPagination } from "../../../Components/CustomPagination";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 
 export const ViewUnit = () => {
   const [unit, setUnit] = useState([]);
   const [open, setOpen] = useState(false);
-  const errRef = useRef();
-  const [errMsg, setErrMsg] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(null);
-  const getUnits = async () => {
-    try {
-      setOpen(true);
-      const response = await ProductService.getAllUnit();
-      setUnit(response.data.results);
-
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-      if (!err.response) {
-        setErrMsg(
-          "“Sorry, You Are Not Allowed to Access This Page” Please contact to admin"
-        );
-      } else if (err.response.status === 400) {
-        setErrMsg(
-          err.response.data.errors.name
-            ? err.response.data.errors.name
-            : err.response.data.errors.non_field_errors
-        );
-      } else if (err.response.status === 401) {
-        setErrMsg(err.response.data.errors.code);
-      } else {
-        setErrMsg("Server Error");
-      }
-      errRef.current.focus();
-    }
-  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
+  const {
+    handleError,
+    openSnackbar,
+    errorMessages,
+    currentErrorIndex,
+    handleCloseSnackbar,
+  } = useNotificationHandling();
 
   useEffect(() => {
-    getUnits();
-  }, []);
+    getUnits(currentPage, searchQuery);
+  }, [currentPage, searchQuery]);
 
-  const handleInputChange = (event) => {
-    setSearchQuery(event.target.value);
-    getSearchData(event.target.value);
-  };
-
-  const getSearchData = async (value) => {
+  const getUnits = useCallback(async (page, query) => {
     try {
       setOpen(true);
-      const filterSearch = value;
-      const response = await ProductService.getAllSearchUnit(filterSearch);
-      if (response) {
-        setUnit(response.data.results);
-      } else {
-        getUnits();
-      }
-      setOpen(false);
+      const response = await ProductService.getAllUnit(page, query);
+      setUnit(response.data.results);
+      setPageCount(Math.ceil(response.data.count / 25));
     } catch (error) {
-      console.log("error Search leads", error);
+      handleError(error);
+    } finally {
       setOpen(false);
     }
+  }, []);
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1); // Reset to first page with new search
   };
 
-  const getResetData = () => {
+  const handleReset = () => {
     setSearchQuery("");
-    getUnits();
+    setCurrentPage(1); // Reset to first page with no search query
+  };
+
+  const handlePageClick = (event, value) => {
+    setCurrentPage(value);
   };
 
   const openInPopup = (item) => {
-    setRecordForEdit(item.id);
+    setRecordForEdit(item);
     setOpenPopup(true);
   };
 
@@ -89,24 +69,35 @@ export const ViewUnit = () => {
 
   return (
     <>
+      <MessageAlert
+        open={openSnackbar}
+        onClose={handleCloseSnackbar}
+        severity="error"
+        message={errorMessages[currentErrorIndex]}
+      />
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
-        <ErrorMessage errRef={errRef} errMsg={errMsg} />
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
-          <Box display="flex">
-            <Box flexGrow={0.9}>
-              <CustomSearch
-                filterSelectedQuery={searchQuery}
-                handleInputChange={handleInputChange}
-                getResetData={getResetData}
-              />
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              p: 2,
+            }}
+          >
+            {/* Search Component on the left */}
+            <Box sx={{ flexGrow: 1, flexBasis: "40%", minWidth: "300px" }}>
+              <SearchComponent onSearch={handleSearch} onReset={handleReset} />
             </Box>
-            <Box flexGrow={2}>
+
+            {/* Title Text centered */}
+            <Box sx={{ flexGrow: 2, textAlign: "center", minWidth: "150px" }}>
               <h3
                 style={{
-                  textAlign: "left",
-                  marginBottom: "1em",
+                  margin: 0,
                   fontSize: "24px",
                   color: "rgb(34, 34, 34)",
                   fontWeight: 800,
@@ -115,12 +106,21 @@ export const ViewUnit = () => {
                 Unit
               </h3>
             </Box>
-            <Box flexGrow={0.5} align="right">
+
+            {/* Add Button on the right */}
+            <Box
+              sx={{
+                flexGrow: 1,
+                flexBasis: "40%",
+                display: "flex",
+                justifyContent: "flex-end",
+                minWidth: "300px",
+              }}
+            >
               <Button
                 onClick={() => setOpenPopup2(true)}
                 variant="contained"
                 color="success"
-                startIcon={<AddIcon />}
               >
                 Add
               </Button>
@@ -131,6 +131,10 @@ export const ViewUnit = () => {
             headers={TableHeader}
             data={TableData}
             openInPopup={openInPopup}
+          />
+          <CustomPagination
+            pageCount={pageCount}
+            handlePageClick={handlePageClick}
           />
         </Paper>
       </Grid>

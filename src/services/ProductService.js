@@ -1,15 +1,14 @@
 import CustomAxios from "./api";
 
-const getAllColour = () => {
-  return CustomAxios.get("/api/product/color");
-};
-
-const getColourPaginatewithSearch = (all, search) => {
-  return CustomAxios.get(`/api/product/color/?page=${all}&search=${search}`);
-};
-
-const getAllPaginateColour = (all) => {
-  return CustomAxios.get(`/api/product/color/?page=${all}`);
+const getAllColour = (page, searchQuery) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (searchQuery) {
+    params.append("search", searchQuery);
+  }
+  return CustomAxios.get(`api/product/color/?${params.toString()}`);
 };
 
 const getColourById = (id) => {
@@ -18,10 +17,6 @@ const getColourById = (id) => {
 
 const createColour = (data) => {
   return CustomAxios.post("/api/product/color/", data);
-};
-
-const getAllSearchColour = (search) => {
-  return CustomAxios.get(`/api/product/color/?search=${search}`);
 };
 
 const updateColour = (id, data) => {
@@ -51,15 +46,15 @@ const updateBrand = (id, data) => {
   return CustomAxios.patch(`/api/product/brand/${id}`, data);
 };
 
-const getAllBasicUnit = () => {
-  return CustomAxios.get("/api/product/basic-unit");
-};
-
-const getAllPaginateBasicUnit = (all) => {
-  return CustomAxios.get(`/api/product/basic-unit/?page=${all}`);
-};
-const getAllSearchBasicUnit = (search) => {
-  return CustomAxios.get(`/api/product/basic-unit/?search=${search}`);
+const getAllBasicUnit = (page, searchQuery) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (searchQuery) {
+    params.append("search", searchQuery);
+  }
+  return CustomAxios.get(`api/product/basic-unit/?${params.toString()}`);
 };
 
 const getBasicUnitById = (id) => {
@@ -74,16 +69,15 @@ const updateBasicUnit = (id, data) => {
   return CustomAxios.patch(`/api/product/basic-unit/${id}`, data);
 };
 
-const getAllUnit = () => {
-  return CustomAxios.get("/api/product/unit");
-};
-
-const getAllPaginateUnit = (all) => {
-  return CustomAxios.get(`/api/product/unit/?page=${all}`);
-};
-
-const getAllSearchUnit = (search) => {
-  return CustomAxios.get(`/api/product/unit/?search=${search}`);
+const getAllUnit = (page, searchQuery) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (searchQuery) {
+    params.append("search", searchQuery);
+  }
+  return CustomAxios.get(`api/product/unit/?${params.toString()}`);
 };
 
 const createUnit = (data) => {
@@ -324,9 +318,6 @@ const getAllProduct = () => {
 
 const ProductService = {
   getAllColour,
-  getColourPaginatewithSearch,
-  getAllPaginateColour,
-  getAllSearchColour,
   getColourById,
   createColour,
   updateColour,
@@ -335,14 +326,10 @@ const ProductService = {
   createBrand,
   updateBrand,
   getAllBasicUnit,
-  getAllPaginateBasicUnit,
-  getAllSearchBasicUnit,
   getBasicUnitById,
   createBasicUnit,
   updateBasicUnit,
   getAllUnit,
-  getAllPaginateUnit,
-  getAllSearchUnit,
   createUnit,
   getUnitById,
   updateUnit,

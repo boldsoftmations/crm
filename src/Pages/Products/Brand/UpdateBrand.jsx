@@ -61,6 +61,15 @@ export const UpdateBrand = (props) => {
           <Grid item xs={12}>
             <CustomTextField
               fullWidth
+              size="small"
+              label="ID"
+              variant="outlined"
+              value={brand.id || ""}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <CustomTextField
+              fullWidth
               name="name"
               size="small"
               label="Brand"
