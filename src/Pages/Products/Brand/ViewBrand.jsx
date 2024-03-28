@@ -11,6 +11,7 @@ import CustomTextField from "../../../Components/CustomTextField";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import SearchComponent from "../../../Components/SearchComponent ";
 
 export const ViewBrand = () => {
   const [brand, setBrand] = useState([]);
@@ -30,28 +31,30 @@ export const ViewBrand = () => {
   } = useNotificationHandling();
 
   useEffect(() => {
-    getBrandList(currentPage);
-  }, [currentPage, getBrandList]);
+    getBrandList(currentPage, searchQuery);
+  }, [currentPage, searchQuery]);
 
-  const getBrandList = useCallback(
-    async (page, query = searchQuery) => {
-      try {
-        setOpen(true);
-        const response = await ProductService.getAllBrand(page, query);
-        setBrand(response.data.results);
-        const total = response.data.count;
-        setPageCount(Math.ceil(total / 25));
-      } catch (error) {
-        handleError(error); // Handle errors from the API call
-      } finally {
-        setOpen(false); // Always close the loader
-      }
-    },
-    [searchQuery]
-  );
+  const getBrandList = useCallback(async (page, query) => {
+    try {
+      setOpen(true);
+      const response = await ProductService.getAllBrand(page, query);
+      setBrand(response.data.results);
+      setPageCount(Math.ceil(response.data.count / 25));
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setOpen(false);
+    }
+  }, []);
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1); // Reset to first page with new search
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(1); // Reset to first page with no search query
   };
 
   const handlePageClick = (event, value) => {
@@ -77,66 +80,44 @@ export const ViewBrand = () => {
 
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
-          <Box display="flex">
-            <Box
-              sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}
-            >
-              <Grid
-                container
-                spacing={2}
-                alignItems="center"
-                sx={{ marginRight: 5, marginLeft: 5 }}
-              >
-                <Grid item xs={12} sm={6}>
-                  <CustomTextField
-                    size="small"
-                    label="Search"
-                    variant="outlined"
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={2}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => getBrandList(currentPage, searchQuery)}
-                    fullWidth
-                  >
-                    Search
-                  </Button>
-                </Grid>
-                <Grid item xs={12} sm={2}>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => {
-                      setSearchQuery("");
-                      setCurrentPage(1);
-                      getBrandList(1, "");
-                    }}
-                    fullWidth
-                  >
-                    Reset
-                  </Button>
-                </Grid>
-              </Grid>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              p: 2,
+            }}
+          >
+            {/* Search Component on the left */}
+            <Box sx={{ flexGrow: 1, flexBasis: "40%", minWidth: "300px" }}>
+              <SearchComponent onSearch={handleSearch} onReset={handleReset} />
             </Box>
-            <Box display="flex" justifyContent="center" marginBottom="10px">
+
+            {/* Title Text centered */}
+            <Box sx={{ flexGrow: 2, textAlign: "center", minWidth: "150px" }}>
               <h3
                 style={{
-                  marginBottom: "1em",
+                  margin: 0,
                   fontSize: "24px",
                   color: "rgb(34, 34, 34)",
                   fontWeight: 800,
-                  textAlign: "center",
                 }}
               >
                 Brand
               </h3>
             </Box>
-            <Box flexGrow={0.5} align="right">
+
+            {/* Add Button on the right */}
+            <Box
+              sx={{
+                flexGrow: 1,
+                flexBasis: "40%",
+                display: "flex",
+                justifyContent: "flex-end",
+                minWidth: "300px",
+              }}
+            >
               <Button
                 onClick={() => setOpenPopup2(true)}
                 variant="contained"
@@ -146,7 +127,6 @@ export const ViewBrand = () => {
               </Button>
             </Box>
           </Box>
-
           {/* CustomTable */}
           <CustomTable
             headers={TableHeader}
