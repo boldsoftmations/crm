@@ -28,17 +28,15 @@ const updateColour = (id, data) => {
   return CustomAxios.patch(`/api/product/color/${id}`, data);
 };
 
-const getAllBrand = () => {
-  return CustomAxios.get("/api/product/brand");
-};
-
-const getAllPaginateBrand = (all) => {
-  return CustomAxios.get(`/api/product/brand/?page=${all}`);
-};
-
-const getAllSearchBrand = (search) => {
-  console.log("search", search);
-  return CustomAxios.get(`/api/product/brand/?search=${search}`);
+const getAllBrand = (page, searchQuery) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (searchQuery) {
+    params.append("search", searchQuery);
+  }
+  return CustomAxios.get(`api/product/brand/?${params.toString()}`);
 };
 
 const getBrandById = (id) => {
@@ -333,8 +331,6 @@ const ProductService = {
   createColour,
   updateColour,
   getAllBrand,
-  getAllPaginateBrand,
-  getAllSearchBrand,
   getBrandById,
   createBrand,
   updateBrand,

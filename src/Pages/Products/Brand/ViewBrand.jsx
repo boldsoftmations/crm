@@ -1,95 +1,81 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Grid, Button, Paper, Box } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import ProductService from "../../../services/ProductService";
 import { Popup } from "./../../../Components/Popup";
 import { CreateBrand } from "./CreateBrand";
 import { UpdateBrand } from "./UpdateBrand";
-import { ErrorMessage } from "./../../../Components/ErrorMessage/ErrorMessage";
 import { CustomLoader } from "./../../../Components/CustomLoader";
 import "../../CommonStyle.css";
 import { CustomTable } from "../../../Components/CustomTable";
 import CustomTextField from "../../../Components/CustomTextField";
+import { CustomPagination } from "../../../Components/CustomPagination";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 
 export const ViewBrand = () => {
   const [brand, setBrand] = useState([]);
   const [open, setOpen] = useState(false);
-  const errRef = useRef();
-  const [errMsg, setErrMsg] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(null);
-  const getBrandList = async () => {
-    try {
-      setOpen(true);
-      const response = await ProductService.getAllBrand();
-      setBrand(response.data.results);
-
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-      if (!err.response) {
-        setErrMsg(
-          "“Sorry, You Are Not Allowed to Access This Page” Please contact to admin"
-        );
-      } else if (err.response.status === 400) {
-        setErrMsg(
-          err.response.data.errors.name
-            ? err.response.data.errors.name
-            : err.response.data.errors.non_field_errors
-        );
-      } else if (err.response.status === 401) {
-        setErrMsg(err.response.data.errors.code);
-      } else {
-        setErrMsg("Server Error");
-      }
-      errRef.current.focus();
-    }
-  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
+  const {
+    handleError,
+    openSnackbar,
+    errorMessages,
+    currentErrorIndex,
+    handleCloseSnackbar,
+  } = useNotificationHandling();
 
   useEffect(() => {
-    getBrandList();
-  }, []);
+    getBrandList(currentPage);
+  }, [currentPage, getBrandList]);
 
-  const getSearchData = async (value) => {
-    try {
-      setOpen(true);
-      const response = await ProductService.getAllSearchBrand(searchQuery);
-      if (response) {
+  const getBrandList = useCallback(
+    async (page, query = searchQuery) => {
+      try {
+        setOpen(true);
+        const response = await ProductService.getAllBrand(page, query);
         setBrand(response.data.results);
-      } else {
-        getBrandList();
+        const total = response.data.count;
+        setPageCount(Math.ceil(total / 25));
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
       }
-      setOpen(false);
-    } catch (error) {
-      console.log("error Search leads", error);
-      setOpen(false);
-    }
-  };
-
-  const getResetData = () => {
-    setSearchQuery("");
-    getBrandList();
-  };
-
-  const openInPopup = (item) => {
-    setRecordForEdit(item.id);
-    setOpenPopup(true);
-  };
+    },
+    [searchQuery]
+  );
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
+  };
+
+  const handlePageClick = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  const openInPopup = (item) => {
+    setRecordForEdit(item);
+    setOpenPopup(true);
   };
 
   const TableHeader = ["ID", "BRAND", "SHORT NAME", "ACTION"];
   const TableData = brand.map((value) => value);
   return (
     <>
+      <MessageAlert
+        open={openSnackbar}
+        onClose={handleCloseSnackbar}
+        severity="error"
+        message={errorMessages[currentErrorIndex]}
+      />
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
-        <ErrorMessage errRef={errRef} errMsg={errMsg} />
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
           <Box display="flex">
             <Box
@@ -111,24 +97,24 @@ export const ViewBrand = () => {
                     fullWidth
                   />
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={2}>
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={getSearchData}
+                    onClick={() => getBrandList(currentPage, searchQuery)}
                     fullWidth
                   >
                     Search
                   </Button>
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={2}>
                   <Button
                     variant="contained"
                     color="secondary"
                     onClick={() => {
                       setSearchQuery("");
-                      // setCurrentPage(1);
-                      getResetData(1, "");
+                      setCurrentPage(1);
+                      getBrandList(1, "");
                     }}
                     fullWidth
                   >
@@ -155,7 +141,6 @@ export const ViewBrand = () => {
                 onClick={() => setOpenPopup2(true)}
                 variant="contained"
                 color="success"
-                startIcon={<AddIcon />}
               >
                 Add
               </Button>
@@ -167,6 +152,10 @@ export const ViewBrand = () => {
             headers={TableHeader}
             data={TableData}
             openInPopup={openInPopup}
+          />
+          <CustomPagination
+            pageCount={pageCount}
+            handlePageClick={handlePageClick}
           />
         </Paper>
       </Grid>
