@@ -39,7 +39,9 @@ import {
   getFinishGoodProduct,
   getRawMaterialProduct,
 } from "../../../Redux/Action/Action";
-import CustomTextField from "../../../Components/CustomTextField";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import SearchComponent from "../../../Components/SearchComponent ";
 
 export const BillofMaterialsView = () => {
   const [openPopup, setOpenPopup] = useState(false);
@@ -54,6 +56,8 @@ export const BillofMaterialsView = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [filterApproved, setFilterApproved] = useState(null);
   const users = useSelector((state) => state.auth.profile);
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   useEffect(() => {
     getFinishGoods();
@@ -128,6 +132,7 @@ export const BillofMaterialsView = () => {
         setPageCount(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
+        handleError(error);
         setOpen(false);
         console.error("error", error);
       }
@@ -135,8 +140,14 @@ export const BillofMaterialsView = () => {
     [filterApproved, searchQuery]
   );
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(1);
   };
 
   const handlePageClick = (event, value) => {
@@ -180,6 +191,12 @@ export const BillofMaterialsView = () => {
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
@@ -224,42 +241,11 @@ export const BillofMaterialsView = () => {
                   )}
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={3}>
-                <CustomTextField
-                  size="small"
-                  label="Search"
-                  variant="outlined"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  fullWidth
+              <Grid item xs={12} sm={6}>
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
                 />
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() =>
-                    getAllBillofMaterialsDetails(
-                      // currentPage,
-                      filterApproved,
-                      searchQuery
-                    )
-                  } // Call `handleSearch` when the button is clicked
-                >
-                  Search
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    setSearchQuery("");
-                    getAllBillofMaterialsDetails(1, filterApproved, "");
-                  }}
-                >
-                  Reset
-                </Button>
               </Grid>
             </Grid>
           </Box>

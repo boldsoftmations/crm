@@ -4,9 +4,11 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { CustomTable } from "../../../Components/CustomTable";
-import { CustomSearchWithButton } from "../../../Components/CustomSearchWithButton";
 import { Box, Button, Grid, Paper } from "@mui/material";
 import CustomTextField from "../../../Components/CustomTextField";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import SearchComponent from "../../../Components/SearchComponent ";
 
 export const ProductionInventoryGAndLView = () => {
   const [open, setOpen] = useState(false);
@@ -16,6 +18,8 @@ export const ProductionInventoryGAndLView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [exportData, setExportData] = useState([]);
   const csvLinkRef = useRef(null);
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const handleDownload = async () => {
     try {
@@ -79,7 +83,7 @@ export const ProductionInventoryGAndLView = () => {
 
   useEffect(() => {
     getAllProductionInventoryGAndLDetails(currentPage);
-  }, [currentPage, getAllProductionInventoryGAndLDetails]);
+  }, [currentPage, searchQuery, getAllProductionInventoryGAndLDetails]);
 
   const getAllProductionInventoryGAndLDetails = useCallback(
     async (page, search = searchQuery) => {
@@ -94,6 +98,7 @@ export const ProductionInventoryGAndLView = () => {
         setPageCount(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
+        handleError(error);
         setOpen(false);
         console.error("error", error);
       }
@@ -107,6 +112,16 @@ export const ProductionInventoryGAndLView = () => {
 
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(1);
   };
 
   const Tableheaders = [
@@ -133,49 +148,26 @@ export const ProductionInventoryGAndLView = () => {
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={3}>
-                <CustomTextField
-                  size="small"
-                  label="Search"
-                  variant="outlined"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  fullWidth
+              <Grid item xs={12} sm={6}>
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
                 />
               </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() =>
-                    getAllProductionInventoryGAndLDetails(
-                      currentPage,
-                      searchQuery
-                    )
-                  } // Call `handleSearch` when the button is clicked
-                >
-                  Search
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    setSearchQuery("");
-                    getAllProductionInventoryGAndLDetails(1, "");
-                  }}
-                >
-                  Reset
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={5}>
+
+              <Grid item xs={12} sm={6}>
                 <Button variant="contained" onClick={handleDownload}>
                   Download CSV
                 </Button>
