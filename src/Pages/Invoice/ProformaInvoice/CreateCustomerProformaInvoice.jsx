@@ -51,14 +51,8 @@ const values = {
 export const CreateCustomerProformaInvoice = (props) => {
   const { setOpenPopup, recordForEdit } = props;
   const [productOption, setProductOption] = useState([]);
-  const {
-    handleSuccess,
-    handleError,
-    openSnackbar,
-    errorMessages,
-    currentErrorIndex,
-    handleCloseSnackbar,
-  } = useNotificationHandling();
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
   const {
     handleAutocompleteChange,
     handleFormChange,
@@ -224,9 +218,16 @@ export const CreateCustomerProformaInvoice = (props) => {
       }
 
       // Perform the API call if data is valid
-      await InvoiceServices.createCustomerProformaInvoiceData(payload);
-      handleSuccess(); // Handle the success scenario
-      navigate("/invoice/active-pi");
+      const response = await InvoiceServices.createCustomerProformaInvoiceData(
+        payload
+      );
+      const successMessage =
+        response.data.message || "Proforma Invoice created successfully!";
+      handleSuccess(successMessage);
+
+      setTimeout(() => {
+        navigate("/invoice/active-pi");
+      }, 300);
     } catch (error) {
       handleError(error); // Handle errors from the API call
     } finally {
@@ -237,12 +238,11 @@ export const CreateCustomerProformaInvoice = (props) => {
   return (
     <div>
       <MessageAlert
-        open={openSnackbar}
+        open={alertInfo.open}
         onClose={handleCloseSnackbar}
-        severity="error"
-        message={errorMessages[currentErrorIndex]}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
       />
-
       <CustomLoader open={open} />
       <Box
         component="form"

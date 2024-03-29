@@ -46,14 +46,8 @@ const values = {
 export const CreateLeadsProformaInvoice = (props) => {
   const { setOpenPopup, leadsByID } = props;
   const [productOption, setProductOption] = useState([]);
-  const {
-    handleSuccess,
-    handleError,
-    openSnackbar,
-    errorMessages,
-    currentErrorIndex,
-    handleCloseSnackbar,
-  } = useNotificationHandling();
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
   const {
     handleAutocompleteChange,
     handleFormChange,
@@ -190,9 +184,16 @@ export const CreateLeadsProformaInvoice = (props) => {
         setOpenPopup2(true); // Assuming this opens a popup to edit lead details
         return;
       }
-      await InvoiceServices.createLeadsProformaInvoiceData(payload);
-      handleSuccess("Proforma Invoice created successfully!");
-      navigate("/invoice/active-pi"); // Assuming `navigate` comes from `useNavigate` hook from react-router-dom
+      const response = await InvoiceServices.createLeadsProformaInvoiceData(
+        payload
+      );
+      const successMessage =
+        response.data.message || "Proforma Invoice created successfully!";
+      handleSuccess(successMessage);
+
+      setTimeout(() => {
+        navigate("/invoice/active-pi");
+      }, 300);
     } catch (error) {
       handleError(error); // Using the custom hook's method to handle errors
       console.error("Creating Lead PI error", error);
@@ -220,10 +221,10 @@ export const CreateLeadsProformaInvoice = (props) => {
   return (
     <div>
       <MessageAlert
-        open={openSnackbar}
+        open={alertInfo.open}
         onClose={handleCloseSnackbar}
-        severity="error"
-        message={errorMessages[currentErrorIndex]}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
       />
       <CustomLoader open={open} />
 
