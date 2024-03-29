@@ -13,6 +13,8 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
 import { styled } from "@mui/material/styles";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -37,6 +39,9 @@ export const GRNCreate = ({
       qa_accepted: "",
     }))
   );
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
+
   const calculateQA = (orderQty, rejectedQty) => {
     return !isNaN(orderQty) && !isNaN(rejectedQty)
       ? parseInt(orderQty, 10) - parseInt(rejectedQty, 10)
@@ -73,8 +78,11 @@ export const GRNCreate = ({
       });
 
       getAllPackingListDetails();
+      const successMessage = "GRN Created Successfully";
+      handleSuccess(successMessage);
       setOpenPopup(false);
     } catch (err) {
+      handleError(err);
       setError("Error occurred while creating GRN.");
       console.error("Creating Packing list error", err);
     } finally {
@@ -84,6 +92,12 @@ export const GRNCreate = ({
 
   return (
     <div>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Box component="form" noValidate onSubmit={(e) => createGrnDetails(e)}>

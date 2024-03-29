@@ -32,8 +32,10 @@ import { PackingListUpdate } from "./PackingListUpdate";
 import InvoiceServices from "../../../services/InvoiceService";
 import { useDispatch, useSelector } from "react-redux";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
-import CustomTextField from "../../../Components/CustomTextField";
 import { GRNCreate } from "../GRN/GRNCreate";
+import SearchComponent from "../../../Components/SearchComponent ";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const PackingListView = () => {
   const dispatch = useDispatch();
@@ -47,6 +49,8 @@ export const PackingListView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [acceptedFilter, setAcceptedFilter] = useState(false);
   const [idForEdit, setIDForEdit] = useState("");
+  const { handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   useEffect(() => {
     getAllSellerAccountsDetails();
@@ -82,6 +86,7 @@ export const PackingListView = () => {
         setPageCount(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
+        handleError(error);
         setOpen(false);
         console.error("error", error);
       }
@@ -89,12 +94,18 @@ export const PackingListView = () => {
     [acceptedFilter, searchQuery] // Depend on acceptedFilter directly
   );
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(1);
   };
 
   const handleFilterChange = (event) => {
@@ -116,13 +127,27 @@ export const PackingListView = () => {
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
-          <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              p: 2,
+            }}
+          >
             <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={6} md={3}>
                 <FormControl sx={{ minWidth: "100px" }} fullWidth size="small">
                   <InputLabel id="demo-simple-select-label">
                     Filter By Accepted
@@ -160,39 +185,11 @@ export const PackingListView = () => {
                   )}
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={3}>
-                <CustomTextField
-                  size="small"
-                  label="Search"
-                  variant="outlined"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  fullWidth
+              <Grid item xs={12} sm={6}>
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
                 />
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    setCurrentPage(0);
-                    getAllPackingListDetails(0, acceptedFilter, searchQuery);
-                  }} // Call `handleSearch` when the button is clicked
-                >
-                  Search
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    setSearchQuery("");
-                    getAllPackingListDetails(0, acceptedFilter, "");
-                  }}
-                >
-                  Reset
-                </Button>
               </Grid>
             </Grid>
           </Box>

@@ -26,7 +26,7 @@ const SearchComponent = ({ onSearch, onReset }) => {
   };
 
   return (
-    <Box sx={{ flexGrow: 1, mb: 2 }}>
+    <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={12} sm={8} md={6}>
           <TextField

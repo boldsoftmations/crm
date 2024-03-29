@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { CSVLink } from "react-csv";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
@@ -7,6 +7,7 @@ import { CustomPagination } from "../../../Components/CustomPagination";
 import { CustomTable } from "../../../Components/CustomTable";
 import { CustomSearchWithButton } from "../../../Components/CustomSearchWithButton";
 import { Button } from "@mui/material";
+import SearchComponent from "../../../Components/SearchComponent ";
 
 export const ProductionInventoryView = () => {
   const [open, setOpen] = useState(false);
@@ -15,7 +16,7 @@ export const ProductionInventoryView = () => {
   const [productionInventoryData, setProductionInventoryData] = useState([]);
   const [pageCount, setpageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-  const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [exportData, setExportData] = useState([]);
   const csvLinkRef = useRef(null);
 
@@ -47,10 +48,10 @@ export const ProductionInventoryView = () => {
     try {
       setOpen(true);
       let response;
-      if (filterSelectedQuery) {
+      if (searchQuery) {
         response = await InventoryServices.getProductionInventoryPaginateData(
           "all",
-          filterSelectedQuery
+          searchQuery
         );
       } else {
         response = await InventoryServices.getProductionInventoryPaginateData(
@@ -79,24 +80,28 @@ export const ProductionInventoryView = () => {
     }
   };
 
-  const handleInputChange = () => {
-    setFilterSelectedQuery(filterSelectedQuery);
-    getSearchData(filterSelectedQuery);
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(1);
   };
 
   useEffect(() => {
     getAllProductionInventoryDetails();
-  }, []);
+  }, [currentPage, searchQuery]);
 
-  const getAllProductionInventoryDetails = async () => {
+  const getAllProductionInventoryDetails = useCallback(async () => {
     try {
       setOpen(true);
-      const response = currentPage
-        ? await InventoryServices.getProductionInventoryPaginateData(
-            currentPage
-          )
-        : await InventoryServices.getAllProductionInventoryData();
-
+      const response =
+        await InventoryServices.getProductionInventoryPaginateData(
+          currentPage,
+          searchQuery
+        );
       setProductionInventoryData(response.data.results);
       const total = response.data.count;
       setpageCount(Math.ceil(total / 25));
@@ -105,7 +110,7 @@ export const ProductionInventoryView = () => {
     } finally {
       setOpen(false);
     }
-  };
+  }, [searchQuery, currentPage]);
 
   const handleErrorResponse = (err) => {
     if (!err.response) {
@@ -126,39 +131,16 @@ export const ProductionInventoryView = () => {
     }
   };
 
-  const getSearchData = async (value) => {
-    try {
-      setOpen(true);
-      const filterSearch = value;
-      if (filterSearch !== "") {
-        const response =
-          await InventoryServices.getAllSearchProductionInventoryData(
-            filterSearch
-          );
-        setProductionInventoryData(response.data.results);
-        const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
-      } else {
-        await getAllProductionInventoryDetails();
-        setFilterSelectedQuery("");
-      }
-    } catch (error) {
-      console.log("error Search leads", error);
-    } finally {
-      setOpen(false);
-    }
-  };
-
   const handlePageClick = async (event, value) => {
     try {
       const page = value;
       setCurrentPage(page);
       setOpen(true);
 
-      const response = filterSelectedQuery
+      const response = searchQuery
         ? await InventoryServices.getProductionInventoryPaginateData(
             page,
-            filterSelectedQuery
+            searchQuery
           )
         : await InventoryServices.getProductionInventoryPaginateData(page);
       if (response) {
@@ -167,18 +149,13 @@ export const ProductionInventoryView = () => {
         setpageCount(Math.ceil(total / 25));
       } else {
         await getAllProductionInventoryDetails();
-        setFilterSelectedQuery("");
+        setSearchQuery("");
       }
     } catch (error) {
       console.log("error", error);
     } finally {
       setOpen(false);
     }
-  };
-
-  const getResetData = () => {
-    setFilterSelectedQuery("");
-    getAllProductionInventoryDetails();
   };
 
   const Tableheaders = [
@@ -227,12 +204,7 @@ export const ProductionInventoryView = () => {
         >
           <div style={{ display: "flex" }}>
             <div style={{ flexGrow: 0.9 }}>
-              <CustomSearchWithButton
-                filterSelectedQuery={filterSelectedQuery}
-                setFilterSelectedQuery={setFilterSelectedQuery}
-                handleInputChange={handleInputChange}
-                getResetData={getResetData}
-              />
+              <SearchComponent onSearch={handleSearch} onReset={handleReset} />
             </div>
             <div style={{ flexGrow: 2 }}>
               <h3

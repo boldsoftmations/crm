@@ -8,6 +8,8 @@ import { styled } from "@mui/material/styles";
 import InventoryServices from "../../../services/InventoryService";
 import ProductService from "../../../services/ProductService";
 import { CustomLoader } from "../../../Components/CustomLoader";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -31,6 +33,8 @@ export const SafetyStockCreate = ({ setOpenPopup, onCreateSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [productOption, setProductOption] = useState([]);
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target;
@@ -65,7 +69,10 @@ export const SafetyStockCreate = ({ setOpenPopup, onCreateSuccess }) => {
       await InventoryServices.createSafetyStockData(inputValues);
       onCreateSuccess();
       setOpenPopup(false);
+      const successMessage = "Safety Stock Created Successfully";
+      handleSuccess(successMessage);
     } catch (error) {
+      handleError(error);
       console.error("Error creating safety stock", error);
       setError("Product with this seller unit already exists");
     } finally {
@@ -73,12 +80,14 @@ export const SafetyStockCreate = ({ setOpenPopup, onCreateSuccess }) => {
     }
   };
 
-  const handleCloseSnackbar = () => {
-    setError(null);
-  };
-
   return (
     <div>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={loading} />
       <Box component="form" noValidate onSubmit={createSafetyStock}>
         <Snackbar

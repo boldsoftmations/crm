@@ -37,14 +37,9 @@ export const BillofMaterialsCreate = (props) => {
       })),
     [RawAndConsumableProduct]
   );
-  const {
-    handleSuccess,
-    handleError,
-    openSnackbar,
-    errorMessages,
-    currentErrorIndex,
-    handleCloseSnackbar,
-  } = useNotificationHandling();
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
+
   const {
     handleAutocompleteChange,
     handleFormChange,
@@ -84,10 +79,10 @@ export const BillofMaterialsCreate = (props) => {
   return (
     <div>
       <MessageAlert
-        open={openSnackbar}
+        open={alertInfo.open}
         onClose={handleCloseSnackbar}
-        severity="error"
-        message={errorMessages[currentErrorIndex]}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
       />
       <CustomLoader open={open} />
 

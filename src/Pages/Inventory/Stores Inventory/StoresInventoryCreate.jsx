@@ -1,32 +1,21 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Chip,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  Button,
-  FormControlLabel,
-  FormLabel,
-  RadioGroup,
-  Radio,
-  Divider,
-  Checkbox,
-} from "@mui/material";
+import { Box, Grid, Button } from "@mui/material";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import ProductService from "../../../services/ProductService";
 import InvoiceServices from "../../../services/InvoiceService";
 import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 export const StoresInventoryCreate = (props) => {
   const { setOpenPopup, getAllStoresInventoryDetails } = props;
   const [open, setOpen] = useState(false);
   const [storeInventoryData, setStoreInventoryData] = useState([]);
   const [product, setProduct] = useState([]);
   const [sellerData, setSellerData] = useState([]);
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -101,10 +90,13 @@ export const StoresInventoryCreate = (props) => {
       };
       setOpen(true);
       await InventoryServices.createStoresInventoryData(req);
+      const successMessage = "Store Inventory Created Successfully";
+      handleSuccess(successMessage);
       setOpenPopup(false);
       getAllStoresInventoryDetails();
       setOpen(false);
     } catch (err) {
+      handleError(err);
       setOpen(false);
       console.error("error Store Inventory", err);
     }
@@ -112,6 +104,12 @@ export const StoresInventoryCreate = (props) => {
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Box

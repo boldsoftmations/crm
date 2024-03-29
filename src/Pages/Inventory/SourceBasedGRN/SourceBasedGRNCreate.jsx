@@ -6,6 +6,8 @@ import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
 import { useSelector } from "react-redux";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const SourceBasedGRNCreate = (props) => {
   const { setOpenCreatePopup, sellerOption, getAllSourceBasedGRNData } = props;
@@ -21,6 +23,9 @@ export const SourceBasedGRNCreate = (props) => {
       unit: "",
     },
   ]);
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
+
   const [sourceBasedGrnData, setSourceBasedGrnData] = useState({
     product: "",
     unit: "",
@@ -271,8 +276,11 @@ export const SourceBasedGRNCreate = (props) => {
     try {
       await InventoryServices.createSourceBasedGRN(requestPayload);
       setOpenCreatePopup(false);
+      const successMessage = "Source Based GRN Created Successfully";
+      handleSuccess(successMessage);
       getAllSourceBasedGRNData();
     } catch (error) {
+      handleError(error);
       let errorMessage = "An unknown error occurred";
       if (
         error.response &&
@@ -288,12 +296,14 @@ export const SourceBasedGRNCreate = (props) => {
     }
   };
 
-  const handleCloseSnackbar = () => {
-    setError(null);
-  };
-
   return (
     <div>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Box
