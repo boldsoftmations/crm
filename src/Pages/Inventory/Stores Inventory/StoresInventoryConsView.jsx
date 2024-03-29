@@ -5,6 +5,10 @@ import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 import InventoryServices from "../../../services/InventoryService";
 import { CustomTable } from "../../../Components/CustomTable";
 import { CustomSearch } from "../../../Components/CustomSearch";
+import SearchComponent from "../../../Components/SearchComponent ";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import { Box, Button, Paper, Typography } from "@mui/material";
 
 export const StoresInventoryConsView = () => {
   const [open, setOpen] = useState(false);
@@ -12,6 +16,8 @@ export const StoresInventoryConsView = () => {
   const [errMsg, setErrMsg] = useState("");
   const [storesInventoryData, setStoresInventoryData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const { handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   useEffect(() => {
     getAllStoresInventoryDetails();
@@ -23,6 +29,7 @@ export const StoresInventoryConsView = () => {
       const response = await InventoryServices.getAllConsStoresInventoryData();
       setStoresInventoryData(response.data);
     } catch (err) {
+      handleError(err);
       handleErrorResponse(err);
     } finally {
       setOpen(false);
@@ -48,11 +55,11 @@ export const StoresInventoryConsView = () => {
     }
   };
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
+  const handleSearch = (query) => {
+    setSearchQuery(query);
   };
 
-  const handleResetClick = () => {
+  const handleReset = () => {
     setSearchQuery("");
   };
 
@@ -81,85 +88,64 @@ export const StoresInventoryConsView = () => {
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
-
-      <div>
-        <ErrorMessage errRef={errRef} errMsg={errMsg} />
-
-        <div
-          style={{
-            padding: "16px",
-            margin: "16px",
-            boxShadow: "0px 3px 6px #00000029",
-            borderRadius: "4px",
+      <ErrorMessage errRef={errRef} errMsg={errMsg} />
+      <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
+        <Box
+          sx={{
             display: "flex",
-            flexDirection: "column",
-            backgroundColor: "rgb(255, 255, 255)", // set background color to default Paper color
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            p: 2,
           }}
         >
-          <div style={{ display: "flex" }}>
-            <div style={{ flexGrow: 0.9 }}>
-              <CustomSearch
-                filterSelectedQuery={searchQuery}
-                handleInputChange={handleSearchChange}
-                getResetData={handleResetClick}
-              />
-            </div>
-            <div style={{ flexGrow: 2 }}>
-              <h3
-                style={{
-                  textAlign: "left",
-                  marginBottom: "1em",
-                  fontSize: "24px",
-                  color: "rgb(34, 34, 34)",
-                  fontWeight: 800,
-                }}
-              >
-                Stores Inventory Cons
-              </h3>
-            </div>
-            <div style={{ flexGrow: 0.5 }} align="right">
-              <CSVLink
-                data={data}
-                headers={headers}
-                filename={"Stores Inventory Consolidate.csv"}
-                target="_blank"
-                style={{
-                  textDecoration: "none",
-                  outline: "none",
-                  height: "5vh",
-                }}
-              >
-                <div
-                  className="btn btn-primary"
-                  style={{
-                    display: "inline-block",
-                    padding: "6px 16px",
-                    margin: "10px",
-                    fontSize: "0.875rem",
-                    minWidth: "64px",
-                    fontWeight: 500,
-                    lineHeight: 1.75,
-                    borderRadius: "4px",
-                    letterSpacing: "0.02857em",
-                    textTransform: "uppercase",
-                    boxShadow:
-                      "0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2)",
-                  }}
-                >
-                  Download CSV
-                </div>
-              </CSVLink>
-            </div>
-          </div>
-          <CustomTable
-            headers={Tableheaders}
-            data={data}
-            openInPopup={null}
-            openInPopup2={null}
-          />
-        </div>
-      </div>
+          <Box sx={{ flexGrow: 1, minWidth: "300px" }}>
+            <SearchComponent onSearch={handleSearch} onReset={handleReset} />
+          </Box>
+          <Typography
+            variant="h3"
+            sx={{
+              flexGrow: 2,
+              textAlign: "center",
+              margin: "0",
+              fontSize: "24px",
+              color: "rgb(34, 34, 34)",
+              fontWeight: 800,
+              minWidth: "150px",
+            }}
+          >
+            Stores Inventory Cons
+          </Typography>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: "flex",
+              justifyContent: "flex-end",
+              minWidth: "300px",
+            }}
+          >
+            <CSVLink
+              data={data}
+              headers={headers}
+              filename={"Stores Inventory Consolidate.csv"}
+              target="_blank"
+              style={{ textDecoration: "none", outline: "none" }}
+            >
+              <Button variant="contained" sx={{ marginRight: 1 }}>
+                Download CSV
+              </Button>
+            </CSVLink>
+          </Box>
+        </Box>
+        <CustomTable headers={Tableheaders} data={data} />
+      </Paper>
     </>
   );
 };
