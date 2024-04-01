@@ -25,6 +25,9 @@ import { Popup } from "../../../Components/Popup";
 import InventoryServices from "../../../services/InventoryService";
 import { PurchaseInvoice } from "./PurchaseInvoice";
 import CustomTextField from "../../../Components/CustomTextField";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import SearchComponent from "../../../Components/SearchComponent ";
 
 export const PurchaseInvoiceView = () => {
   const [openPopupView, setOpenPopupView] = useState(false);
@@ -40,6 +43,8 @@ export const PurchaseInvoiceView = () => {
     .toString()
     .padStart(2, "0")}`;
   const [selectedYearMonth, setSelectedYearMonth] = useState(currentYearMonth);
+  const { handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   useEffect(() => {
     getAllPurchaseInvoiceDetails(currentPage);
@@ -58,16 +63,13 @@ export const PurchaseInvoiceView = () => {
         setPageCount(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
+        handleError(error);
         setOpen(false);
         console.error("error", error);
       }
     },
     [selectedYearMonth, searchQuery] // Depend on acceptedFilter directly
   );
-
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
 
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
@@ -77,8 +79,24 @@ export const PurchaseInvoiceView = () => {
     setOpenPopupView(true);
   };
 
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(0);
+  };
+
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
@@ -104,44 +122,11 @@ export const PurchaseInvoiceView = () => {
                   // sx={{ width: 200, marginRight: "15rem" }}
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
-                <CustomTextField
-                  size="small"
-                  label="Search"
-                  variant="outlined"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  fullWidth
+              <Grid item xs={12} sm={6}>
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
                 />
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    setCurrentPage(0);
-                    getAllPurchaseInvoiceDetails(
-                      0,
-                      selectedYearMonth,
-                      searchQuery
-                    );
-                  }} // Call `handleSearch` when the button is clicked
-                >
-                  Search
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    setSearchQuery("");
-                    setCurrentPage(0);
-                    getAllPurchaseInvoiceDetails(0, selectedYearMonth, "");
-                  }}
-                >
-                  Reset
-                </Button>
               </Grid>
             </Grid>
           </Box>

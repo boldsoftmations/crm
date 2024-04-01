@@ -32,12 +32,14 @@ import { PurchaseOrderUpdate } from "./PurchaseOrderUpdate";
 import InvoiceServices from "../../../services/InvoiceService";
 import { useDispatch } from "react-redux";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
-import CustomTextField from "../../../Components/CustomTextField";
 import { PackingListCreate } from "../PackingList/PackingListCreate";
 import { PurchaseOrderPDF } from "./PurchaseOrderPDF";
 import jsPDF from "jspdf";
 import { pdf } from "@react-pdf/renderer";
 import { PackingListMergeCreate } from "../PackingList/PackingListMergeCreate";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import SearchComponent from "../../../Components/SearchComponent ";
 
 export const PurchaseOrderView = () => {
   const [openPopupUpdate, setOpenPopupUpdate] = useState(false);
@@ -52,6 +54,8 @@ export const PurchaseOrderView = () => {
   const [openCreatePLPopup, setOpenCreatePLPopup] = useState(false);
   const [openMergePLPopup, setOpenMergePLPopup] = useState(false);
   const dispatch = useDispatch();
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const handleDownload = async (data) => {
     try {
@@ -104,10 +108,6 @@ export const PurchaseOrderView = () => {
     }
   };
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
   };
@@ -153,6 +153,7 @@ export const PurchaseOrderView = () => {
         setPageCount(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
+        handleError(error);
         setOpen(false);
         console.error("error", error);
       }
@@ -165,8 +166,24 @@ export const PurchaseOrderView = () => {
     setSelectedRow(row);
   };
 
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(0);
+  };
+
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
@@ -211,39 +228,11 @@ export const PurchaseOrderView = () => {
                   )}
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={3}>
-                <CustomTextField
-                  size="small"
-                  label="Search"
-                  variant="outlined"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  fullWidth
+              <Grid item xs={12} sm={6}>
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
                 />
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    setCurrentPage(0);
-                    getAllPurchaseOrderDetails(0, acceptedFilter, searchQuery);
-                  }}
-                >
-                  Search
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    setSearchQuery("");
-                    getAllPurchaseOrderDetails(0, acceptedFilter, "");
-                  }}
-                >
-                  Reset
-                </Button>
               </Grid>
               <Grid item xs={12} sm={2}>
                 <Button
