@@ -761,19 +761,25 @@ function Row(props) {
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell>PRODUCT CODE</TableCell>
-                    <TableCell>QUANTITY</TableCell>
-                    <TableCell align="right">AMOUNT</TableCell>
+                    <TableCell align="center">PRODUCT CODE</TableCell>
+                    <TableCell align="center">QUANTITY</TableCell>
+                    <TableCell align="center">AMOUNT</TableCell>
+                    <TableCell align="center">PROFIT/LOSS</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {row.products_si.map((historyRow) => (
                     <TableRow key={historyRow.date}>
-                      <TableCell component="th" scope="row">
+                      <TableCell component="th" scope="row" align="center">
                         {historyRow.product}
                       </TableCell>
-                      <TableCell>{historyRow.quantity}</TableCell>
-                      <TableCell align="right">{historyRow.amount}</TableCell>
+                      <TableCell align="center">
+                        {historyRow.quantity}
+                      </TableCell>
+                      <TableCell align="center">{historyRow.amount}</TableCell>
+                      <TableCell align="center">
+                        {historyRow.profit_or_loss}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
