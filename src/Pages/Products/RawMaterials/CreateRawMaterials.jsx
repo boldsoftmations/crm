@@ -19,7 +19,7 @@ function searchArrayByKey(array, key, searchValue, returnValue) {
 export const CreateRawMaterials = (props) => {
   const { setOpenPopup, getRawMaterials, currentPage, searchQuery } = props;
   const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState();
+  const [formData, setFormData] = useState([]);
   const { brandAllData, colourAllData, productCodeAllData, unitAllData } =
     useSelector((state) => state.auth);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -28,7 +28,7 @@ export const CreateRawMaterials = (props) => {
   const shortName = searchArrayByKey(
     brandAllData,
     "name",
-    formData.brand,
+    formData.brand || null,
     "short_name"
   );
 
@@ -97,7 +97,7 @@ export const CreateRawMaterials = (props) => {
 
       <Box component="form" noValidate onSubmit={(e) => createrawMaterials(e)}>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               name="Name"
@@ -108,7 +108,7 @@ export const CreateRawMaterials = (props) => {
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               name="size"
@@ -119,7 +119,7 @@ export const CreateRawMaterials = (props) => {
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               sx={{
                 minWidth: 220,
@@ -134,7 +134,7 @@ export const CreateRawMaterials = (props) => {
               label={"Unit"}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               sx={{
                 minWidth: 220,
@@ -150,7 +150,7 @@ export const CreateRawMaterials = (props) => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               sx={{
                 minWidth: 220,
@@ -165,7 +165,7 @@ export const CreateRawMaterials = (props) => {
               label="brand"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               sx={{
                 minWidth: 220,
@@ -180,7 +180,7 @@ export const CreateRawMaterials = (props) => {
               label="Product Code"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               size="small"
@@ -189,7 +189,7 @@ export const CreateRawMaterials = (props) => {
               value={description || ""}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               size="small"
@@ -200,7 +200,7 @@ export const CreateRawMaterials = (props) => {
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               name="hsn_code"
@@ -213,6 +213,7 @@ export const CreateRawMaterials = (props) => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <CustomTextField
+              fullWidth
               name="gst"
               type={"number"}
               size="small"
@@ -224,6 +225,7 @@ export const CreateRawMaterials = (props) => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <CustomTextField
+              fullWidth
               size="small"
               label="CGST"
               variant="outlined"
@@ -232,6 +234,7 @@ export const CreateRawMaterials = (props) => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <CustomTextField
+              fullWidth
               size="small"
               label="SGST"
               variant="outlined"

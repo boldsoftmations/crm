@@ -100,7 +100,7 @@ export const CreateConsumable = (props) => {
 
       <Box component="form" noValidate onSubmit={(e) => createconsumable(e)}>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               name="code"
@@ -111,7 +111,7 @@ export const CreateConsumable = (props) => {
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               sx={{
                 minWidth: 220,
@@ -125,7 +125,7 @@ export const CreateConsumable = (props) => {
               label="description"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               size="small"
@@ -136,7 +136,7 @@ export const CreateConsumable = (props) => {
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               size="small"
@@ -148,7 +148,7 @@ export const CreateConsumable = (props) => {
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               sx={{
                 minWidth: 220,
@@ -162,7 +162,7 @@ export const CreateConsumable = (props) => {
               label="Unit"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               sx={{
                 minWidth: 220,
@@ -176,7 +176,7 @@ export const CreateConsumable = (props) => {
               label="Brand"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               name="size"
@@ -188,7 +188,7 @@ export const CreateConsumable = (props) => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               name="hsn_code"
@@ -201,6 +201,7 @@ export const CreateConsumable = (props) => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <CustomTextField
+              fullWidth
               name="gst"
               type={"number"}
               size="small"
@@ -212,6 +213,7 @@ export const CreateConsumable = (props) => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <CustomTextField
+              fullWidth
               size="small"
               label="CGST"
               variant="outlined"
@@ -220,6 +222,7 @@ export const CreateConsumable = (props) => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <CustomTextField
+              fullWidth
               size="small"
               label="SGST"
               variant="outlined"

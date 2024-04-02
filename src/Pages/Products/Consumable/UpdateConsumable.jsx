@@ -39,7 +39,7 @@ export const UpdateConsumable = (props) => {
   const shortName = searchArrayByKey(
     brandAllData,
     "name",
-    formData.brand,
+    formData.brand || "",
     "short_name"
   );
 
