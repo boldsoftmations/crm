@@ -17,6 +17,8 @@ import { useSelector } from "react-redux";
 import { styled } from "@mui/material/styles";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -43,6 +45,8 @@ export const ProductionEntryCreate = (props) => {
       expected_quantity: null,
     },
   ]);
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const handleFormChange = (index, event) => {
     let data = [...products];
@@ -132,7 +136,9 @@ export const ProductionEntryCreate = (props) => {
       setOpenPopup(false);
       getAllProductionEntryDetails();
       setOpen(false);
+      handleSuccess("Production Entry Created Successfully");
     } catch (error) {
+      handleError(error);
       if (error.response && error.response.data && error.response.data.errors) {
         setError(error.response.data.errors.non_field_errors);
       }
@@ -141,12 +147,14 @@ export const ProductionEntryCreate = (props) => {
     }
   };
 
-  const handleCloseSnackbar = () => {
-    setError(null);
-  };
-
   return (
     <div>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Box

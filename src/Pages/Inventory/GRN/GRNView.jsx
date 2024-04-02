@@ -30,8 +30,10 @@ import InventoryServices from "../../../services/InventoryService";
 import { GRNUpdate } from "./GRNUpdate";
 import { useSelector } from "react-redux";
 import { PurchaseInvoiceCreate } from "../Purchase Invoice/PurchaseInvoiceCreate";
-import CustomTextField from "../../../Components/CustomTextField";
 import ClearIcon from "@mui/icons-material/Clear";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import SearchComponent from "../../../Components/SearchComponent ";
 
 export const GRNView = () => {
   const [openPopupUpdate, setOpenPopupUpdate] = useState(false);
@@ -45,6 +47,8 @@ export const GRNView = () => {
   const [recordForEdit, setRecordForEdit] = useState();
   const [acceptedFilter, setAcceptedFilter] = useState(false);
   const userData = useSelector((state) => state.auth.profile);
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   useEffect(() => {
     getAllGRNDetails(currentPage);
@@ -63,16 +67,13 @@ export const GRNView = () => {
         setPageCount(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
+        handleError(error);
         setOpen(false);
         console.error("error", error);
       }
     },
     [acceptedFilter, searchQuery]
   );
-
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
 
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
@@ -96,8 +97,24 @@ export const GRNView = () => {
     getAllGRNDetails(0, value, searchQuery);
   };
 
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(0);
+  };
+
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
@@ -142,39 +159,11 @@ export const GRNView = () => {
                   )}
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={3}>
-                <CustomTextField
-                  size="small"
-                  label="Search"
-                  variant="outlined"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  fullWidth
+              <Grid item xs={12} sm={6}>
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
                 />
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    setCurrentPage(0);
-                    getAllGRNDetails(0, acceptedFilter, searchQuery);
-                  }}
-                >
-                  Search
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    setSearchQuery("");
-                    getAllGRNDetails(0, acceptedFilter, "");
-                  }}
-                >
-                  Reset
-                </Button>
               </Grid>
             </Grid>
           </Box>

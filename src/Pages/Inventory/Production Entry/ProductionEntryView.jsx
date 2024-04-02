@@ -28,7 +28,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { getFinishGoodProduct } from "../../../Redux/Action/Action";
 import { ProductionEntryCreate } from "./ProductionEntryCreate";
 import InvoiceServices from "../../../services/InvoiceService";
-import CustomTextField from "../../../Components/CustomTextField";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import SearchComponent from "../../../Components/SearchComponent ";
 
 export const ProductionEntryView = () => {
   const [openPopup2, setOpenPopup2] = useState(false);
@@ -40,6 +42,8 @@ export const ProductionEntryView = () => {
   const [sellerOption, setSellerOption] = useState(null);
   const users = useSelector((state) => state.auth.profile);
   const dispatch = useDispatch();
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   useEffect(() => {
     getAllSellerAccountsDetails();
@@ -92,6 +96,7 @@ export const ProductionEntryView = () => {
         setPageCount(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
+        handleError(error);
         setOpen(false);
         console.error("error", error);
       }
@@ -99,12 +104,18 @@ export const ProductionEntryView = () => {
     [searchQuery]
   );
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(1);
   };
 
   // const openInPopup = (item) => {
@@ -114,44 +125,23 @@ export const ProductionEntryView = () => {
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={3}>
-                <CustomTextField
-                  size="small"
-                  label="Search"
-                  variant="outlined"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  fullWidth
+              <Grid item xs={12} sm={6}>
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
                 />
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() =>
-                    getAllProductionEntryDetails(currentPage, searchQuery)
-                  } // Call `handleSearch` when the button is clicked
-                >
-                  Search
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    setSearchQuery("");
-                    getAllProductionEntryDetails(1, "");
-                  }}
-                >
-                  Reset
-                </Button>
               </Grid>
             </Grid>
           </Box>

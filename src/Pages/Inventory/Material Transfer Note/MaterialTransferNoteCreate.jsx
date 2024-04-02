@@ -6,6 +6,8 @@ import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
 import { useSelector } from "react-redux";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const MaterialTransferNoteCreate = (props) => {
   const {
@@ -18,6 +20,9 @@ export const MaterialTransferNoteCreate = (props) => {
   const [error, setError] = useState(null);
   const data = useSelector((state) => state.auth);
   const users = data.profile;
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
+
   const [materialTransferNoteDetails, setMaterialTransferNoteDetails] =
     useState([]);
 
@@ -80,8 +85,10 @@ export const MaterialTransferNoteCreate = (props) => {
     try {
       await InventoryServices.createMaterialTransferNoteData(requestPayload);
       setOpenCreatePopup(false);
+      handleSuccess("Material Transfer Note created successfully");
       getAllMaterialTransferNoteDetails();
     } catch (error) {
+      handleError(error);
       let errorMessage = "An unknown error occurred";
       if (
         error.response &&
@@ -97,12 +104,14 @@ export const MaterialTransferNoteCreate = (props) => {
     }
   };
 
-  const handleCloseSnackbar = () => {
-    setError(null);
-  };
-
   return (
     <div>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Box
@@ -110,22 +119,6 @@ export const MaterialTransferNoteCreate = (props) => {
         noValidate
         onSubmit={(e) => createMaterialTransferNoteDetails(e)}
       >
-        <Snackbar
-          open={Boolean(error)}
-          onClose={handleCloseSnackbar}
-          message={error}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              sx={{ p: 0.5 }}
-              onClick={handleCloseSnackbar}
-            >
-              <CloseIcon />
-            </IconButton>
-          }
-        />
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={3}>
             <CustomAutocomplete

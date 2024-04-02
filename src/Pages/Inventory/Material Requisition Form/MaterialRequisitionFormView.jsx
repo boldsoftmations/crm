@@ -41,9 +41,10 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 import moment from "moment";
-import InvoiceServices from "../../../services/InvoiceService";
-import CustomTextField from "../../../Components/CustomTextField";
 import { CSVLink } from "react-csv";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import SearchComponent from "../../../Components/SearchComponent ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const MaterialRequisitionFormView = () => {
   const [openPopup, setOpenPopup] = useState(false);
@@ -59,6 +60,8 @@ export const MaterialRequisitionFormView = () => {
   const [idForEdit, setIDForEdit] = useState("");
   const [storesInventoryData, setStoresInventoryData] = useState([]);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const users = useSelector((state) => state.auth.profile);
   const [exportData, setExportData] = useState([]);
@@ -165,10 +168,15 @@ export const MaterialRequisitionFormView = () => {
     [searchQuery]
   );
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
   };
 
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(1);
+  };
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
   };
@@ -188,10 +196,12 @@ export const MaterialRequisitionFormView = () => {
       setOpenPopup(false);
       setOpenPopup3(false);
       getAllMaterialRequisitionFormDetails();
+      handleSuccess("Material Requisition Form Accepted");
       setOpen(false);
       // Show success snackbar
       setOpenSnackbar(true);
     } catch (error) {
+      handleError(error);
       console.log("error Store Accepting", error);
       setOpen(false);
     }
@@ -244,47 +254,23 @@ export const MaterialRequisitionFormView = () => {
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={3}>
-                <CustomTextField
-                  size="small"
-                  label="Search"
-                  variant="outlined"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  fullWidth
+              <Grid item xs={12} sm={6}>
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
                 />
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() =>
-                    getAllMaterialRequisitionFormDetails(
-                      currentPage,
-                      searchQuery
-                    )
-                  } // Call `handleSearch` when the button is clicked
-                >
-                  Search
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    setSearchQuery("");
-                    getAllMaterialRequisitionFormDetails(1, "");
-                  }}
-                >
-                  Reset
-                </Button>
               </Grid>
             </Grid>
           </Box>

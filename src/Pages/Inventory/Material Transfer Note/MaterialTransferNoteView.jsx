@@ -29,9 +29,11 @@ import { useSelector } from "react-redux";
 import { MaterialTransferNoteCreate } from "./MaterialTransferNoteCreate";
 import InvoiceServices from "../../../services/InvoiceService";
 import { CustomPagination } from "../../../Components/CustomPagination";
-import CustomTextField from "../../../Components/CustomTextField";
 import { MaterialTransferNotePDF } from "./MaterialTransferNotePDF";
 import { MaterialTransferAccept } from "./MaterialTransferAccept";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import SearchComponent from "../../../Components/SearchComponent ";
 
 export const MaterialTransferNoteView = () => {
   const [openCreatePopup, setOpenCreatePopup] = useState(false);
@@ -47,6 +49,8 @@ export const MaterialTransferNoteView = () => {
   const userData = useSelector((state) => state.auth.profile);
   const [exportData, setExportData] = useState([]);
   const csvLinkRef = useRef(null);
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const handleDownload = async () => {
     try {
@@ -145,10 +149,6 @@ export const MaterialTransferNoteView = () => {
     setMaterialTransferNoteByID(item);
   };
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
   };
@@ -180,7 +180,7 @@ export const MaterialTransferNoteView = () => {
 
   useEffect(() => {
     getAllMaterialTransferNoteDetails(currentPage);
-  }, [currentPage, getAllMaterialTransferNoteDetails]);
+  }, [currentPage, searchQuery, getAllMaterialTransferNoteDetails]);
 
   const getAllMaterialTransferNoteDetails = useCallback(
     async (page, filter = acceptedFilter, search = searchQuery) => {
@@ -197,6 +197,7 @@ export const MaterialTransferNoteView = () => {
         setPageCount(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
+        handleError(error);
         setOpen(false);
         console.log("error", error);
       }
@@ -204,6 +205,15 @@ export const MaterialTransferNoteView = () => {
     [acceptedFilter, searchQuery]
   );
 
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(1);
+  };
   // Usage
   const isAcceptedEdit =
     userData.groups.includes("Accounts") ||
@@ -223,6 +233,12 @@ export const MaterialTransferNoteView = () => {
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
       <div
         style={{
@@ -275,42 +291,8 @@ export const MaterialTransferNoteView = () => {
                 )}
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={3}>
-              <CustomTextField
-                size="small"
-                label="Search"
-                variant="outlined"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={1}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() =>
-                  getAllMaterialTransferNoteDetails(
-                    currentPage,
-                    acceptedFilter,
-                    searchQuery
-                  )
-                } // Call `handleSearch` when the button is clicked
-              >
-                Search
-              </Button>
-            </Grid>
-            <Grid item xs={12} sm={1}>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={() => {
-                  setSearchQuery("");
-                  getAllMaterialTransferNoteDetails(1, acceptedFilter, "");
-                }}
-              >
-                Reset
-              </Button>
+            <Grid item xs={12} sm={6}>
+              <SearchComponent onSearch={handleSearch} onReset={handleReset} />
             </Grid>
           </Grid>
         </Box>
