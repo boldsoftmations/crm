@@ -179,30 +179,19 @@ const updateFinishGoods = (id, data) => {
   return CustomAxios.patch(`/api/product/finished-goods/${id}`, data);
 };
 
-const getAllRawMaterials = () => {
-  return CustomAxios.get("/api/product/raw-materials/");
-};
-
-const getAllSearchRawMaterials = (search) => {
-  return CustomAxios.get(`/api/product/raw-materials/?search=${search}`);
-};
-
-const getRawMaterialsPaginate = (currentPage) => {
-  return CustomAxios.get(`/api/product/raw-materials/?page=${currentPage}`);
-};
-
-const getRawMaterialsPaginateWithSearch = (currentPage, search) => {
-  return CustomAxios.get(
-    `/api/product/raw-materials/?page=${currentPage}&search=${search}`
-  );
+const getAllRawMaterials = (page, searchQuery) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (searchQuery) {
+    params.append("search", searchQuery);
+  }
+  return CustomAxios.get(`api/product/raw-materials/?${params.toString()}`);
 };
 
 const createRawMaterials = (data) => {
   return CustomAxios.post("/api/product/raw-materials/", data);
-};
-
-const getRawMaterialsById = (id) => {
-  return CustomAxios.get(`/api/product/raw-materials/${id}`);
 };
 
 const updateRawMaterials = (id, data) => {
@@ -282,11 +271,7 @@ const ProductService = {
   createFinishGoods,
   updateFinishGoods,
   getAllRawMaterials,
-  getAllSearchRawMaterials,
-  getRawMaterialsPaginate,
-  getRawMaterialsPaginateWithSearch,
   createRawMaterials,
-  getRawMaterialsById,
   updateRawMaterials,
   getAllPriceList,
   getAllPaginatePriceList,

@@ -84,7 +84,7 @@ export const BillofMaterialsView = () => {
   const getrawMaterials = async () => {
     try {
       setOpen(true);
-      const response = await ProductService.getRawMaterialsPaginate("all");
+      const response = await ProductService.getAllRawMaterials("all");
       console.log("raw material", response.data);
       var arr = response.data.map((ProductData) => ({
         product: ProductData.name,

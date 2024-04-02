@@ -1,7 +1,6 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import ProductService from "../../../services/ProductService";
-import "../../CommonStyle.css";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
@@ -273,13 +272,11 @@ export const CreateFinishGoods = (props) => {
             <CustomTextField
               fullWidth
               size="small"
-              type="month"
               name="shelf_life"
-              label="Shelf Life (Month/Year)"
+              label="Shelf Life (Month)"
               variant="outlined"
               value={formData.shelf_life || ""}
               onChange={handleInputChange}
-              InputLabelProps={{ shrink: true }} // Ensures the label doesn't overlap the input value
             />
           </Grid>
           <Grid item xs={12} sm={4}>
