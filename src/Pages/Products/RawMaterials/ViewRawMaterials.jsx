@@ -70,12 +70,9 @@ export const ViewRawMaterials = () => {
       setOpen(true);
       let response;
       if (searchQuery) {
-        response = await ProductService.getRawMaterialsPaginateWithSearch(
-          "all",
-          searchQuery
-        );
+        response = await ProductService.getAllRawMaterials("all", searchQuery);
       } else {
-        response = await ProductService.getRawMaterialsPaginate("all");
+        response = await ProductService.getAllRawMaterials("all");
       }
       const data = response.data.map((row) => {
         return {
@@ -270,7 +267,7 @@ export const ViewRawMaterials = () => {
                   data={exportData}
                   headers={headers}
                   ref={csvLinkRef}
-                  filename="Product Code.csv"
+                  filename="Raw Material.csv"
                   target="_blank"
                   style={{
                     textDecoration: "none",

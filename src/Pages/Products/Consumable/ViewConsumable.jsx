@@ -253,7 +253,7 @@ export const ViewConsumable = () => {
                   data={exportData}
                   headers={headers}
                   ref={csvLinkRef}
-                  filename="Product Code.csv"
+                  filename="Consumable.csv"
                   target="_blank"
                   style={{
                     textDecoration: "none",

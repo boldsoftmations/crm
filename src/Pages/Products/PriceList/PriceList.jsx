@@ -1,75 +1,32 @@
-import React, { useEffect, useRef, useState } from "react";
-
-import "../../CommonStyle.css";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Grid,
-  Button,
-  Paper,
-  styled,
-  Box,
-  TableContainer,
-  Switch,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  IconButton,
-} from "@mui/material";
-import { tableCellClasses } from "@mui/material/TableCell";
-import AddIcon from "@mui/icons-material/Add";
+import React, { useCallback, useEffect, useState } from "react";
+import { Grid, Button, Paper, Box } from "@mui/material";
 import ProductService from "../../../services/ProductService";
-import ClearIcon from "@mui/icons-material/Clear";
 import { Popup } from "../../../Components/Popup";
 import { CreatePriceList } from "./CreatePriceList";
 import { UpdatePriceList } from "./UpdatePriceList";
-import { ErrorMessage } from "./../../../Components/ErrorMessage/ErrorMessage";
 import { CustomLoader } from "./../../../Components/CustomLoader";
-import { CustomSearch } from "./../../../Components/CustomSearch";
 import { CustomPagination } from "./../../../Components/CustomPagination";
 import { CustomTable } from "../../../Components/CustomTable";
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}));
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import SearchComponent from "../../../Components/SearchComponent ";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
 export const PriceList = () => {
   const [priceListData, setPriceListData] = useState([]);
   const [open, setOpen] = useState(false);
-  const errRef = useRef();
-  const [errMsg, setErrMsg] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterQuery, setFilterQuery] = useState("");
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(null);
-  const [pageCount, setpageCount] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-  const [filterSelectedQuerys, setFilterSelectedQuerys] = useState("");
   const [product, setProduct] = useState([]);
+  const { handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
   useEffect(() => {
     getProduct();
-    getPriceList();
   }, []);
 
   const getProduct = async () => {
@@ -84,144 +41,44 @@ export const PriceList = () => {
     }
   };
 
-  const getPriceList = async () => {
+  useEffect(() => {
+    getPriceList(currentPage, filterQuery, searchQuery);
+  }, [currentPage, filterQuery, searchQuery]);
+
+  const getPriceList = useCallback(async (page, filter, query) => {
     try {
       setOpen(true);
-      if (currentPage) {
-        const response = await ProductService.getPriceListPaginate(currentPage);
-        setPriceListData(response.data.results);
-        const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
-      } else {
-        const response = await ProductService.getAllPriceList();
-        setPriceListData(response.data.results);
-        const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
-      }
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-      if (!err.response) {
-        setErrMsg(
-          "“Sorry, You Are Not Allowed to Access This Page” Please contact to admin"
-        );
-      } else if (err.response.status === 400) {
-        setErrMsg(
-          err.response.data.errors.name
-            ? err.response.data.errors.name
-            : err.response.data.errors.non_field_errors
-        );
-      } else if (err.response.status === 401) {
-        setErrMsg(err.response.data.errors.code);
-      } else {
-        setErrMsg("Server Error");
-      }
-      errRef.current.focus();
-    }
-  };
-
-  const handleInputChange = (event) => {
-    setFilterSelectedQuerys(event.target.value);
-    getFilterData(event.target.value);
-  };
-
-  const handleInputChanges = (event) => {
-    setSearchQuery(event.target.value);
-    getSearchData(event.target.value);
-  };
-
-  const getFilterData = async (value) => {
-    try {
-      setOpen(true);
-      const filterSearch = value;
-      const response = await ProductService.getAllPaginatePriceList(
-        "validity",
-        filterSearch
+      const response = await ProductService.getAllPriceList(
+        page,
+        filter,
+        query
       );
       setPriceListData(response.data.results);
-      const total = response.data.count;
-      setpageCount(Math.ceil(total / 25));
-      setOpen(false);
+      setPageCount(Math.ceil(response.data.count / 25));
     } catch (error) {
-      console.log("error Search leads", error);
+      handleError(error);
+    } finally {
       setOpen(false);
     }
+  }, []);
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1); // Reset to first page with new search
   };
 
-  const getSearchData = async (value) => {
-    try {
-      setOpen(true);
-      const filterSearch = value;
-      const response = await ProductService.getAllSearchPriceList(
-        "search",
-        filterSearch
-      );
-      if (response) {
-        setPriceListData(response.data.results);
-        const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
-      } else {
-        getPriceList();
-      }
-
-      setOpen(false);
-    } catch (error) {
-      console.log("error Search leads", error);
-      setOpen(false);
-    }
+  const handleFilter = (query) => {
+    setFilterQuery(query);
+    setCurrentPage(1); // Reset to first page with new search
   };
 
-  const handlePageClick = async (event, value) => {
-    try {
-      const page = value;
-      setCurrentPage(page);
-      setOpen(true);
-
-      if (searchQuery) {
-        const response = await ProductService.getAllPriceListPaginate(
-          page,
-          "search",
-          searchQuery
-        );
-        if (response) {
-          setPriceListData(response.data.results);
-          const total = response.data.count;
-          setpageCount(Math.ceil(total / 25));
-        } else {
-          getPriceList();
-          setFilterSelectedQuerys("");
-        }
-      } else if (filterSelectedQuerys !== "search") {
-        const response = await ProductService.getAllPriceListPaginate(
-          page,
-          "validity",
-          filterSelectedQuerys
-        );
-        setPriceListData(response.data.results);
-        const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
-      } else {
-        const response = await ProductService.getPriceListPaginate(page);
-        setPriceListData(response.data.results);
-        const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
-      }
-
-      setOpen(false);
-    } catch (error) {
-      console.log("error", error);
-      setOpen(false);
-    }
-  };
-
-  const getResetData = () => {
-    setFilterSelectedQuerys("");
-    getPriceList();
-  };
-
-  const getResetDataSearch = () => {
+  const handleReset = () => {
     setSearchQuery("");
-    getPriceList();
+    setCurrentPage(1); // Reset to first page with no search query
+  };
+
+  const handlePageClick = (event, value) => {
+    setCurrentPage(value);
   };
 
   const openInPopup = (item) => {
@@ -256,81 +113,89 @@ export const PriceList = () => {
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
-        <ErrorMessage errRef={errRef} errMsg={errMsg} />
         <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
-          <Box display="flex">
-            <Box flexGrow={0.9}>
-              <FormControl
-                sx={{ minWidth: "200px", marginLeft: "1em" }}
-                size="small"
-              >
-                <InputLabel id="demo-simple-select-label">Filter By</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  name="values"
-                  label="Filter By"
-                  value={filterSelectedQuerys}
-                  onChange={(event) => handleInputChange(event)}
+          <Box sx={{ flexGrow: 1, p: 2 }}>
+            <Grid
+              container
+              spacing={2}
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              {/* Search Component and Filter */}
+              <Grid item xs={12} sm={6} md={4} lg={4}>
+                <Box
                   sx={{
-                    "& .MuiSelect-iconOutlined": {
-                      display: filterSelectedQuerys ? "none" : "",
-                    },
-                    "&.Mui-focused .MuiIconButton-root": {
-                      color: "primary.main",
-                    },
+                    display: "flex",
+                    width: "100%",
+                    mt: 1,
+                    alignItems: "center",
                   }}
-                  endAdornment={
-                    <IconButton
-                      sx={{
-                        visibility: filterSelectedQuerys ? "visible" : "hidden",
-                      }}
-                      onClick={getResetData}
-                    >
-                      <ClearIcon />
-                    </IconButton>
-                  }
                 >
-                  <MenuItem value={"valid"}>valid</MenuItem>
-                  <MenuItem value={"expired"}>expired</MenuItem>
-                  {/* <MenuItem value={"search"}>Search</MenuItem> */}
-                </Select>
-              </FormControl>
-              {filterSelectedQuerys !== "valid" &&
-                filterSelectedQuerys !== "expired" && (
-                  <CustomSearch
-                    filterSelectedQuery={searchQuery}
-                    handleInputChange={handleInputChanges}
-                    getResetData={getResetDataSearch}
+                  <CustomAutocomplete
+                    sx={{ flexGrow: 1, mr: 1 }} // Give it flexibility to grow and a margin to the right
+                    size="small"
+                    value={filterQuery}
+                    onChange={(event, value) => handleFilter(value)}
+                    options={Filter_Option}
+                    getOptionLabel={(option) => option}
+                    label="Filter By Description"
                   />
-                )}
-            </Box>
-            <Box flexGrow={2}>
-              <h3
-                style={{
-                  textAlign: "left",
-                  marginBottom: "1em",
-                  fontSize: "24px",
-                  color: "rgb(34, 34, 34)",
-                  fontWeight: 800,
-                }}
+                  <SearchComponent
+                    sx={{ flexGrow: 1 }} // Allow SearchComponent to also take up available space
+                    onSearch={handleSearch}
+                    onReset={handleReset}
+                  />
+                </Box>
+              </Grid>
+
+              {/* Title Text */}
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={4}
+                lg={4}
+                sx={{ textAlign: "center" }}
               >
-                Price List
-              </h3>
-            </Box>
-            <Box flexGrow={0.5} align="right">
-              <Button
-                onClick={() => setOpenPopup2(true)}
-                variant="contained"
-                color="success"
-                startIcon={<AddIcon />}
+                <h3
+                  style={{
+                    margin: 0,
+                    fontSize: "24px",
+                    color: "rgb(34, 34, 34)",
+                    fontWeight: 800,
+                  }}
+                >
+                  Price List
+                </h3>
+              </Grid>
+
+              {/* Add Button */}
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                lg={4}
+                sx={{ display: "flex", justifyContent: "flex-end" }}
               >
-                Add
-              </Button>
-            </Box>
+                <Button
+                  onClick={() => setOpenPopup2(true)}
+                  variant="contained"
+                  color="success"
+                >
+                  Add
+                </Button>
+              </Grid>
+            </Grid>
           </Box>
           <CustomTable
             headers={Tableheaders}
@@ -355,6 +220,9 @@ export const PriceList = () => {
           getPriceList={getPriceList}
           setOpenPopup={setOpenPopup2}
           product={product}
+          currentPage={currentPage}
+          filterQuery={filterQuery}
+          searchQuery={searchQuery}
         />
       </Popup>
       <Popup
@@ -367,8 +235,13 @@ export const PriceList = () => {
           setOpenPopup={setOpenPopup}
           getPriceList={getPriceList}
           product={product}
+          currentPage={currentPage}
+          filterQuery={filterQuery}
+          searchQuery={searchQuery}
         />
       </Popup>
     </>
   );
 };
+
+const Filter_Option = ["valid", "expired"];

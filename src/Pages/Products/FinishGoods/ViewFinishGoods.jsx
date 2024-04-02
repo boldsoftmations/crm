@@ -302,7 +302,7 @@ export const ViewFinishGoods = () => {
                   data={exportData}
                   headers={headers}
                   ref={csvLinkRef}
-                  filename="Product Code.csv"
+                  filename="Finish Goods.csv"
                   target="_blank"
                   style={{
                     textDecoration: "none",

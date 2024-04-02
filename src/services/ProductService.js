@@ -198,34 +198,22 @@ const updateRawMaterials = (id, data) => {
   return CustomAxios.patch(`/api/product/raw-materials/${id}`, data);
 };
 
-const getAllPriceList = () => {
-  return CustomAxios.get("/api/product/pricelist/");
-};
-
-const getAllPaginatePriceList = (filter, all) => {
-  return CustomAxios.get(`/api/product/pricelist/?${filter}=${all}`);
-};
-
-const getAllSearchPriceList = (type, search) => {
-  return CustomAxios.get(`/api/product/pricelist/?${type}=${search}`);
-};
-
-const getAllPriceListPaginate = (currentPage, type, search) => {
-  return CustomAxios.get(
-    `/api/product/pricelist/?page=${currentPage}&${type}=${search}`
-  );
-};
-
-const getPriceListPaginate = (currentPage) => {
-  return CustomAxios.get(`/api/product/pricelist/?page=${currentPage}`);
+const getAllPriceList = (page, filterQuery, searchQuery) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (filterQuery) {
+    params.append("validity", filterQuery);
+  }
+  if (searchQuery) {
+    params.append("search", searchQuery);
+  }
+  return CustomAxios.get(`api/product/pricelist/?${params.toString()}`);
 };
 
 const createPriceList = (data) => {
   return CustomAxios.post("/api/product/pricelist/", data);
-};
-
-const getPriceListById = (id) => {
-  return CustomAxios.get(`/api/product/pricelist/${id}`);
 };
 
 const getAllValidPriceList = (all) => {
@@ -274,12 +262,7 @@ const ProductService = {
   createRawMaterials,
   updateRawMaterials,
   getAllPriceList,
-  getAllPaginatePriceList,
-  getAllSearchPriceList,
-  getAllPriceListPaginate,
-  getPriceListPaginate,
   createPriceList,
-  getPriceListById,
   getAllValidPriceList,
   updatePriceList,
   getAllProduct,

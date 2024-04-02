@@ -544,7 +544,7 @@ export const SalesInvoiceView = () => {
                   <StyledTableCell align="center">
                     PROFORMA INVOICE LIST
                   </StyledTableCell>
-
+                  <StyledTableCell align="center">PROFIT/LOSS</StyledTableCell>
                   <StyledTableCell align="center">Action</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -724,6 +724,7 @@ function Row(props) {
         <StyledTableCell align="center">{row.gst}</StyledTableCell>
         <StyledTableCell align="center">{row.total}</StyledTableCell>
         <StyledTableCell align="center">{row.company}</StyledTableCell>
+
         {row.proforma_invoice_list !== null ? (
           <StyledTableCell align="center">
             {`${row.proforma_invoice_list},`}
@@ -731,6 +732,9 @@ function Row(props) {
         ) : (
           <StyledTableCell align="center"></StyledTableCell>
         )}
+        <StyledTableCell align="center">
+          {row.profit_or_loss_pct}
+        </StyledTableCell>
         <StyledTableCell align="center">
           <Button variant="text" onClick={() => openInPopup(row.invoice_no)}>
             View

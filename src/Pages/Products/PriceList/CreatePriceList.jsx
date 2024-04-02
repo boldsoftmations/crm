@@ -1,22 +1,27 @@
 import { Box, Button, Grid } from "@mui/material";
-
-import React, { useRef, useState } from "react";
-
+import React, { useState } from "react";
 import ProductService from "../../../services/ProductService";
-
-import "../../CommonStyle.css";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const CreatePriceList = (props) => {
-  const { setOpenPopup, getPriceList, product } = props;
+  const {
+    setOpenPopup,
+    getPriceList,
+    product,
+    currentPage,
+    filterQuery,
+    searchQuery,
+  } = props;
   const [inputValue, setInputValue] = useState([]);
   const [open, setOpen] = useState(false);
-  const errRef = useRef();
-  const [errMsg, setErrMsg] = useState("");
-  const [productName, setProductName] = useState([]);
   const [validation, setValidation] = useState();
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setInputValue({ ...inputValue, [name]: value });
@@ -31,7 +36,7 @@ export const CreatePriceList = (props) => {
       setValidation(validate);
       console.log("validate", validation);
       const req = {
-        product: productName,
+        product: inputValue.product,
         slab1: inputValue.slab1,
         slab1_price: inputValue.slab1_price,
         slab2: inputValue.slab2,
@@ -42,32 +47,30 @@ export const CreatePriceList = (props) => {
       };
 
       setOpen(true);
-      await ProductService.createPriceList(req);
+      const response = await ProductService.createPriceList(req);
+      const successMessage =
+        response.data.message || "Price List Updated successfully";
+      handleSuccess(successMessage);
 
-      setOpenPopup(false);
-      setOpen(false);
-      getPriceList();
-    } catch (err) {
-      setOpen(false);
-      if (!err.response) {
-        setErrMsg("No Server Response");
-      } else if (err.response.status === 400) {
-        setErrMsg(
-          err.response.data.errors.name
-            ? err.response.data.errors.name
-            : err.response.data.errors.non_field_errors
-        );
-      } else if (err.response.status === 401) {
-        setErrMsg(err.response.data.errors.code);
-      } else {
-        setErrMsg("Server Error");
-      }
-      errRef.current.focus();
+      setTimeout(() => {
+        setOpenPopup(false);
+        getPriceList(currentPage, filterQuery, searchQuery);
+      }, 300);
+    } catch (error) {
+      handleError(error); // Handle errors from the API call
+    } finally {
+      setOpen(false); // Always close the loader
     }
   };
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
       <Box
         component="form"
@@ -75,34 +78,19 @@ export const CreatePriceList = (props) => {
         onSubmit={(e) => createPriceListDetails(e)}
       >
         <Grid container spacing={2}>
-          <p
-            style={{
-              width: "100%",
-              padding: 10,
-              marginBottom: 10,
-              borderRadius: 4,
-              backgroundColor: errMsg ? "red" : "offscreen",
-              textAlign: "center",
-              color: "white",
-              textTransform: "capitalize",
-            }}
-            ref={errRef}
-            className={errMsg ? "errmsg" : "offscreen"}
-            aria-live="assertive"
-          >
-            {errMsg}
-          </p>
           <Grid item xs={12}>
             <CustomAutocomplete
               sx={{
                 minWidth: 180,
               }}
               size="small"
-              onChange={(e, value) => setProductName(value)}
-              name="productName"
+              onChange={(event, newValue) => {
+                setInputValue((prev) => ({ ...prev, product: newValue }));
+              }}
+              value={inputValue.product}
               options={product.map((option) => option.name)}
               getOptionLabel={(option) => `${option ? option : "No Options"}`}
-              label="Product Name"
+              label="Product"
             />
           </Grid>
           <Grid item xs={12} sm={6}>
