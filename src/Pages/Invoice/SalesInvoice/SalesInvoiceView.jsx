@@ -221,9 +221,9 @@ export const SalesInvoiceView = () => {
       if (currentPage) {
         const response =
           await InvoiceServices.getSalesInvoiceDataWithPagination(
-            currentPage,
             StartDate,
-            EndDate
+            EndDate,
+            currentPage
           );
         setSalesInvoiceData(response.data.results);
         const total = response.data.count;
@@ -544,7 +544,9 @@ export const SalesInvoiceView = () => {
                   <StyledTableCell align="center">
                     PROFORMA INVOICE LIST
                   </StyledTableCell>
-                  <StyledTableCell align="center">PROFIT/LOSS</StyledTableCell>
+                  <StyledTableCell align="center">
+                    PROFIT/LOSS %
+                  </StyledTableCell>
                   <StyledTableCell align="center">Action</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -764,7 +766,7 @@ function Row(props) {
                     <TableCell align="center">PRODUCT CODE</TableCell>
                     <TableCell align="center">QUANTITY</TableCell>
                     <TableCell align="center">AMOUNT</TableCell>
-                    <TableCell align="center">PROFIT/LOSS</TableCell>
+                    <TableCell align="center">PROFIT/LOSS(PER UNIT)</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
