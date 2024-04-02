@@ -58,7 +58,7 @@ export const CreateRawMaterials = (props) => {
         unit: formData.unit,
         color: formData.color,
         brand: formData.brand,
-        productcode: formData.productCode,
+        productcode: formData.productcode,
         description: description,
         shelf_life: formData.shelf_life,
         hsn_code: formData.hsn_code,
