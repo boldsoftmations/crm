@@ -130,6 +130,7 @@ export const CreateCustomerProformaInvoice = (props) => {
       console.log("Error fetching seller account data:", error);
     }
   };
+
   const getContactsDetailsByID = async () => {
     try {
       const [contactResponse, warehouseResponse] = await Promise.all([

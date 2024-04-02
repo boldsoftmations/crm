@@ -1,114 +1,82 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { Box, Grid, Button } from "@mui/material";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
+
+function searchArrayByKey(array, key, searchValue, returnValue) {
+  for (let i = 0; i < array.length; i++) {
+    if (array[i][key] === searchValue) {
+      return array[i][returnValue];
+    }
+  }
+}
+
 export const UpdateFinishGoods = (props) => {
-  const { recordForEdit, setOpenPopup, getFinishGoods } = props;
-  const [finishGoods, setFinishGoods] = useState([]);
-  const [basicUnit, setBasicUnit] = useState([]);
-  const [brand, setBrand] = useState([]);
-  const [color, setColor] = useState([]);
-  const [productCode, setProductCode] = useState([]);
-  const [unit, setUnit] = useState([]);
-  const [shelfLife, setShelfLife] = useState("");
-  const [packingUnit, setPackingUnit] = useState([]);
+  const {
+    recordForEdit,
+    setOpenPopup,
+    getFinishGoods,
+    currentPage,
+    searchQuery,
+  } = props;
 
-  const errRef = useRef();
-  const [errMsg, setErrMsg] = useState("");
-
+  const [formData, setFormData] = useState(recordForEdit);
+  console.log("formData", formData);
+  console.log("recordForEdit", recordForEdit);
   const [open, setOpen] = useState(false);
-  const user = useSelector((state) => state.auth);
-  const brandData = user.brandAllData;
-  const colorData = user.colourAllData;
-  const packingUnitData = user.packingunitAllData;
-  const productCodeData = user.productCodeAllData;
-  const allBasicUnit = user.basicunitAllData;
-  const unitData = user.unitAllData;
+  const {
+    brandAllData,
+    colourAllData,
+    packingunitAllData,
+    productCodeAllData,
+    basicunitAllData,
+    unitAllData,
+  } = useSelector((state) => state.auth);
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
-  const productCodeValue = productCode.productcode
-    ? productCode.productcode
-    : productCode;
-  const brandValue = brand.brand ? brand.brand : brand;
-  const colorValue = color.color ? color.color : color;
-  const packingUnitValue = packingUnit.packing_unit
-    ? packingUnit.packing_unit
-    : packingUnit;
-  const unitValue = unit.unit ? unit.unit : unit;
-  const basicUnitValue = basicUnit.basic_unit
-    ? basicUnit.basic_unit
-    : basicUnit;
-
-  function searchBrand(nameKey, myArray) {
-    for (var i = 0; i < myArray.length; i++) {
-      if (myArray[i].name === nameKey) {
-        return myArray[i].short_name;
-      }
-    }
-  }
-
-  var shortName = searchBrand(brandValue, brandData);
-
-  function getDescription(nameKey, myArray) {
-    for (var i = 0; i < myArray.length; i++) {
-      if (myArray[i].code === nameKey) {
-        return myArray[i].description;
-      }
-    }
-  }
-
-  var description = getDescription(productCodeValue, productCodeData);
-
-  function packingUnitShortName(nameKey, myArray) {
-    for (var i = 0; i < myArray.length; i++) {
-      if (myArray[i].name === nameKey) {
-        return myArray[i].short_name;
-      }
-    }
-  }
-
-  const getPackingUnitShortName = packingUnitShortName(
-    packingUnitValue,
-    packingUnitData
+  const shortName = searchArrayByKey(
+    brandAllData,
+    "name",
+    formData.brand,
+    "short_name"
+  );
+  const description = searchArrayByKey(
+    productCodeAllData,
+    "code",
+    formData.productcode,
+    "description"
+  );
+  const getPackingUnitShortName = searchArrayByKey(
+    packingunitAllData,
+    "name",
+    formData.packing_unit,
+    "short_name"
   );
 
-  const productName = `${productCodeValue ? productCodeValue : ""}-${
-    colorValue ? colorValue : ""
-  }-${shortName ? shortName : ""}-${finishGoods.size ? finishGoods.size : ""}-${
-    finishGoods.unit_quantity ? finishGoods.unit_quantity : ""
-  }-${getPackingUnitShortName ? getPackingUnitShortName : ""}${
-    finishGoods.packing_unit_quantity ? finishGoods.packing_unit_quantity : ""
-  }`;
+  const productName = useMemo(() => {
+    const productNameParts = [
+      formData.productcode,
+      formData.color,
+      shortName,
+      formData.size,
+      formData.unit_quantity,
+      getPackingUnitShortName,
+      formData.packing_unit_quantity,
+    ];
 
-  const handleInputChange = (event) => {
+    return productNameParts.filter((part) => part).join("-");
+  }, [formData, shortName, getPackingUnitShortName]); // Add dependencies as needed
+
+  const handleInputChange = useCallback((event) => {
     const { name, value } = event.target;
-    if (name === "shelfLife") {
-      setShelfLife(value);
-    } else {
-      setFinishGoods({ ...finishGoods, [name]: value });
-    }
-  };
-
-  const getFinishGoodData = async (recordForEdit) => {
-    try {
-      setOpen(true);
-      const res = await ProductService.getFinishGoodsById(recordForEdit);
-      setFinishGoods(res.data);
-      setProductCode(res.data);
-      setBrand(res.data);
-      setColor(res.data);
-      setPackingUnit(res.data);
-      setUnit(res.data);
-      setShelfLife(res.data.shelf_life);
-      setBasicUnit(res.data);
-      setOpen(false);
-    } catch (error) {
-      console.log("error", error);
-      setOpen(false);
-    }
-  };
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+  }, []);
 
   const updateFinishGood = async (e) => {
     try {
@@ -116,93 +84,68 @@ export const UpdateFinishGoods = (props) => {
       setOpen(true);
       const data = {
         name: productName,
-        size: finishGoods.size,
-        basic_unit: basicUnitValue,
-        unit: unitValue,
-        unit_quantity: finishGoods.unit_quantity,
-        packing_unit: packingUnitValue,
-        packing_unit_quantity: finishGoods.packing_unit_quantity,
-        color: colorValue,
-        brand: brandValue,
-        productcode: productCodeValue,
+        size: formData.size,
+        basic_unit: formData.basic_unit,
+        unit: formData.unit,
+        unit_quantity: formData.unit_quantity,
+        packing_unit: formData.packing_unit,
+        packing_unit_quantity: formData.packing_unit_quantity,
+        color: formData.color,
+        brand: formData.brand,
+        productcode: formData.productcode,
         description: description,
-        shelf_life: shelfLife,
-        hsn_code: finishGoods.hsn_code,
-        gst: finishGoods.gst,
+        shelf_life: formData.shelf_life,
+        hsn_code: formData.hsn_code,
+        gst: formData.gst,
         cgst: GST,
         sgst: GST,
         type: "finished-goods",
       };
       if (recordForEdit) {
-        const res = await ProductService.updateFinishGoods(
-          finishGoods.id,
+        const response = await ProductService.updateFinishGoods(
+          formData.id,
           data
         );
-        console.log("res", res);
-        setOpenPopup(false);
+        const successMessage =
+          response.data.message || "Finish Goods updated successfully";
+        handleSuccess(successMessage);
 
-        setOpen(false);
-        getFinishGoods();
+        setTimeout(() => {
+          setOpenPopup(false);
+          getFinishGoods(currentPage, searchQuery);
+        }, 300);
       }
-    } catch (err) {
-      console.log("error update color :>> ", err);
-      setOpen(false);
-      if (!err.response) {
-        setErrMsg("No Server Response");
-      } else if (err.response.status === 400) {
-        setErrMsg(
-          err.response.data.errors.name
-            ? err.response.data.errors.name
-            : err.response.data.errors.non_field_errors
-        );
-      } else if (err.response.status === 401) {
-        setErrMsg(err.response.data.errors.code);
-      } else {
-        setErrMsg("Server Error");
-      }
-      errRef.current.focus();
+    } catch (error) {
+      handleError(error); // Handle errors from the API call
+    } finally {
+      setOpen(false); // Always close the loader
     }
   };
 
-  useEffect(() => {
-    if (recordForEdit) getFinishGoodData(recordForEdit);
-  }, [recordForEdit]);
-
-  const GST = JSON.stringify(finishGoods.gst / 2);
+  const GST = JSON.stringify(formData.gst / 2);
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Box component="form" noValidate onSubmit={(e) => updateFinishGood(e)}>
         <Grid container spacing={2}>
-          <p
-            style={{
-              width: "100%",
-              padding: 10,
-              marginBottom: 10,
-              borderRadius: 4,
-              backgroundColor: errMsg ? "red" : "offscreen",
-              textAlign: "center",
-              color: "white",
-              textTransform: "capitalize",
-            }}
-            ref={errRef}
-            className={errMsg ? "errmsg" : "offscreen"}
-            aria-live="assertive"
-          >
-            {errMsg}
-          </p>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               size="small"
               label="Name"
               variant="outlined"
-              value={finishGoods.name ? finishGoods.name : ""}
+              value={formData.name || ""}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               name="Name"
@@ -213,59 +156,65 @@ export const UpdateFinishGoods = (props) => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               sx={{
                 minWidth: 220,
               }}
               size="small"
-              value={basicUnitValue ? basicUnitValue : ""}
-              onChange={(event, value) => setBasicUnit(value)}
-              options={allBasicUnit.map((option) => option.name)}
+              value={formData.basic_unit || ""}
+              onChange={(event, newValue) => {
+                setFormData((prev) => ({ ...prev, basic_unit: newValue }));
+              }}
+              options={basicunitAllData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label="Basic Unit"
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               sx={{
                 minWidth: 220,
               }}
               size="small"
-              value={unitValue ? unitValue : ""}
-              onChange={(e, value) => setUnit(value)}
-              options={unitData.map((option) => option.name)}
+              value={formData.unit || ""}
+              onChange={(event, newValue) => {
+                setFormData((prev) => ({ ...prev, unit: newValue }));
+              }}
+              options={unitAllData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label={"Unit"}
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               sx={{
                 minWidth: 220,
               }}
               size="small"
-              value={packingUnitValue ? packingUnitValue : ""}
-              onChange={(e, value) => setPackingUnit(value)}
-              options={packingUnitData.map((option) => option.name)}
+              value={formData.packing_unit || ""}
+              onChange={(event, newValue) => {
+                setFormData((prev) => ({ ...prev, packing_unit: newValue }));
+              }}
+              options={packingunitAllData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label={" Packing Unit"}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               name="unit_quantity"
               size="small"
               label="Unit Quantity"
               variant="outlined"
-              value={finishGoods.unit_quantity ? finishGoods.unit_quantity : ""}
+              value={formData.unit_quantity || ""}
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               name="packing_unit_quantity"
@@ -273,99 +222,106 @@ export const UpdateFinishGoods = (props) => {
               label="Packing Unit Quantity"
               variant="outlined"
               value={
-                finishGoods.packing_unit_quantity
-                  ? finishGoods.packing_unit_quantity
+                formData.packing_unit_quantity
+                  ? formData.packing_unit_quantity
                   : ""
               }
               onChange={handleInputChange}
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               sx={{
                 minWidth: 220,
               }}
               size="small"
-              value={colorValue ? colorValue : ""}
-              onChange={(event, value) => setColor(value)}
-              options={colorData.map((option) => option.name)}
+              value={formData.color || ""}
+              onChange={(event, newValue) => {
+                setFormData((prev) => ({ ...prev, color: newValue }));
+              }}
+              options={colourAllData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label={"Colour"}
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               sx={{
                 minWidth: 220,
               }}
               size="small"
-              value={brandValue ? brandValue : ""}
-              onChange={(event, value) => setBrand(value)}
-              options={brandData.map((option) => option.name)}
+              value={formData.brand || ""}
+              onChange={(event, newValue) => {
+                setFormData((prev) => ({ ...prev, brand: newValue }));
+              }}
+              options={brandAllData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label="Brand"
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               sx={{
                 minWidth: 220,
               }}
               size="small"
-              value={productCodeValue ? productCodeValue : ""}
-              onChange={(event, value) => setProductCode(value)}
-              options={productCodeData.map((option) => option.code)}
+              value={formData.productcode || ""}
+              onChange={(event, newValue) => {
+                setFormData((prev) => ({ ...prev, productcode: newValue }));
+              }}
+              options={productCodeAllData.map((option) => option.code)}
               getOptionLabel={(option) => `${option}`}
               label="Product Code"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               size="small"
               label="Description"
               variant="outlined"
-              value={description ? description : ""}
+              value={description || ""}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               size="small"
-              type="number"
-              name="shelfLife"
-              label="Shelf Life (Months)"
+              type="month"
+              name="shelf_life"
+              label="Shelf Life (Month/Year)"
               variant="outlined"
-              value={shelfLife}
-              onChange={(e) => setShelfLife(e.target.value)}
+              value={formData.shelf_life || ""}
+              onChange={handleInputChange}
+              InputLabelProps={{ shrink: true }} // Ensures the label doesn't overlap the input value
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               name="size"
               size="small"
               label="Size"
               variant="outlined"
-              value={finishGoods.size ? finishGoods.size : ""}
+              value={formData.size || ""}
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               name="hsn_code"
               size="small"
               label="Hsn Code"
               variant="outlined"
-              value={finishGoods.hsn_code ? finishGoods.hsn_code : ""}
+              value={formData.hsn_code || ""}
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               name="gst"
@@ -373,11 +329,11 @@ export const UpdateFinishGoods = (props) => {
               size="small"
               label="IGST %"
               variant="outlined"
-              value={finishGoods.gst ? finishGoods.gst : ""}
+              value={formData.gst || ""}
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               size="small"
@@ -386,7 +342,7 @@ export const UpdateFinishGoods = (props) => {
               value={GST ? `${GST}%` : ""}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
               size="small"

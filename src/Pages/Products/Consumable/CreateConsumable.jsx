@@ -1,73 +1,57 @@
 import { Box, Button, Grid } from "@mui/material";
-
-import React, { useEffect, useRef, useState } from "react";
-
+import React, { useCallback, useState } from "react";
 import ProductService from "../../../services/ProductService";
-
-import "../../CommonStyle.css";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+
+function searchArrayByKey(array, key, searchValue, returnValue) {
+  for (let i = 0; i < array.length; i++) {
+    if (array[i][key] === searchValue) {
+      return array[i][returnValue];
+    }
+  }
+}
 
 export const CreateConsumable = (props) => {
-  const { setOpenPopup, getconsumables } = props;
-  const [description, setDescription] = useState([]);
-  const [allDescription, seAllDescription] = useState([]);
-  const [brand, setBrand] = useState([]);
-  const [unit, setUnit] = useState([]);
-  const [consumable, setConsumable] = useState([]);
+  const {
+    setOpenPopup,
+    getconsumables,
+    descriptionOptions,
+    currentPage,
+    searchQuery,
+  } = props;
+  const [formData, setFormData] = useState([]);
   const [open, setOpen] = useState(false);
-  const [shelfLife, setShelfLife] = useState([]);
+  const { brandAllData, unitAllData } = useSelector((state) => state.auth);
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
-  const errRef = useRef();
-  const [errMsg, setErrMsg] = useState("");
-  const user = useSelector((state) => state.auth);
-  const brandData = user.brandAllData;
-  const unitData = user.unitAllData;
-  const handleInputChange = (event) => {
+  const handleInputChange = useCallback((event) => {
     const { name, value } = event.target;
-    if (name === "shelfLife") {
-      setShelfLife(value);
-    } else {
-      setConsumable({ ...consumable, [name]: value });
-    }
-  };
-  function searchBrand(nameKey, myArray) {
-    for (var i = 0; i < myArray.length; i++) {
-      if (myArray[i].name === nameKey) {
-        return myArray[i].short_name;
-      }
-    }
-  }
-
-  var shortName = searchBrand(brand, brandData);
-
-  function searchAutoNumber(nameKey, myArray) {
-    for (var i = 0; i < myArray.length; i++) {
-      if (myArray[i].name === nameKey) {
-        return myArray[i].auto_number;
-      }
-    }
-  }
-
-  var autoNumber = searchAutoNumber(description, allDescription);
-  const productName = `${description ? description : ""}-${
-    autoNumber ? autoNumber : ""
-  }-${shortName ? shortName : ""}`;
-
-  useEffect(() => {
-    getYesDescriptionData();
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   }, []);
 
-  const getYesDescriptionData = async () => {
-    try {
-      const res = await ProductService.getYesDescription();
-      seAllDescription(res.data);
-    } catch (error) {
-      console.log("error in Description Api", error);
-    }
-  };
+  const shortName = searchArrayByKey(
+    brandAllData,
+    "name",
+    formData.brand,
+    "short_name"
+  );
+
+  const autoNumber = searchArrayByKey(
+    descriptionOptions,
+    "name",
+    formData.description,
+    "short_name"
+  );
+
+  const productName = `${formData.description || ""}-${
+    autoNumber ? autoNumber : ""
+  }-${shortName ? shortName : ""}`;
 
   const createconsumable = async (e) => {
     try {
@@ -75,68 +59,47 @@ export const CreateConsumable = (props) => {
       setOpen(true);
       const data = {
         name: productName,
-        description: description,
-        unit: unit,
-        brand: brand,
-        size: consumable.size,
-        additional_description: consumable.addDsc,
-        shelf_life: shelfLife,
-        hsn_code: consumable.hsn_code,
-        gst: consumable.gst,
+        description: formData.description,
+        unit: formData.unit,
+        brand: formData.brand,
+        size: formData.size,
+        additional_description: formData.addDsc,
+        shelf_life: formData.shelf_life,
+        hsn_code: formData.hsn_code,
+        gst: formData.gst,
         cgst: GST,
         sgst: GST,
         type: "consumables",
       };
-      await ProductService.createConsumable(data);
+      const response = await ProductService.createConsumable(data);
+      const successMessage =
+        response.data.message || "Product Code Created successfully";
+      handleSuccess(successMessage);
 
-      setOpenPopup(false);
-      setOpen(false);
-      getconsumables();
-    } catch (err) {
-      console.log("error update color :>> ", err);
-      setOpen(false);
-      if (!err.response) {
-        setErrMsg("No Server Response");
-      } else if (err.response.status === 400) {
-        setErrMsg(
-          err.response.data.errors.name
-            ? err.response.data.errors.name
-            : err.response.data.errors.non_field_errors
-        );
-      } else if (err.response.status === 401) {
-        setErrMsg(err.response.data.errors.code);
-      } else {
-        setErrMsg("Server Error");
-      }
-      errRef.current.focus();
+      setTimeout(() => {
+        setOpenPopup(false);
+        getconsumables(currentPage, searchQuery);
+      }, 300);
+    } catch (error) {
+      handleError(error); // Handle errors from the API call
+    } finally {
+      setOpen(false); // Always close the loader
     }
   };
-  const GST = consumable.gst / 2;
+  const GST = formData.gst / 2;
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Box component="form" noValidate onSubmit={(e) => createconsumable(e)}>
         <Grid container spacing={2}>
-          <p
-            style={{
-              width: "100%",
-              padding: 10,
-              marginBottom: 10,
-              borderRadius: 4,
-              backgroundColor: errMsg ? "red" : "offscreen",
-              textAlign: "center",
-              color: "white",
-              textTransform: "capitalize",
-            }}
-            ref={errRef}
-            className={errMsg ? "errmsg" : "offscreen"}
-            aria-live="assertive"
-          >
-            {errMsg}
-          </p>
-
           <Grid item xs={12}>
             <CustomTextField
               fullWidth
@@ -154,9 +117,10 @@ export const CreateConsumable = (props) => {
                 minWidth: 220,
               }}
               size="small"
-              onChange={(event, value) => setDescription(value)}
-              name="description"
-              options={allDescription.map((option) => option.name)}
+              onChange={(event, newValue) => {
+                setFormData((prev) => ({ ...prev, description: newValue }));
+              }}
+              options={descriptionOptions.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label="description"
             />
@@ -164,12 +128,14 @@ export const CreateConsumable = (props) => {
           <Grid item xs={12} sm={6}>
             <CustomTextField
               fullWidth
-              name="addDsc"
               size="small"
-              label="Additional Description"
+              type="month"
+              name="shelf_life"
+              label="Shelf Life (Month/Year)"
               variant="outlined"
-              value={consumable.addDsc}
+              value={formData.shelf_life || ""}
               onChange={handleInputChange}
+              InputLabelProps={{ shrink: true }} // Ensures the label doesn't overlap the input value
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -180,7 +146,7 @@ export const CreateConsumable = (props) => {
               name="shelfLife"
               label="Shelf Life (Months)"
               variant="outlined"
-              value={shelfLife ? shelfLife : ""}
+              value={formData.shelf_life}
               onChange={handleInputChange}
             />
           </Grid>
@@ -190,8 +156,10 @@ export const CreateConsumable = (props) => {
                 minWidth: 220,
               }}
               size="small"
-              onChange={(event, value) => setUnit(value)}
-              options={unitData.map((option) => option.name)}
+              onChange={(event, newValue) => {
+                setFormData((prev) => ({ ...prev, unit: newValue }));
+              }}
+              options={unitAllData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label="Unit"
             />
@@ -202,8 +170,10 @@ export const CreateConsumable = (props) => {
                 minWidth: 220,
               }}
               size="small"
-              onChange={(event, value) => setBrand(value)}
-              options={brandData.map((option) => option.name)}
+              onChange={(event, newValue) => {
+                setFormData((prev) => ({ ...prev, brand: newValue }));
+              }}
+              options={brandAllData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label="Brand"
             />
@@ -215,7 +185,7 @@ export const CreateConsumable = (props) => {
               size="small"
               label="size"
               variant="outlined"
-              value={consumable.size}
+              value={formData.size}
               onChange={handleInputChange}
             />
           </Grid>
@@ -227,7 +197,7 @@ export const CreateConsumable = (props) => {
               size="small"
               label="Hsn Code"
               variant="outlined"
-              value={consumable.hsn_code}
+              value={formData.hsn_code}
               onChange={handleInputChange}
             />
           </Grid>
@@ -238,7 +208,7 @@ export const CreateConsumable = (props) => {
               size="small"
               label="IGST %"
               variant="outlined"
-              value={consumable.gst}
+              value={formData.gst}
               onChange={handleInputChange}
             />
           </Grid>

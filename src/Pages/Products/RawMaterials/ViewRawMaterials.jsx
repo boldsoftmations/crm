@@ -111,7 +111,7 @@ export const ViewRawMaterials = () => {
 
   const getBrandList = async () => {
     try {
-      const res = await ProductService.getAllPaginateBrand("all");
+      const res = await ProductService.getAllBrand("all");
       dispatch(getBrandData(res.data));
     } catch (err) {
       console.log("error finishGoods :>> ", err);
@@ -120,7 +120,7 @@ export const ViewRawMaterials = () => {
 
   const getColours = async () => {
     try {
-      const res = await ProductService.getAllPaginateColour("all");
+      const res = await ProductService.getAllColour("all");
       dispatch(getColourData(res.data));
     } catch (err) {
       console.log("err Colour FinishGoods :>> ", err);
@@ -129,7 +129,7 @@ export const ViewRawMaterials = () => {
 
   const getproductCodes = async () => {
     try {
-      const res = await ProductService.getAllPaginateProductCode("all");
+      const res = await ProductService.getAllProductCode("all");
       dispatch(getProductCodeData(res.data));
     } catch (err) {
       console.log("error ProductCode finishGoods", err);
@@ -138,7 +138,7 @@ export const ViewRawMaterials = () => {
 
   const getUnits = async () => {
     try {
-      const res = await ProductService.getAllPaginateUnit("all");
+      const res = await ProductService.getAllUnit("all");
       dispatch(getUnitData(res.data));
     } catch (err) {
       console.log("error unit finishGoods", err);
