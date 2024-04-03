@@ -141,6 +141,8 @@ export const ViewBasicUnit = () => {
         <CreateBasicUnit
           getBasicUnit={getBasicUnit}
           setOpenPopup={setOpenPopup2}
+          currentPage={currentPage}
+          searchQuery={searchQuery}
         />
       </Popup>
       <Popup
@@ -152,6 +154,8 @@ export const ViewBasicUnit = () => {
           recordForEdit={recordForEdit}
           setOpenPopup={setOpenPopup}
           getBasicUnit={getBasicUnit}
+          currentPage={currentPage}
+          searchQuery={searchQuery}
         />
       </Popup>
     </>

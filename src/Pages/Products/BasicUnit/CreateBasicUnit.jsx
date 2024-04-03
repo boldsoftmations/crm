@@ -7,7 +7,7 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const CreateBasicUnit = (props) => {
-  const { setOpenPopup, getBasicUnit } = props;
+  const { setOpenPopup, getBasicUnit, currentPage, searchQuery } = props;
   const [brand, setBrand] = useState([]);
   const [open, setOpen] = useState(false);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -34,7 +34,7 @@ export const CreateBasicUnit = (props) => {
 
       setTimeout(() => {
         setOpenPopup(false);
-        getBasicUnit();
+        getBasicUnit(currentPage, searchQuery);
       }, 300);
     } catch (error) {
       handleError(error); // Handle errors from the API call

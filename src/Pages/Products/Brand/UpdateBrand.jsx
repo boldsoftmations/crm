@@ -7,7 +7,13 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const UpdateBrand = (props) => {
-  const { recordForEdit, setOpenPopup, getBrandList } = props;
+  const {
+    recordForEdit,
+    setOpenPopup,
+    getBrandList,
+    currentPage,
+    searchQuery,
+  } = props;
   const [open, setOpen] = useState(false);
   const [brand, setBrand] = useState(recordForEdit);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -36,7 +42,7 @@ export const UpdateBrand = (props) => {
 
         setTimeout(() => {
           setOpenPopup(false);
-          getBrandList();
+          getBrandList(currentPage, searchQuery);
         }, 300); // Adjust delay as needed
       }
     } catch (error) {

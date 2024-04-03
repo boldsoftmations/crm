@@ -19,7 +19,13 @@ import { MessageAlert } from "../../../Components/MessageAlert";
 // ];
 
 export const UpdateDescription = (props) => {
-  const { recordForEdit, setOpenPopup, getDescriptions } = props;
+  const {
+    recordForEdit,
+    setOpenPopup,
+    getDescriptions,
+    currentPage,
+    searchQuery,
+  } = props;
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState(recordForEdit);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -49,7 +55,7 @@ export const UpdateDescription = (props) => {
 
         setTimeout(() => {
           setOpenPopup(false);
-          getDescriptions();
+          getDescriptions(currentPage, searchQuery);
         }, 300);
       }
     } catch (error) {

@@ -7,7 +7,8 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const UpdateColor = (props) => {
-  const { recordForEdit, setOpenPopup, getColours } = props;
+  const { recordForEdit, setOpenPopup, getColours, currentPage, searchQuery } =
+    props;
   const [open, setOpen] = useState(false);
   const [colour, setColour] = useState(recordForEdit);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -33,7 +34,7 @@ export const UpdateColor = (props) => {
 
         setTimeout(() => {
           setOpenPopup(false);
-          getColours();
+          getColours(currentPage, searchQuery);
         }, 300);
       }
     } catch (error) {

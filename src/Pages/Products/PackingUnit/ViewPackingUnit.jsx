@@ -140,6 +140,8 @@ export const ViewPackingUnit = () => {
         <CreatePackingUnit
           getPackingUnits={getPackingUnits}
           setOpenPopup={setOpenPopup2}
+          currentPage={currentPage}
+          searchQuery={searchQuery}
         />
       </Popup>
       <Popup
@@ -151,6 +153,8 @@ export const ViewPackingUnit = () => {
           recordForEdit={recordForEdit}
           setOpenPopup={setOpenPopup}
           getPackingUnits={getPackingUnits}
+          currentPage={currentPage}
+          searchQuery={searchQuery}
         />
       </Popup>
     </>

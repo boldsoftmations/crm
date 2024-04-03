@@ -7,7 +7,7 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const CreateColor = (props) => {
-  const { setOpenPopup, getColours } = props;
+  const { setOpenPopup, getColours, currentPage, searchQuery } = props;
   const [colour, setColour] = useState("");
   const [open, setOpen] = useState(false);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -28,7 +28,7 @@ export const CreateColor = (props) => {
 
       setTimeout(() => {
         setOpenPopup(false);
-        getColours();
+        getColours(currentPage, searchQuery);
       }, 300);
     } catch (error) {
       handleError(error); // Handle errors from the API call

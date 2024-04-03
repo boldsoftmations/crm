@@ -286,6 +286,8 @@ export const ViewConsumable = () => {
           getconsumables={getconsumables}
           setOpenPopup={setOpenPopup2}
           descriptionOptions={descriptionOptions}
+          currentPage={currentPage}
+          searchQuery={searchQuery}
         />
       </Popup>
       <Popup

@@ -7,7 +7,13 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const UpdatePackingUnit = (props) => {
-  const { recordForEdit, setOpenPopup, getPackingUnits } = props;
+  const {
+    recordForEdit,
+    setOpenPopup,
+    getPackingUnits,
+    currentPage,
+    searchQuery,
+  } = props;
   const [open, setOpen] = useState(false);
   const [packingUnit, setPackingUnit] = useState(recordForEdit);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -37,7 +43,7 @@ export const UpdatePackingUnit = (props) => {
 
         setTimeout(() => {
           setOpenPopup(false);
-          getPackingUnits();
+          getPackingUnits(currentPage, searchQuery);
         }, 300);
       }
     } catch (error) {

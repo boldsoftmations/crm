@@ -209,6 +209,8 @@ export const ViewDescription = () => {
         <CreateDescription
           getDescriptions={getDescriptions}
           setOpenPopup={setOpenPopup2}
+          currentPage={currentPage}
+          searchQuery={searchQuery}
         />
       </Popup>
       <Popup
@@ -220,6 +222,8 @@ export const ViewDescription = () => {
           recordForEdit={recordForEdit}
           setOpenPopup={setOpenPopup}
           getDescriptions={getDescriptions}
+          currentPage={currentPage}
+          searchQuery={searchQuery}
         />
       </Popup>
     </>

@@ -7,7 +7,7 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const CreateBrand = (props) => {
-  const { setOpenPopup, getBrandList } = props;
+  const { setOpenPopup, getBrandList, currentPage, searchQuery } = props;
   const [brand, setBrand] = useState([]);
   const [open, setOpen] = useState(false);
   const {
@@ -38,7 +38,7 @@ export const CreateBrand = (props) => {
 
       setTimeout(() => {
         setOpenPopup(false);
-        getBrandList();
+        getBrandList(currentPage, searchQuery);
       }, 300); // Adjust delay as needed
     } catch (error) {
       handleError(error); // Handle errors from the API call

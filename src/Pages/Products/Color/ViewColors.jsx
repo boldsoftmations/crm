@@ -137,6 +137,8 @@ export const ViewColors = () => {
         title={"Create Colour"}
         openPopup={openPopup2}
         setOpenPopup={setOpenPopup2}
+        currentPage={currentPage}
+        searchQuery={searchQuery}
       >
         <CreateColor getColours={getColours} setOpenPopup={setOpenPopup2} />
       </Popup>
@@ -149,6 +151,8 @@ export const ViewColors = () => {
           recordForEdit={recordForEdit}
           setOpenPopup={setOpenPopup}
           getColours={getColours}
+          currentPage={currentPage}
+          searchQuery={searchQuery}
         />
       </Popup>
     </>

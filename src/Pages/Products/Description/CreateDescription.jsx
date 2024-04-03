@@ -28,7 +28,7 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 // ];
 
 export const CreateDescription = (props) => {
-  const { setOpenPopup, getDescriptions } = props;
+  const { setOpenPopup, getDescriptions, currentPage, searchQuery } = props;
   const [description, setDescription] = useState([]);
   const [open, setOpen] = useState(false);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -54,7 +54,7 @@ export const CreateDescription = (props) => {
 
       setTimeout(() => {
         setOpenPopup(false);
-        getDescriptions();
+        getDescriptions(currentPage, searchQuery);
       }, 300);
     } catch (error) {
       handleError(error); // Handle errors from the API call

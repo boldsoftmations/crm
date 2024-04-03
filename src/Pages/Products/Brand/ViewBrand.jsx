@@ -142,6 +142,8 @@ export const ViewBrand = () => {
         title={"Create Brand"}
         openPopup={openPopup2}
         setOpenPopup={setOpenPopup2}
+        currentPage={currentPage}
+        searchQuery={searchQuery}
       >
         <CreateBrand getBrandList={getBrandList} setOpenPopup={setOpenPopup2} />
       </Popup>
@@ -154,6 +156,8 @@ export const ViewBrand = () => {
           recordForEdit={recordForEdit}
           setOpenPopup={setOpenPopup}
           getBrandList={getBrandList}
+          currentPage={currentPage}
+          searchQuery={searchQuery}
         />
       </Popup>
     </>

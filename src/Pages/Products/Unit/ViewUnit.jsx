@@ -137,6 +137,8 @@ export const ViewUnit = () => {
         title={"Create Unit"}
         openPopup={openPopup2}
         setOpenPopup={setOpenPopup2}
+        currentPage={currentPage}
+        searchQuery={searchQuery}
       >
         <CreateUnit getUnits={getUnits} setOpenPopup={setOpenPopup2} />
       </Popup>
@@ -149,6 +151,8 @@ export const ViewUnit = () => {
           recordForEdit={recordForEdit}
           setOpenPopup={setOpenPopup}
           getUnits={getUnits}
+          currentPage={currentPage}
+          searchQuery={searchQuery}
         />
       </Popup>
     </>
