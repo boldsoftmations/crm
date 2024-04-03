@@ -257,6 +257,8 @@ export const StoresInventoryView = () => {
           setOpenPopup={setOpenPopup}
         >
           <StoresInventoryCreate
+            currentPage={currentPage}
+            searchQuery={searchQuery}
             setOpenPopup={setOpenPopup}
             getAllStoresInventoryDetails={getAllStoresInventoryDetails}
           />

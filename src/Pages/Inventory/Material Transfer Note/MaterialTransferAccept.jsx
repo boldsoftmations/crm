@@ -7,6 +7,9 @@ export const MaterialTransferAccept = ({
   materialTransferNoteByID,
   setOpenAcceptPopup,
   getAllMaterialTransferNoteDetails,
+  currentPage,
+  searchQuery,
+  acceptedFilter,
 }) => {
   const [open, setOpen] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
@@ -51,7 +54,11 @@ export const MaterialTransferAccept = ({
         req
       );
       setOpenAcceptPopup(false);
-      getAllMaterialTransferNoteDetails();
+      getAllMaterialTransferNoteDetails(
+        currentPage,
+        searchQuery,
+        acceptedFilter
+      );
       setOpen(false);
     } catch (error) {
       console.log("createing company detail error", error);

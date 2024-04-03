@@ -17,7 +17,13 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 export const BillofMaterialsCreate = (props) => {
-  const { setOpenPopup, getAllBillofMaterialsDetails } = props;
+  const {
+    setOpenPopup,
+    getAllBillofMaterialsDetails,
+    currentPage,
+    searchQuery,
+    filterApproved,
+  } = props;
   const [open, setOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState([]);
   const data = useSelector((state) => state.auth);
@@ -68,7 +74,7 @@ export const BillofMaterialsCreate = (props) => {
       await InventoryServices.createBillofMaterialsData(req);
       setOpenPopup(false);
       handleSuccess();
-      getAllBillofMaterialsDetails();
+      getAllBillofMaterialsDetails(currentPage, searchQuery, filterApproved);
     } catch (error) {
       handleError(error); // Handle errors from the API call
     } finally {

@@ -7,6 +7,7 @@ export const SafetyStockUpdate = ({
   setOpenPopup,
   selectedRow,
   onUpdateSuccess,
+  currentPage,
 }) => {
   const [quantity, setQuantity] = useState(selectedRow.quantity);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +25,7 @@ export const SafetyStockUpdate = ({
         ...selectedRow,
         quantity,
       });
-      onUpdateSuccess();
+      onUpdateSuccess(currentPage);
       setOpenPopup(false);
     } catch (error) {
       console.error("Error updating safety stock data:", error);

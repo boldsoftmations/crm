@@ -19,7 +19,14 @@ const Root = styled("div")(({ theme }) => ({
 }));
 
 export const BillofMaterialsUpdate = (props) => {
-  const { setOpenPopup, getAllBillofMaterialsDetails, idForEdit } = props;
+  const {
+    setOpenPopup,
+    getAllBillofMaterialsDetails,
+    idForEdit,
+    currentPage,
+    searchQuery,
+    filterApproved,
+  } = props;
   const [open, setOpen] = useState(false);
   const { consumableProduct, rawMaterialProduct } = useSelector(
     (state) => state.auth
@@ -46,14 +53,8 @@ export const BillofMaterialsUpdate = (props) => {
       })),
     [idForEdit]
   );
-  const {
-    handleSuccess,
-    handleError,
-    openSnackbar,
-    errorMessages,
-    currentErrorIndex,
-    handleCloseSnackbar,
-  } = useNotificationHandling();
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
   const {
     handleAutocompleteChange,
     handleFormChange,
@@ -75,7 +76,7 @@ export const BillofMaterialsUpdate = (props) => {
 
       setOpenPopup(false);
       handleSuccess();
-      getAllBillofMaterialsDetails();
+      getAllBillofMaterialsDetails(currentPage, searchQuery, filterApproved);
     } catch (error) {
       handleError(error); // Handle errors from the API call
     } finally {
@@ -86,10 +87,10 @@ export const BillofMaterialsUpdate = (props) => {
   return (
     <div>
       <MessageAlert
-        open={openSnackbar}
+        open={alertInfo.open}
         onClose={handleCloseSnackbar}
-        severity="error"
-        message={errorMessages[currentErrorIndex]}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
       />
       <CustomLoader open={open} />
 

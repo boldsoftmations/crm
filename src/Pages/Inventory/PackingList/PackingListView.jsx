@@ -290,6 +290,9 @@ export const PackingListView = () => {
         setOpenPopup={setOpenPopupCreateGrn}
       >
         <GRNCreate
+          currentPage={currentPage}
+          searchQuery={searchQuery}
+          acceptedFilter={acceptedFilter}
           setOpenPopup={setOpenPopupCreateGrn}
           idForEdit={idForEdit}
           getAllPackingListDetails={getAllPackingListDetails}

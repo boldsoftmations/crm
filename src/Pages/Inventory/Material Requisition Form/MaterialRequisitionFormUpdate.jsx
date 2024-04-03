@@ -24,6 +24,8 @@ export const MaterialRequisitionFormUpdate = (props) => {
     getAllMaterialRequisitionFormDetails,
     idForEdit,
     storesInventoryData,
+    currentPage,
+    searchQuery,
   } = props;
   const [open, setOpen] = useState(false);
   const data = useSelector((state) => state.auth);
@@ -72,7 +74,7 @@ export const MaterialRequisitionFormUpdate = (props) => {
       );
       setOpenPopup(false);
       handleSuccess();
-      getAllMaterialRequisitionFormDetails();
+      getAllMaterialRequisitionFormDetails(currentPage, searchQuery);
     } catch (error) {
       handleError(error); // Handle errors from the API call
     } finally {

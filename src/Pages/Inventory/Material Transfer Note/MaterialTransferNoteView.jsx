@@ -221,6 +221,7 @@ export const MaterialTransferNoteView = () => {
     userData.groups.includes("Production Delhi");
 
   const isAcceptedView =
+    userData.groups.includes("Director") ||
     userData.groups.includes("Stores") ||
     userData.groups.includes("Stores Delhi");
 
@@ -439,6 +440,9 @@ export const MaterialTransferNoteView = () => {
         setOpenPopup={setOpenCreatePopup}
       >
         <MaterialTransferNoteCreate
+          currentPage={currentPage}
+          searchQuery={searchQuery}
+          acceptedFilter={acceptedFilter}
           getAllMaterialTransferNoteDetails={getAllMaterialTransferNoteDetails}
           setOpenCreatePopup={setOpenCreatePopup}
           sellerOption={sellerOption}
@@ -452,6 +456,9 @@ export const MaterialTransferNoteView = () => {
         setOpenPopup={setOpenAcceptPopup}
       >
         <MaterialTransferAccept
+          currentPage={currentPage}
+          searchQuery={searchQuery}
+          acceptedFilter={acceptedFilter}
           materialTransferNoteByID={materialTransferNoteByID}
           setOpenAcceptPopup={setOpenAcceptPopup}
           getAllMaterialTransferNoteDetails={getAllMaterialTransferNoteDetails}

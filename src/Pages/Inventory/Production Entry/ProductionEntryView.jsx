@@ -231,6 +231,8 @@ export const ProductionEntryView = () => {
         setOpenPopup={setOpenPopup2}
       >
         <ProductionEntryCreate
+          currentPage={currentPage}
+          searchQuery={searchQuery}
           getAllProductionEntryDetails={getAllProductionEntryDetails}
           setOpenPopup={setOpenPopup2}
           sellerOption={sellerOption}

@@ -19,7 +19,11 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const SafetyStockCreate = ({ setOpenPopup, onCreateSuccess }) => {
+export const SafetyStockCreate = ({
+  setOpenPopup,
+  onCreateSuccess,
+  currentPage,
+}) => {
   const { sellerData } = useSelector((state) => ({
     sellerData: state.auth.sellerAccount,
   }));
@@ -67,7 +71,7 @@ export const SafetyStockCreate = ({ setOpenPopup, onCreateSuccess }) => {
 
     try {
       await InventoryServices.createSafetyStockData(inputValues);
-      onCreateSuccess();
+      onCreateSuccess(currentPage);
       setOpenPopup(false);
       const successMessage = "Safety Stock Created Successfully";
       handleSuccess(successMessage);

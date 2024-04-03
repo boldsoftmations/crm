@@ -14,6 +14,9 @@ export const MaterialTransferNoteCreate = (props) => {
     setOpenCreatePopup,
     sellerOption,
     getAllMaterialTransferNoteDetails,
+    currentPage,
+    searchQuery,
+    acceptedFilter,
   } = props;
   const [open, setOpen] = useState(false);
   const [productOption, setProductOption] = useState([]);
@@ -86,7 +89,11 @@ export const MaterialTransferNoteCreate = (props) => {
       await InventoryServices.createMaterialTransferNoteData(requestPayload);
       setOpenCreatePopup(false);
       handleSuccess("Material Transfer Note created successfully");
-      getAllMaterialTransferNoteDetails();
+      getAllMaterialTransferNoteDetails(
+        currentPage,
+        searchQuery,
+        acceptedFilter
+      );
     } catch (error) {
       handleError(error);
       let errorMessage = "An unknown error occurred";
