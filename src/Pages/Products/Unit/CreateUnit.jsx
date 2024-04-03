@@ -1,5 +1,5 @@
 import { Box, Button, Grid } from "@mui/material";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import React from "react";
 import ProductService from "../../../services/ProductService";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -7,7 +7,7 @@ import CustomTextField from "../../../Components/CustomTextField";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 
-export const CreateUnit = (props) => {
+export const CreateUnit = memo((props) => {
   const { setOpenPopup, getUnits, currentPage, searchQuery } = props;
   const [unit, setUnit] = useState([]);
   const [open, setOpen] = useState(false);
@@ -19,30 +19,33 @@ export const CreateUnit = (props) => {
     setUnit({ ...unit, [name]: value });
   };
 
-  const createunit = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const data = {
-        name: unit.name,
-        short_name: unit.shortName,
-      };
+  const createunit = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        setOpen(true);
+        const data = {
+          name: unit.name,
+          short_name: unit.shortName,
+        };
 
-      const response = await ProductService.createUnit(data);
-      const successMessage =
-        response.data.message || "Unit Created successfully";
-      handleSuccess(successMessage);
+        const response = await ProductService.createUnit(data);
+        const successMessage =
+          response.data.message || "Unit Created successfully";
+        handleSuccess(successMessage);
 
-      setTimeout(() => {
-        setOpenPopup(false);
-        getUnits(currentPage, searchQuery);
-      }, 300);
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+        setTimeout(() => {
+          setOpenPopup(false);
+          getUnits(currentPage, searchQuery);
+        }, 300);
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
+      }
+    },
+    [unit, currentPage, searchQuery]
+  );
 
   return (
     <>
@@ -90,4 +93,4 @@ export const CreateUnit = (props) => {
       </Box>
     </>
   );
-};
+});

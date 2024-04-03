@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { useSelector } from "react-redux";
 import { Box, Grid, Button } from "@mui/material";
@@ -16,7 +16,7 @@ function searchArrayByKey(array, key, searchValue, returnValue) {
   }
 }
 
-export const UpdateRawMaterials = (props) => {
+export const UpdateRawMaterials = memo((props) => {
   const {
     recordForEdit,
     setOpenPopup,
@@ -54,45 +54,48 @@ export const UpdateRawMaterials = (props) => {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   }, []);
 
-  const updateRawMaterial = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const data = {
-        name: productName,
-        unit: formData.unit,
-        size: formData.size,
-        color: formData.color,
-        brand: formData.brand,
-        productcode: formData.productcode,
-        description: description,
-        shelf_life: formData.shelf_life,
-        hsn_code: formData.hsn_code,
-        gst: formData.gst,
-        cgst: GST,
-        sgst: GST,
-        type: "raw-materials",
-      };
-      if (recordForEdit) {
-        const response = await ProductService.updateRawMaterials(
-          formData.id,
-          data
-        );
-        const successMessage =
-          response.data.message || "Raw Materials updated successfully";
-        handleSuccess(successMessage);
+  const updateRawMaterial = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        setOpen(true);
+        const data = {
+          name: productName,
+          unit: formData.unit,
+          size: formData.size,
+          color: formData.color,
+          brand: formData.brand,
+          productcode: formData.productcode,
+          description: description,
+          shelf_life: formData.shelf_life,
+          hsn_code: formData.hsn_code,
+          gst: formData.gst,
+          cgst: GST,
+          sgst: GST,
+          type: "raw-materials",
+        };
+        if (recordForEdit) {
+          const response = await ProductService.updateRawMaterials(
+            formData.id,
+            data
+          );
+          const successMessage =
+            response.data.message || "Raw Materials updated successfully";
+          handleSuccess(successMessage);
 
-        setTimeout(() => {
-          setOpenPopup(false);
-          getRawMaterials(currentPage, searchQuery);
-        }, 300);
+          setTimeout(() => {
+            setOpenPopup(false);
+            getRawMaterials(currentPage, searchQuery);
+          }, 300);
+        }
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
       }
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+    },
+    [formData, productName, GST, currentPage, searchQuery]
+  );
 
   const GST = JSON.stringify(formData.gst / 2);
 
@@ -277,4 +280,4 @@ export const UpdateRawMaterials = (props) => {
       </Box>
     </>
   );
-};
+});

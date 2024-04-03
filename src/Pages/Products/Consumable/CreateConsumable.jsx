@@ -1,5 +1,5 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { useCallback, useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -16,7 +16,7 @@ function searchArrayByKey(array, key, searchValue, returnValue) {
   }
 }
 
-export const CreateConsumable = (props) => {
+export const CreateConsumable = memo((props) => {
   const {
     setOpenPopup,
     getconsumables,
@@ -53,39 +53,42 @@ export const CreateConsumable = (props) => {
     autoNumber ? autoNumber : ""
   }-${shortName ? shortName : ""}`;
 
-  const createconsumable = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const data = {
-        name: productName,
-        description: formData.description,
-        unit: formData.unit,
-        brand: formData.brand,
-        size: formData.size,
-        additional_description: formData.addDsc,
-        shelf_life: formData.shelf_life,
-        hsn_code: formData.hsn_code,
-        gst: formData.gst,
-        cgst: GST,
-        sgst: GST,
-        type: "consumables",
-      };
-      const response = await ProductService.createConsumable(data);
-      const successMessage =
-        response.data.message || "Product Code Created successfully";
-      handleSuccess(successMessage);
+  const createconsumable = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        setOpen(true);
+        const data = {
+          name: productName,
+          description: formData.description,
+          unit: formData.unit,
+          brand: formData.brand,
+          size: formData.size,
+          additional_description: formData.addDsc,
+          shelf_life: formData.shelf_life,
+          hsn_code: formData.hsn_code,
+          gst: formData.gst,
+          cgst: GST,
+          sgst: GST,
+          type: "consumables",
+        };
+        const response = await ProductService.createConsumable(data);
+        const successMessage =
+          response.data.message || "Product Code Created successfully";
+        handleSuccess(successMessage);
 
-      setTimeout(() => {
-        setOpenPopup(false);
-        getconsumables(currentPage, searchQuery);
-      }, 300);
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+        setTimeout(() => {
+          setOpenPopup(false);
+          getconsumables(currentPage, searchQuery);
+        }, 300);
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
+      }
+    },
+    [formData, currentPage, searchQuery]
+  );
   const GST = formData.gst / 2;
 
   return (
@@ -243,4 +246,4 @@ export const CreateConsumable = (props) => {
       </Box>
     </>
   );
-};
+});

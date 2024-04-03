@@ -1,12 +1,12 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import CustomTextField from "../../../Components/CustomTextField";
 import { CustomLoader } from "./../../../Components/CustomLoader";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 
-export const CreateBasicUnit = (props) => {
+export const CreateBasicUnit = memo((props) => {
   const { setOpenPopup, getBasicUnit, currentPage, searchQuery } = props;
   const [brand, setBrand] = useState([]);
   const [open, setOpen] = useState(false);
@@ -18,30 +18,33 @@ export const CreateBasicUnit = (props) => {
     setBrand({ ...brand, [name]: value });
   };
 
-  const createBrand = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const data = {
-        name: brand.name,
-        short_name: brand.shortName,
-      };
+  const createBrand = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        setOpen(true);
+        const data = {
+          name: brand.name,
+          short_name: brand.shortName,
+        };
 
-      const response = await ProductService.createBasicUnit(data);
-      const successMessage =
-        response.data.message || "Basic Unit Created successfully";
-      handleSuccess(successMessage);
+        const response = await ProductService.createBasicUnit(data);
+        const successMessage =
+          response.data.message || "Basic Unit Created successfully";
+        handleSuccess(successMessage);
 
-      setTimeout(() => {
-        setOpenPopup(false);
-        getBasicUnit(currentPage, searchQuery);
-      }, 300);
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+        setTimeout(() => {
+          setOpenPopup(false);
+          getBasicUnit(currentPage, searchQuery);
+        }, 300);
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
+      }
+    },
+    [brand, currentPage, searchQuery]
+  );
 
   return (
     <>
@@ -89,4 +92,4 @@ export const CreateBasicUnit = (props) => {
       </Box>
     </>
   );
-};
+});

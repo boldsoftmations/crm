@@ -8,7 +8,7 @@ import {
   Select,
 } from "@mui/material";
 
-import React, { useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
@@ -27,7 +27,7 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 //   },
 // ];
 
-export const CreateDescription = (props) => {
+export const CreateDescription = memo((props) => {
   const { setOpenPopup, getDescriptions, currentPage, searchQuery } = props;
   const [description, setDescription] = useState([]);
   const [open, setOpen] = useState(false);
@@ -39,29 +39,32 @@ export const CreateDescription = (props) => {
     setDescription({ ...description, [name]: value });
   };
 
-  const createdescription = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const data = {
-        name: description.name,
-        consumable: description.consumable,
-      };
-      const response = await ProductService.createDescription(data);
-      const successMessage =
-        response.data.message || "Description Created successfully";
-      handleSuccess(successMessage);
+  const createdescription = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        setOpen(true);
+        const data = {
+          name: description.name,
+          consumable: description.consumable,
+        };
+        const response = await ProductService.createDescription(data);
+        const successMessage =
+          response.data.message || "Description Created successfully";
+        handleSuccess(successMessage);
 
-      setTimeout(() => {
-        setOpenPopup(false);
-        getDescriptions(currentPage, searchQuery);
-      }, 300);
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+        setTimeout(() => {
+          setOpenPopup(false);
+          getDescriptions(currentPage, searchQuery);
+        }, 300);
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
+      }
+    },
+    [description, currentPage, searchQuery]
+  );
 
   return (
     <>
@@ -112,4 +115,4 @@ export const CreateDescription = (props) => {
       </Box>
     </>
   );
-};
+});

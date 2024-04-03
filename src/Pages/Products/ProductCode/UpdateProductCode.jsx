@@ -1,5 +1,5 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
@@ -7,7 +7,7 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "./../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 
-export const UpdateProductCode = (props) => {
+export const UpdateProductCode = memo((props) => {
   const {
     recordForEdit,
     setOpenPopup,
@@ -38,35 +38,38 @@ export const UpdateProductCode = (props) => {
     }
   };
 
-  const updatesproductCode = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const data = {
-        code: productCode.code,
-        description: productCode.description,
-      };
+  const updatesproductCode = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        setOpen(true);
+        const data = {
+          code: productCode.code,
+          description: productCode.description,
+        };
 
-      if (recordForEdit) {
-        const response = await ProductService.updateProductCode(
-          productCode.id,
-          data
-        );
-        const successMessage =
-          response.data.message || "Product Code updated successfully";
-        handleSuccess(successMessage);
+        if (recordForEdit) {
+          const response = await ProductService.updateProductCode(
+            productCode.id,
+            data
+          );
+          const successMessage =
+            response.data.message || "Product Code updated successfully";
+          handleSuccess(successMessage);
 
-        setTimeout(() => {
-          setOpenPopup(false);
-          getproductCodes(currentPage, searchQuery);
-        }, 300);
+          setTimeout(() => {
+            setOpenPopup(false);
+            getproductCodes(currentPage, searchQuery);
+          }, 300);
+        }
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
       }
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+    },
+    [productCode, currentPage, searchQuery]
+  );
 
   return (
     <>
@@ -122,4 +125,4 @@ export const UpdateProductCode = (props) => {
       </Box>
     </>
   );
-};
+});

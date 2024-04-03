@@ -1,5 +1,5 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -16,7 +16,7 @@ function searchArrayByKey(array, key, searchValue, returnValue) {
   }
 }
 
-export const CreateFinishGoods = (props) => {
+export const CreateFinishGoods = memo((props) => {
   const { setOpenPopup, getFinishGoods, currentPage, searchQuery } = props;
   const [formData, setFormData] = useState([]);
   const [open, setOpen] = useState(false);
@@ -70,51 +70,54 @@ export const CreateFinishGoods = (props) => {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   }, []);
 
-  const createfinishGoods = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const data = {
-        name: productName,
-        size: formData.size,
-        basic_unit: formData.basic_unit,
-        unit: formData.unit,
-        unit_quantity: formData.unit_quantity,
-        packing_unit: formData.packing_unit,
-        packing_unit_quantity: formData.packing_unit_quantity,
-        color: formData.color,
-        brand: formData.brand,
-        productcode: formData.product_code,
-        description: description,
-        shelf_life: formData.shelf_life,
-        hsn_code: formData.hsn_code,
-        gst: formData.gst,
-        cgst: GST,
-        sgst: GST,
-        type: "finished-goods",
-      };
+  const createfinishGoods = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        setOpen(true);
+        const data = {
+          name: productName,
+          size: formData.size,
+          basic_unit: formData.basic_unit,
+          unit: formData.unit,
+          unit_quantity: formData.unit_quantity,
+          packing_unit: formData.packing_unit,
+          packing_unit_quantity: formData.packing_unit_quantity,
+          color: formData.color,
+          brand: formData.brand,
+          productcode: formData.product_code,
+          description: description,
+          shelf_life: formData.shelf_life,
+          hsn_code: formData.hsn_code,
+          gst: formData.gst,
+          cgst: GST,
+          sgst: GST,
+          type: "finished-goods",
+        };
 
-      const response = await ProductService.createFinishGoods(data);
+        const response = await ProductService.createFinishGoods(data);
 
-      const successMessage =
-        response.data.message || "Finish Goods updated successfully";
-      handleSuccess(successMessage);
+        const successMessage =
+          response.data.message || "Finish Goods updated successfully";
+        handleSuccess(successMessage);
 
-      setTimeout(() => {
-        setOpenPopup(false);
-        getFinishGoods(currentPage, searchQuery);
-      }, 300);
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+        setTimeout(() => {
+          setOpenPopup(false);
+          getFinishGoods(currentPage, searchQuery);
+        }, 300);
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
+      }
+    },
+    [formData, productName, GST, currentPage, searchQuery]
+  );
 
   const GST = formData.gst / 2;
 
   return (
-    <div>
+    <>
       <MessageAlert
         open={alertInfo.open}
         onClose={handleCloseSnackbar}
@@ -330,6 +333,6 @@ export const CreateFinishGoods = (props) => {
           Submit
         </Button>
       </Box>
-    </div>
+    </>
   );
-};
+});

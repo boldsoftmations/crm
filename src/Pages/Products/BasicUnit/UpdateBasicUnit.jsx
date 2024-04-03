@@ -1,12 +1,12 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 
-export const UpdateBasicUnit = (props) => {
+export const UpdateBasicUnit = memo((props) => {
   const {
     recordForEdit,
     setOpenPopup,
@@ -24,7 +24,7 @@ export const UpdateBasicUnit = (props) => {
     setBrand({ ...brand, [name]: value });
   };
 
-  const updatesBrand = async (e) => {
+  const updatesBrand = useCallback(async (e) => {
     try {
       e.preventDefault();
       setOpen(true);
@@ -48,7 +48,7 @@ export const UpdateBasicUnit = (props) => {
     } finally {
       setOpen(false); // Always close the loader
     }
-  };
+  });
 
   return (
     <>
@@ -105,4 +105,4 @@ export const UpdateBasicUnit = (props) => {
       </Box>
     </>
   );
-};
+});

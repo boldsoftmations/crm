@@ -38,7 +38,7 @@ export const ViewColors = () => {
     } finally {
       setOpen(false);
     }
-  }, []);
+  }, []); // Ensure dependencies are correctly listed
 
   const handleSearch = (query) => {
     setSearchQuery(query);

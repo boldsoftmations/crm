@@ -1,5 +1,5 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
@@ -7,7 +7,7 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 
-export const CreateProductCode = (props) => {
+export const CreateProductCode = memo((props) => {
   const { setOpenPopup, getproductCodes, currentPage, searchQuery } = props;
   const [description, setDescription] = useState([]);
   const [allDescription, seAllDescription] = useState([]);
@@ -34,29 +34,32 @@ export const CreateProductCode = (props) => {
     }
   };
 
-  const createProductCode = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const data = {
-        code: productCode.code,
-        description: description,
-      };
-      const response = await ProductService.createProductCode(data);
-      const successMessage =
-        response.data.message || "Product Code Created successfully";
-      handleSuccess(successMessage);
+  const createProductCode = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        setOpen(true);
+        const data = {
+          code: productCode.code,
+          description: description,
+        };
+        const response = await ProductService.createProductCode(data);
+        const successMessage =
+          response.data.message || "Product Code Created successfully";
+        handleSuccess(successMessage);
 
-      setTimeout(() => {
-        setOpenPopup(false);
-        getproductCodes(currentPage, searchQuery);
-      }, 300);
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+        setTimeout(() => {
+          setOpenPopup(false);
+          getproductCodes(currentPage, searchQuery);
+        }, 300);
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
+      }
+    },
+    [productCode, currentPage, searchQuery]
+  );
 
   return (
     <>
@@ -107,4 +110,4 @@ export const CreateProductCode = (props) => {
       </Box>
     </>
   );
-};
+});

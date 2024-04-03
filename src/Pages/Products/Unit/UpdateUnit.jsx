@@ -1,12 +1,12 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import CustomTextField from "../../../Components/CustomTextField";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 
-export const UpdateUnit = (props) => {
+export const UpdateUnit = memo((props) => {
   const { recordForEdit, setOpenPopup, getUnits, currentPage, searchQuery } =
     props;
   const [open, setOpen] = useState(false);
@@ -19,32 +19,35 @@ export const UpdateUnit = (props) => {
     setUnit({ ...unit, [name]: value });
   };
 
-  const updatesunit = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const data = {
-        name: unit.name,
-        short_name: unit.short_name,
-      };
-      if (recordForEdit) {
-        const response = await ProductService.updateUnit(unit.id, data);
+  const updatesunit = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        setOpen(true);
+        const data = {
+          name: unit.name,
+          short_name: unit.short_name,
+        };
+        if (recordForEdit) {
+          const response = await ProductService.updateUnit(unit.id, data);
 
-        const successMessage =
-          response.data.message || "Unit updated successfully";
-        handleSuccess(successMessage);
+          const successMessage =
+            response.data.message || "Unit updated successfully";
+          handleSuccess(successMessage);
 
-        setTimeout(() => {
-          setOpenPopup(false);
-          getUnits(currentPage, searchQuery);
-        }, 300);
+          setTimeout(() => {
+            setOpenPopup(false);
+            getUnits(currentPage, searchQuery);
+          }, 300);
+        }
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
       }
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+    },
+    [unit, currentPage, searchQuery]
+  );
 
   return (
     <>
@@ -101,4 +104,4 @@ export const UpdateUnit = (props) => {
       </Box>
     </>
   );
-};
+});

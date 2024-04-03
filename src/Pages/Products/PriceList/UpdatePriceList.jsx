@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import { Box, Button, FormControlLabel, Grid, Switch } from "@mui/material";
 import ProductService from "../../../services/ProductService";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -7,7 +7,7 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 
-export const UpdatePriceList = (props) => {
+export const UpdatePriceList = memo((props) => {
   const {
     recordForEdit,
     setOpenPopup,
@@ -22,46 +22,49 @@ export const UpdatePriceList = (props) => {
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
-  const handleInputChange = (event) => {
+  const handleInputChange = useCallback((event) => {
     const { name, value } = event.target;
-    setInputValue({ ...inputValue, [name]: value });
-  };
+    setInputValue((prevFormData) => ({ ...prevFormData, [name]: value }));
+  }, []);
 
   const validate = inputValue.slab1 < inputValue.slab2;
-  const updatePriceList = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const req = {
-        product: inputValue.product,
-        slab1: inputValue.slab1,
-        slab1_price: inputValue.slab1_price,
-        slab2: inputValue.slab2,
-        slab2_price: inputValue.slab2_price,
-        slab3_price: inputValue.slab3_price,
-        validity: inputValue.validity,
-        discontinued: inputValue.discontinued,
-      };
-      if (recordForEdit) {
-        const response = await ProductService.updatePriceList(
-          inputValue.id,
-          req
-        );
-        const successMessage =
-          response.data.message || "Price List Created successfully";
-        handleSuccess(successMessage);
+  const updatePriceList = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        setOpen(true);
+        const req = {
+          product: inputValue.product,
+          slab1: inputValue.slab1,
+          slab1_price: inputValue.slab1_price,
+          slab2: inputValue.slab2,
+          slab2_price: inputValue.slab2_price,
+          slab3_price: inputValue.slab3_price,
+          validity: inputValue.validity,
+          discontinued: inputValue.discontinued,
+        };
+        if (recordForEdit) {
+          const response = await ProductService.updatePriceList(
+            inputValue.id,
+            req
+          );
+          const successMessage =
+            response.data.message || "Price List Created successfully";
+          handleSuccess(successMessage);
 
-        setTimeout(() => {
-          setOpenPopup(false);
-          getPriceList(currentPage, filterQuery, searchQuery);
-        }, 300);
+          setTimeout(() => {
+            setOpenPopup(false);
+            getPriceList(currentPage, filterQuery, searchQuery);
+          }, 300);
+        }
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
       }
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+    },
+    [inputValue, currentPage, searchQuery]
+  );
 
   return (
     <>
@@ -199,4 +202,4 @@ export const UpdatePriceList = (props) => {
       </Box>
     </>
   );
-};
+});

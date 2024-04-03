@@ -1,5 +1,5 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { useCallback, useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -16,7 +16,7 @@ function searchArrayByKey(array, key, searchValue, returnValue) {
   }
 }
 
-export const CreateRawMaterials = (props) => {
+export const CreateRawMaterials = memo((props) => {
   const { setOpenPopup, getRawMaterials, currentPage, searchQuery } = props;
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState([]);
@@ -48,45 +48,48 @@ export const CreateRawMaterials = (props) => {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   }, []);
 
-  const createrawMaterials = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const data = {
-        name: productName,
-        size: formData.size,
-        unit: formData.unit,
-        color: formData.color,
-        brand: formData.brand,
-        productcode: formData.productcode,
-        description: description,
-        shelf_life: formData.shelf_life,
-        hsn_code: formData.hsn_code,
-        gst: formData.gst,
-        cgst: GST,
-        sgst: GST,
-        type: "raw-materials",
-      };
-      const response = await ProductService.createRawMaterials(data);
-      const successMessage =
-        response.data.message || "Raw Materials Created successfully";
-      handleSuccess(successMessage);
+  const createrawMaterials = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        setOpen(true);
+        const data = {
+          name: productName,
+          size: formData.size,
+          unit: formData.unit,
+          color: formData.color,
+          brand: formData.brand,
+          productcode: formData.productcode,
+          description: description,
+          shelf_life: formData.shelf_life,
+          hsn_code: formData.hsn_code,
+          gst: formData.gst,
+          cgst: GST,
+          sgst: GST,
+          type: "raw-materials",
+        };
+        const response = await ProductService.createRawMaterials(data);
+        const successMessage =
+          response.data.message || "Raw Materials Created successfully";
+        handleSuccess(successMessage);
 
-      setTimeout(() => {
-        setOpenPopup(false);
-        getRawMaterials(currentPage, searchQuery);
-      }, 300);
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+        setTimeout(() => {
+          setOpenPopup(false);
+          getRawMaterials(currentPage, searchQuery);
+        }, 300);
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
+      }
+    },
+    [formData, productName, GST, currentPage, searchQuery]
+  );
 
   const GST = formData.gst / 2;
 
   return (
-    <div>
+    <>
       <MessageAlert
         open={alertInfo.open}
         onClose={handleCloseSnackbar}
@@ -251,6 +254,6 @@ export const CreateRawMaterials = (props) => {
           Submit
         </Button>
       </Box>
-    </div>
+    </>
   );
-};
+});

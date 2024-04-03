@@ -1,5 +1,5 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
@@ -7,7 +7,7 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 
-export const CreatePriceList = (props) => {
+export const CreatePriceList = memo((props) => {
   const {
     setOpenPopup,
     getPriceList,
@@ -22,46 +22,49 @@ export const CreatePriceList = (props) => {
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
-  const handleInputChange = (event) => {
+  const handleInputChange = useCallback((event) => {
     const { name, value } = event.target;
-    setInputValue({ ...inputValue, [name]: value });
-  };
+    setInputValue((prevFormData) => ({ ...prevFormData, [name]: value }));
+  }, []);
 
   const validate = inputValue.slab1 < inputValue.slab2;
 
-  const createPriceListDetails = async (e) => {
-    try {
-      e.preventDefault();
-      let validate = inputValue.slab1 < inputValue.slab2;
-      setValidation(validate);
-      console.log("validate", validation);
-      const req = {
-        product: inputValue.product,
-        slab1: inputValue.slab1,
-        slab1_price: inputValue.slab1_price,
-        slab2: inputValue.slab2,
-        slab2_price: inputValue.slab2_price,
-        slab3_price: inputValue.slab3_price,
-        validity: inputValue.validity,
-        discontinued: false,
-      };
+  const createPriceListDetails = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        let validate = inputValue.slab1 < inputValue.slab2;
+        setValidation(validate);
+        console.log("validate", validation);
+        const req = {
+          product: inputValue.product,
+          slab1: inputValue.slab1,
+          slab1_price: inputValue.slab1_price,
+          slab2: inputValue.slab2,
+          slab2_price: inputValue.slab2_price,
+          slab3_price: inputValue.slab3_price,
+          validity: inputValue.validity,
+          discontinued: false,
+        };
 
-      setOpen(true);
-      const response = await ProductService.createPriceList(req);
-      const successMessage =
-        response.data.message || "Price List Updated successfully";
-      handleSuccess(successMessage);
+        setOpen(true);
+        const response = await ProductService.createPriceList(req);
+        const successMessage =
+          response.data.message || "Price List Updated successfully";
+        handleSuccess(successMessage);
 
-      setTimeout(() => {
-        setOpenPopup(false);
-        getPriceList(currentPage, filterQuery, searchQuery);
-      }, 300);
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+        setTimeout(() => {
+          setOpenPopup(false);
+          getPriceList(currentPage, filterQuery, searchQuery);
+        }, 300);
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
+      }
+    },
+    [inputValue, currentPage, searchQuery]
+  );
 
   return (
     <>
@@ -189,4 +192,4 @@ export const CreatePriceList = (props) => {
       </Box>
     </>
   );
-};
+});

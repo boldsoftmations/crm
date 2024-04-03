@@ -1,5 +1,5 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
@@ -18,7 +18,7 @@ import { MessageAlert } from "../../../Components/MessageAlert";
 //   },
 // ];
 
-export const UpdateDescription = (props) => {
+export const UpdateDescription = memo((props) => {
   const {
     recordForEdit,
     setOpenPopup,
@@ -36,34 +36,37 @@ export const UpdateDescription = (props) => {
     setDescription({ ...description, [name]: value });
   };
 
-  const updatesdescription = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const data = {
-        name: description.name,
-        consumable: description.consumable,
-      };
-      if (recordForEdit) {
-        const response = await ProductService.updateDescription(
-          description.id,
-          data
-        );
-        const successMessage =
-          response.data.message || "Description updated successfully";
-        handleSuccess(successMessage);
+  const updatesdescription = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        setOpen(true);
+        const data = {
+          name: description.name,
+          consumable: description.consumable,
+        };
+        if (recordForEdit) {
+          const response = await ProductService.updateDescription(
+            description.id,
+            data
+          );
+          const successMessage =
+            response.data.message || "Description updated successfully";
+          handleSuccess(successMessage);
 
-        setTimeout(() => {
-          setOpenPopup(false);
-          getDescriptions(currentPage, searchQuery);
-        }, 300);
+          setTimeout(() => {
+            setOpenPopup(false);
+            getDescriptions(currentPage, searchQuery);
+          }, 300);
+        }
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
       }
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+    },
+    [description, currentPage, searchQuery]
+  );
 
   return (
     <>
@@ -121,4 +124,4 @@ export const UpdateDescription = (props) => {
       </Box>
     </>
   );
-};
+});

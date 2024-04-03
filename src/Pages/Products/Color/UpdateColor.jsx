@@ -1,12 +1,12 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 
-export const UpdateColor = (props) => {
+export const UpdateColor = memo((props) => {
   const { recordForEdit, setOpenPopup, getColours, currentPage, searchQuery } =
     props;
   const [open, setOpen] = useState(false);
@@ -19,30 +19,33 @@ export const UpdateColor = (props) => {
     setColour({ ...colour, [name]: value });
   };
 
-  const updateColour = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const data = {
-        name: colour.name,
-      };
-      if (recordForEdit) {
-        const response = await ProductService.updateColour(colour.id, data);
-        const successMessage =
-          response.data.message || "Colour updated successfully";
-        handleSuccess(successMessage);
+  const updateColour = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        setOpen(true);
+        const data = {
+          name: colour.name,
+        };
+        if (recordForEdit) {
+          const response = await ProductService.updateColour(colour.id, data);
+          const successMessage =
+            response.data.message || "Colour updated successfully";
+          handleSuccess(successMessage);
 
-        setTimeout(() => {
-          setOpenPopup(false);
-          getColours(currentPage, searchQuery);
-        }, 300);
+          setTimeout(() => {
+            setOpenPopup(false);
+            getColours(currentPage, searchQuery);
+          }, 300);
+        }
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
       }
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+    },
+    [colour, currentPage, searchQuery]
+  );
 
   return (
     <>
@@ -88,4 +91,4 @@ export const UpdateColor = (props) => {
       </Box>
     </>
   );
-};
+});

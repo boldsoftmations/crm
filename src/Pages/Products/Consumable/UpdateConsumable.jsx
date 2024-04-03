@@ -1,5 +1,5 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -16,7 +16,7 @@ function searchArrayByKey(array, key, searchValue, returnValue) {
   }
 }
 
-export const UpdateConsumable = (props) => {
+export const UpdateConsumable = memo((props) => {
   const {
     recordForEdit,
     setOpenPopup,
@@ -53,39 +53,42 @@ export const UpdateConsumable = (props) => {
     return parts.join("-");
   }, [formData, shortName]);
 
-  const updatesconsumable = async (e) => {
-    e.preventDefault();
-    try {
-      setOpen(true);
-      const GST = formData.gst / 2;
-      const data = {
-        ...formData,
-        name: productName,
-        cgst: GST,
-        sgst: GST,
-        type: "consumables",
-      };
+  const updatesconsumable = useCallback(
+    async (e) => {
+      e.preventDefault();
+      try {
+        setOpen(true);
+        const GST = formData.gst / 2;
+        const data = {
+          ...formData,
+          name: productName,
+          cgst: GST,
+          sgst: GST,
+          type: "consumables",
+        };
 
-      if (recordForEdit) {
-        const response = await ProductService.updateConsumable(
-          formData.id,
-          data
-        );
-        const successMessage =
-          response.data.message || "Consumable updated successfully";
-        handleSuccess(successMessage);
+        if (recordForEdit) {
+          const response = await ProductService.updateConsumable(
+            formData.id,
+            data
+          );
+          const successMessage =
+            response.data.message || "Consumable updated successfully";
+          handleSuccess(successMessage);
 
-        setTimeout(() => {
-          setOpenPopup(false);
-          getconsumables(currentPage, searchQuery);
-        }, 300);
+          setTimeout(() => {
+            setOpenPopup(false);
+            getconsumables(currentPage, searchQuery);
+          }, 300);
+        }
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
       }
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+    },
+    [formData, productName, GST, currentPage, searchQuery]
+  );
 
   const GST = JSON.stringify(formData.gst / 2);
   console.log("formData", formData);
@@ -257,4 +260,4 @@ export const UpdateConsumable = (props) => {
       </Box>
     </>
   );
-};
+});

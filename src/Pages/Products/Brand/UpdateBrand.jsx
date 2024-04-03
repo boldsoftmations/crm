@@ -1,12 +1,12 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import CustomTextField from "../../../Components/CustomTextField";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 
-export const UpdateBrand = (props) => {
+export const UpdateBrand = memo((props) => {
   const {
     recordForEdit,
     setOpenPopup,
@@ -24,33 +24,36 @@ export const UpdateBrand = (props) => {
     setBrand({ ...brand, [name]: value });
   };
 
-  const updatesBrand = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const data = {
-        name: brand.name,
-        short_name: brand.short_name,
-      };
+  const updatesBrand = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        setOpen(true);
+        const data = {
+          name: brand.name,
+          short_name: brand.short_name,
+        };
 
-      if (recordForEdit) {
-        const response = await ProductService.updateBrand(brand.id, data);
-        // Example adjustment for fallback success message
-        const successMessage =
-          response.data.message || "Brand updated successfully";
-        handleSuccess(successMessage);
+        if (recordForEdit) {
+          const response = await ProductService.updateBrand(brand.id, data);
+          // Example adjustment for fallback success message
+          const successMessage =
+            response.data.message || "Brand updated successfully";
+          handleSuccess(successMessage);
 
-        setTimeout(() => {
-          setOpenPopup(false);
-          getBrandList(currentPage, searchQuery);
-        }, 300); // Adjust delay as needed
+          setTimeout(() => {
+            setOpenPopup(false);
+            getBrandList(currentPage, searchQuery);
+          }, 300); // Adjust delay as needed
+        }
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
       }
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+    },
+    [brand, currentPage, searchQuery]
+  );
 
   return (
     <>
@@ -108,4 +111,4 @@ export const UpdateBrand = (props) => {
       </Box>
     </>
   );
-};
+});

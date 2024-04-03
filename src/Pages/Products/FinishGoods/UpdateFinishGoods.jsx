@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { Box, Grid, Button } from "@mui/material";
 import { useSelector } from "react-redux";
@@ -16,7 +16,7 @@ function searchArrayByKey(array, key, searchValue, returnValue) {
   }
 }
 
-export const UpdateFinishGoods = (props) => {
+export const UpdateFinishGoods = memo((props) => {
   const {
     recordForEdit,
     setOpenPopup,
@@ -76,49 +76,52 @@ export const UpdateFinishGoods = (props) => {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   }, []);
 
-  const updateFinishGood = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const data = {
-        name: productName,
-        size: formData.size,
-        basic_unit: formData.basic_unit,
-        unit: formData.unit,
-        unit_quantity: formData.unit_quantity,
-        packing_unit: formData.packing_unit,
-        packing_unit_quantity: formData.packing_unit_quantity,
-        color: formData.color,
-        brand: formData.brand,
-        productcode: formData.productcode,
-        description: description,
-        shelf_life: formData.shelf_life,
-        hsn_code: formData.hsn_code,
-        gst: formData.gst,
-        cgst: GST,
-        sgst: GST,
-        type: "finished-goods",
-      };
-      if (recordForEdit) {
-        const response = await ProductService.updateFinishGoods(
-          formData.id,
-          data
-        );
-        const successMessage =
-          response.data.message || "Finish Goods updated successfully";
-        handleSuccess(successMessage);
+  const updateFinishGood = useCallback(
+    async (e) => {
+      try {
+        e.preventDefault();
+        setOpen(true);
+        const data = {
+          name: productName,
+          size: formData.size,
+          basic_unit: formData.basic_unit,
+          unit: formData.unit,
+          unit_quantity: formData.unit_quantity,
+          packing_unit: formData.packing_unit,
+          packing_unit_quantity: formData.packing_unit_quantity,
+          color: formData.color,
+          brand: formData.brand,
+          productcode: formData.productcode,
+          description: description,
+          shelf_life: formData.shelf_life,
+          hsn_code: formData.hsn_code,
+          gst: formData.gst,
+          cgst: GST,
+          sgst: GST,
+          type: "finished-goods",
+        };
+        if (recordForEdit) {
+          const response = await ProductService.updateFinishGoods(
+            formData.id,
+            data
+          );
+          const successMessage =
+            response.data.message || "Finish Goods updated successfully";
+          handleSuccess(successMessage);
 
-        setTimeout(() => {
-          setOpenPopup(false);
-          getFinishGoods(currentPage, searchQuery);
-        }, 300);
+          setTimeout(() => {
+            setOpenPopup(false);
+            getFinishGoods(currentPage, searchQuery);
+          }, 300);
+        }
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
+      } finally {
+        setOpen(false); // Always close the loader
       }
-    } catch (error) {
-      handleError(error); // Handle errors from the API call
-    } finally {
-      setOpen(false); // Always close the loader
-    }
-  };
+    },
+    [formData, productName, GST, currentPage, searchQuery]
+  );
 
   const GST = JSON.stringify(formData.gst / 2);
 
@@ -360,4 +363,4 @@ export const UpdateFinishGoods = (props) => {
       </Box>
     </>
   );
-};
+});
