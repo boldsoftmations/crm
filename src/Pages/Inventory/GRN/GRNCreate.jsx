@@ -1,14 +1,5 @@
-import {
-  Box,
-  Button,
-  Chip,
-  Divider,
-  Grid,
-  IconButton,
-  Snackbar,
-} from "@mui/material";
+import { Box, Button, Chip, Divider, Grid } from "@mui/material";
 import React, { memo, useCallback, useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
@@ -24,7 +15,14 @@ const Root = styled("div")(({ theme }) => ({
 }));
 
 export const GRNCreate = memo(
-  ({ setOpenPopup, idForEdit, getAllPackingListDetails }) => {
+  ({
+    setOpenPopup,
+    idForEdit,
+    getAllPackingListDetails,
+    currentPage,
+    acceptedFilter,
+    searchQuery,
+  }) => {
     const [open, setOpen] = useState(false);
     const [error, setError] = useState(null);
     const [products, setProducts] = useState(
@@ -73,17 +71,17 @@ export const GRNCreate = memo(
           grn_source: "Purchase",
           products,
         });
-
-        getAllPackingListDetails();
-        const successMessage = "GRN Created Successfully";
+        const successMessage =
+          response.data.message || "GRN Created successfully";
         handleSuccess(successMessage);
-        setOpenPopup(false);
-      } catch (err) {
-        handleError(err);
-        setError("Error occurred while creating GRN.");
-        console.error("Creating Packing list error", err);
+        setTimeout(() => {
+          setOpenPopup(false);
+          getAllPackingListDetails(currentPage, acceptedFilter, searchQuery);
+        }, 300);
+      } catch (error) {
+        handleError(error); // Handle errors from the API call
       } finally {
-        setOpen(false);
+        setOpen(false); // Always close the loader
       }
     }, []);
 
@@ -98,24 +96,6 @@ export const GRNCreate = memo(
         <CustomLoader open={open} />
 
         <Box component="form" noValidate onSubmit={(e) => createGrnDetails(e)}>
-          <Snackbar
-            open={Boolean(error)}
-            onClose={() => setError(null)}
-            message={error}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
-            action={
-              <React.Fragment>
-                <IconButton
-                  size="small"
-                  aria-label="close"
-                  color="inherit"
-                  onClick={() => setError(null)}
-                >
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              </React.Fragment>
-            }
-          />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={4}>
               <CustomTextField

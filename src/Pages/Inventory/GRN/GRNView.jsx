@@ -16,10 +16,6 @@ import {
   Collapse,
   Typography,
   IconButton,
-  InputLabel,
-  FormControl,
-  Select,
-  MenuItem,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -30,10 +26,11 @@ import InventoryServices from "../../../services/InventoryService";
 import { GRNUpdate } from "./GRNUpdate";
 import { useSelector } from "react-redux";
 import { PurchaseInvoiceCreate } from "../Purchase Invoice/PurchaseInvoiceCreate";
-import ClearIcon from "@mui/icons-material/Clear";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import SearchComponent from "../../../Components/SearchComponent ";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { CustomPagination } from "../../../Components/CustomPagination";
 
 export const GRNView = () => {
   const [openPopupUpdate, setOpenPopupUpdate] = useState(false);
@@ -47,37 +44,52 @@ export const GRNView = () => {
   const [recordForEdit, setRecordForEdit] = useState();
   const [acceptedFilter, setAcceptedFilter] = useState(false);
   const userData = useSelector((state) => state.auth.profile);
-  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+  const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
   useEffect(() => {
-    getAllGRNDetails(currentPage);
-  }, [currentPage, getAllGRNDetails]);
+    getAllGRNDetails(currentPage, acceptedFilter, searchQuery);
+  }, [currentPage, acceptedFilter, searchQuery]);
 
-  const getAllGRNDetails = useCallback(
-    async (page, filter = acceptedFilter, search = searchQuery) => {
-      try {
-        setOpen(true);
-        const response = await InventoryServices.getAllGRNData(
-          page,
-          filter,
-          search
-        );
-        setGRNData(response.data.results);
-        setPageCount(Math.ceil(response.data.count / 25));
-        setOpen(false);
-      } catch (error) {
-        handleError(error);
-        setOpen(false);
-        console.error("error", error);
-      }
-    },
-    [acceptedFilter, searchQuery]
-  );
+  const getAllGRNDetails = useCallback(async (page, filter, query) => {
+    try {
+      setOpen(true);
+      const response = await InventoryServices.getAllGRNData(
+        page,
+        filter,
+        query
+      );
+      setGRNData(response.data.results);
+      setPageCount(Math.ceil(response.data.count / 25));
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setOpen(false);
+    }
+  }, []);
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(0); // Reset to first page with new search
+  };
+
+  const handleFilter = (query) => {
+    if (query) {
+      const value = query.value === "true"; // Convert string to boolean
+      setAcceptedFilter(value);
+    } else {
+      setAcceptedFilter(false); // Set it back to false instead of null
+      setCurrentPage(0);
+    }
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(0); // Reset to first page with no search query
+  };
 
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
-    getAllGRNDetails(value);
   };
 
   const openInPopup = (item) => {
@@ -88,23 +100,6 @@ export const GRNView = () => {
   const handlePurchaseInvoice = (item) => {
     setRecordForEdit(item);
     setOpenPopupCreatePI(true);
-  };
-
-  const handleFilterChange = (event) => {
-    const { value } = event.target;
-    setAcceptedFilter(value);
-    setCurrentPage(0);
-    getAllGRNDetails(0, value, searchQuery);
-  };
-
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    setCurrentPage(1);
-  };
-
-  const handleReset = () => {
-    setSearchQuery("");
-    setCurrentPage(0);
   };
 
   return (
@@ -122,42 +117,17 @@ export const GRNView = () => {
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} sm={3}>
-                <FormControl sx={{ minWidth: "100px" }} fullWidth size="small">
-                  <InputLabel id="demo-simple-select-label">
-                    Filter By Accepted
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    name="status"
-                    label="Filter By Accepted"
-                    value={acceptedFilter}
-                    onChange={handleFilterChange}
-                  >
-                    {AcceptedOption.map((option, i) => (
-                      <MenuItem key={i} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  {acceptedFilter && (
-                    <IconButton
-                      size="small"
-                      onClick={() => {
-                        setAcceptedFilter(false);
-                        getAllGRNDetails(1, false, searchQuery);
-                      }}
-                      sx={{
-                        position: "absolute",
-                        right: 8,
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                      }}
-                    >
-                      <ClearIcon />
-                    </IconButton>
+                <CustomAutocomplete
+                  sx={{ flexGrow: 1, mr: 1 }}
+                  size="small"
+                  value={AcceptedOption.find(
+                    (option) => option.value === acceptedFilter.toString()
                   )}
-                </FormControl>
+                  onChange={(event, newValue) => handleFilter(newValue)}
+                  options={AcceptedOption}
+                  getOptionLabel={(option) => option.label}
+                  label="Filter By Accepted"
+                />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <SearchComponent
@@ -229,17 +199,11 @@ export const GRNView = () => {
               </TableBody>{" "}
             </Table>
           </TableContainer>
-          <TableFooter
-            sx={{ display: "flex", justifyContent: "center", marginTop: "2em" }}
-          >
-            <Pagination
-              count={pageCount}
-              onChange={handlePageClick}
-              color={"primary"}
-              variant="outlined"
-              shape="circular"
-            />
-          </TableFooter>
+          <CustomPagination
+            pageCount={pageCount}
+            currentPage={currentPage}
+            handlePageClick={handlePageClick}
+          />
         </Paper>
       </Grid>
       <Popup
@@ -252,6 +216,9 @@ export const GRNView = () => {
           setOpenPopup={setOpenPopupUpdate}
           getAllGRNDetails={getAllGRNDetails}
           idForEdit={idForEdit}
+          currentPage={currentPage}
+          acceptedFilter={acceptedFilter}
+          searchQuery={searchQuery}
         />
       </Popup>
       <Popup

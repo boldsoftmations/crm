@@ -15,13 +15,8 @@ import {
   Collapse,
   Typography,
   IconButton,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import ClearIcon from "@mui/icons-material/Clear";
 import React, { useCallback, useEffect, useState } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -36,6 +31,8 @@ import { GRNCreate } from "../GRN/GRNCreate";
 import SearchComponent from "../../../Components/SearchComponent ";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { CustomPagination } from "../../../Components/CustomPagination";
 
 export const PackingListView = () => {
   const dispatch = useDispatch();
@@ -70,49 +67,48 @@ export const PackingListView = () => {
   };
 
   useEffect(() => {
-    getAllPackingListDetails(currentPage, searchQuery);
-  }, [currentPage, searchQuery]);
+    getAllPackingListDetails(currentPage, acceptedFilter, searchQuery);
+  }, [currentPage, acceptedFilter, searchQuery]);
 
-  const getAllPackingListDetails = useCallback(
-    async (page, filter = acceptedFilter, search = searchQuery) => {
-      try {
-        setOpen(true);
-        const response = await InventoryServices.getAllPackingListData(
-          page,
-          filter,
-          search
-        );
-        setPackingListData(response.data.results);
-        setPageCount(Math.ceil(response.data.count / 25));
-        setOpen(false);
-      } catch (error) {
-        handleError(error);
-        setOpen(false);
-        console.error("error", error);
-      }
-    },
-    [acceptedFilter, searchQuery] // Depend on acceptedFilter directly
-  );
+  const getAllPackingListDetails = useCallback(async (page, filter, query) => {
+    try {
+      setOpen(true);
+      const response = await InventoryServices.getAllPackingListData(
+        page,
+        filter,
+        query
+      );
+      setPackingListData(response.data.results);
+      setPageCount(Math.ceil(response.data.count / 25));
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setOpen(false);
+    }
+  }, []);
 
-  const handlePageClick = (event, value) => {
-    setCurrentPage(value);
+  const handleFilter = (query) => {
+    if (query) {
+      const value = query.value === "true"; // Convert string to boolean
+      setAcceptedFilter(value);
+    } else {
+      setAcceptedFilter(false); // Set it back to false instead of null
+      setCurrentPage(0);
+    }
   };
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    setCurrentPage(1);
+    setCurrentPage(0); // Reset to first page on new search
   };
 
   const handleReset = () => {
     setSearchQuery("");
-    setCurrentPage(1);
+    setCurrentPage(0); // Reset to the first page
   };
 
-  const handleFilterChange = (event) => {
-    const { value } = event.target;
-    setAcceptedFilter(value);
-    setCurrentPage(0);
-    getAllPackingListDetails(0, value, searchQuery);
+  const handlePageClick = (event, value) => {
+    setCurrentPage(value); // Assuming `value` is already adjusted for 0-based indexing in CustomPagination
   };
 
   const openInPopup = (item) => {
@@ -148,42 +144,17 @@ export const PackingListView = () => {
           >
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} sm={6} md={3}>
-                <FormControl sx={{ minWidth: "100px" }} fullWidth size="small">
-                  <InputLabel id="demo-simple-select-label">
-                    Filter By Accepted
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    name="status"
-                    label="Filter By Accepted"
-                    value={acceptedFilter}
-                    onChange={handleFilterChange}
-                  >
-                    {AcceptedOption.map((option, i) => (
-                      <MenuItem key={i} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  {acceptedFilter && (
-                    <IconButton
-                      size="small"
-                      onClick={() => {
-                        setAcceptedFilter(false);
-                        getAllPackingListDetails(1, false, searchQuery);
-                      }}
-                      sx={{
-                        position: "absolute",
-                        right: 8,
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                      }}
-                    >
-                      <ClearIcon />
-                    </IconButton>
+                <CustomAutocomplete
+                  sx={{ flexGrow: 1, mr: 1 }}
+                  size="small"
+                  value={AcceptedOption.find(
+                    (option) => option.value === acceptedFilter.toString()
                   )}
-                </FormControl>
+                  onChange={(event, newValue) => handleFilter(newValue)}
+                  options={AcceptedOption}
+                  getOptionLabel={(option) => option.label}
+                  label="Filter By Accepted"
+                />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <SearchComponent
@@ -254,18 +225,16 @@ export const PackingListView = () => {
                     userData={userData}
                   />
                 ))}
-              </TableBody>{" "}
+              </TableBody>
             </Table>
           </TableContainer>
           <TableFooter
             sx={{ display: "flex", justifyContent: "center", marginTop: "2em" }}
           >
-            <Pagination
-              count={pageCount}
-              onChange={handlePageClick}
-              color={"primary"}
-              variant="outlined"
-              shape="circular"
+            <CustomPagination
+              pageCount={pageCount}
+              currentPage={currentPage}
+              handlePageClick={handlePageClick}
             />
           </TableFooter>
         </Paper>

@@ -45,7 +45,6 @@ export const PurchaseOrderView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [acceptedFilter, setAcceptedFilter] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [contactNameOption, setContactNameOption] = useState("");
   const [openCreatePLPopup, setOpenCreatePLPopup] = useState(false);
   const [openMergePLPopup, setOpenMergePLPopup] = useState(false);
   const dispatch = useDispatch();
@@ -146,22 +145,22 @@ export const PurchaseOrderView = () => {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    setCurrentPage(1); // Reset to first page with new search
+    setCurrentPage(0); // Reset to first page with new search
   };
 
   const handleFilter = (query) => {
     if (query) {
-      const value = query.value === "true";
+      const value = query.value === "true"; // Convert string to boolean
       setAcceptedFilter(value);
     } else {
-      setAcceptedFilter(null);
-      setCurrentPage(1);
+      setAcceptedFilter(false); // Set it back to false instead of null
+      setCurrentPage(0);
     }
   };
 
   const handleReset = () => {
     setSearchQuery("");
-    setCurrentPage(1); // Reset to first page with no search query
+    setCurrentPage(0); // Reset to first page with no search query
   };
 
   const handlePageClick = (event, value) => {
@@ -293,6 +292,7 @@ export const PurchaseOrderView = () => {
           </TableContainer>
           <CustomPagination
             pageCount={pageCount}
+            currentPage={currentPage}
             handlePageClick={handlePageClick}
           />
         </Paper>
@@ -307,7 +307,6 @@ export const PurchaseOrderView = () => {
           setOpenPopup={setOpenPopupUpdate}
           getAllPurchaseOrderDetails={getAllPurchaseOrderDetails}
           selectedRow={selectedRow}
-          contactNameOption={contactNameOption}
           currentPage={currentPage}
           acceptedFilter={acceptedFilter}
           searchQuery={searchQuery}
