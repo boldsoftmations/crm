@@ -81,8 +81,8 @@ export const ProductionEntryView = () => {
   };
 
   useEffect(() => {
-    getAllProductionEntryDetails(currentPage);
-  }, [currentPage, getAllProductionEntryDetails]);
+    getAllProductionEntryDetails(currentPage, searchQuery);
+  }, [currentPage, searchQuery]);
 
   const getAllProductionEntryDetails = useCallback(
     async (page, search = searchQuery) => {

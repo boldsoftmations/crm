@@ -145,8 +145,8 @@ export const MaterialRequisitionFormView = () => {
   };
 
   useEffect(() => {
-    getAllMaterialRequisitionFormDetails(currentPage);
-  }, [currentPage, getAllMaterialRequisitionFormDetails]);
+    getAllMaterialRequisitionFormDetails(currentPage, searchQuery);
+  }, [currentPage, searchQuery]);
 
   const getAllMaterialRequisitionFormDetails = useCallback(
     async (page, search = searchQuery) => {

@@ -192,13 +192,15 @@ export const ChalanView = () => {
                         </Button>
                       </StyledTableCell> */}
                       <StyledTableCell align="center">
-                        <Button
-                          variant="text"
-                          color="primary"
-                          onClick={() => handleChallanCreate(chalan)}
-                        >
-                          Challan Create
-                        </Button>
+                        {!chalan.is_accepted && (
+                          <Button
+                            variant="text"
+                            color="primary"
+                            onClick={() => handleChallanCreate(chalan)}
+                          >
+                            Challan Create
+                          </Button>
+                        )}
                       </StyledTableCell>
                     </StyledTableRow>
                     <TableRow>

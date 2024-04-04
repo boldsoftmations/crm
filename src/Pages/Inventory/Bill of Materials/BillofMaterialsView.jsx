@@ -116,8 +116,8 @@ export const BillofMaterialsView = () => {
   };
 
   useEffect(() => {
-    getAllBillofMaterialsDetails(currentPage);
-  }, [currentPage, getAllBillofMaterialsDetails]);
+    getAllBillofMaterialsDetails(currentPage, searchQuery);
+  }, [currentPage, searchQuery]);
 
   const getAllBillofMaterialsDetails = useCallback(
     async (page, filter = filterApproved, search = searchQuery) => {

@@ -70,8 +70,8 @@ export const PackingListView = () => {
   };
 
   useEffect(() => {
-    getAllPackingListDetails(currentPage);
-  }, [currentPage, getAllPackingListDetails]);
+    getAllPackingListDetails(currentPage, searchQuery);
+  }, [currentPage, searchQuery]);
 
   const getAllPackingListDetails = useCallback(
     async (page, filter = acceptedFilter, search = searchQuery) => {
