@@ -97,7 +97,9 @@ export const StoresInventoryCreate = memo((props) => {
       await InventoryServices.createStoresInventoryData(req);
       const successMessage = "Store Inventory Created Successfully";
       handleSuccess(successMessage);
-      setOpenPopup(false);
+      setTimeout(() => {
+        setOpenPopup(false);
+      }, 300);
       getAllStoresInventoryDetails(currentPage, searchQuery);
       setOpen(false);
     } catch (err) {

@@ -33,6 +33,7 @@ export const StoresInventoryView = () => {
       setTimeout(() => {
         csvLinkRef.current.link.click();
       });
+      handleSuccess("CSV file downloaded successfully");
     } catch (error) {
       console.log("CSVLink Download error", error);
     }

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, memo } from "react";
-import { Box, Button, Grid, Snackbar, IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Box, Button, Grid } from "@mui/material";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useSelector } from "react-redux";
@@ -32,7 +31,6 @@ export const SafetyStockCreate = memo(
       quantity: "",
     });
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
     const [productOption, setProductOption] = useState([]);
     const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
       useNotificationHandling();
@@ -69,13 +67,13 @@ export const SafetyStockCreate = memo(
       try {
         await InventoryServices.createSafetyStockData(inputValues);
         onCreateSuccess(currentPage);
-        setOpenPopup(false);
         const successMessage = "Safety Stock Created Successfully";
         handleSuccess(successMessage);
+        setTimeout(() => {
+          setOpenPopup(false);
+        }, 300);
       } catch (error) {
         handleError(error);
-        console.error("Error creating safety stock", error);
-        setError("Product with this seller unit already exists");
       } finally {
         setLoading(false);
       }
@@ -91,21 +89,6 @@ export const SafetyStockCreate = memo(
         />
         <CustomLoader open={loading} />
         <Box component="form" noValidate onSubmit={createSafetyStock}>
-          <Snackbar
-            open={Boolean(error)}
-            onClose={handleCloseSnackbar}
-            message={error}
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                sx={{ p: 0.5 }}
-                onClick={handleCloseSnackbar}
-              >
-                <CloseIcon />
-              </IconButton>
-            }
-          />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={4}>
               <CustomAutocomplete

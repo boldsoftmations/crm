@@ -23,13 +23,14 @@ import { tableCellClasses } from "@mui/material/TableCell";
 import { useSelector } from "react-redux";
 import CustomTextField from "../../../Components/CustomTextField";
 import { GRNPDFDownload } from "./GRNPDFDownload";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const GRNRegisterView = () => {
   const [open, setOpen] = useState(false);
   const [grnRegisterData, setGRNRegisterData] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
   const [exportData, setExportData] = useState([]);
   const csvLinkRef = useRef(null);
   const data = useSelector((state) => state.auth);
@@ -40,6 +41,8 @@ export const GRNRegisterView = () => {
     .toString()
     .padStart(2, "0")}`;
   const [selectedYearMonth, setSelectedYearMonth] = useState(currentYearMonth);
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const handleDownload = async () => {
     try {
@@ -48,6 +51,7 @@ export const GRNRegisterView = () => {
       setTimeout(() => {
         csvLinkRef.current.link.click();
       });
+      handleSuccess("CSV file downloaded successfully");
     } catch (error) {
       console.log("CSVLink Download error", error);
     }
@@ -159,18 +163,13 @@ export const GRNRegisterView = () => {
         setPageCount(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
-        setOpen(false);
-        console.error("error", error);
+        handleError(error);
       } finally {
         setOpen(false);
       }
     },
     [selectedYearMonth]
   );
-
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
 
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
@@ -191,6 +190,12 @@ export const GRNRegisterView = () => {
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
       <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
         <Box display="flex" marginBottom="10px">

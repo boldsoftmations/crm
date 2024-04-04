@@ -19,6 +19,8 @@ import { SafetyStockCreate } from "./SafetyStockCreate";
 import { SafetyStockUpdate } from "./SafetyStockUpdate";
 import InventoryServices from "../../../services/InventoryService";
 import { CustomPagination } from "../../../Components/CustomPagination";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const SafetyStockView = () => {
   const [openPopupCreate, setOpenPopupCreate] = useState(false);
@@ -28,6 +30,8 @@ export const SafetyStockView = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+  const { handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const handleEdit = async (item) => {
     try {
@@ -52,6 +56,7 @@ export const SafetyStockView = () => {
       setSafetyStockData(response.data.results);
       setPageCount(Math.ceil(response.data.count / 25));
     } catch (error) {
+      handleError(error);
       console.error("error", error);
     } finally {
       setOpen(false); // Close loading state in the finally block
@@ -64,6 +69,12 @@ export const SafetyStockView = () => {
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
           <Box display="flex" marginBottom="10px">
