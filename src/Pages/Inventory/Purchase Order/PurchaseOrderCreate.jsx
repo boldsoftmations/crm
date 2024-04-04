@@ -30,13 +30,10 @@ export const PurchaseOrderCreate = ({
   setOpenPopup,
   getAllVendorDetails,
 }) => {
-  console.log("recordForEdit", recordForEdit);
   const { sellerData, userData } = useSelector((state) => ({
     sellerData: state.auth.sellerAccount,
     userData: state.auth.profile,
   }));
-  console.log("sellerData", sellerData);
-  console.log("userData", userData);
   const today = new Date().toISOString().slice(0, 10);
   const [inputValues, setInputValues] = useState({
     created_by: userData.email,
@@ -126,30 +123,51 @@ export const PurchaseOrderCreate = ({
     });
   };
 
-  const handleProductAutocompleteChange = (index, value) => {
-    // Find the product object based on the selected value
-    const productObj = productOption.find((item) => item.name === value);
+  const handleProductAutocompleteChange = (index, selectedProductName) => {
+    // Prevent function from running if the selected product name is not defined
+    if (!selectedProductName) return;
 
-    // Check if the new value is already included in the selected products list
+    // Find the product object based on the selected value
+    const productObj = productOption.find(
+      (item) => item.name === selectedProductName
+    );
+
+    // Early exit if the product object is not found
+    if (!productObj) {
+      console.error("Selected product not found in product options");
+      return;
+    }
+
+    // Check if the new value is already included in the selected products list to prevent duplicates
     const isDuplicate = inputValues.products.some(
-      (product, idx) => product.product === value && idx !== index
+      (product, idx) => product.product === selectedProductName && idx !== index
     );
 
     if (isDuplicate) {
-      // If the product is already selected, show an error message
-      setError(`Product ${value} is already selected in another field.`);
+      // If the product is already selected, show an error message and exit the function
+      setError(
+        `Product ${selectedProductName} is already selected in another field.`
+      );
+      return;
     } else {
-      // Update the product entry with the new value and reset any error messages
-      setError(null);
-      setInputValues((prevValues) => {
-        const newProducts = prevValues.products.map((product, idx) =>
-          idx === index
-            ? { ...product, product: value, unit: productObj.unit }
-            : product
-        );
-        return { ...prevValues, products: newProducts };
-      });
+      setError(null); // Reset any previous error messages
     }
+
+    // Safely update the state with the new products list
+    setInputValues((prevValues) => {
+      const newProducts = prevValues.products.map((product, idx) => {
+        if (idx === index) {
+          return {
+            ...product,
+            product: selectedProductName,
+            unit: productObj.unit,
+          };
+        }
+        return product;
+      });
+
+      return { ...prevValues, products: newProducts };
+    });
   };
 
   const addProductField = useCallback(() => {
