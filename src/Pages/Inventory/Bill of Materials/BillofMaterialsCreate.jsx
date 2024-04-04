@@ -1,5 +1,5 @@
 import { Box, Button, Chip, Divider, Grid } from "@mui/material";
-import React, { useMemo, useState } from "react";
+import React, { memo, useMemo, useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { useSelector } from "react-redux";
@@ -16,7 +16,7 @@ const Root = styled("div")(({ theme }) => ({
     marginTop: theme.spacing(2),
   },
 }));
-export const BillofMaterialsCreate = (props) => {
+export const BillofMaterialsCreate = memo((props) => {
   const {
     setOpenPopup,
     getAllBillofMaterialsDetails,
@@ -83,7 +83,7 @@ export const BillofMaterialsCreate = (props) => {
   };
 
   return (
-    <div>
+    <>
       <MessageAlert
         open={alertInfo.open}
         onClose={handleCloseSnackbar}
@@ -204,6 +204,6 @@ export const BillofMaterialsCreate = (props) => {
           Submit
         </Button>
       </Box>
-    </div>
+    </>
   );
-};
+});

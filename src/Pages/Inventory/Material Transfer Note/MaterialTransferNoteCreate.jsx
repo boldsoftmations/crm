@@ -1,5 +1,5 @@
 import { Box, Button, Grid, IconButton, Snackbar } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
@@ -9,7 +9,7 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 
-export const MaterialTransferNoteCreate = (props) => {
+export const MaterialTransferNoteCreate = memo((props) => {
   const {
     setOpenCreatePopup,
     sellerOption,
@@ -112,7 +112,7 @@ export const MaterialTransferNoteCreate = (props) => {
   };
 
   return (
-    <div>
+    <>
       <MessageAlert
         open={alertInfo.open}
         onClose={handleCloseSnackbar}
@@ -189,6 +189,6 @@ export const MaterialTransferNoteCreate = (props) => {
           Submit
         </Button>
       </Box>
-    </div>
+    </>
   );
-};
+});

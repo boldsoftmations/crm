@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { Box, Grid, Button } from "@mui/material";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import ProductService from "../../../services/ProductService";
@@ -8,7 +8,7 @@ import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
-export const StoresInventoryCreate = (props) => {
+export const StoresInventoryCreate = memo((props) => {
   const {
     setOpenPopup,
     getAllStoresInventoryDetails,
@@ -208,4 +208,4 @@ export const StoresInventoryCreate = (props) => {
       </Box>
     </>
   );
-};
+});

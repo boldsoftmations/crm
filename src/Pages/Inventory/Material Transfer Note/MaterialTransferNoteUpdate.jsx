@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { Box, Button, Grid } from "@mui/material";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { useSelector } from "react-redux";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
-export const MaterialTransferNoteUpdate = (props) => {
+export const MaterialTransferNoteUpdate = memo((props) => {
   const {
     setOpenUpdatePopup,
     getAllMaterialTransferNoteDetails,
@@ -82,7 +82,7 @@ export const MaterialTransferNoteUpdate = (props) => {
   };
 
   return (
-    <div>
+    <>
       <CustomLoader open={open} />
 
       <Box
@@ -197,6 +197,6 @@ export const MaterialTransferNoteUpdate = (props) => {
           </Button>
         ) : null}
       </Box>
-    </div>
+    </>
   );
-};
+});

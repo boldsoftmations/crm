@@ -1,5 +1,5 @@
 import { Box, Button, Chip, Divider, Grid, styled } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { useSelector } from "react-redux";
@@ -9,7 +9,7 @@ import useDynamicFormFields from "../../../Components/useDynamicFormFields ";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import InvoiceServices from "../../../services/InvoiceService";
-export const MaterialRequisitionFormCreate = (props) => {
+export const MaterialRequisitionFormCreate = memo((props) => {
   const {
     setOpenPopup,
     getAllMaterialRequisitionFormDetails,
@@ -86,7 +86,7 @@ export const MaterialRequisitionFormCreate = (props) => {
   };
 
   return (
-    <div>
+    <>
       <MessageAlert
         open={alertInfo.open}
         onClose={handleCloseSnackbar}
@@ -200,9 +200,9 @@ export const MaterialRequisitionFormCreate = (props) => {
           Submit
         </Button>
       </Box>
-    </div>
+    </>
   );
-};
+});
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",

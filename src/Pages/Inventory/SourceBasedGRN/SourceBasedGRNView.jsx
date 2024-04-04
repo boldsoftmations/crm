@@ -16,7 +16,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -42,7 +42,7 @@ export const SourceBasedGRNView = () => {
     getAllSourceBasedGRNData(currentPage);
   }, [currentPage]);
 
-  const getAllSourceBasedGRNData = async (page) => {
+  const getAllSourceBasedGRNData = useCallback(async (page) => {
     try {
       setOpen(true);
       const response = await InventoryServices.getAllSourceBasedGRNData(page);
@@ -54,7 +54,7 @@ export const SourceBasedGRNView = () => {
     } catch (err) {
       setOpen(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     getAllSellerAccountsDetails();

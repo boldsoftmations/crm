@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import {
   Box,
   Button,
@@ -23,293 +23,291 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const PurchaseOrderUpdate = ({
-  selectedRow,
-  getAllPurchaseOrderDetails,
-  setOpenPopup,
-}) => {
-  const [inputValues, setInputValues] = useState(selectedRow);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+export const PurchaseOrderUpdate = memo(
+  ({ selectedRow, getAllPurchaseOrderDetails, setOpenPopup }) => {
+    const [inputValues, setInputValues] = useState(selectedRow);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-  const createPurchaseOrderDetails = async (e) => {
-    try {
-      e.preventDefault();
-      setLoading(true);
-      const req = {
-        created_by: inputValues.created_by,
-        vendor: inputValues.vendor,
-        vendor_type: inputValues.vendor_type,
-        vendor_email: inputValues.vendor_email,
-        vendor_contact_person: inputValues.vendor_contact_person,
-        vendor_contact: inputValues.vendor_contact,
-        seller_account: inputValues.seller_account,
-        payment_terms: inputValues.payment_terms,
-        delivery_terms: inputValues.delivery_terms,
-        schedule_date: inputValues.schedule_date,
-        currency: inputValues.currency,
-        po_no: inputValues.po_no,
-        po_date: inputValues.po_date,
-        seller_account: inputValues.seller_account || null,
-        close_short: inputValues.close_short,
-        products: inputValues.products || [],
-      };
+    const createPurchaseOrderDetails = async (e) => {
+      try {
+        e.preventDefault();
+        setLoading(true);
+        const req = {
+          created_by: inputValues.created_by,
+          vendor: inputValues.vendor,
+          vendor_type: inputValues.vendor_type,
+          vendor_email: inputValues.vendor_email,
+          vendor_contact_person: inputValues.vendor_contact_person,
+          vendor_contact: inputValues.vendor_contact,
+          seller_account: inputValues.seller_account,
+          payment_terms: inputValues.payment_terms,
+          delivery_terms: inputValues.delivery_terms,
+          schedule_date: inputValues.schedule_date,
+          currency: inputValues.currency,
+          po_no: inputValues.po_no,
+          po_date: inputValues.po_date,
+          seller_account: inputValues.seller_account || null,
+          close_short: inputValues.close_short,
+          products: inputValues.products || [],
+        };
 
-      const response = await InventoryServices.updatePurchaseOrderData(
-        inputValues.id,
-        req
-      );
-      if (response.status === 200) {
-        setOpenPopup(false);
-        getAllPurchaseOrderDetails();
+        const response = await InventoryServices.updatePurchaseOrderData(
+          inputValues.id,
+          req
+        );
+        if (response.status === 200) {
+          setOpenPopup(false);
+          getAllPurchaseOrderDetails();
+        }
+        setLoading(false);
+      } catch (error) {
+        console.log("createing Packing list error", error);
+        setLoading(false);
       }
-      setLoading(false);
-    } catch (error) {
-      console.log("createing Packing list error", error);
-      setLoading(false);
-    }
-  };
+    };
 
-  const handleCloseSnackbar = () => {
-    setError(null);
-  };
+    const handleCloseSnackbar = () => {
+      setError(null);
+    };
 
-  return (
-    <div>
-      <CustomLoader open={loading} />
+    return (
+      <>
+        <CustomLoader open={loading} />
 
-      <Box
-        component="form"
-        noValidate
-        onSubmit={(e) => createPurchaseOrderDetails(e)}
-      >
-        <Snackbar
-          open={Boolean(error)}
-          onClose={handleCloseSnackbar}
-          message={error}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              sx={{ p: 0.5 }}
-              onClick={handleCloseSnackbar}
-            >
-              <CloseIcon />
-            </IconButton>
-          }
-        />
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={3}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Vendor"
-              variant="outlined"
-              value={inputValues.vendor || ""}
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Vendor Contact Person"
-              variant="outlined"
-              value={inputValues.vendor_contact_person || ""}
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Buyer Account"
-              variant="outlined"
-              value={inputValues.seller_account || ""}
-              disabled
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={3}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Payment Terms"
-              variant="outlined"
-              value={inputValues.payment_terms || ""}
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Delivery Terms"
-              variant="outlined"
-              value={inputValues.delivery_terms || ""}
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              name="po_no"
-              label="Purchase Order No."
-              variant="outlined"
-              value={inputValues.po_no || ""}
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <CustomTextField
-              fullWidth
-              name="po_date"
-              size="small"
-              label="Purchase Order Date"
-              variant="outlined"
-              value={inputValues.po_date}
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Currency"
-              variant="outlined"
-              value={inputValues.currency || ""}
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <CustomTextField
-              fullWidth
-              name="schedule_date"
-              size="small"
-              label="Schedule Date"
-              variant="outlined"
-              value={inputValues.schedule_date}
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Issued By"
-              variant="outlined"
-              value={inputValues.created_by || ""}
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <Switch
-              checked={inputValues.close_short}
-              onChange={(event) =>
-                setInputValues({
-                  ...inputValues,
-                  close_short: event.target.checked,
-                })
-              }
-              name="close_short"
-              inputProps={{ "aria-label": "controlled" }}
-            />
-            <span>Close Short</span>
-          </Grid>
-          <Grid item xs={12}>
-            <Root>
-              <Divider>
-                <Chip label="PRODUCT" />
-              </Divider>
-            </Root>
-          </Grid>
-          {inputValues.products.map((input, index) => {
-            return (
-              <>
-                <Grid key={index} item xs={12} sm={3}>
-                  <CustomTextField
-                    fullWidth
-                    size="small"
-                    label="Product"
-                    variant="outlined"
-                    value={input.product || ""}
-                    disabled
-                  />
-                </Grid>
-                <Grid item xs={12} sm={1}>
-                  <CustomTextField
-                    fullWidth
-                    size="small"
-                    label="Unit"
-                    variant="outlined"
-                    value={input.unit || ""}
-                    disabled
-                  />
-                </Grid>
-                <Grid item xs={12} sm={2}>
-                  <CustomTextField
-                    fullWidth
-                    name="quantity"
-                    size="small"
-                    label="Quantity"
-                    variant="outlined"
-                    value={input.quantity || ""}
-                    disabled
-                  />
-                </Grid>
-                <Grid item xs={12} sm={2}>
-                  <CustomTextField
-                    fullWidth
-                    size="small"
-                    label="Pending Quantity"
-                    variant="outlined"
-                    value={input.pending_quantity || ""}
-                    disabled
-                  />
-                </Grid>
-                <Grid item xs={12} sm={2}>
-                  <CustomTextField
-                    fullWidth
-                    name="rate"
-                    size="small"
-                    label="Rate"
-                    variant="outlined"
-                    value={input.rate || ""}
-                    disabled
-                  />
-                </Grid>
-                <Grid item xs={12} sm={2}>
-                  <CustomTextField
-                    fullWidth
-                    name="amount"
-                    size="small"
-                    label="Amount"
-                    variant="outlined"
-                    value={input.amount || ""}
-                    disabled
-                  />
-                </Grid>
-                {/* <Grid item xs={12} sm={1} alignContent="right"></Grid> */}
-              </>
-            );
-          })}
-
-          {/* <Grid item xs={12} sm={2} alignContent="right"></Grid> */}
-        </Grid>
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
+        <Box
+          component="form"
+          noValidate
+          onSubmit={(e) => createPurchaseOrderDetails(e)}
         >
-          Submit
-        </Button>
-      </Box>
-    </div>
-  );
-};
+          <Snackbar
+            open={Boolean(error)}
+            onClose={handleCloseSnackbar}
+            message={error}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                sx={{ p: 0.5 }}
+                onClick={handleCloseSnackbar}
+              >
+                <CloseIcon />
+              </IconButton>
+            }
+          />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={3}>
+              <CustomTextField
+                fullWidth
+                size="small"
+                label="Vendor"
+                variant="outlined"
+                value={inputValues.vendor || ""}
+                disabled
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <CustomTextField
+                fullWidth
+                size="small"
+                label="Vendor Contact Person"
+                variant="outlined"
+                value={inputValues.vendor_contact_person || ""}
+                disabled
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <CustomTextField
+                fullWidth
+                size="small"
+                label="Buyer Account"
+                variant="outlined"
+                value={inputValues.seller_account || ""}
+                disabled
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={3}>
+              <CustomTextField
+                fullWidth
+                size="small"
+                label="Payment Terms"
+                variant="outlined"
+                value={inputValues.payment_terms || ""}
+                disabled
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <CustomTextField
+                fullWidth
+                size="small"
+                label="Delivery Terms"
+                variant="outlined"
+                value={inputValues.delivery_terms || ""}
+                disabled
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <CustomTextField
+                fullWidth
+                size="small"
+                name="po_no"
+                label="Purchase Order No."
+                variant="outlined"
+                value={inputValues.po_no || ""}
+                disabled
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <CustomTextField
+                fullWidth
+                name="po_date"
+                size="small"
+                label="Purchase Order Date"
+                variant="outlined"
+                value={inputValues.po_date}
+                disabled
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <CustomTextField
+                fullWidth
+                size="small"
+                label="Currency"
+                variant="outlined"
+                value={inputValues.currency || ""}
+                disabled
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <CustomTextField
+                fullWidth
+                name="schedule_date"
+                size="small"
+                label="Schedule Date"
+                variant="outlined"
+                value={inputValues.schedule_date}
+                disabled
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <CustomTextField
+                fullWidth
+                size="small"
+                label="Issued By"
+                variant="outlined"
+                value={inputValues.created_by || ""}
+                disabled
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <Switch
+                checked={inputValues.close_short}
+                onChange={(event) =>
+                  setInputValues({
+                    ...inputValues,
+                    close_short: event.target.checked,
+                  })
+                }
+                name="close_short"
+                inputProps={{ "aria-label": "controlled" }}
+              />
+              <span>Close Short</span>
+            </Grid>
+            <Grid item xs={12}>
+              <Root>
+                <Divider>
+                  <Chip label="PRODUCT" />
+                </Divider>
+              </Root>
+            </Grid>
+            {inputValues.products.map((input, index) => {
+              return (
+                <>
+                  <Grid key={index} item xs={12} sm={3}>
+                    <CustomTextField
+                      fullWidth
+                      size="small"
+                      label="Product"
+                      variant="outlined"
+                      value={input.product || ""}
+                      disabled
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={1}>
+                    <CustomTextField
+                      fullWidth
+                      size="small"
+                      label="Unit"
+                      variant="outlined"
+                      value={input.unit || ""}
+                      disabled
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={2}>
+                    <CustomTextField
+                      fullWidth
+                      name="quantity"
+                      size="small"
+                      label="Quantity"
+                      variant="outlined"
+                      value={input.quantity || ""}
+                      disabled
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={2}>
+                    <CustomTextField
+                      fullWidth
+                      size="small"
+                      label="Pending Quantity"
+                      variant="outlined"
+                      value={input.pending_quantity || ""}
+                      disabled
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={2}>
+                    <CustomTextField
+                      fullWidth
+                      name="rate"
+                      size="small"
+                      label="Rate"
+                      variant="outlined"
+                      value={input.rate || ""}
+                      disabled
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={2}>
+                    <CustomTextField
+                      fullWidth
+                      name="amount"
+                      size="small"
+                      label="Amount"
+                      variant="outlined"
+                      value={input.amount || ""}
+                      disabled
+                    />
+                  </Grid>
+                  {/* <Grid item xs={12} sm={1} alignContent="right"></Grid> */}
+                </>
+              );
+            })}
+
+            {/* <Grid item xs={12} sm={2} alignContent="right"></Grid> */}
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Submit
+          </Button>
+        </Box>
+      </>
+    );
+  }
+);
 
 // Data structure for Payment Terms
 const paymentTerms = [

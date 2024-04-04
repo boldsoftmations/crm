@@ -9,7 +9,7 @@ import {
   IconButton,
   Snackbar,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
@@ -26,7 +26,7 @@ const Root = styled("div")(({ theme }) => ({
     marginTop: theme.spacing(2),
   },
 }));
-export const ProductionEntryCreate = (props) => {
+export const ProductionEntryCreate = memo((props) => {
   const {
     setOpenPopup,
     sellerOption,
@@ -154,7 +154,7 @@ export const ProductionEntryCreate = (props) => {
   };
 
   return (
-    <div>
+    <>
       <MessageAlert
         open={alertInfo.open}
         onClose={handleCloseSnackbar}
@@ -356,6 +356,6 @@ export const ProductionEntryCreate = (props) => {
           Submit
         </Button>
       </Box>
-    </div>
+    </>
   );
-};
+});

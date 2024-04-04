@@ -1,5 +1,5 @@
 import { Box, Button, Grid, IconButton, Snackbar } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
@@ -9,7 +9,7 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 
-export const SourceBasedGRNCreate = (props) => {
+export const SourceBasedGRNCreate = memo((props) => {
   const {
     setOpenCreatePopup,
     sellerOption,
@@ -218,88 +218,91 @@ export const SourceBasedGRNCreate = (props) => {
     }
   };
 
-  const createSourceBasedGrnData = async (e) => {
-    e.preventDefault();
-    setOpen(true);
+  const createSourceBasedGrnData = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setOpen(true);
 
-    const isUnitTransfer = sourceBasedGrnData.source_type === "Unit Transfer";
-    const isJobWorker = sourceBasedGrnData.source_type === "Job Worker";
-    // const ManuFacturing = sourceBasedGrnData.source_type === "Manufacturing";
+      const isUnitTransfer = sourceBasedGrnData.source_type === "Unit Transfer";
+      const isJobWorker = sourceBasedGrnData.source_type === "Job Worker";
+      // const ManuFacturing = sourceBasedGrnData.source_type === "Manufacturing";
 
-    let requestPayload = {
-      grn_source: sourceBasedGrnData.grn_source,
-      user: users.email,
-    };
-
-    if (isUnitTransfer) {
-      requestPayload = {
-        ...requestPayload,
-        grn_source: "Unit Transfer",
-        from_unit: sourceBasedGrnData.from_unit,
-        to_unit: sourceBasedGrnData.to_unit,
-        transport_cost: parseFloat(sourceBasedGrnData.transport_cost),
-        products: products.map((product) => ({
-          products: product.product,
-          unit: product.unit,
-          order_quantity: parseInt(product.quantity, 10),
-          // rate: parseFloat(product.rate),
-          // amount: parseInt(product.amount),
-          qa_accepted: parseInt(product.quantity, 10),
-          qa_rejected: 0,
-        })),
+      let requestPayload = {
+        grn_source: sourceBasedGrnData.grn_source,
+        user: users.email,
       };
-    } else if (isJobWorker) {
-      requestPayload = {
-        ...requestPayload,
-        grn_source: "Job Worker",
-        challan_no: sourceBasedGrnData.challan_no,
-        source_key: sourceBasedGrnData.source_key,
-        seller_account: sourceBasedGrnData.seller_account,
-        invoice_no: sourceBasedGrnData.invoice_no,
-        transport_cost: parseFloat(sourceBasedGrnData.transport_cost),
-        total_amount: parseFloat(sourceBasedGrnData.total_amount),
-        products: products.map((product) => ({
-          products: product.product,
-          unit: product.unit,
-          order_quantity: parseInt(product.quantity, 10),
-          rate: parseFloat(product.rate),
-          amount: parseInt(product.amount),
-          total_amount: parseFloat(product.total_amount),
-          qa_accepted: parseInt(product.quantity, 10),
-          qa_rejected: 0,
-        })),
-      };
-    }
-    // else if (ManuFacturing) {
-    //   requestPayload = {
-    //     ...requestPayload,
-    //     seller_account: sourceBasedGrnData.seller_account,
-    //     product: sourceBasedGrnData.product,
-    //   };
-    // }
 
-    try {
-      await InventoryServices.createSourceBasedGRN(requestPayload);
-      setOpenCreatePopup(false);
-      const successMessage = "Source Based GRN Created Successfully";
-      handleSuccess(successMessage);
-      getAllSourceBasedGRNData(currentPage);
-    } catch (error) {
-      handleError(error);
-      let errorMessage = "An unknown error occurred";
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.errors &&
-        error.response.data.errors.non_field_errors
-      ) {
-        errorMessage = error.response.data.errors.non_field_errors;
+      if (isUnitTransfer) {
+        requestPayload = {
+          ...requestPayload,
+          grn_source: "Unit Transfer",
+          from_unit: sourceBasedGrnData.from_unit,
+          to_unit: sourceBasedGrnData.to_unit,
+          transport_cost: parseFloat(sourceBasedGrnData.transport_cost),
+          products: products.map((product) => ({
+            products: product.product,
+            unit: product.unit,
+            order_quantity: parseInt(product.quantity, 10),
+            // rate: parseFloat(product.rate),
+            // amount: parseInt(product.amount),
+            qa_accepted: parseInt(product.quantity, 10),
+            qa_rejected: 0,
+          })),
+        };
+      } else if (isJobWorker) {
+        requestPayload = {
+          ...requestPayload,
+          grn_source: "Job Worker",
+          challan_no: sourceBasedGrnData.challan_no,
+          source_key: sourceBasedGrnData.source_key,
+          seller_account: sourceBasedGrnData.seller_account,
+          invoice_no: sourceBasedGrnData.invoice_no,
+          transport_cost: parseFloat(sourceBasedGrnData.transport_cost),
+          total_amount: parseFloat(sourceBasedGrnData.total_amount),
+          products: products.map((product) => ({
+            products: product.product,
+            unit: product.unit,
+            order_quantity: parseInt(product.quantity, 10),
+            rate: parseFloat(product.rate),
+            amount: parseInt(product.amount),
+            total_amount: parseFloat(product.total_amount),
+            qa_accepted: parseInt(product.quantity, 10),
+            qa_rejected: 0,
+          })),
+        };
       }
-      setError(errorMessage);
-    } finally {
-      setOpen(false);
-    }
-  };
+      // else if (ManuFacturing) {
+      //   requestPayload = {
+      //     ...requestPayload,
+      //     seller_account: sourceBasedGrnData.seller_account,
+      //     product: sourceBasedGrnData.product,
+      //   };
+      // }
+
+      try {
+        await InventoryServices.createSourceBasedGRN(requestPayload);
+        setOpenCreatePopup(false);
+        const successMessage = "Source Based GRN Created Successfully";
+        handleSuccess(successMessage);
+        getAllSourceBasedGRNData(currentPage);
+      } catch (error) {
+        handleError(error);
+        let errorMessage = "An unknown error occurred";
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.errors &&
+          error.response.data.errors.non_field_errors
+        ) {
+          errorMessage = error.response.data.errors.non_field_errors;
+        }
+        setError(errorMessage);
+      } finally {
+        setOpen(false);
+      }
+    },
+    [sourceBasedGrnData, currentPage]
+  );
 
   return (
     <div>
@@ -496,6 +499,6 @@ export const SourceBasedGRNCreate = (props) => {
       </Box>
     </div>
   );
-};
+});
 
 const SourceOption = ["Job Worker", "Unit Transfer"];

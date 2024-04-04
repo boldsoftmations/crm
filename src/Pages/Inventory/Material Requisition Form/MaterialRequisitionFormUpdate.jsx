@@ -1,5 +1,5 @@
 import { Box, Button, Chip, Divider, Grid } from "@mui/material";
-import React, { useMemo, useState } from "react";
+import React, { memo, useMemo, useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
@@ -18,7 +18,7 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const MaterialRequisitionFormUpdate = (props) => {
+export const MaterialRequisitionFormUpdate = memo((props) => {
   const {
     setOpenPopup,
     getAllMaterialRequisitionFormDetails,
@@ -83,7 +83,7 @@ export const MaterialRequisitionFormUpdate = (props) => {
   };
 
   return (
-    <div>
+    <>
       <MessageAlert
         open={alertInfo.open}
         onClose={handleCloseSnackbar}
@@ -200,6 +200,6 @@ export const MaterialRequisitionFormUpdate = (props) => {
           </Button>
         ) : null}
       </Box>
-    </div>
+    </>
   );
-};
+});
