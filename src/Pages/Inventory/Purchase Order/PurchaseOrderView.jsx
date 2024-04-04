@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Box,
   Grid,
@@ -11,18 +11,11 @@ import {
   TableRow,
   TableCell,
   Button,
-  TableFooter,
-  Pagination,
   Collapse,
   Typography,
   IconButton,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import ClearIcon from "@mui/icons-material/Clear";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -40,6 +33,8 @@ import { PackingListMergeCreate } from "../PackingList/PackingListMergeCreate";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import SearchComponent from "../../../Components/SearchComponent ";
+import { CustomPagination } from "../../../Components/CustomPagination";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
 export const PurchaseOrderView = () => {
   const [openPopupUpdate, setOpenPopupUpdate] = useState(false);
@@ -54,7 +49,7 @@ export const PurchaseOrderView = () => {
   const [openCreatePLPopup, setOpenCreatePLPopup] = useState(false);
   const [openMergePLPopup, setOpenMergePLPopup] = useState(false);
   const dispatch = useDispatch();
-  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+  const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
   const handleDownload = async (data) => {
@@ -108,17 +103,6 @@ export const PurchaseOrderView = () => {
     }
   };
 
-  const handlePageClick = (event, value) => {
-    setCurrentPage(value);
-  };
-
-  const handleFilterChange = (event) => {
-    const { value } = event.target;
-    setAcceptedFilter(value);
-    setCurrentPage(0);
-    getAllPurchaseOrderDetails(0, value, searchQuery);
-  };
-
   useEffect(() => {
     getAllSellerAccountsDetails();
   }, []);
@@ -137,43 +121,56 @@ export const PurchaseOrderView = () => {
   };
 
   useEffect(() => {
-    getAllPurchaseOrderDetails(currentPage);
-  }, [currentPage, getAllPurchaseOrderDetails]);
+    getAllPurchaseOrderDetails(currentPage, acceptedFilter, searchQuery);
+  }, [currentPage, acceptedFilter, searchQuery]);
 
   const getAllPurchaseOrderDetails = useCallback(
-    async (page, filter = acceptedFilter, search = searchQuery) => {
+    async (page, filter, query) => {
       try {
         setOpen(true);
         const response = await InventoryServices.getAllPurchaseOrderData(
           page,
           filter,
-          search
+          query
         );
         setPurchaseOrderData(response.data.results);
         setPageCount(Math.ceil(response.data.count / 25));
-        setOpen(false);
       } catch (error) {
         handleError(error);
+      } finally {
         setOpen(false);
-        console.error("error", error);
       }
     },
-    [acceptedFilter, searchQuery]
+    []
   );
-
-  const handleOpenCreatePLPopup = (row) => {
-    setOpenCreatePLPopup(true);
-    setSelectedRow(row);
-  };
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to first page with new search
+  };
+
+  const handleFilter = (query) => {
+    if (query) {
+      const value = query.value === "true";
+      setAcceptedFilter(value);
+    } else {
+      setAcceptedFilter(null);
+      setCurrentPage(1);
+    }
   };
 
   const handleReset = () => {
     setSearchQuery("");
-    setCurrentPage(0);
+    setCurrentPage(1); // Reset to first page with no search query
+  };
+
+  const handlePageClick = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  const handleOpenCreatePLPopup = (row) => {
+    setOpenCreatePLPopup(true);
+    setSelectedRow(row);
   };
 
   return (
@@ -191,42 +188,17 @@ export const PurchaseOrderView = () => {
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} sm={3}>
-                <FormControl sx={{ minWidth: "100px" }} fullWidth size="small">
-                  <InputLabel id="demo-simple-select-label">
-                    Filter By Accepted
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    name="status"
-                    label="Filter By Accepted"
-                    value={acceptedFilter}
-                    onChange={handleFilterChange}
-                  >
-                    {AcceptedOption.map((option, i) => (
-                      <MenuItem key={i} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  {acceptedFilter && (
-                    <IconButton
-                      size="small"
-                      onClick={() => {
-                        setAcceptedFilter("");
-                        getAllPurchaseOrderDetails(1, false, searchQuery);
-                      }}
-                      sx={{
-                        position: "absolute",
-                        right: 8,
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                      }}
-                    >
-                      <ClearIcon />
-                    </IconButton>
+                <CustomAutocomplete
+                  sx={{ flexGrow: 1, mr: 1 }}
+                  size="small"
+                  value={AcceptedOption.find(
+                    (option) => option.value === acceptedFilter.toString()
                   )}
-                </FormControl>
+                  onChange={(event, newValue) => handleFilter(newValue)}
+                  options={AcceptedOption}
+                  getOptionLabel={(option) => option.label}
+                  label="Filter By Accepted"
+                />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <SearchComponent
@@ -319,17 +291,10 @@ export const PurchaseOrderView = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          <TableFooter
-            sx={{ display: "flex", justifyContent: "center", marginTop: "2em" }}
-          >
-            <Pagination
-              count={pageCount}
-              onChange={handlePageClick}
-              color={"primary"}
-              variant="outlined"
-              shape="circular"
-            />
-          </TableFooter>
+          <CustomPagination
+            pageCount={pageCount}
+            handlePageClick={handlePageClick}
+          />
         </Paper>
       </Grid>
       <Popup
@@ -343,6 +308,9 @@ export const PurchaseOrderView = () => {
           getAllPurchaseOrderDetails={getAllPurchaseOrderDetails}
           selectedRow={selectedRow}
           contactNameOption={contactNameOption}
+          currentPage={currentPage}
+          acceptedFilter={acceptedFilter}
+          searchQuery={searchQuery}
         />
       </Popup>
       <Popup

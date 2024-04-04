@@ -1,19 +1,11 @@
-import React, { memo, useState } from "react";
-import {
-  Box,
-  Button,
-  Chip,
-  Divider,
-  Grid,
-  IconButton,
-  Snackbar,
-  Switch,
-} from "@mui/material";
+import React, { memo, useCallback, useState } from "react";
+import { Box, Button, Chip, Divider, Grid, Switch } from "@mui/material";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import CloseIcon from "@mui/icons-material/Close";
 import CustomTextField from "../../../Components/CustomTextField";
 import InventoryServices from "../../../services/InventoryService";
 import { styled } from "@mui/material/styles";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -24,55 +16,76 @@ const Root = styled("div")(({ theme }) => ({
 }));
 
 export const PurchaseOrderUpdate = memo(
-  ({ selectedRow, getAllPurchaseOrderDetails, setOpenPopup }) => {
+  ({
+    selectedRow,
+    getAllPurchaseOrderDetails,
+    setOpenPopup,
+    currentPage,
+    acceptedFilter,
+    searchQuery,
+  }) => {
     const [inputValues, setInputValues] = useState(selectedRow);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+      useNotificationHandling();
 
-    const createPurchaseOrderDetails = async (e) => {
-      try {
-        e.preventDefault();
-        setLoading(true);
-        const req = {
-          created_by: inputValues.created_by,
-          vendor: inputValues.vendor,
-          vendor_type: inputValues.vendor_type,
-          vendor_email: inputValues.vendor_email,
-          vendor_contact_person: inputValues.vendor_contact_person,
-          vendor_contact: inputValues.vendor_contact,
-          seller_account: inputValues.seller_account,
-          payment_terms: inputValues.payment_terms,
-          delivery_terms: inputValues.delivery_terms,
-          schedule_date: inputValues.schedule_date,
-          currency: inputValues.currency,
-          po_no: inputValues.po_no,
-          po_date: inputValues.po_date,
-          seller_account: inputValues.seller_account || null,
-          close_short: inputValues.close_short,
-          products: inputValues.products || [],
-        };
+    const createPurchaseOrderDetails = useCallback(
+      async (e) => {
+        try {
+          e.preventDefault();
+          setLoading(true);
+          const req = {
+            created_by: inputValues.created_by,
+            vendor: inputValues.vendor,
+            vendor_type: inputValues.vendor_type,
+            vendor_email: inputValues.vendor_email,
+            vendor_contact_person: inputValues.vendor_contact_person,
+            vendor_contact: inputValues.vendor_contact,
+            seller_account: inputValues.seller_account,
+            payment_terms: inputValues.payment_terms,
+            delivery_terms: inputValues.delivery_terms,
+            schedule_date: inputValues.schedule_date,
+            currency: inputValues.currency,
+            po_no: inputValues.po_no,
+            po_date: inputValues.po_date,
+            seller_account: inputValues.seller_account || null,
+            close_short: inputValues.close_short,
+            products: inputValues.products || [],
+          };
 
-        const response = await InventoryServices.updatePurchaseOrderData(
-          inputValues.id,
-          req
-        );
-        if (response.status === 200) {
-          setOpenPopup(false);
-          getAllPurchaseOrderDetails();
+          const response = await InventoryServices.updatePurchaseOrderData(
+            inputValues.id,
+            req
+          );
+          const successMessage =
+            response.data.message || "Purchase Order updated successfully";
+          handleSuccess(successMessage);
+
+          setTimeout(() => {
+            setOpenPopup(false);
+            getAllPurchaseOrderDetails(
+              currentPage,
+              acceptedFilter,
+              searchQuery
+            );
+          }, 300);
+        } catch (error) {
+          handleError(error); // Handle errors from the API call
+        } finally {
+          setLoading(false); // Always close the loader
         }
-        setLoading(false);
-      } catch (error) {
-        console.log("createing Packing list error", error);
-        setLoading(false);
-      }
-    };
-
-    const handleCloseSnackbar = () => {
-      setError(null);
-    };
+      },
+      [inputValues, currentPage, acceptedFilter, searchQuery]
+    );
 
     return (
       <>
+        <MessageAlert
+          open={alertInfo.open}
+          onClose={handleCloseSnackbar}
+          severity={alertInfo.severity}
+          message={alertInfo.message}
+        />
         <CustomLoader open={loading} />
 
         <Box
@@ -80,22 +93,6 @@ export const PurchaseOrderUpdate = memo(
           noValidate
           onSubmit={(e) => createPurchaseOrderDetails(e)}
         >
-          <Snackbar
-            open={Boolean(error)}
-            onClose={handleCloseSnackbar}
-            message={error}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                sx={{ p: 0.5 }}
-                onClick={handleCloseSnackbar}
-              >
-                <CloseIcon />
-              </IconButton>
-            }
-          />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={3}>
               <CustomTextField

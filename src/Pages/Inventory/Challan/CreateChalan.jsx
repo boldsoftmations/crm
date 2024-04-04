@@ -27,7 +27,6 @@ const Root = styled("div")(({ theme }) => ({
 
 export const CreateChalan = memo(
   ({ recordForEdit, setOpenPopup, getChalanDetails, currentPage }) => {
-    console.log("recordForEdit", recordForEdit);
     const { sellerData, userData } = useSelector((state) => ({
       sellerData: state.auth.sellerAccount,
       userData: state.auth.profile,
