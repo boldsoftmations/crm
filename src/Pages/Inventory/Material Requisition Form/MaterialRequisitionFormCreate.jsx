@@ -14,6 +14,8 @@ export const MaterialRequisitionFormCreate = (props) => {
     setOpenPopup,
     getAllMaterialRequisitionFormDetails,
     storesInventoryData,
+    currentPage,
+    searchQuery,
   } = props;
   const productOption = useMemo(
     () =>
@@ -75,7 +77,7 @@ export const MaterialRequisitionFormCreate = (props) => {
       await InventoryServices.createMaterialRequisitionFormData(payload);
       setOpenPopup(false);
       handleSuccess();
-      getAllMaterialRequisitionFormDetails();
+      getAllMaterialRequisitionFormDetails(currentPage, searchQuery);
     } catch (error) {
       handleError(error); // Handle errors from the API call
     } finally {

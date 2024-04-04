@@ -271,6 +271,7 @@ export const ChalanView = () => {
             maxWidth="xl"
           >
             <ChalanInvoiceCreate
+              currentPage={currentPage}
               setOpenPopup={setOpenPopup}
               challanNumbers={challanNumbers}
               getChalanDetails={getChalanDetails}

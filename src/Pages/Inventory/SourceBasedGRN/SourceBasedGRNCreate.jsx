@@ -10,7 +10,12 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const SourceBasedGRNCreate = (props) => {
-  const { setOpenCreatePopup, sellerOption, getAllSourceBasedGRNData } = props;
+  const {
+    setOpenCreatePopup,
+    sellerOption,
+    getAllSourceBasedGRNData,
+    currentPage,
+  } = props;
   const [open, setOpen] = useState(false);
   const [productOption, setProductOption] = useState([]);
   const [error, setError] = useState(null);
@@ -278,7 +283,7 @@ export const SourceBasedGRNCreate = (props) => {
       setOpenCreatePopup(false);
       const successMessage = "Source Based GRN Created Successfully";
       handleSuccess(successMessage);
-      getAllSourceBasedGRNData();
+      getAllSourceBasedGRNData(currentPage);
     } catch (error) {
       handleError(error);
       let errorMessage = "An unknown error occurred";

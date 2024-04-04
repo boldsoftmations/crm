@@ -27,7 +27,13 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 export const ProductionEntryCreate = (props) => {
-  const { setOpenPopup, sellerOption, getAllProductionEntryDetails } = props;
+  const {
+    setOpenPopup,
+    sellerOption,
+    getAllProductionEntryDetails,
+    currentPage,
+    searchQuery,
+  } = props;
   const [open, setOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState([]);
   const [selectedBOM, setSelectedBOM] = useState([]);
@@ -134,7 +140,7 @@ export const ProductionEntryCreate = (props) => {
       };
       await InventoryServices.createProductionEntryData(req);
       setOpenPopup(false);
-      getAllProductionEntryDetails();
+      getAllProductionEntryDetails(currentPage, searchQuery);
       setOpen(false);
       handleSuccess("Production Entry Created Successfully");
     } catch (error) {

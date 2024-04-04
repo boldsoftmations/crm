@@ -160,6 +160,7 @@ export const SafetyStockView = () => {
         setOpenPopup={setOpenPopupCreate}
       >
         <SafetyStockCreate
+          currentPage={currentPage}
           setOpenPopup={setOpenPopupCreate}
           onCreateSuccess={getAllSafetyStockDetails}
         />
@@ -170,6 +171,7 @@ export const SafetyStockView = () => {
         setOpenPopup={setOpenPopupUpdate}
       >
         <SafetyStockUpdate
+          currentPage={currentPage}
           setOpenPopup={setOpenPopupUpdate}
           selectedRow={selectedRow}
           onUpdateSuccess={getAllSafetyStockDetails}

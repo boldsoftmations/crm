@@ -9,7 +9,12 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 export const StoresInventoryCreate = (props) => {
-  const { setOpenPopup, getAllStoresInventoryDetails } = props;
+  const {
+    setOpenPopup,
+    getAllStoresInventoryDetails,
+    currentPage,
+    searchQuery,
+  } = props;
   const [open, setOpen] = useState(false);
   const [storeInventoryData, setStoreInventoryData] = useState([]);
   const [product, setProduct] = useState([]);
@@ -93,7 +98,7 @@ export const StoresInventoryCreate = (props) => {
       const successMessage = "Store Inventory Created Successfully";
       handleSuccess(successMessage);
       setOpenPopup(false);
-      getAllStoresInventoryDetails();
+      getAllStoresInventoryDetails(currentPage, searchQuery);
       setOpen(false);
     } catch (err) {
       handleError(err);

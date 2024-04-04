@@ -28,7 +28,8 @@ const Root = styled("div")(({ theme }) => ({
 export const CreateChalan = ({
   recordForEdit,
   setOpenPopup,
-  getAllVendorDetails,
+  getChalanDetails,
+  currentPage,
 }) => {
   console.log("recordForEdit", recordForEdit);
   const { sellerData, userData } = useSelector((state) => ({
@@ -238,7 +239,7 @@ export const CreateChalan = ({
 
       const response = await InventoryServices.createChalan(req);
       if (response) {
-        getAllVendorDetails();
+        getChalanDetails(currentPage);
         setOpenPopup(false);
       }
       setLoading(false);

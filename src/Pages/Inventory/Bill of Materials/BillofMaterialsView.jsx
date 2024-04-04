@@ -357,6 +357,9 @@ export const BillofMaterialsView = () => {
         setOpenPopup={setOpenPopup2}
       >
         <BillofMaterialsCreate
+          currentPage={currentPage}
+          filterApproved={filterApproved}
+          searchQuery={searchQuery}
           getAllBillofMaterialsDetails={getAllBillofMaterialsDetails}
           setOpenPopup={setOpenPopup2}
         />
@@ -368,6 +371,9 @@ export const BillofMaterialsView = () => {
         setOpenPopup={setOpenPopup}
       >
         <BillofMaterialsUpdate
+          currentPage={currentPage}
+          filterApproved={filterApproved}
+          searchQuery={searchQuery}
           setOpenPopup={setOpenPopup}
           getAllBillofMaterialsDetails={getAllBillofMaterialsDetails}
           idForEdit={idForEdit}

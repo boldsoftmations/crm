@@ -418,6 +418,8 @@ export const MaterialRequisitionFormView = () => {
         setOpenPopup={setOpenPopup2}
       >
         <MaterialRequisitionFormCreate
+          currentPage={currentPage}
+          searchQuery={searchQuery}
           storesInventoryData={storesInventoryData}
           getAllMaterialRequisitionFormDetails={
             getAllMaterialRequisitionFormDetails
@@ -432,6 +434,8 @@ export const MaterialRequisitionFormView = () => {
         setOpenPopup={setOpenPopup}
       >
         <MaterialRequisitionFormUpdate
+          currentPage={currentPage}
+          searchQuery={searchQuery}
           setOpenPopup={setOpenPopup}
           storesInventoryData={storesInventoryData}
           getAllMaterialRequisitionFormDetails={

@@ -181,6 +181,7 @@ export const SourceBasedGRNView = () => {
       >
         <SourceBasedGRNCreate
           idForEdit={idForEdit}
+          currentPage={currentPage}
           setOpenCreatePopup={setOpenCreatePopup}
           sellerOption={sellerOption}
           getAllSourceBasedGRNData={getAllSourceBasedGRNData}
