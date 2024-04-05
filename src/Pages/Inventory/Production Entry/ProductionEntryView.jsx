@@ -42,7 +42,7 @@ export const ProductionEntryView = () => {
   const [sellerOption, setSellerOption] = useState(null);
   const users = useSelector((state) => state.auth.profile);
   const dispatch = useDispatch();
-  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+  const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
   useEffect(() => {
@@ -60,8 +60,9 @@ export const ProductionEntryView = () => {
       setSellerOption(response.data.results);
       setOpen(false);
     } catch (err) {
+      handleError(err);
+    } finally {
       setOpen(false);
-      console.log("err", err);
     }
   };
 
@@ -75,8 +76,9 @@ export const ProductionEntryView = () => {
       dispatch(getFinishGoodProduct(arr));
       setOpen(false);
     } catch (err) {
+      handleError(err);
+    } finally {
       setOpen(false);
-      console.log("err", err);
     }
   };
 
@@ -97,8 +99,8 @@ export const ProductionEntryView = () => {
         setOpen(false);
       } catch (error) {
         handleError(error);
+      } finally {
         setOpen(false);
-        console.error("error", error);
       }
     },
     [searchQuery]

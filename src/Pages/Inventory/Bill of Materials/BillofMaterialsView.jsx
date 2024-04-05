@@ -76,6 +76,7 @@ export const BillofMaterialsView = () => {
       dispatch(getFinishGoodProduct(arr));
       setOpen(false);
     } catch (err) {
+      handleError(err);
       setOpen(false);
       console.log("err", err);
     }
@@ -93,6 +94,7 @@ export const BillofMaterialsView = () => {
       dispatch(getRawMaterialProduct(arr));
       setOpen(false);
     } catch (err) {
+      handleError(err);
       setOpen(false);
       console.log("err", err);
     }
@@ -110,6 +112,7 @@ export const BillofMaterialsView = () => {
       dispatch(getConsumableProduct(arr));
       setOpen(false);
     } catch (err) {
+      handleError(err);
       setOpen(false);
       console.log("err", err);
     }
@@ -168,13 +171,14 @@ export const BillofMaterialsView = () => {
         product: data.product,
       };
       await InventoryServices.updateBillofMaterialsData(data.id, req);
-
-      setOpenPopup(false);
+      handleSuccess("BOM Accepted Successfully");
+      setTimeout(() => {
+        setOpenPopup(false);
+      }, 300);
       getAllBillofMaterialsDetails(currentPage, filterApproved, searchQuery);
       setOpen(false);
-      // Show success snackbar
-      setOpenSnackbar(true);
     } catch (error) {
+      handleError(error);
       console.log("error Store Accepting", error);
       setOpen(false);
     }

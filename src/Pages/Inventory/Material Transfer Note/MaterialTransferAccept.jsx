@@ -1,7 +1,8 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useState } from "react";
 import InventoryServices from "../../../services/InventoryService";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import { Alert, Snackbar } from "@mui/material";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const MaterialTransferAccept = memo(
   ({
@@ -13,31 +14,9 @@ export const MaterialTransferAccept = memo(
     acceptedFilter,
   }) => {
     const [open, setOpen] = useState(false);
-    const [errorMessages, setErrorMessages] = useState([]);
-    const [currentErrorIndex, setCurrentErrorIndex] = useState(0);
-    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+      useNotificationHandling();
 
-    const extractErrorMessages = (data) => {
-      let messages = [];
-      if (data.errors) {
-        for (const [key, value] of Object.entries(data.errors)) {
-          // Assuming each key has an array of messages, concatenate them.
-          value.forEach((msg) => {
-            messages.push(`${key}: ${msg}`);
-          });
-        }
-      }
-      return messages;
-    };
-
-    const handleCloseSnackbar = useCallback(() => {
-      if (currentErrorIndex < errorMessages.length - 1) {
-        setCurrentErrorIndex((prevIndex) => prevIndex + 1);
-      } else {
-        setOpenSnackbar(false);
-        setCurrentErrorIndex(0); // Reset for any future errors
-      }
-    }, [currentErrorIndex, errorMessages.length]);
     // Stores Accept Api
     const updateMaterialTransferNoteDetails = async (data) => {
       try {
@@ -54,7 +33,10 @@ export const MaterialTransferAccept = memo(
           data.id,
           req
         );
-        setOpenAcceptPopup(false);
+        handleSuccess("Accepted successfully");
+        setTimeout(() => {
+          setOpenAcceptPopup(false);
+        }, 300);
         getAllMaterialTransferNoteDetails(
           currentPage,
           searchQuery,
@@ -62,11 +44,8 @@ export const MaterialTransferAccept = memo(
         );
         setOpen(false);
       } catch (error) {
+        handleError(error);
         console.log("createing company detail error", error);
-        const newErrors = extractErrorMessages(error.response.data);
-        setErrorMessages(newErrors);
-        setCurrentErrorIndex(0); // Reset the error index when new errors arrive
-        setOpenSnackbar((prevOpen) => !prevOpen);
       } finally {
         setOpen(false);
       }
@@ -74,18 +53,14 @@ export const MaterialTransferAccept = memo(
 
     return (
       <>
+        <MessageAlert
+          open={alertInfo.open}
+          onClose={handleCloseSnackbar}
+          severity={alertInfo.severity}
+          message={alertInfo.message}
+        />
         <CustomLoader open={open} />
         {/* Display errors */}
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        >
-          <Alert onClose={handleCloseSnackbar} severity="error">
-            {errorMessages[currentErrorIndex]}
-          </Alert>
-        </Snackbar>
         <div className="my-4">
           <table className="table table-bordered">
             <tbody>

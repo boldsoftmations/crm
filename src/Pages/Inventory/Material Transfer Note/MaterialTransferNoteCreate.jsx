@@ -1,6 +1,5 @@
 import { Box, Button, Grid, IconButton, Snackbar } from "@mui/material";
 import React, { memo, useEffect, useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
@@ -20,7 +19,6 @@ export const MaterialTransferNoteCreate = memo((props) => {
   } = props;
   const [open, setOpen] = useState(false);
   const [productOption, setProductOption] = useState([]);
-  const [error, setError] = useState(null);
   const data = useSelector((state) => state.auth);
   const users = data.profile;
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -68,6 +66,7 @@ export const MaterialTransferNoteCreate = memo((props) => {
         setProductOption(response.data);
       }
     } catch (err) {
+      handleError(err);
       console.error("error potential", err);
     } finally {
       setOpen(false);
@@ -87,8 +86,11 @@ export const MaterialTransferNoteCreate = memo((props) => {
 
     try {
       await InventoryServices.createMaterialTransferNoteData(requestPayload);
-      setOpenCreatePopup(false);
+
       handleSuccess("Material Transfer Note created successfully");
+      setTimeout(() => {
+        setOpenCreatePopup(false);
+      }, 300);
       getAllMaterialTransferNoteDetails(
         currentPage,
         searchQuery,
@@ -96,16 +98,6 @@ export const MaterialTransferNoteCreate = memo((props) => {
       );
     } catch (error) {
       handleError(error);
-      let errorMessage = "An unknown error occurred";
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.errors &&
-        error.response.data.errors.non_field_errors
-      ) {
-        errorMessage = error.response.data.errors.non_field_errors;
-      }
-      setError(errorMessage);
     } finally {
       setOpen(false);
     }
