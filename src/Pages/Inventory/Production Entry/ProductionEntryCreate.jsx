@@ -6,11 +6,8 @@ import {
   Divider,
   FormControlLabel,
   Grid,
-  IconButton,
-  Snackbar,
 } from "@mui/material";
 import React, { memo, useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { useSelector } from "react-redux";
@@ -38,7 +35,6 @@ export const ProductionEntryCreate = memo((props) => {
   const [selectedProduct, setSelectedProduct] = useState([]);
   const [selectedBOM, setSelectedBOM] = useState([]);
   const [quantity, setQuantity] = useState(0);
-  const [error, setError] = useState(null);
   const [checked, setChecked] = useState(false);
   const data = useSelector((state) => state.auth);
   const [selectedSellerData, setSelectedSellerData] = useState(null);
@@ -141,14 +137,13 @@ export const ProductionEntryCreate = memo((props) => {
       await InventoryServices.createProductionEntryData(req);
       setOpenPopup(false);
       getAllProductionEntryDetails(currentPage, searchQuery);
-      setOpen(false);
       handleSuccess("Production Entry Created Successfully");
+      setTimeout(() => {
+        setOpen(false);
+      }, 300);
     } catch (error) {
       handleError(error);
-      if (error.response && error.response.data && error.response.data.errors) {
-        setError(error.response.data.errors.non_field_errors);
-      }
-
+    } finally {
       setOpen(false);
     }
   };
@@ -162,28 +157,11 @@ export const ProductionEntryCreate = memo((props) => {
         message={alertInfo.message}
       />
       <CustomLoader open={open} />
-
       <Box
         component="form"
         noValidate
         onSubmit={(e) => createMaterialRequisitionFormDetails(e)}
       >
-        <Snackbar
-          open={Boolean(error)}
-          onClose={handleCloseSnackbar}
-          message={error}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              sx={{ p: 0.5 }}
-              onClick={handleCloseSnackbar}
-            >
-              <CloseIcon />
-            </IconButton>
-          }
-        />
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <CustomAutocomplete

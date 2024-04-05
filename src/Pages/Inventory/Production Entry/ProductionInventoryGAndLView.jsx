@@ -28,7 +28,9 @@ export const ProductionInventoryGAndLView = () => {
       setTimeout(() => {
         csvLinkRef.current.link.click();
       });
+      handleSuccess("CSV Downloaded Successfully");
     } catch (error) {
+      handleError(error);
       console.log("CSVLink Download error", error);
     }
   };
@@ -75,7 +77,7 @@ export const ProductionInventoryGAndLView = () => {
       setOpen(false);
       return data;
     } catch (err) {
-      console.log(err);
+      handleError(err);
     } finally {
       setOpen(false);
     }
@@ -105,10 +107,6 @@ export const ProductionInventoryGAndLView = () => {
     },
     [searchQuery]
   );
-
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
 
   const handlePageClick = (event, value) => {
     setCurrentPage(value);
