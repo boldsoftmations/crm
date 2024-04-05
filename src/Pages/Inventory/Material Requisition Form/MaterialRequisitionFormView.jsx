@@ -59,7 +59,6 @@ export const MaterialRequisitionFormView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [idForEdit, setIDForEdit] = useState("");
   const [storesInventoryData, setStoresInventoryData] = useState([]);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
@@ -74,6 +73,7 @@ export const MaterialRequisitionFormView = () => {
       setTimeout(() => {
         csvLinkRef.current.link.click();
       });
+      handleSuccess("CSV Downloaded Successfully");
     } catch (error) {
       console.log("CSVLink Download error", error);
     }
@@ -161,6 +161,7 @@ export const MaterialRequisitionFormView = () => {
         setPageCount(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
+        handleError(error);
         setOpen(false);
         console.error("error", error);
       }
@@ -197,9 +198,9 @@ export const MaterialRequisitionFormView = () => {
       setOpenPopup3(false);
       getAllMaterialRequisitionFormDetails();
       handleSuccess("Material Requisition Form Accepted");
-      setOpen(false);
-      // Show success snackbar
-      setOpenSnackbar(true);
+      setTimeout(() => {
+        setOpen(false);
+      }, 300);
     } catch (error) {
       handleError(error);
       console.log("error Store Accepting", error);
@@ -210,10 +211,6 @@ export const MaterialRequisitionFormView = () => {
   const openInPopup = (item) => {
     setIDForEdit(item);
     setOpenPopup(true);
-  };
-
-  const handleSnackbarClose = () => {
-    setOpenSnackbar(false);
   };
 
   const handlePrint = async (data) => {
@@ -243,9 +240,10 @@ export const MaterialRequisitionFormView = () => {
 
       // clean up the temporary link element
       document.body.removeChild(link);
-
+      handleSuccess("Material Requisition Form Printed");
       setOpen(false);
     } catch (error) {
+      handleError(error);
       console.log("error exporting pdf", error);
     } finally {
       setOpen(false);
@@ -343,24 +341,6 @@ export const MaterialRequisitionFormView = () => {
               },
             }}
           >
-            <Snackbar
-              open={openSnackbar}
-              onClose={handleSnackbarClose}
-              message={
-                "Materail Requisition Form details Accepted successfully!"
-              }
-              anchorOrigin={{ vertical: "top", horizontal: "center" }}
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  sx={{ p: 0.5 }}
-                  onClick={handleSnackbarClose}
-                >
-                  <CloseIcon />
-                </IconButton>
-              }
-            />
             <Table
               sx={{ minWidth: 700 }}
               stickyHeader

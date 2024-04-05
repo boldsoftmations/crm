@@ -61,6 +61,7 @@ export const MaterialRequisitionFormCreate = memo((props) => {
       const response = await InvoiceServices.getfilterSellerAccountData(data);
       setSellerOption(response.data.results);
     } catch (err) {
+      handleError(err);
       console.log("err", err);
     }
   };
@@ -75,8 +76,10 @@ export const MaterialRequisitionFormCreate = memo((props) => {
         products_data: products,
       };
       await InventoryServices.createMaterialRequisitionFormData(payload);
-      setOpenPopup(false);
-      handleSuccess();
+      handleSuccess("MRF Created Successfully");
+      setTimeout(() => {
+        setOpenPopup(false);
+      }, 300);
       getAllMaterialRequisitionFormDetails(currentPage, searchQuery);
     } catch (error) {
       handleError(error); // Handle errors from the API call
