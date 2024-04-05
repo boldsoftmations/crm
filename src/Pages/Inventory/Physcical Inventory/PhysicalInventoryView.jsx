@@ -4,9 +4,8 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import { CustomTable } from "../../../Components/CustomTable";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import { Box, Button, Grid, Paper } from "@mui/material";
+import { Box, Button, Grid, Pagination, Paper } from "@mui/material";
 import SearchComponent from "../../../Components/SearchComponent ";
-import { CustomPagination } from "../../../Components/CustomPagination";
 import { Popup } from "../../../Components/Popup";
 import { PhysicalInventoryCreate } from "./PhysicalInventoryCreate";
 import { PhysicalInventoryUpdate } from "./PhysicalInventoryUpdate";
@@ -17,40 +16,44 @@ export const PhysicalInventoryView = () => {
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [data, setData] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const [pageCount, setPageCount] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
   useEffect(() => {
-    getPhysicalInventoryData(pageCount, searchQuery);
-  }, [pageCount, searchQuery]);
+    getPhysicalInventoryData();
+  }, [currentPage, searchQuery, getPhysicalInventoryData]);
 
-  const getPhysicalInventoryData = useCallback(async (page, query) => {
+  const getPhysicalInventoryData = useCallback(async () => {
+    setOpen(true);
     try {
-      setOpen(true);
-      const response = await InventoryServices.getPhysical(page, query);
+      const response = await InventoryServices.getPhysical(
+        currentPage,
+        searchQuery
+      );
       setData(response.data.results);
-      setPageCount(Math.ceil(response.data.count / 25));
+      setTotalPages(Math.ceil(response.data.count / 25));
     } catch (error) {
       handleError(error);
     } finally {
       setOpen(false);
     }
-  }, []);
+  }, [currentPage, searchQuery]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    setPageCount(1);
+    setCurrentPage(1);
   };
 
   const handleReset = () => {
     setSearchQuery("");
-    setPageCount(1);
+    setCurrentPage(1);
   };
 
-  const handlePageClick = (event, value) => {
-    setPageCount(value);
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
   };
 
   const Tableheaders = [
@@ -85,6 +88,8 @@ export const PhysicalInventoryView = () => {
     setOpenUpdateModal(true);
   };
 
+  console.log("current page", currentPage);
+  console.log("total page", totalPages);
   return (
     <>
       <MessageAlert
@@ -161,10 +166,14 @@ export const PhysicalInventoryView = () => {
           openInPopup2={null}
         />
 
-        <CustomPagination
-          pageCount={pageCount}
-          handlePageClick={handlePageClick}
-        />
+        <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={handlePageChange}
+            color="primary"
+          />
+        </Box>
       </Paper>
       <Popup
         maxWidth="xl"
@@ -173,7 +182,7 @@ export const PhysicalInventoryView = () => {
         setOpenPopup={setOpenCreateModal}
       >
         <PhysicalInventoryCreate
-          pageCount={pageCount}
+          currentPage={currentPage}
           searchQuery={searchQuery}
           setOpenPopup={setOpenCreateModal}
           getPhysicalInventoryData={getPhysicalInventoryData}
@@ -187,7 +196,7 @@ export const PhysicalInventoryView = () => {
       >
         <PhysicalInventoryUpdate
           selectedRowData={selectedRowData}
-          pageCount={pageCount}
+          currentPage={currentPage}
           searchQuery={searchQuery}
           setOpenPopup={setOpenUpdateModal}
           getPhysicalInventoryData={getPhysicalInventoryData}

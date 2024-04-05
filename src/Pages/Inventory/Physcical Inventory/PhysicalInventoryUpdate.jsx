@@ -10,7 +10,7 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 export const PhysicalInventoryUpdate = memo((props) => {
   const {
     selectedRowData,
-    pageCount,
+    currentPage,
     searchQuery,
     setOpenPopup,
     getPhysicalInventoryData,
@@ -46,7 +46,7 @@ export const PhysicalInventoryUpdate = memo((props) => {
 
           setTimeout(() => {
             setOpenPopup(false);
-            getPhysicalInventoryData(pageCount, searchQuery);
+            getPhysicalInventoryData(currentPage, searchQuery);
           }, 300);
         }
       } catch (error) {
@@ -55,7 +55,7 @@ export const PhysicalInventoryUpdate = memo((props) => {
         setOpen(false);
       }
     },
-    [formData, pageCount, searchQuery]
+    [formData, currentPage, searchQuery]
   );
 
   return (

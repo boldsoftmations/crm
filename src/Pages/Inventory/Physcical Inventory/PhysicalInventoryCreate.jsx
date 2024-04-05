@@ -10,7 +10,7 @@ import ProductService from "../../../services/ProductService";
 import InvoiceServices from "../../../services/InvoiceService";
 
 export const PhysicalInventoryCreate = memo((props) => {
-  const { pageCount, searchQuery, setOpenPopup, getPhysicalInventoryData } =
+  const { currentPage, searchQuery, setOpenPopup, getPhysicalInventoryData } =
     props;
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({});
@@ -87,7 +87,7 @@ export const PhysicalInventoryCreate = memo((props) => {
 
         setTimeout(() => {
           setOpenPopup(false);
-          getPhysicalInventoryData(pageCount, searchQuery);
+          getPhysicalInventoryData(currentPage, searchQuery);
         }, 300);
       } catch (error) {
         handleError(error);
@@ -95,7 +95,7 @@ export const PhysicalInventoryCreate = memo((props) => {
         setOpen(false);
       }
     },
-    [formData, pageCount, searchQuery]
+    [formData, currentPage, searchQuery]
   );
 
   return (
