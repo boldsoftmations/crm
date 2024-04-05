@@ -129,6 +129,7 @@ export const ViewBasicUnit = () => {
           />
           <CustomPagination
             totalPages={totalPages}
+            currentPage={currentPage}
             handlePageChange={handlePageChange}
           />
         </Paper>

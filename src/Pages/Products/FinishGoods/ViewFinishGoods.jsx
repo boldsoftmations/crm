@@ -321,6 +321,7 @@ export const ViewFinishGoods = () => {
           />
           <CustomPagination
             totalPages={totalPages}
+            currentPage={currentPage}
             handlePageChange={handlePageChange}
           />
         </Paper>

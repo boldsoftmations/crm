@@ -193,6 +193,7 @@ export const ViewProductCode = () => {
           />
           <CustomPagination
             totalPages={totalPages}
+            currentPage={currentPage}
             handlePageChange={handlePageChange}
           />
         </Paper>

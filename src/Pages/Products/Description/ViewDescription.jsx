@@ -197,6 +197,7 @@ export const ViewDescription = () => {
           />
           <CustomPagination
             totalPages={totalPages}
+            currentPage={currentPage}
             handlePageChange={handlePageChange}
           />
         </Paper>
