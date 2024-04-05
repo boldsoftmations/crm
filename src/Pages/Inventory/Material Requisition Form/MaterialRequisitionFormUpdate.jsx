@@ -72,8 +72,10 @@ export const MaterialRequisitionFormUpdate = memo((props) => {
         idForEdit.id,
         payload
       );
-      setOpenPopup(false);
-      handleSuccess();
+      handleSuccess("Material Requisition Form Accepted");
+      setTimeout(() => {
+        setOpenPopup(false);
+      }, 300);
       getAllMaterialRequisitionFormDetails(currentPage, searchQuery);
     } catch (error) {
       handleError(error); // Handle errors from the API call
