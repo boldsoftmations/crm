@@ -59,7 +59,9 @@ export const MaterialTransferNoteView = () => {
       setTimeout(() => {
         csvLinkRef.current.link.click();
       });
+      handleSuccess("CSV file downloaded successfully");
     } catch (error) {
+      handleError(error);
       console.log("CSVLink Download error", error);
     }
   };
@@ -95,9 +97,10 @@ export const MaterialTransferNoteView = () => {
         };
       });
       setOpen(false);
+      handleSuccess("Exported successfully");
       return data;
     } catch (err) {
-      console.log(err);
+      handleError(err);
     } finally {
       setOpen(false);
     }
@@ -130,9 +133,10 @@ export const MaterialTransferNoteView = () => {
 
       // clean up the temporary link element
       document.body.removeChild(link);
-
+      handleSuccess("Exported successfully");
       setOpen(false);
     } catch (error) {
+      handleError(error);
       console.log("error exporting pdf", error);
     } finally {
       setOpen(false);
@@ -173,8 +177,9 @@ export const MaterialTransferNoteView = () => {
       setSellerOption(response.data.results);
       setOpen(false);
     } catch (err) {
+      handleError(err);
+    } finally {
       setOpen(false);
-      console.log("err", err);
     }
   };
 
@@ -198,8 +203,8 @@ export const MaterialTransferNoteView = () => {
         setOpen(false);
       } catch (error) {
         handleError(error);
+      } finally {
         setOpen(false);
-        console.log("error", error);
       }
     },
     [acceptedFilter, searchQuery]
