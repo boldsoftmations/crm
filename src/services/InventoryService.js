@@ -150,15 +150,17 @@ const updateGRNData = (id, data) => {
 };
 
 //Source Based GRN API
-const getAllSourceBasedGRNData = (page, searchValue) => {
+const getAllSourceBasedGRNData = (page, grnSourceFilter, search) => {
   const params = new URLSearchParams();
 
   if (page) {
     params.append("page", page);
   }
-
-  if (searchValue) {
-    params.append("search", searchValue);
+  if (grnSourceFilter) {
+    params.append("grn_source", grnSourceFilter);
+  }
+  if (search) {
+    params.append("search", search);
   }
   return CustomAxios.get(`api/inventory/list-grn/?${params.toString()}`);
 };

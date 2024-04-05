@@ -133,22 +133,28 @@ export const SourceBasedGRNCreate = memo((props) => {
     getInvoiceDetails();
   }, []);
 
-  const getInvoiceDetails = async (page) => {
-    // setIsLoading(true);
+  const getInvoiceDetails = async (page = 1) => {
     try {
       const response = await InventoryServices.getChallanInvoice(page);
-
       if (response && response.data.results) {
-        setInvoiceData(response.data.results);
+        setInvoiceData((prevInvoices) => [
+          ...prevInvoices,
+          ...response.data.results,
+        ]);
+
+        const total = response.data.count;
+        const totalPages = Math.ceil(total / 25);
+        setPageCount(totalPages);
+        if (page < totalPages) {
+          getInvoiceDetails(page + 1);
+        }
       }
-      const total = response.data.count;
-      setPageCount(Math.ceil(total / 25));
     } catch (err) {
+      handleError(err);
       console.error("Error fetching invoice data", err);
-    } finally {
-      // setIsLoading(false);
     }
   };
+
   useEffect(() => {
     if (sourceBasedGrnData.source_type === "Job Worker") {
       getChalanDetails();
@@ -173,8 +179,7 @@ export const SourceBasedGRNCreate = memo((props) => {
   const getProduct = async () => {
     setOpen(true);
     try {
-      const response =
-        await InventoryServices.getAllConsProductionInventoryData();
+      const response = await InventoryServices.getAllConsStoresInventoryData();
       if (response && response.data) {
         setProductOption(response.data);
       }
@@ -218,91 +223,82 @@ export const SourceBasedGRNCreate = memo((props) => {
     }
   };
 
-  const createSourceBasedGrnData = useCallback(
-    async (e) => {
-      e.preventDefault();
-      setOpen(true);
+  const createSourceBasedGrnData = async (e) => {
+    e.preventDefault();
+    setOpen(true);
 
-      const isUnitTransfer = sourceBasedGrnData.source_type === "Unit Transfer";
-      const isJobWorker = sourceBasedGrnData.source_type === "Job Worker";
-      // const ManuFacturing = sourceBasedGrnData.source_type === "Manufacturing";
+    const isUnitTransfer = sourceBasedGrnData.source_type === "Unit Transfer";
+    const isJobWorker = sourceBasedGrnData.source_type === "Job Worker";
+    // const ManuFacturing = sourceBasedGrnData.source_type === "Manufacturing";
 
-      let requestPayload = {
-        grn_source: sourceBasedGrnData.grn_source,
-        user: users.email,
+    let requestPayload = {
+      grn_source: sourceBasedGrnData.grn_source,
+      user: users.email,
+    };
+
+    if (isUnitTransfer) {
+      requestPayload = {
+        ...requestPayload,
+        grn_source: "Unit Transfer",
+        from_unit: sourceBasedGrnData.from_unit,
+        to_unit: sourceBasedGrnData.to_unit,
+        transport_cost: parseFloat(sourceBasedGrnData.transport_cost),
+        products: products.map((product) => ({
+          products: product.product,
+          unit: product.unit,
+          order_quantity: parseInt(product.quantity, 10),
+          // rate: parseFloat(product.rate),
+          // amount: parseInt(product.amount),
+          qa_accepted: parseInt(product.quantity, 10),
+          qa_rejected: 0,
+        })),
       };
+    } else if (isJobWorker) {
+      requestPayload = {
+        ...requestPayload,
+        grn_source: "Job Worker",
+        challan_no: sourceBasedGrnData.challan_no,
+        source_key: sourceBasedGrnData.source_key,
+        seller_account: sourceBasedGrnData.seller_account,
+        invoice_no: sourceBasedGrnData.invoice_no,
+        transport_cost: parseFloat(sourceBasedGrnData.transport_cost),
+        total_amount: parseFloat(sourceBasedGrnData.total_amount),
+        products: products.map((product) => ({
+          products: product.product,
+          unit: product.unit,
+          order_quantity: parseInt(product.quantity, 10),
+          rate: parseFloat(product.rate),
+          amount: parseInt(product.amount),
+          total_amount: parseFloat(product.total_amount),
+          qa_accepted: parseInt(product.quantity, 10),
+          qa_rejected: 0,
+        })),
+      };
+    }
+    // else if (ManuFacturing) {
+    //   requestPayload = {
+    //     ...requestPayload,
+    //     seller_account: sourceBasedGrnData.seller_account,
+    //     product: sourceBasedGrnData.product,
+    //   };
+    // }
 
-      if (isUnitTransfer) {
-        requestPayload = {
-          ...requestPayload,
-          grn_source: "Unit Transfer",
-          from_unit: sourceBasedGrnData.from_unit,
-          to_unit: sourceBasedGrnData.to_unit,
-          transport_cost: parseFloat(sourceBasedGrnData.transport_cost),
-          products: products.map((product) => ({
-            products: product.product,
-            unit: product.unit,
-            order_quantity: parseInt(product.quantity, 10),
-            // rate: parseFloat(product.rate),
-            // amount: parseInt(product.amount),
-            qa_accepted: parseInt(product.quantity, 10),
-            qa_rejected: 0,
-          })),
-        };
-      } else if (isJobWorker) {
-        requestPayload = {
-          ...requestPayload,
-          grn_source: "Job Worker",
-          challan_no: sourceBasedGrnData.challan_no,
-          source_key: sourceBasedGrnData.source_key,
-          seller_account: sourceBasedGrnData.seller_account,
-          invoice_no: sourceBasedGrnData.invoice_no,
-          transport_cost: parseFloat(sourceBasedGrnData.transport_cost),
-          total_amount: parseFloat(sourceBasedGrnData.total_amount),
-          products: products.map((product) => ({
-            products: product.product,
-            unit: product.unit,
-            order_quantity: parseInt(product.quantity, 10),
-            rate: parseFloat(product.rate),
-            amount: parseInt(product.amount),
-            total_amount: parseFloat(product.total_amount),
-            qa_accepted: parseInt(product.quantity, 10),
-            qa_rejected: 0,
-          })),
-        };
-      }
-      // else if (ManuFacturing) {
-      //   requestPayload = {
-      //     ...requestPayload,
-      //     seller_account: sourceBasedGrnData.seller_account,
-      //     product: sourceBasedGrnData.product,
-      //   };
-      // }
-
-      try {
-        await InventoryServices.createSourceBasedGRN(requestPayload);
-        setOpenCreatePopup(false);
-        const successMessage = "Source Based GRN Created Successfully";
-        handleSuccess(successMessage);
-        getAllSourceBasedGRNData(currentPage);
-      } catch (error) {
-        handleError(error);
-        let errorMessage = "An unknown error occurred";
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.errors &&
-          error.response.data.errors.non_field_errors
-        ) {
-          errorMessage = error.response.data.errors.non_field_errors;
-        }
-        setError(errorMessage);
-      } finally {
-        setOpen(false);
-      }
-    },
-    [sourceBasedGrnData, currentPage]
-  );
+    try {
+      await InventoryServices.createSourceBasedGRN(requestPayload);
+      setOpenCreatePopup(false);
+      const response = await InventoryServices.getAllSourceBasedGRNData(
+        requestPayload
+      );
+      const successMessage =
+        response.data.message || "Source Based GRN Created successfully";
+      handleSuccess(successMessage);
+      getAllSourceBasedGRNData(currentPage);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setOpen(false);
+    }
+  };
 
   return (
     <div>

@@ -26,6 +26,11 @@ import { useSelector } from "react-redux";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { SourceBasedGRNCreate } from "./SourceBasedGRNCreate";
 import InvoiceServices from "../../../services/InvoiceService";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import CustomTextField from "../../../Components/CustomTextField";
+import SearchComponent from "../../../Components/SearchComponent ";
 
 export const SourceBasedGRNView = () => {
   const userData = useSelector((state) => state.auth.profile);
@@ -37,24 +42,37 @@ export const SourceBasedGRNView = () => {
   const [idForEdit, setIDForEdit] = useState("");
   const [openCreatePopup, setOpenCreatePopup] = useState(false);
   const [sellerOption, setSellerOption] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
+  const [grnSourceFilter, setGrnSourceFilter] = useState(null);
+  const grnSourceOptions = ["Purchase", "Unit Transfer", "Job Worker"];
 
   useEffect(() => {
-    getAllSourceBasedGRNData(currentPage);
-  }, [currentPage]);
+    getAllSourceBasedGRNData(currentPage, grnSourceFilter, searchQuery);
+  }, [currentPage, grnSourceFilter, searchQuery]);
 
-  const getAllSourceBasedGRNData = useCallback(async (page) => {
-    try {
-      setOpen(true);
-      const response = await InventoryServices.getAllSourceBasedGRNData(page);
-      if (response && response.data.results) {
-        setPackingListData(response.data.results);
-        setPageCount(Math.ceil(response.data.count / 25));
+  const getAllSourceBasedGRNData = useCallback(
+    async (page, sourceFilter, search) => {
+      try {
+        setOpen(true);
+        const response = await InventoryServices.getAllSourceBasedGRNData(
+          page,
+          sourceFilter,
+          search
+        );
+        if (response && response.data.results) {
+          setPackingListData(response.data.results);
+          setPageCount(Math.ceil(response.data.count / 25));
+        }
+      } catch (err) {
+        handleError(err);
+      } finally {
+        setOpen(false);
       }
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   useEffect(() => {
     getAllSellerAccountsDetails();
@@ -66,7 +84,7 @@ export const SourceBasedGRNView = () => {
       const data = userData.groups.includes("Production Delhi")
         ? "Delhi"
         : "Maharashtra";
-      const response = await InvoiceServices.getfilterSellerAccountData(data);
+      const response = await InvoiceServices.getAllSellerAccountData(data);
       setSellerOption(response.data.results);
       setOpen(false);
     } catch (err) {
@@ -79,6 +97,18 @@ export const SourceBasedGRNView = () => {
     setCurrentPage(value);
   };
 
+  const handleGrnSourceChange = (event, newValue) => {
+    setGrnSourceFilter(newValue);
+    setCurrentPage(0);
+  };
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(0);
+  };
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(0);
+  };
   const openInPopup = (item) => {
     setIDForEdit(item);
     setOpenPopup(true);
@@ -86,13 +116,39 @@ export const SourceBasedGRNView = () => {
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={3}>
+                <CustomAutocomplete
+                  value={grnSourceFilter}
+                  onChange={handleGrnSourceChange}
+                  options={grnSourceOptions}
+                  renderInput={(params) => (
+                    <CustomTextField {...params} label="GRN Source Filter" />
+                  )}
+                  fullWidth
+                  size="small"
+                  sx={{ maxWidth: 300 }}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={3}>
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
+                />
+              </Grid>
+              <Grid item xs={12} sm={3}>
                 {/* Add Button */}
                 {(userData.groups.includes("Production") ||
                   userData.groups.includes("Director") ||
