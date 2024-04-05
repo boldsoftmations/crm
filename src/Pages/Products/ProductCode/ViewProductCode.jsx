@@ -19,8 +19,8 @@ export const ViewProductCode = () => {
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(null);
-  const [pageCount, setPageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [exportData, setExportData] = useState([]);
   const csvLinkRef = useRef(null);
   const { handleError, handleCloseSnackbar, alertInfo } =
@@ -79,7 +79,7 @@ export const ViewProductCode = () => {
       setOpen(true);
       const response = await ProductService.getAllProductCode(page, query);
       setProductCode(response.data.results);
-      setPageCount(Math.ceil(response.data.count / 25));
+      setTotalPages(Math.ceil(response.data.count / 25));
     } catch (error) {
       handleError(error);
     } finally {
@@ -97,7 +97,7 @@ export const ViewProductCode = () => {
     setCurrentPage(1); // Reset to first page with no search query
   };
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -192,8 +192,8 @@ export const ViewProductCode = () => {
             openInPopup={openInPopup}
           />
           <CustomPagination
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>

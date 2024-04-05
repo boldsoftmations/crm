@@ -5,9 +5,7 @@ import { Popup } from "./../../../Components/Popup";
 import { CreateBrand } from "./CreateBrand";
 import { UpdateBrand } from "./UpdateBrand";
 import { CustomLoader } from "./../../../Components/CustomLoader";
-import "../../CommonStyle.css";
 import { CustomTable } from "../../../Components/CustomTable";
-import CustomTextField from "../../../Components/CustomTextField";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
@@ -21,9 +19,8 @@ export const ViewBrand = () => {
   const [openPopup2, setOpenPopup2] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageCount, setPageCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const {
-    handleSuccess,
     handleError,
     handleCloseSnackbar,
     alertInfo, // Make sure this line is added
@@ -38,7 +35,7 @@ export const ViewBrand = () => {
       setOpen(true);
       const response = await ProductService.getAllBrand(page, query);
       setBrand(response.data.results);
-      setPageCount(Math.ceil(response.data.count / 25));
+      setTotalPages(Math.ceil(response.data.count / 25));
     } catch (error) {
       handleError(error);
     } finally {
@@ -56,7 +53,7 @@ export const ViewBrand = () => {
     setCurrentPage(1); // Reset to first page with no search query
   };
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -133,8 +130,8 @@ export const ViewBrand = () => {
             openInPopup={openInPopup}
           />
           <CustomPagination
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>

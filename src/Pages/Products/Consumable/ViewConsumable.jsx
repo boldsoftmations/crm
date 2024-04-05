@@ -19,11 +19,11 @@ export const ViewConsumable = () => {
   const [consumable, setConsumable] = useState([]);
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [pageCount, setPageCount] = useState(0);
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [exportData, setExportData] = useState([]);
   const [descriptionOptions, setDescriptionOptions] = useState([]);
   const { handleError, handleCloseSnackbar, alertInfo } =
@@ -136,7 +136,7 @@ export const ViewConsumable = () => {
       setOpen(true);
       const response = await ProductService.getAllConsumable(page, query);
       setConsumable(response.data.results);
-      setPageCount(Math.ceil(response.data.count / 25));
+      setTotalPages(Math.ceil(response.data.count / 25));
     } catch (error) {
       handleError(error);
     } finally {
@@ -154,7 +154,7 @@ export const ViewConsumable = () => {
     setCurrentPage(1); // Reset to first page with no search query
   };
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -271,8 +271,8 @@ export const ViewConsumable = () => {
             openInPopup={openInPopup}
           />
           <CustomPagination
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>

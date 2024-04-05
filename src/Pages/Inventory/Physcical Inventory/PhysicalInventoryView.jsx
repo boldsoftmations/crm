@@ -1,14 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { Box, Button, Grid, Paper } from "@mui/material";
 import InventoryServices from "../../../services/InventoryService";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { CustomTable } from "../../../Components/CustomTable";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import { Box, Button, Grid, Pagination, Paper } from "@mui/material";
 import SearchComponent from "../../../Components/SearchComponent ";
 import { Popup } from "../../../Components/Popup";
 import { PhysicalInventoryCreate } from "./PhysicalInventoryCreate";
 import { PhysicalInventoryUpdate } from "./PhysicalInventoryUpdate";
+import { CustomPagination } from "../../../Components/CustomPagination";
 
 export const PhysicalInventoryView = () => {
   const [open, setOpen] = useState(false);
@@ -166,14 +167,11 @@ export const PhysicalInventoryView = () => {
           openInPopup2={null}
         />
 
-        <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-          <Pagination
-            count={totalPages}
-            page={currentPage}
-            onChange={handlePageChange}
-            color="primary"
-          />
-        </Box>
+        <CustomPagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          handlePageChange={handlePageChange}
+        />
       </Paper>
       <Popup
         maxWidth="xl"
