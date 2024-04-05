@@ -514,6 +514,26 @@ const createChalanInvoice = (data) => {
   return CustomAxios.post(`/api/inventory/challan-invoice/`, data);
 };
 
+const getPhysical = (page, searchQuery) => {
+  const params = new URLSearchParams();
+
+  if (page) {
+    params.append("page", page);
+  }
+  if (searchQuery) {
+    params.append("search", searchQuery);
+  }
+  return CustomAxios.get(
+    `/api/inventory/physical-inventory/?${params.toString()}`
+  );
+};
+const createPhysical = (data) => {
+  return CustomAxios.post(`/api/inventory/physical-inventory/`, data);
+};
+const updatePhysical = (id, data) => {
+  return CustomAxios.patch(`/api/inventory/physical-inventory/${id}/`, data);
+};
+
 const InventoryServices = {
   getAllVendorData,
   createVendorData,
@@ -575,6 +595,9 @@ const InventoryServices = {
   updateChalan,
   getChallanInvoice,
   createChalanInvoice,
+  getPhysical,
+  createPhysical,
+  updatePhysical,
 };
 
 export default InventoryServices;

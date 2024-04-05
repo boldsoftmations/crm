@@ -261,7 +261,6 @@ export const PurchaseOrderCreate = ({
         schedule_date: inputValues.schedule_date,
         currency: inputValues.currency,
         po_date: inputValues.po_date,
-        seller_account: inputValues.seller_account || null,
         products: inputValues.products || [],
       };
 

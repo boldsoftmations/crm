@@ -89,6 +89,7 @@ import { Automation } from "../Pages/WhatsappGroup/Automation";
 import { SourceBasedGRNView } from "../Pages/Inventory/SourceBasedGRN/SourceBasedGRNView";
 import { ChalanInvoiceView } from "../Pages/Inventory/ChallanInvoice/ChalanInvoiceView";
 import { ChalanView } from "../Pages/Inventory/Challan/ChalanView";
+import { PhysicalInventoryView } from "../Pages/Inventory/Physcical Inventory/PhysicalInventoryView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -310,6 +311,10 @@ export const RouteScreen = () => {
             <Route
               path="/inventory/view-safety-stock"
               element={<SafetyStockView />}
+            />
+            <Route
+              path="/inventory/physical"
+              element={<PhysicalInventoryView />}
             />
             {/* ProductForecast Route */}
             <Route
