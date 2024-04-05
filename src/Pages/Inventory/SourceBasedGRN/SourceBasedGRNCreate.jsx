@@ -1,6 +1,5 @@
-import { Box, Button, Grid, IconButton, Snackbar } from "@mui/material";
-import React, { memo, useCallback, useEffect, useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
+import { Box, Button, Grid } from "@mui/material";
+import React, { memo, useEffect, useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
@@ -18,7 +17,6 @@ export const SourceBasedGRNCreate = memo((props) => {
   } = props;
   const [open, setOpen] = useState(false);
   const [productOption, setProductOption] = useState([]);
-  const [error, setError] = useState(null);
   const data = useSelector((state) => state.auth);
   const users = data.profile;
   const [products, setProducts] = useState([
@@ -170,6 +168,7 @@ export const SourceBasedGRNCreate = memo((props) => {
         setChalanOption(response.data.results);
       }
     } catch (err) {
+      handleError(err);
       console.error("Error fetching Chalan data", err);
     } finally {
       setOpen(false);
@@ -184,6 +183,7 @@ export const SourceBasedGRNCreate = memo((props) => {
         setProductOption(response.data);
       }
     } catch (err) {
+      handleError(err);
       console.error("error potential", err);
     } finally {
       setOpen(false);
@@ -285,13 +285,10 @@ export const SourceBasedGRNCreate = memo((props) => {
 
     try {
       await InventoryServices.createSourceBasedGRN(requestPayload);
-      setOpenCreatePopup(false);
-      const response = await InventoryServices.getAllSourceBasedGRNData(
-        requestPayload
-      );
-      const successMessage =
-        response.data.message || "Source Based GRN Created successfully";
-      handleSuccess(successMessage);
+      handleSuccess("Source Based GRN Created Successfully");
+      setTimeout(() => {
+        setOpenCreatePopup(false);
+      }, 300);
       getAllSourceBasedGRNData(currentPage);
     } catch (error) {
       handleError(error);
@@ -315,22 +312,6 @@ export const SourceBasedGRNCreate = memo((props) => {
         noValidate
         onSubmit={(e) => createSourceBasedGrnData(e)}
       >
-        <Snackbar
-          open={Boolean(error)}
-          onClose={handleCloseSnackbar}
-          message={error}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              sx={{ p: 0.5 }}
-              onClick={handleCloseSnackbar}
-            >
-              <CloseIcon />
-            </IconButton>
-          }
-        />
         <Grid container spacing={2}>
           <Grid
             item
