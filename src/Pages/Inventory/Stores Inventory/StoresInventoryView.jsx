@@ -132,10 +132,10 @@ export const StoresInventoryView = () => {
     "SOURCE KEY",
     "SELLER STATE",
     "DESCRIPTION",
-    "DATE",
     "UNIT",
     "QUANTITY",
     "PENDING QUANTITY",
+    "MFG. DATE",
     "EXPIRY DATE",
     "RATE",
     "AMOUNT",
@@ -147,10 +147,10 @@ export const StoresInventoryView = () => {
     source_key: row.source_key,
     seller_account: row.seller_account,
     description: row.description,
-    created_on: row.created_on,
     unit: row.unit,
     quantity: row.quantity,
     pending_quantity: row.pending_quantity,
+    created_on: row.created_on,
     expiry_date: row.expiry_date,
     rate: row.rate,
     amount: row.amount,
@@ -223,7 +223,7 @@ export const StoresInventoryView = () => {
                   }}
                 />
               )}
-              {(userData.groups.includes("Accounts") ||
+              {/* {(userData.groups.includes("Accounts") ||
                 userData.groups.includes("Director") ||
                 userData.groups.includes("Production")) && (
                 <Button
@@ -233,7 +233,7 @@ export const StoresInventoryView = () => {
                 >
                   Add
                 </Button>
-              )}
+              )} */}
             </Box>
           </Grid>
         </Box>
