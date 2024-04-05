@@ -73,9 +73,10 @@ export const BillofMaterialsUpdate = memo((props) => {
         products_data: products,
       };
       await InventoryServices.updateBillofMaterialsData(idForEdit.id, req);
-
-      setOpenPopup(false);
-      handleSuccess();
+      handleSuccess("BOM Updated Successfully");
+      setTimeout(() => {
+        setOpenPopup(false);
+      }, 300);
       getAllBillofMaterialsDetails(currentPage, searchQuery, filterApproved);
     } catch (error) {
       handleError(error); // Handle errors from the API call

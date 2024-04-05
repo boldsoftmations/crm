@@ -72,8 +72,10 @@ export const BillofMaterialsCreate = memo((props) => {
         products_data: products,
       };
       await InventoryServices.createBillofMaterialsData(req);
-      setOpenPopup(false);
-      handleSuccess();
+      handleSuccess("BOM Created Successfully");
+      setTimeout(() => {
+        setOpenPopup(false);
+      }, 300);
       getAllBillofMaterialsDetails(currentPage, searchQuery, filterApproved);
     } catch (error) {
       handleError(error); // Handle errors from the API call
