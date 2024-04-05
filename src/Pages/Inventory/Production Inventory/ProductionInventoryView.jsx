@@ -12,7 +12,7 @@ import { MessageAlert } from "../../../Components/MessageAlert";
 export const ProductionInventoryView = () => {
   const [open, setOpen] = useState(false);
   const [productionInventoryData, setProductionInventoryData] = useState([]);
-  const [pageCount, setpageCount] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [exportData, setExportData] = useState([]);
@@ -84,61 +84,36 @@ export const ProductionInventoryView = () => {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    setCurrentPage(1);
+    setCurrentPage(0);
   };
 
   const handleReset = () => {
     setSearchQuery("");
-    setCurrentPage(1);
+    setCurrentPage(0);
   };
 
   useEffect(() => {
-    getAllProductionInventoryDetails();
+    getAllProductionInventoryDetails(currentPage, searchQuery);
   }, [currentPage, searchQuery]);
 
-  const getAllProductionInventoryDetails = useCallback(async () => {
+  const getAllProductionInventoryDetails = useCallback(async (page, query) => {
     try {
       setOpen(true);
-      const response =
-        await InventoryServices.getProductionInventoryPaginateData(
-          currentPage,
-          searchQuery
-        );
+      const response = await InventoryServices.getProductionInventoryData(
+        page,
+        query
+      );
       setProductionInventoryData(response.data.results);
-      const total = response.data.count;
-      setpageCount(Math.ceil(total / 25));
-    } catch (err) {
-      handleError(err);
-    } finally {
-      setOpen(false);
-    }
-  }, [searchQuery, currentPage]);
-
-  const handlePageClick = async (event, value) => {
-    try {
-      const page = value;
-      setCurrentPage(page);
-      setOpen(true);
-
-      const response = searchQuery
-        ? await InventoryServices.getProductionInventoryPaginateData(
-            page,
-            searchQuery
-          )
-        : await InventoryServices.getProductionInventoryPaginateData(page);
-      if (response) {
-        setProductionInventoryData(response.data.results);
-        const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
-      } else {
-        await getAllProductionInventoryDetails();
-        setSearchQuery("");
-      }
+      setPageCount(Math.ceil(response.data.count / 25));
     } catch (error) {
-      console.log("error", error);
+      handleError(error);
     } finally {
       setOpen(false);
     }
+  }, []);
+
+  const handlePageClick = (event, value) => {
+    setCurrentPage(value);
   };
 
   const Tableheaders = [

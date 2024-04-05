@@ -103,14 +103,13 @@ export const StoresInventoryView = () => {
         );
         setStoresInventoryData(response.data.results);
         setPageCount(Math.ceil(response.data.count / 25));
-        setOpen(false);
       } catch (error) {
         handleError(error);
+      } finally {
         setOpen(false);
-        console.error("error", error);
       }
     },
-    [searchQuery]
+    []
   );
 
   const handleSearch = (query) => {

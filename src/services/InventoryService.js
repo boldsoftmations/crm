@@ -1,6 +1,6 @@
 import CustomAxios from "./api";
 
-const getAllVendorData = (page, searchValue,sourceFilter) => {
+const getAllVendorData = (page, searchValue, sourceFilter) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
 
@@ -42,16 +42,13 @@ const createContactInventoryData = (data) => {
   return CustomAxios.post("/api/inventory/list-contact/", data);
 };
 
-
 const updateContactInventoryData = (id, data) => {
   return CustomAxios.patch(`/api/inventory/list-contact/${id}`, data);
 };
 
-
 const createWareHouseInventoryData = (data) => {
   return CustomAxios.post("/api/inventory/list-warehouse/", data);
 };
-
 
 const updatetWareHouseInventoryData = (id, data) => {
   return CustomAxios.patch(`/api/inventory/list-warehouse/${id}`, data);
@@ -81,7 +78,6 @@ const getAllPurchaseOrderData = (page, acceptedToFilter, searchValue) => {
 const createPurchaseOrderData = (data) => {
   return CustomAxios.post("/api/inventory/purchase-order/", data);
 };
-
 
 const updatePurchaseOrderData = (id, data) => {
   return CustomAxios.patch(`/api/inventory/purchase-order/${id}/`, data);
@@ -116,13 +112,12 @@ const createPackingListData = (data) => {
   return CustomAxios.post("/api/inventory/list-packing-list/", data);
 };
 
-
 const updatePackingListData = (id, data) => {
   return CustomAxios.patch(`/api/inventory/list-packing-list/${id}/`, data);
 };
 
 // grn List Api
-const getAllGRNData = (page ,acceptedToFilter, searchValue) => {
+const getAllGRNData = (page, acceptedToFilter, searchValue) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
 
@@ -165,14 +160,12 @@ const getAllSourceBasedGRNData = (page, searchValue) => {
   if (searchValue) {
     params.append("search", searchValue);
   }
-    return CustomAxios.get(`api/inventory/list-grn/?${params.toString()}`);
-  
-}
+  return CustomAxios.get(`api/inventory/list-grn/?${params.toString()}`);
+};
 
 const createSourceBasedGRN = (data) => {
   return CustomAxios.post("/api/inventory/list-grn/", data);
-
-}
+};
 
 // GRN Register
 const getAllGRNRegisterDetails = (yearMonthFilter, page) => {
@@ -194,7 +187,7 @@ const getAllGRNRegisterDetails = (yearMonthFilter, page) => {
 };
 
 // Purchase Invoice List Api
-const getAllPurchaseInvoiceData = ( yearMonthFilter, page,searchValue) => {
+const getAllPurchaseInvoiceData = (yearMonthFilter, page, searchValue) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
 
@@ -310,7 +303,6 @@ const createBillofMaterialsData = (data) => {
   return CustomAxios.post("/api/inventory/list-bill-of-materials/", data);
 };
 
-
 const updateBillofMaterialsData = (id, data) => {
   return CustomAxios.patch(`/api/inventory/list-bill-of-materials/${id}`, data);
 };
@@ -338,7 +330,6 @@ const getAllProductionEntryData = (page, searchValue) => {
 const createProductionEntryData = (data) => {
   return CustomAxios.post("/api/inventory/list-production-entry/", data);
 };
-
 
 // Material Requisition Form List Api
 const getAllMaterialTransferNoteData = (
@@ -371,7 +362,6 @@ const createMaterialTransferNoteData = (data) => {
   return CustomAxios.post("/api/inventory/list-material-transfer-note/", data);
 };
 
-
 const updateMaterialTransferNoteData = (id, data) => {
   return CustomAxios.patch(
     `/api/inventory/list-material-transfer-note/${id}`,
@@ -385,19 +375,19 @@ const getAllConsProductionInventoryData = () => {
   return CustomAxios.get(`/api/inventory/list-con-production-inventory/`);
 };
 
-
-const getProductionInventoryPaginateData = (page, searchQuery = "") => {
+const getProductionInventoryData = (page, searchQuery = "") => {
   const params = new URLSearchParams();
 
-  if (page){
+  if (page) {
     params.append("page", page);
-  } 
-  if (searchQuery) {
-    params.append("search", searchQuery); 
   }
-  return CustomAxios.get(`/api/inventory/list-production-inventory/?${params.toString()}`);
+  if (searchQuery) {
+    params.append("search", searchQuery);
+  }
+  return CustomAxios.get(
+    `/api/inventory/list-production-inventory/?${params.toString()}`
+  );
 };
-
 
 // Production Inventory G&L List Api
 const getAllProductionGAndLInventoryData = (page, searchValue) => {
@@ -481,32 +471,32 @@ const updateCurrencyData = (id, data) => {
 
 //Safety Stock API
 
-  const getAllSafetyStockData = () => {
-    return CustomAxios.get(`/api/inventory/safety-stock/`);
-  }
+const getAllSafetyStockData = () => {
+  return CustomAxios.get(`/api/inventory/safety-stock/`);
+};
 
-  const createSafetyStockData = (data) => {
-    return CustomAxios.post(`/api/inventory/safety-stock/`, data);
-  }
+const createSafetyStockData = (data) => {
+  return CustomAxios.post(`/api/inventory/safety-stock/`, data);
+};
 
-  const updateSafetyStockData =(id,data) => {
-    return CustomAxios.patch(`/api/inventory/safety-stock/${id}/`,data);
-  }
+const updateSafetyStockData = (id, data) => {
+  return CustomAxios.patch(`/api/inventory/safety-stock/${id}/`, data);
+};
 
-  const getChalan = (page) => {
-    const params = new URLSearchParams();
+const getChalan = (page) => {
+  const params = new URLSearchParams();
 
-    if (page) {
-      params.append("page", page);
-    }
-    return CustomAxios.get(`/api/inventory/challan/?${params.toString()}`);
+  if (page) {
+    params.append("page", page);
   }
-  const createChalan = (data) => {
-    return CustomAxios.post(`/api/inventory/challan/`, data);
-  }
+  return CustomAxios.get(`/api/inventory/challan/?${params.toString()}`);
+};
+const createChalan = (data) => {
+  return CustomAxios.post(`/api/inventory/challan/`, data);
+};
 const updateChalan = (id, data) => {
   return CustomAxios.patch(`/api/inventory/challan/${id}/`, data);
-}
+};
 
 const getChallanInvoice = (page) => {
   const params = new URLSearchParams();
@@ -514,11 +504,13 @@ const getChallanInvoice = (page) => {
   if (page) {
     params.append("page", page);
   }
-  return CustomAxios.get(`/api/inventory/challan-invoice/?${params.toString()}`);
-}
+  return CustomAxios.get(
+    `/api/inventory/challan-invoice/?${params.toString()}`
+  );
+};
 const createChalanInvoice = (data) => {
   return CustomAxios.post(`/api/inventory/challan-invoice/`, data);
-}
+};
 
 const InventoryServices = {
   getAllVendorData,
@@ -560,7 +552,7 @@ const InventoryServices = {
   getAllMaterialTransferNoteData,
   createMaterialTransferNoteData,
   updateMaterialTransferNoteData,
-  getProductionInventoryPaginateData,
+  getProductionInventoryData,
   getAllConsProductionInventoryData,
   getAllProductionGAndLInventoryData,
   getAllProductionShortFallData,
@@ -580,7 +572,7 @@ const InventoryServices = {
   createChalan,
   updateChalan,
   getChallanInvoice,
-  createChalanInvoice
+  createChalanInvoice,
 };
 
 export default InventoryServices;
