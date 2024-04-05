@@ -11,8 +11,6 @@ import {
   TableRow,
   TableCell,
   Button,
-  TableFooter,
-  Pagination,
   Collapse,
   Typography,
   IconButton,
@@ -37,7 +35,7 @@ export const GRNView = () => {
   const [openPopupCreatePI, setOpenPopupCreatePI] = useState(false);
   const [open, setOpen] = useState(false);
   const [grnData, setGRNData] = useState([]);
-  const [pageCount, setPageCount] = useState(0);
+  const [pageCount, setPageCount] = useState(1);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [idForEdit, setIDForEdit] = useState();
