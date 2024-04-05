@@ -20,8 +20,8 @@ export const PriceList = () => {
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(null);
-  const [pageCount, setPageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [product, setProduct] = useState([]);
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
@@ -54,7 +54,7 @@ export const PriceList = () => {
         query
       );
       setPriceListData(response.data.results);
-      setPageCount(Math.ceil(response.data.count / 25));
+      setTotalPages(Math.ceil(response.data.count / 25));
     } catch (error) {
       handleError(error);
     } finally {
@@ -77,7 +77,7 @@ export const PriceList = () => {
     setCurrentPage(1); // Reset to first page with no search query
   };
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -206,8 +206,8 @@ export const PriceList = () => {
             openInPopup4={null}
           />
           <CustomPagination
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>
