@@ -126,54 +126,68 @@ export const SourceBasedGRNView = () => {
 
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
-          <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={3}>
+          <Box sx={{ marginBottom: 2 }}>
+            <Grid
+              container
+              spacing={2}
+              alignItems="center"
+              justifyContent="flex-start"
+            >
+              <Grid item xs={12} md={3}>
                 <CustomAutocomplete
                   value={grnSourceFilter}
                   onChange={handleGrnSourceChange}
                   options={grnSourceOptions}
                   renderInput={(params) => (
-                    <CustomTextField {...params} label="GRN Source Filter" />
+                    <CustomTextField
+                      {...params}
+                      label="GRN Source Filter"
+                      fullWidth
+                      size="small"
+                    />
                   )}
-                  fullWidth
-                  size="small"
-                  sx={{ maxWidth: 300 }}
                 />
               </Grid>
-
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} md={5}>
                 <SearchComponent
                   onSearch={handleSearch}
                   onReset={handleReset}
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
-                {/* Add Button */}
-                {(userData.groups.includes("Production") ||
-                  userData.groups.includes("Director") ||
-                  userData.groups.includes("Production Delhi")) && (
+              {(userData.groups.includes("Production") ||
+                userData.groups.includes("Director") ||
+                userData.groups.includes("Production Delhi")) && (
+                <Grid item xs={12} md={4}>
                   <Button
                     variant="contained"
                     onClick={() => setOpenCreatePopup(true)}
                   >
                     Add
                   </Button>
-                )}
-              </Grid>
-              <Grid item xs={12} sm={3}>
-                <h3
-                  style={{
-                    textAlign: "left",
-                    fontSize: "24px",
-                    color: "rgb(34, 34, 34)",
-                    fontWeight: 800,
-                  }}
-                >
-                  Source Based GRN
-                </h3>
-              </Grid>
-              <Grid item xs={12} sm={3}></Grid>
+                </Grid>
+              )}
+            </Grid>
+          </Box>
+
+          <Box
+            sx={{
+              marginBottom: 2,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Grid item xs={12} sm={6}>
+              <h3
+                style={{
+                  textAlign: "center",
+                  fontSize: "24px",
+                  color: "rgb(34, 34, 34)",
+                  fontWeight: 800,
+                }}
+              >
+                Source Based GRN
+              </h3>
             </Grid>
           </Box>
           <TableContainer
