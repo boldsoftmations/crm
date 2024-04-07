@@ -136,13 +136,23 @@ const createFollowUpLeads = (data) => {
   return CustomAxios.post("/api/lead/list-followup/", data);
 };
 
-// Generic function to get order book data
-const getAllFollowUp = ({ typeValue, page = 1, assignToFilter }) => {
-  let url = `/api/lead/list-followup/?type=${typeValue}&page=${page}`;
-  if (assignToFilter) {
-    url += `&user__email=${assignToFilter}`;
+const getFollowUp = (typeValue, page, filterValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
+
+  if (typeValue) {
+    params.append("type", typeValue);
   }
-  return CustomAxios.get(url);
+
+  if (page) {
+    params.append("page", page);
+  }
+
+  if (filterValue) {
+    params.append("user__email", filterValue);
+  }
+
+  return CustomAxios.get(`api/lead/list-followup/?${params.toString()}`);
 };
 
 const createPotentialLead = (data) => {
@@ -165,32 +175,37 @@ const AssignMultipleLeads = (data) => {
   return CustomAxios.post("/api/lead/assign-multiple-leads/", data);
 };
 
-const getAllFollowup = (options) => {
-  const {
-    startDate,
-    endDate,
-    currentPage,
-    filter,
-    filterValue,
-    search,
-    searchValue,
-  } = options;
+const getAllFollowUp = (
+  startDate,
+  endDate,
+  page,
+  assignedFilter,
+  filterValue
+) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
 
-  let url = `/api/lead/list-all-follow-ups/?date_range_after=${startDate}&date_range_before=${endDate}`;
-
-  if (currentPage) {
-    url += `&page=${currentPage}`;
+  if (startDate) {
+    params.append("date_range_after", startDate);
   }
 
-  if (filter && filterValue) {
-    url += `&${filter}=${filterValue}`;
+  if (endDate) {
+    params.append("date_range_before", endDate);
   }
 
-  if (search && searchValue) {
-    url += `&${search}=${searchValue}`;
+  if (page) {
+    params.append("page", page);
   }
 
-  return CustomAxios.get(url);
+  if (assignedFilter) {
+    params.append("user_email", assignedFilter);
+  }
+
+  if (filterValue) {
+    params.append("activity", filterValue);
+  }
+
+  return CustomAxios.get(`api/lead/list-all-follow-ups/?${params.toString()}`);
 };
 
 // IndiaMart Leads API
@@ -217,7 +232,7 @@ const LeadServices = {
   getLeadsById,
   updateLeads,
   createFollowUpLeads,
-  getAllFollowUp,
+  getFollowUp,
   createPotentialLead,
   deletePotentialLeadsById,
   getAllRefernces,
@@ -227,7 +242,7 @@ const LeadServices = {
   DoneLeadFollowup,
   BulkLeadAssign,
   AssignMultipleLeads,
-  getAllFollowup,
+  getAllFollowUp,
   getIndiaMartLeads,
   createLeadForecast,
   getLeadForecast,
