@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Grid,
   Button,
@@ -8,7 +8,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  IconButton,
   styled,
   Table,
   TableBody,
@@ -16,32 +15,30 @@ import {
   TableHead,
   TableRow,
   TableCell,
+  Typography,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import ClearIcon from "@mui/icons-material/Clear";
 import LeadServices from "../../services/LeadService";
-import "../CommonStyle.css";
 import { CreateLeads } from "./CreateLeads";
 import { UpdateLeads } from "./UpdateLeads";
 import { Popup } from "../../Components/Popup";
-import { ErrorMessage } from "../../Components/ErrorMessage/ErrorMessage";
 import { CustomPagination } from "../../Components/CustomPagination";
 import { CustomLoader } from "../../Components/CustomLoader";
 import { BulkLeadAssign } from "./BulkLeadAssign";
 import { useSelector } from "react-redux";
 import { LeadActivityCreate } from "../FollowUp/LeadActivityCreate";
-import CustomTextField from "../../Components/CustomTextField";
 import { LeadPotentialCreate } from "./LeadPotential/LeadPotentialCreate";
+import { useNotificationHandling } from "../../Components/useNotificationHandling ";
+import SearchComponent from "../../Components/SearchComponent ";
+import { MessageAlert } from "../../Components/MessageAlert";
 
 export const DuplicateLead = () => {
   const [leads, setLeads] = useState([]);
   const [open, setOpen] = useState(false);
   const [filterQuery, setFilterQuery] = useState("gst_number");
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
-  const errRef = useRef();
-  const [errMsg, setErrMsg] = useState("");
-  const [pageCount, setpageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [openModalFollowup, setOpenModalFollowup] = useState(false);
@@ -51,11 +48,8 @@ export const DuplicateLead = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const tokenData = useSelector((state) => state.auth);
   const users = tokenData.profile;
-
-  const handleInputChanges = (event) => {
-    setFilterQuery(event.target.value);
-    getSearchData(event.target.value);
-  };
+  const { handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const openInPopup = (item) => {
     setLeadsByID(item.lead_id);
@@ -70,11 +64,6 @@ export const DuplicateLead = () => {
   const openInPopup3 = (item) => {
     setLeadsByID(item.lead_id);
     setOpenModalPotential(true);
-  };
-
-  const getResetSearchData = () => {
-    setFilterSelectedQuery("");
-    getSearchData(filterQuery, ""); // Pass an empty string as the second parameter
   };
 
   const handleCheckboxChange = (row) => {
@@ -100,218 +89,133 @@ export const DuplicateLead = () => {
 
   useEffect(() => {
     getleads();
-  }, []);
+  }, [currentPage, filterQuery, filterSelectedQuery]);
 
-  const getleads = async () => {
+  const getleads = useCallback(async () => {
     try {
       setOpen(true);
-      if ((filterQuery || filterSelectedQuery) && currentPage > 0) {
-        const response = await LeadServices.getFilterPaginateDuplicateLeads(
-          currentPage,
-          filterQuery,
-          filterSelectedQuery
-        );
-
-        setLeads(response.data.results);
-        const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
-      } else if (currentPage) {
-        const response = await LeadServices.getAllPaginateDuplicateLeads(
-          currentPage
-        );
-        setLeads(response.data.results);
-        const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
-      } else {
-        let response = await LeadServices.getAllDuplicateLeads(filterQuery);
-        if (response) {
-          setLeads(response.data.results);
-          const total = response.data.count;
-          setpageCount(Math.ceil(total / 25));
-        }
-      }
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-      if (!err.response) {
-        setErrMsg(
-          "“Sorry, You Are Not Allowed to Access This Page” Please contact to admin"
-        );
-      } else if (err.response.status === 400) {
-        setErrMsg(
-          err.response.data.errors.name
-            ? err.response.data.errors.name
-            : err.response.data.errors.non_field_errors
-        );
-      } else if (err.response.status === 401) {
-        setErrMsg(err.response.data.errors.code);
-      } else {
-        setErrMsg("Server Error");
-      }
-      errRef.current.focus();
-    }
-  };
-
-  const getSearchData = async (filterQuery, filterSelectedQuery) => {
-    try {
-      setOpen(true);
-      const response = await LeadServices.getSearchDuplicateLeads(
+      const response = await LeadServices.getAllDuplicateLeads(
+        currentPage,
         filterQuery,
         filterSelectedQuery
       );
-      if (response) {
-        setLeads(response.data.results);
-        const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
-      } else {
-        getleads();
-        setFilterSelectedQuery("");
-      }
-      setOpen(false);
+      setLeads(response.data.results);
+      setTotalPages(Math.ceil(response.data.count / 25));
     } catch (error) {
-      console.log("error Search leads", error);
+      handleError(error);
+    } finally {
       setOpen(false);
     }
+  }, [currentPage, filterQuery, filterSelectedQuery]);
+
+  const handleFilter = (event) => {
+    setFilterQuery(event.target.value);
+    setCurrentPage(1);
   };
 
-  const handlePageClick = async (event, value) => {
-    try {
-      const page = value;
-      setCurrentPage(page);
-      setOpen(true);
+  const handleSearch = (query) => {
+    setFilterSelectedQuery(query);
+    setCurrentPage(1);
+  };
 
-      if (filterQuery || filterSelectedQuery) {
-        const response = await LeadServices.getFilterPaginateDuplicateLeads(
-          page,
-          filterQuery,
-          filterSelectedQuery
-        );
-        if (response) {
-          setLeads(response.data.results);
-          const total = response.data.count;
-          setpageCount(Math.ceil(total / 25));
-        } else {
-          getleads();
-          setFilterSelectedQuery("");
-        }
-      } else {
-        const response = await LeadServices.getAllPaginateDuplicateLeads(page);
-        setLeads(response.data.results);
-        const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
-      }
+  const handleReset = () => {
+    setFilterSelectedQuery("");
+    setCurrentPage(1);
+  };
 
-      setOpen(false);
-    } catch (error) {
-      console.log("error", error);
-      setOpen(false);
-    }
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
   };
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
-      <Popup
-        maxWidth={"lg"}
-        title={"Assign Bulk Lead to another Employee"}
-        openPopup={openModal}
-        setOpenPopup={setOpenModal}
-      >
-        <BulkLeadAssign setOpenPopup={setOpenModal} />
-      </Popup>
-      <Grid item xs={12}>
-        <ErrorMessage errRef={errRef} errMsg={errMsg} />
-        <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
-          <Box display="flex" marginBottom="10px">
-            <FormControl fullWidth sx={{ maxWidth: "300px" }} size="small">
-              <InputLabel id="demo-simple-select-label">Fliter By</InputLabel>
-              <Select
-                labelId="demso-simple-select-label"
-                id="demo-simple-select"
-                name="values"
-                label="Fliter By"
-                value={filterQuery}
-                onChange={(event) => handleInputChanges(event)}
-              >
-                {FilterOptions.map((option, i) => (
-                  <MenuItem key={i} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
 
-            <CustomTextField
-              value={filterSelectedQuery}
-              onChange={(event) => setFilterSelectedQuery(event.target.value)}
-              name="search"
-              size="small"
-              placeholder="search"
-              label="Search"
-              variant="outlined"
-              sx={{
-                marginRight: "1rem",
-                backgroundColor: "#ffffff",
-                marginLeft: "1em",
-                "& .MuiSelect-iconOutlined": {
-                  display: filterSelectedQuery ? "none" : "",
-                },
-                "&.Mui-focused .MuiIconButton-root": {
-                  color: "primary.main",
-                },
-              }}
-              InputProps={{
-                endAdornment: (
-                  <>
-                    <IconButton
-                      sx={{
-                        visibility: filterSelectedQuery ? "visible" : "hidden",
-                      }}
-                      onClick={getResetSearchData}
-                    >
-                      <ClearIcon />
-                    </IconButton>
-                  </>
-                ),
-              }}
-            />
-            <Button
-              sx={{ marginRight: "1rem" }}
-              variant="contained"
-              color="primary"
-              onClick={() => getSearchData(filterQuery, filterSelectedQuery)}
-            >
-              Search
-            </Button>
-            {(users.groups.toString() === "Sales Manager" ||
-              users.groups.toString() === "Sales Deputy Manager") && (
-              <button
-                onClick={() => setOpenModal(true)}
-                className="btn btn-primary me-2"
-                size="small"
-              >
-                Assign Bulk Lead
-              </button>
-            )}
-            <Button
-              onClick={() => setOpenPopup2(true)}
-              variant="contained"
-              color="success"
-            >
-              Add
-            </Button>
+      <Grid item xs={12}>
+        <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
+          <Box sx={{ mb: 2 }}>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} sm={6} md={3}>
+                <FormControl fullWidth sx={{ maxWidth: "300px" }} size="small">
+                  <InputLabel id="demo-simple-select-label">
+                    Fliter By
+                  </InputLabel>
+                  <Select
+                    labelId="demso-simple-select-label"
+                    id="demo-simple-select"
+                    name="values"
+                    label="Fliter By"
+                    value={filterQuery}
+                    onChange={(event) => handleFilter(event)}
+                  >
+                    {FilterOptions.map((option, i) => (
+                      <MenuItem key={i} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={2}>
+                {(users.groups.includes("Director") ||
+                  users.groups.includes("Sales Manager") ||
+                  users.groups.includes("Sales Deputy Manager")) && (
+                  <button
+                    onClick={() => setOpenModal(true)}
+                    className="btn btn-primary me-2"
+                    size="small"
+                  >
+                    Assign Bulk Lead
+                  </button>
+                )}
+              </Grid>
+              <Grid item xs={12} sm={6} md={1}>
+                <Button
+                  onClick={() => setOpenPopup2(true)}
+                  variant="contained"
+                  color="success"
+                >
+                  Add
+                </Button>
+              </Grid>
+            </Grid>
           </Box>
-          <Box display="flex" alignItems="center" justifyContent="center">
-            <h3
-              style={{
-                marginBottom: "1em",
-                fontSize: "24px",
-                color: "rgb(34, 34, 34)",
-                fontWeight: 800,
-              }}
-            >
-              Duplicate Leads
-            </h3>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              mt: 2,
+            }}
+          >
+            <Grid container justifyContent="center">
+              <Grid item xs={12}>
+                <Typography
+                  variant="h3"
+                  component="h3"
+                  sx={{
+                    textAlign: "center",
+                    fontSize: "24px",
+                    fontWeight: 800,
+                    color: "rgb(34, 34, 34)",
+                  }}
+                >
+                  Duplicates Leads
+                </Typography>
+              </Grid>
+            </Grid>
           </Box>
           <TableContainer
             sx={{
@@ -415,8 +319,9 @@ export const DuplicateLead = () => {
             </Table>
           </TableContainer>
           <CustomPagination
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            totalPages={totalPages}
+            currentPage={currentPage}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>
@@ -426,7 +331,14 @@ export const DuplicateLead = () => {
         openPopup={openPopup2}
         setOpenPopup={setOpenPopup2}
       >
-        <CreateLeads getleads={getleads} setOpenPopup={setOpenPopup2} />
+        <CreateLeads
+          getleads={getleads}
+          setOpenPopup={setOpenPopup2}
+          currentPage={currentPage}
+          filterQuery={filterQuery}
+          filterSelectedQuery={filterSelectedQuery}
+          searchQuery={null}
+        />
       </Popup>
       <Popup
         fullScreen={true}
@@ -438,6 +350,10 @@ export const DuplicateLead = () => {
           leadsByID={leadsByID}
           setOpenPopup={setOpenPopup}
           getAllleadsData={getleads}
+          currentPage={currentPage}
+          filterQuery={filterQuery}
+          filterSelectedQuery={filterSelectedQuery}
+          searchQuery={null}
         />
       </Popup>
 
@@ -448,9 +364,14 @@ export const DuplicateLead = () => {
         setOpenPopup={setOpenModalFollowup}
       >
         <LeadActivityCreate
+          getleads={getleads}
           leadsByID={leadsByID}
-          setOpenModal={setOpenModalFollowup}
+          setOpenPopup={setOpenModalFollowup}
           getLeadByID={null}
+          currentPage={currentPage}
+          filterQuery={filterQuery}
+          filterSelectedQuery={filterSelectedQuery}
+          searchQuery={null}
         />
       </Popup>
       <Popup
@@ -460,10 +381,23 @@ export const DuplicateLead = () => {
         setOpenPopup={setOpenModalPotential}
       >
         <LeadPotentialCreate
+          getleads={getleads}
           getLeadByID={null}
           leadsByID={leadsByID}
-          setOpenModal={setOpenModalPotential}
+          setOpenPopup={setOpenModalPotential}
+          currentPage={currentPage}
+          filterQuery={filterQuery}
+          filterSelectedQuery={filterSelectedQuery}
+          searchQuery={null}
         />
+      </Popup>
+      <Popup
+        maxWidth={"lg"}
+        title={"Assign Bulk Lead to another Employee"}
+        openPopup={openModal}
+        setOpenPopup={setOpenModal}
+      >
+        <BulkLeadAssign setOpenPopup={setOpenModal} />
       </Popup>
     </>
   );

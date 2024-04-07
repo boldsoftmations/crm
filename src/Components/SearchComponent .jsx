@@ -26,33 +26,31 @@ const SearchComponent = ({ onSearch, onReset }) => {
   };
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} sm={8} md={6}>
-          <TextField
-            size="small"
-            label="Search"
-            variant="outlined"
-            value={searchQuery}
-            onChange={handleChange}
-            fullWidth
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton aria-label="search" onClick={handleSearchClick}>
-                    <SearchIcon />
-                  </IconButton>
-                  {searchQuery && (
-                    <IconButton aria-label="reset" onClick={handleResetClick}>
-                      <ClearIcon />
-                    </IconButton>
-                  )}
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-      </Grid>
+    <Box sx={{ width: "100%" }}>
+      {" "}
+      {/* Ensured Box takes 100% width */}
+      <TextField
+        size="small"
+        label="Search"
+        variant="outlined"
+        value={searchQuery}
+        onChange={handleChange}
+        fullWidth
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton aria-label="search" onClick={handleSearchClick}>
+                <SearchIcon />
+              </IconButton>
+              {searchQuery && (
+                <IconButton aria-label="reset" onClick={handleResetClick}>
+                  <ClearIcon />
+                </IconButton>
+              )}
+            </InputAdornment>
+          ),
+        }}
+      />
     </Box>
   );
 };

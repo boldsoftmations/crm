@@ -62,52 +62,42 @@ const getAllLeads = (
 //   return CustomAxios.get(`api/lead/duplicate-leads/?${params.toString()}`);
 // };
 
-const getAllDuplicateLeads = (filterValue) => {
-  return CustomAxios.get(`/api/lead/duplicate-leads/?field=${filterValue}`);
+const getAllDuplicateLeads = (page, filterValue, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
+
+  if (page) {
+    params.append("page", page);
+  }
+
+  if (filterValue) {
+    params.append("field", filterValue);
+  }
+
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
+
+  return CustomAxios.get(`api/lead/duplicate-leads/?${params.toString()}`);
 };
 
-const getAllPaginateDuplicateLeads = (
-  currentPage,
-  filterValue,
-  searchValue
-) => {
-  return CustomAxios.get(
-    `/api/lead/duplicate-leads/?page=${currentPage}&field=${filterValue}&search=${searchValue}`
-  );
-};
+const getAllUnassignedData = (page, filterValue, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
 
-const getSearchDuplicateLeads = (filterValue, searchValue) => {
-  return CustomAxios.get(
-    `/api/lead/duplicate-leads/?field=${filterValue}&search=${searchValue}`
-  );
-};
+  if (page) {
+    params.append("page", page);
+  }
 
-const getFilterPaginateDuplicateLeads = (
-  currentPage,
-  filterValue,
-  searchValue
-) => {
-  return CustomAxios.get(
-    `/api/lead/duplicate-leads/?page=${currentPage}&field=${filterValue}&search=${searchValue}`
-  );
-};
+  if (filterValue) {
+    params.append("references__source", filterValue);
+  }
 
-const getAllUnassignedData = () => {
-  return CustomAxios.get(`/api/lead/list-unassigned/`);
-};
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
 
-const getAllPaginateUnassigned = (currentPage) => {
-  return CustomAxios.get(`/api/lead/list-unassigned/?page=${currentPage}`);
-};
-
-const getAllPaginateWithFilterUnassigned = (currentPage, filter, search) => {
-  return CustomAxios.get(
-    `/api/lead/list-unassigned/?page=${currentPage}&${filter}=${search}`
-  );
-};
-
-const getAllFilterByUnassignedData = (filter, search) => {
-  return CustomAxios.get(`/api/lead/list-unassigned/?${filter}=${search}`);
+  return CustomAxios.get(`api/lead/list-unassigned/?${params.toString()}`);
 };
 
 const getAllAssignedUser = () => {
@@ -222,13 +212,7 @@ const LeadServices = {
   getAllLeads,
   getAllAssignedUser,
   getAllUnassignedData,
-  getAllFilterByUnassignedData,
-  getAllPaginateUnassigned,
-  getAllPaginateWithFilterUnassigned,
   getAllDuplicateLeads,
-  getAllPaginateDuplicateLeads,
-  getSearchDuplicateLeads,
-  getFilterPaginateDuplicateLeads,
   createLeads,
   getLeadsById,
   updateLeads,
