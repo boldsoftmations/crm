@@ -41,8 +41,8 @@ export const PackingListView = () => {
   const [openPopupCreateGrn, setOpenPopupCreateGrn] = useState(false);
   const [open, setOpen] = useState(false);
   const [packingListData, setPackingListData] = useState([]);
-  const [pageCount, setPageCount] = useState(1);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [acceptedFilter, setAcceptedFilter] = useState(false);
   const [idForEdit, setIDForEdit] = useState("");
@@ -79,7 +79,7 @@ export const PackingListView = () => {
         query
       );
       setPackingListData(response.data.results);
-      setPageCount(Math.ceil(response.data.count / 25));
+      setTotalPages(Math.ceil(response.data.count / 25));
     } catch (error) {
       handleError(error);
     } finally {
@@ -99,15 +99,15 @@ export const PackingListView = () => {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    setCurrentPage(0); // Reset to first page on new search
+    setCurrentPage(1); // Reset to first page on new search
   };
 
   const handleReset = () => {
     setSearchQuery("");
-    setCurrentPage(0); // Reset to the first page
+    setCurrentPage(1); // Reset to the first page
   };
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value); // Assuming `value` is already adjusted for 0-based indexing in CustomPagination
   };
 
@@ -232,9 +232,9 @@ export const PackingListView = () => {
             sx={{ display: "flex", justifyContent: "center", marginTop: "2em" }}
           >
             <CustomPagination
-              pageCount={pageCount}
               currentPage={currentPage}
-              handlePageClick={handlePageClick}
+              totalPages={totalPages}
+              handlePageChange={handlePageChange}
             />
           </TableFooter>
         </Paper>

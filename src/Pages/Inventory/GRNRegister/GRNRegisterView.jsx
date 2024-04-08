@@ -29,8 +29,8 @@ import { MessageAlert } from "../../../Components/MessageAlert";
 export const GRNRegisterView = () => {
   const [open, setOpen] = useState(false);
   const [grnRegisterData, setGRNRegisterData] = useState([]);
-  const [pageCount, setPageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [exportData, setExportData] = useState([]);
   const csvLinkRef = useRef(null);
   const data = useSelector((state) => state.auth);
@@ -160,7 +160,7 @@ export const GRNRegisterView = () => {
           page
         );
         setGRNRegisterData(response.data.results);
-        setPageCount(Math.ceil(response.data.count / 25));
+        setTotalPages(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
         handleError(error);
@@ -171,7 +171,7 @@ export const GRNRegisterView = () => {
     [selectedYearMonth]
   );
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -316,8 +316,9 @@ export const GRNRegisterView = () => {
           </Table>
         </TableContainer>
         <CustomPagination
-          pageCount={pageCount}
-          handlePageClick={handlePageClick}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handlePageChange={handlePageChange}
         />
       </Paper>
     </>

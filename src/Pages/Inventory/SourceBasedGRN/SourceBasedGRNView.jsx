@@ -37,12 +37,12 @@ export const SourceBasedGRNView = () => {
   const [openPopup, setOpenPopup] = useState(false);
   const [open, setOpen] = useState(false);
   const [packingListData, setPackingListData] = useState([]);
-  const [pageCount, setPageCount] = useState(1);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [idForEdit, setIDForEdit] = useState("");
   const [openCreatePopup, setOpenCreatePopup] = useState(false);
   const [sellerOption, setSellerOption] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [totalPages, setTotalPages] = useState(0);
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
   const [grnSourceFilter, setGrnSourceFilter] = useState(null);
@@ -63,7 +63,7 @@ export const SourceBasedGRNView = () => {
         );
         if (response && response.data.results) {
           setPackingListData(response.data.results);
-          setPageCount(Math.ceil(response.data.count / 25));
+          setTotalPages(Math.ceil(response.data.count / 25));
         }
       } catch (err) {
         handleError(err);
@@ -93,7 +93,7 @@ export const SourceBasedGRNView = () => {
     }
   };
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -103,11 +103,11 @@ export const SourceBasedGRNView = () => {
   };
   const handleSearch = (query) => {
     setSearchQuery(query);
-    setCurrentPage(0);
+    setCurrentPage(1);
   };
   const handleReset = () => {
     setSearchQuery("");
-    setCurrentPage(0);
+    setCurrentPage(1);
   };
   const openInPopup = (item) => {
     setIDForEdit(item);
@@ -237,8 +237,8 @@ export const SourceBasedGRNView = () => {
           >
             <CustomPagination
               currentPage={currentPage}
-              pageCount={pageCount}
-              handlePageClick={handlePageClick}
+              totalPages={totalPages}
+              handlePageChange={handlePageChange}
             />
           </TableFooter>
         </Paper>

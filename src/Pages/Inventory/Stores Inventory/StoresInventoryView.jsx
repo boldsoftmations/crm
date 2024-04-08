@@ -17,7 +17,8 @@ export const StoresInventoryView = () => {
   const [openPopup, setOpenPopup] = useState(false);
   const [storesInventoryData, setStoresInventoryData] = useState([]);
   const [pageCount, setPageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [exportData, setExportData] = useState([]);
   const csvLinkRef = useRef(null);
@@ -102,7 +103,7 @@ export const StoresInventoryView = () => {
           search
         );
         setStoresInventoryData(response.data.results);
-        setPageCount(Math.ceil(response.data.count / 25));
+        setTotalPages(Math.ceil(response.data.count / 25));
       } catch (error) {
         handleError(error);
       } finally {
@@ -122,7 +123,7 @@ export const StoresInventoryView = () => {
     setCurrentPage(1);
   };
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -247,8 +248,8 @@ export const StoresInventoryView = () => {
 
         <CustomPagination
           currentPage={currentPage}
-          pageCount={pageCount}
-          handlePageClick={handlePageClick}
+          totalPages={totalPages}
+          handlePageChange={handlePageChange}
         />
         <Popup
           maxWidth="xl"

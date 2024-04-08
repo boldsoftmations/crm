@@ -28,8 +28,8 @@ export const SafetyStockView = () => {
   const [openPopupUpdate, setOpenPopupUpdate] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [pageCount, setPageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
@@ -54,7 +54,7 @@ export const SafetyStockView = () => {
     try {
       const response = await InventoryServices.getAllSafetyStockData(page);
       setSafetyStockData(response.data.results);
-      setPageCount(Math.ceil(response.data.count / 25));
+      setTotalPages(Math.ceil(response.data.count / 25));
     } catch (error) {
       handleError(error);
       console.error("error", error);
@@ -63,7 +63,7 @@ export const SafetyStockView = () => {
     }
   }, []);
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -159,8 +159,9 @@ export const SafetyStockView = () => {
             </Table>
           </TableContainer>
           <CustomPagination
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>
