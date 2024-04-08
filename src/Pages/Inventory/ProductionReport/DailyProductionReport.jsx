@@ -15,7 +15,8 @@ export const DailyProductionReport = () => {
   const [open, setOpen] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [pageCount, setpageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [dailyProductionReport, setDailyProductionReport] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [exportData, setExportData] = useState([]);
@@ -76,7 +77,7 @@ export const DailyProductionReport = () => {
           );
         setDailyProductionReport(response.data.results);
         const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
+        setTotalPages(Math.ceil(total / 25));
       } else {
         let response = await InventoryServices.getAllDailyProductionReport(
           StartDate,
@@ -85,7 +86,7 @@ export const DailyProductionReport = () => {
         if (response) {
           setDailyProductionReport(response.data.results);
           const total = response.data.count;
-          setpageCount(Math.ceil(total / 25));
+          setTotalPages(Math.ceil(total / 25));
         }
       }
       setOpen(false);
@@ -125,7 +126,7 @@ export const DailyProductionReport = () => {
       if (response) {
         setDailyProductionReport(response.data.results);
         const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
+        setTotalPages(Math.ceil(total / 25));
       } else {
         getDailyProductionReport();
 
@@ -138,7 +139,7 @@ export const DailyProductionReport = () => {
     }
   };
 
-  const handlePageClick = async (event, value) => {
+  const handlePageChange = async (event, value) => {
     try {
       const page = value;
       const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
@@ -156,7 +157,7 @@ export const DailyProductionReport = () => {
         if (response) {
           setDailyProductionReport(response.data.results);
           const total = response.data.count;
-          setpageCount(Math.ceil(total / 25));
+          setTotalPages(Math.ceil(total / 25));
         } else {
           getDailyProductionReport();
           setSearchQuery("");
@@ -170,7 +171,7 @@ export const DailyProductionReport = () => {
           );
         setDailyProductionReport(response.data.results);
         const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
+        setTotalPages(Math.ceil(total / 25));
       }
       setOpen(false);
     } catch (error) {
@@ -348,8 +349,9 @@ export const DailyProductionReport = () => {
             openInPopup4={null}
           />
           <CustomPagination
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>

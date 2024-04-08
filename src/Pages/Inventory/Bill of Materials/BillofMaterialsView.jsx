@@ -12,11 +12,9 @@ import {
   TableCell,
   Button,
   TableFooter,
-  Pagination,
   Collapse,
   Typography,
   IconButton,
-  Snackbar,
   Switch,
   FormControl,
   InputLabel,
@@ -42,18 +40,18 @@ import {
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import SearchComponent from "../../../Components/SearchComponent ";
+import { CustomPagination } from "../../../Components/CustomPagination";
 
 export const BillofMaterialsView = () => {
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [open, setOpen] = useState(false);
   const [billofMaterials, setBillofMaterials] = useState([]);
-  const [pageCount, setPageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [idForEdit, setIDForEdit] = useState("");
   const dispatch = useDispatch();
-  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [filterApproved, setFilterApproved] = useState(null);
   const users = useSelector((state) => state.auth.profile);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -119,7 +117,7 @@ export const BillofMaterialsView = () => {
   };
 
   useEffect(() => {
-    getAllBillofMaterialsDetails(currentPage, searchQuery);
+    getAllBillofMaterialsDetails(currentPage);
   }, [currentPage, searchQuery]);
 
   const getAllBillofMaterialsDetails = useCallback(
@@ -132,7 +130,7 @@ export const BillofMaterialsView = () => {
           search
         );
         setBillofMaterials(response.data.results);
-        setPageCount(Math.ceil(response.data.count / 25));
+        setTotalPages(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
         handleError(error);
@@ -153,7 +151,7 @@ export const BillofMaterialsView = () => {
     setCurrentPage(1);
   };
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -187,10 +185,6 @@ export const BillofMaterialsView = () => {
   const openInPopup = (item) => {
     setIDForEdit(item);
     setOpenPopup(true);
-  };
-
-  const handleSnackbarClose = () => {
-    setOpenSnackbar(false);
   };
 
   return (
@@ -296,22 +290,6 @@ export const BillofMaterialsView = () => {
               },
             }}
           >
-            <Snackbar
-              open={openSnackbar}
-              onClose={handleSnackbarClose}
-              message={"Bill Of Material details Accepted successfully!"}
-              anchorOrigin={{ vertical: "top", horizontal: "center" }}
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  sx={{ p: 0.5 }}
-                  onClick={handleSnackbarClose}
-                >
-                  <CloseIcon />
-                </IconButton>
-              }
-            />
             <Table
               sx={{ minWidth: 700 }}
               stickyHeader
@@ -344,12 +322,10 @@ export const BillofMaterialsView = () => {
           <TableFooter
             sx={{ display: "flex", justifyContent: "center", marginTop: "2em" }}
           >
-            <Pagination
-              count={pageCount}
-              onChange={handlePageClick}
-              color={"primary"}
-              variant="outlined"
-              shape="circular"
+            <CustomPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              handlePageChange={handlePageChange}
             />
           </TableFooter>
         </Paper>
