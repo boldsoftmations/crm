@@ -47,7 +47,6 @@ export const JobOpeningUpdate = ({
           values.closing_date = null;
         }
         await updateJobOpening(values.id, values);
-        alert("Successfully updated Job Opening");
         setOpenUpdatePopup(false);
       }
     } catch (error) {

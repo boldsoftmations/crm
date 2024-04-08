@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 import Hr from "../../../services/Hr";
 import CustomAxios from "../../../services/api";
-import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 
-export const ApplicantListCreate = ({ jobOpeningId, onSuccess }) => {
+export const ApplicantListCreate = ({ jobOpeningId }) => {
   console.log("jobOpeningId:", jobOpeningId);
   const [formData, setFormData] = useState({
     job: jobOpeningId,
@@ -29,9 +29,9 @@ export const ApplicantListCreate = ({ jobOpeningId, onSuccess }) => {
     interested: "",
     shortlisted: false,
   });
-
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
   const [source, setSource] = useState([]);
-  const [selectedSource, setSelectedSource] = useState(null);
 
   useEffect(() => {
     const fetchSource = async () => {
@@ -41,6 +41,7 @@ export const ApplicantListCreate = ({ jobOpeningId, onSuccess }) => {
           setSource(response.data);
         }
       } catch (error) {
+        handleError("error");
         console.error("Error fetching designations:", error);
       }
     };
@@ -71,11 +72,11 @@ export const ApplicantListCreate = ({ jobOpeningId, onSuccess }) => {
     try {
       const response = await Hr.addApplicant(formData);
       console.log("Applicant created:", response.data);
-      onSuccess();
-      alert("Successfully added an applicant");
+      handleSuccess("Applicant created successfully");
+      setTimeout(() => {}, 300);
     } catch (error) {
+      handleError(error);
       console.error("Error creating applicant:", error);
-      alert("Error adding applicant");
     }
   };
   const spokenEnglishOptions = ["Bad", "Average", "Good"];

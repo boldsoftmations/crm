@@ -9,7 +9,9 @@ import { ApplicantListCreate } from "../ApplicantList/ApplicantListCreate";
 import { useSelector } from "react-redux";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import CustomTextField from "../../../Components/CustomTextField";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import SearchComponent from "../../../Components/SearchComponent ";
 
 export const JobOpeningView = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,16 +25,13 @@ export const JobOpeningView = () => {
   const data = useSelector((state) => state.auth);
   const users = data.profile;
   const isSalesManager = users.groups.includes("Sales Manager");
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [totalPages, setTotalPages] = useState(0);
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -45,8 +44,8 @@ export const JobOpeningView = () => {
   };
 
   useEffect(() => {
-    fetchJobOpenings(currentPage);
-  }, [currentPage, fetchJobOpenings]);
+    fetchJobOpenings(currentPage, searchQuery);
+  }, [currentPage, searchQuery, fetchJobOpenings]);
 
   const fetchJobOpenings = useCallback(
     async (page, query = searchQuery) => {
@@ -56,9 +55,10 @@ export const JobOpeningView = () => {
         console.log(response.data);
         setJobOpenings(response.data.results);
         const total = response.data.count;
-        setPageCount(Math.ceil(total / 25));
+        setTotalPages(Math.ceil(total / 25));
         setIsLoading(false);
       } catch (error) {
+        handleError(error);
         console.error("Error fetching job openings:", error);
       } finally {
         setIsLoading(false);
@@ -72,10 +72,13 @@ export const JobOpeningView = () => {
       setIsLoading(true);
       await Hr.addJobOpening(newJob);
       fetchJobOpenings();
-      setOpenCreatePopup(false);
-      setShowSuccessMessage(true);
+      handleSuccess("Job Opening added successfully");
+      setTimeout(() => {
+        setOpenCreatePopup(false);
+      }, 300);
       setIsLoading(false);
     } catch (error) {
+      handleError(error);
       console.error("Error adding job opening:", error);
     } finally {
       setIsLoading(false);
@@ -87,13 +90,28 @@ export const JobOpeningView = () => {
       setIsLoading(true);
       await Hr.updateJobOpening(id, updates);
       fetchJobOpenings();
+      handleSuccess("Job Opening Updated successfully");
+      setTimeout(() => {
+        setOpenCreatePopup(false);
+      }, 300);
       setOpenEditPopup(false);
       setIsLoading(false);
     } catch (error) {
+      handleError(error);
       console.error("Error updating job opening:", error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(1);
   };
 
   const handleAddJobOpeningClick = () => setOpenCreatePopup(true);
@@ -120,10 +138,6 @@ export const JobOpeningView = () => {
     "Action",
   ];
 
-  const handleSuccess = () => {
-    setOpenApplicantListPopup(false);
-    fetchJobOpenings();
-  };
   const TableData = Array.isArray(jobOpenings)
     ? jobOpenings.map((job) => ({
         id: job.id,
@@ -140,22 +154,14 @@ export const JobOpeningView = () => {
     : [];
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={isLoading} />
       <Grid item xs={12}>
-        <Snackbar
-          open={showSuccessMessage}
-          autoHideDuration={6000}
-          onClose={() => setShowSuccessMessage(false)}
-          anchorOrigin={{ vertical: "center", horizontal: "center" }}
-        >
-          <Alert
-            onClose={() => setShowSuccessMessage(false)}
-            severity="success"
-            sx={{ width: "100%" }}
-          >
-            Job opening created successfully!
-          </Alert>
-        </Snackbar>
         <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid
@@ -165,40 +171,11 @@ export const JobOpeningView = () => {
               sx={{ marginRight: 5, marginLeft: 5 }}
             >
               <Grid item xs={12} sm={6}>
-                <CustomTextField
-                  size="small"
-                  label="Search"
-                  variant="outlined"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  fullWidth
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
                 />
               </Grid>
-              <Grid item xs={12} sm={2}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => fetchJobOpenings(currentPage, searchQuery)}
-                  fullWidth
-                >
-                  Search
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={2}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    setSearchQuery("");
-                    setCurrentPage(1);
-                    fetchJobOpenings(1, "");
-                  }}
-                  fullWidth
-                >
-                  Reset
-                </Button>
-              </Grid>
-
               <Grid item xs={12} sm={2}>
                 <Button
                   variant="contained"
@@ -232,8 +209,9 @@ export const JobOpeningView = () => {
             onEdit={handleEditJobOpeningClick}
           />
           <CustomPagination
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
 
           {!isSalesManager && (
@@ -242,10 +220,7 @@ export const JobOpeningView = () => {
               openPopup={openApplicantListPopup}
               setOpenPopup={setOpenApplicantListPopup}
             >
-              <ApplicantListCreate
-                jobOpeningId={recordForEdit.job}
-                onSuccess={handleSuccess}
-              />
+              <ApplicantListCreate jobOpeningId={recordForEdit.job} />
             </Popup>
           )}
 
