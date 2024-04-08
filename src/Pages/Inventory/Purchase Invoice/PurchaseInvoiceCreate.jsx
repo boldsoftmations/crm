@@ -4,6 +4,8 @@ import CustomTextField from "../../../Components/CustomTextField";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { styled } from "@mui/material/styles";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -16,6 +18,8 @@ const Root = styled("div")(({ theme }) => ({
 export const PurchaseInvoiceCreate = memo(
   ({ setOpenPopup, recordForEdit, getAllGRNDetails }) => {
     const [open, setOpen] = useState(false);
+    const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+      useNotificationHandling();
     const [products, setProducts] = useState(
       recordForEdit.products.map((product) => {
         // Log the rate of each product
@@ -59,9 +63,13 @@ export const PurchaseInvoiceCreate = memo(
         await InventoryServices.createPurchaseInvoiceData(req);
         console.log("createing Packing list");
         getAllGRNDetails();
-        setOpenPopup(false);
+        handleSuccess("Purchase Invoice created successfully");
+        setTimeout(() => {
+          setOpenPopup(false);
+        }, 300);
         setOpen(false);
       } catch (error) {
+        handleError(error);
         console.log("createing Packing list error", error);
         setOpen(false);
       }
@@ -69,6 +77,12 @@ export const PurchaseInvoiceCreate = memo(
 
     return (
       <>
+        <MessageAlert
+          open={alertInfo.open}
+          onClose={handleCloseSnackbar}
+          severity={alertInfo.severity}
+          message={alertInfo.message}
+        />
         <CustomLoader open={open} />
         <Box
           component="form"

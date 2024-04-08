@@ -24,16 +24,20 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { Popup } from "../../../Components/Popup";
 import { ChalanInvoiceCreate } from "../ChallanInvoice/ChalanInvoiceCreate";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const ChalanView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [chalanData, setChalanData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [pageCount, setPageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [open, setOpen] = useState({});
   const [openPopup, setOpenPopup] = useState(false);
   const [challanNumbers, setChallanNumbers] = useState([]);
+  const { handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   useEffect(() => {
     getChalanDetails(currentPage);
@@ -48,8 +52,9 @@ export const ChalanView = () => {
         setChalanData(response.data.results);
       }
       const total = response.data.count;
-      setPageCount(Math.ceil(total / 25));
+      setTotalPages(Math.ceil(total / 25));
     } catch (err) {
+      handleError(err);
       console.error("Error fetching Chalan data", err);
     } finally {
       setIsLoading(false);
@@ -66,7 +71,7 @@ export const ChalanView = () => {
   //   }
   // };
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -91,6 +96,12 @@ export const ChalanView = () => {
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={isLoading} />
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
@@ -281,8 +292,9 @@ export const ChalanView = () => {
           </Popup>
 
           <CustomPagination
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>

@@ -6,6 +6,8 @@ import InventoryServices from "../../../services/InventoryService";
 import ProductService from "../../../services/ProductService";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import CustomTextField from "../../../Components/CustomTextField";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const ChalanInvoiceCreate = ({
   setOpenPopup,
@@ -21,7 +23,8 @@ export const ChalanInvoiceCreate = ({
     invoice_no: "",
     products: [{ product: "", quantity: "", cunsuption_rate: "", amount: "" }],
   });
-
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
   const [productOption, setProductOption] = useState([]);
 
   useEffect(() => {
@@ -114,146 +117,158 @@ export const ChalanInvoiceCreate = ({
       const response = await createChalanInvoice(preparedFormData);
       console.log("Invoice Created:", response);
       getChalanDetails();
-      setOpenPopup(false);
+      handleSuccess("Chalan Invoice Created Successfully");
+      setTimeout(() => {
+        setOpenPopup(false);
+      }, 300);
     } catch (error) {
+      handleError(error);
       console.error("Failed to create chalan invoice", error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={4}>
-          <CustomTextField
-            fullWidth
-            size="small"
-            label="Challan"
-            name="challan"
-            value={formData.challan}
-            onChange={handleChange}
-          />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <CustomTextField
-            fullWidth
-            size="small"
-            label="Job Worker"
-            name="job_worker"
-            value={formData.job_worker}
-            onChange={handleChange}
-          />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <CustomTextField
-            size="small"
-            fullWidth
-            label="Buyer Account"
-            value={formData.buyer_account}
-            name="buyer_account"
-            onChange={handleChange}
-          />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <CustomTextField
-            fullWidth
-            size="small"
-            label="Service Charge"
-            name="service_charge"
-            type="number"
-            value={formData.service_charge}
-            onChange={handleChange}
-          />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <CustomTextField
-            fullWidth
-            size="small"
-            label="Transport Cost"
-            name="transport_cost"
-            type="number"
-            value={formData.transport_cost}
-            onChange={handleChange}
-          />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <CustomTextField
-            fullWidth
-            size="small"
-            label="Invoice No"
-            name="invoice_no"
-            value={formData.invoice_no}
-            onChange={handleChange}
-          />
-        </Grid>
-        {formData.products.map((product, index) => (
-          <React.Fragment key={index}>
-            <Grid item xs={12} sm={3}>
-              <CustomAutocomplete
-                name="product"
-                size="small"
-                disablePortal
-                id={`combo-box-demo-${index}`}
-                value={product.product}
-                onChange={(event, value) =>
-                  handleProductAutocompleteChange(index, value)
-                }
-                options={productOption.map((option) => option.name)}
-                getOptionLabel={(option) => option}
-                label="Product"
-              />
-            </Grid>
-            <Grid item xs={12} sm={2}>
-              <CustomTextField
-                fullWidth
-                size="small"
-                label="Quantity"
-                name="quantity"
-                type="number"
-                value={product.quantity}
-                onChange={(e) => handleProductChange(index, e)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={2}>
-              <CustomTextField
-                fullWidth
-                size="small"
-                label="Consumption Rate"
-                name="cunsuption_rate"
-                type="number"
-                value={product.cunsuption_rate}
-                onChange={(e) => handleProductChange(index, e)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <CustomTextField
-                fullWidth
-                size="small"
-                label="Amount"
-                name="amount"
-                type="number"
-                value={product.amount}
-                onChange={(e) => handleProductChange(index, e)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={2}>
-              <IconButton onClick={() => addProductField()}>
-                <AddCircleOutlineIcon />
-              </IconButton>
-              {index > 0 && (
-                <IconButton onClick={() => removeProductField(index)}>
-                  <RemoveCircleOutlineIcon />
+    <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
+      <form onSubmit={handleSubmit}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Challan"
+              name="challan"
+              value={formData.challan}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Job Worker"
+              name="job_worker"
+              value={formData.job_worker}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              size="small"
+              fullWidth
+              label="Buyer Account"
+              value={formData.buyer_account}
+              name="buyer_account"
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Service Charge"
+              name="service_charge"
+              type="number"
+              value={formData.service_charge}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Transport Cost"
+              name="transport_cost"
+              type="number"
+              value={formData.transport_cost}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Invoice No"
+              name="invoice_no"
+              value={formData.invoice_no}
+              onChange={handleChange}
+            />
+          </Grid>
+          {formData.products.map((product, index) => (
+            <React.Fragment key={index}>
+              <Grid item xs={12} sm={3}>
+                <CustomAutocomplete
+                  name="product"
+                  size="small"
+                  disablePortal
+                  id={`combo-box-demo-${index}`}
+                  value={product.product}
+                  onChange={(event, value) =>
+                    handleProductAutocompleteChange(index, value)
+                  }
+                  options={productOption.map((option) => option.name)}
+                  getOptionLabel={(option) => option}
+                  label="Product"
+                />
+              </Grid>
+              <Grid item xs={12} sm={2}>
+                <CustomTextField
+                  fullWidth
+                  size="small"
+                  label="Quantity"
+                  name="quantity"
+                  type="number"
+                  value={product.quantity}
+                  onChange={(e) => handleProductChange(index, e)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={2}>
+                <CustomTextField
+                  fullWidth
+                  size="small"
+                  label="Consumption Rate"
+                  name="cunsuption_rate"
+                  type="number"
+                  value={product.cunsuption_rate}
+                  onChange={(e) => handleProductChange(index, e)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={3}>
+                <CustomTextField
+                  fullWidth
+                  size="small"
+                  label="Amount"
+                  name="amount"
+                  type="number"
+                  value={product.amount}
+                  onChange={(e) => handleProductChange(index, e)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={2}>
+                <IconButton onClick={() => addProductField()}>
+                  <AddCircleOutlineIcon />
                 </IconButton>
-              )}
-            </Grid>
-          </React.Fragment>
-        ))}
+                {index > 0 && (
+                  <IconButton onClick={() => removeProductField(index)}>
+                    <RemoveCircleOutlineIcon />
+                  </IconButton>
+                )}
+              </Grid>
+            </React.Fragment>
+          ))}
 
-        <Grid item xs={12}>
-          <Button type="submit" variant="contained" color="primary">
-            Create Invoice
-          </Button>
+          <Grid item xs={12}>
+            <Button type="submit" variant="contained" color="primary">
+              Create Invoice
+            </Button>
+          </Grid>
         </Grid>
-      </Grid>
-    </form>
+      </form>
+    </>
   );
 };

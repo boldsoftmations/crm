@@ -1,19 +1,11 @@
 import React, { useEffect, useState, useCallback, memo } from "react";
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Grid,
-  IconButton,
-  Snackbar,
-  styled,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Autocomplete, Box, Button, Grid, styled } from "@mui/material";
 import CustomTextField from "../../../Components/CustomTextField";
 import InventoryServices from "../../../services/InventoryService";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useSelector } from "react-redux";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -39,6 +31,9 @@ export const PackingListMergeCreate = memo(
       packing_list_no: "",
       invoice_date: today,
     });
+    const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+      useNotificationHandling();
+
     const [poOptionsForSelectedAccount, setPoOptionsForSelectedAccount] =
       useState([]);
 
@@ -124,10 +119,13 @@ export const PackingListMergeCreate = memo(
           purchase_order: selectedPoNos, // This is already an array
         };
         await InventoryServices.createPackingListData(dataToSend);
-
-        setOpenPopup(false);
+        handleSuccess("MergePL created successfully");
+        setTimeout(() => {
+          setOpenPopup(false);
+        }, 300);
         getAllPurchaseOrderDetails();
       } catch (error) {
+        handleError(error);
         console.error("Creating Packing list error", error);
         setError(error.message || "An error occurred");
       } finally {
@@ -135,32 +133,20 @@ export const PackingListMergeCreate = memo(
       }
     };
 
-    const handleCloseSnackbar = useCallback(() => setError(null), []);
-
     return (
-      <Root>
+      <>
+        <MessageAlert
+          open={alertInfo.open}
+          onClose={handleCloseSnackbar}
+          severity={alertInfo.severity}
+          message={alertInfo.message}
+        />
         <CustomLoader open={loading} />
         <Box
           component="form"
           noValidate
           onSubmit={createMergePackingListDetails}
         >
-          <Snackbar
-            open={Boolean(error)}
-            onClose={handleCloseSnackbar}
-            message={error}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                sx={{ p: 0.5 }}
-                onClick={handleCloseSnackbar}
-              >
-                <CloseIcon />
-              </IconButton>
-            }
-          />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={3}>
               <Autocomplete
@@ -282,7 +268,7 @@ export const PackingListMergeCreate = memo(
             Submit
           </Button>
         </Box>
-      </Root>
+      </>
     );
   }
 );
