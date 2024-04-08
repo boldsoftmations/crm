@@ -13,8 +13,8 @@ import SearchComponent from "../../../Components/SearchComponent ";
 export const ProductionInventoryGAndLView = () => {
   const [open, setOpen] = useState(false);
   const [productionInventoryData, setProductionInventoryData] = useState([]);
-  const [pageCount, setPageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [exportData, setExportData] = useState([]);
   const csvLinkRef = useRef(null);
@@ -97,7 +97,7 @@ export const ProductionInventoryGAndLView = () => {
             search
           );
         setProductionInventoryData(response.data.results);
-        setPageCount(Math.ceil(response.data.count / 25));
+        setTotalPages(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
         handleError(error);
@@ -108,7 +108,7 @@ export const ProductionInventoryGAndLView = () => {
     [searchQuery]
   );
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -214,8 +214,8 @@ export const ProductionInventoryGAndLView = () => {
 
           <CustomPagination
             currentPage={currentPage}
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>

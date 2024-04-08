@@ -40,15 +40,15 @@ export const PurchaseOrderView = () => {
   const [openPopupUpdate, setOpenPopupUpdate] = useState(false);
   const [open, setOpen] = useState(false);
   const [purchaseOrderData, setPurchaseOrderData] = useState([]);
-  const [pageCount, setPageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [totalPages, setTotalPages] = useState(0);
   const [acceptedFilter, setAcceptedFilter] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [openCreatePLPopup, setOpenCreatePLPopup] = useState(false);
   const [openMergePLPopup, setOpenMergePLPopup] = useState(false);
   const dispatch = useDispatch();
-  const { handleError, handleCloseSnackbar, alertInfo } =
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
   const handleDownload = async (data) => {
@@ -81,9 +81,10 @@ export const PurchaseOrderView = () => {
 
       // clean up the temporary link element
       document.body.removeChild(link);
-
+      handleSuccess("Downloaded successfully");
       setOpen(false);
     } catch (error) {
+      handleError(error);
       console.log("error exporting pdf", error);
     } finally {
       setOpen(false);
@@ -133,7 +134,7 @@ export const PurchaseOrderView = () => {
           query
         );
         setPurchaseOrderData(response.data.results);
-        setPageCount(Math.ceil(response.data.count / 25));
+        setTotalPages(Math.ceil(response.data.count / 25));
       } catch (error) {
         handleError(error);
       } finally {
@@ -145,7 +146,7 @@ export const PurchaseOrderView = () => {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    setCurrentPage(0); // Reset to first page with new search
+    setCurrentPage(1); // Reset to first page with new search
   };
 
   const handleFilter = (query) => {
@@ -160,10 +161,10 @@ export const PurchaseOrderView = () => {
 
   const handleReset = () => {
     setSearchQuery("");
-    setCurrentPage(0); // Reset to first page with no search query
+    setCurrentPage(1); // Reset to first page with no search query
   };
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -291,9 +292,9 @@ export const PurchaseOrderView = () => {
             </Table>
           </TableContainer>
           <CustomPagination
-            pageCount={pageCount}
             currentPage={currentPage}
-            handlePageClick={handlePageClick}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>

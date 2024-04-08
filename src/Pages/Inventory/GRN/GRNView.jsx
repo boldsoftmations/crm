@@ -35,8 +35,8 @@ export const GRNView = () => {
   const [openPopupCreatePI, setOpenPopupCreatePI] = useState(false);
   const [open, setOpen] = useState(false);
   const [grnData, setGRNData] = useState([]);
-  const [pageCount, setPageCount] = useState(1);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [idForEdit, setIDForEdit] = useState();
   const [recordForEdit, setRecordForEdit] = useState();
@@ -58,7 +58,7 @@ export const GRNView = () => {
         query
       );
       setGRNData(response.data.results);
-      setPageCount(Math.ceil(response.data.count / 25));
+      setTotalPages(Math.ceil(response.data.count / 25));
     } catch (error) {
       handleError(error);
     } finally {
@@ -68,7 +68,7 @@ export const GRNView = () => {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    setCurrentPage(0); // Reset to first page with new search
+    setCurrentPage(1); // Reset to first page with new search
   };
 
   const handleFilter = (query) => {
@@ -83,10 +83,10 @@ export const GRNView = () => {
 
   const handleReset = () => {
     setSearchQuery("");
-    setCurrentPage(0); // Reset to first page with no search query
+    setCurrentPage(1); // Reset to first page with no search query
   };
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -198,9 +198,9 @@ export const GRNView = () => {
             </Table>
           </TableContainer>
           <CustomPagination
-            pageCount={pageCount}
             currentPage={currentPage}
-            handlePageClick={handlePageClick}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>

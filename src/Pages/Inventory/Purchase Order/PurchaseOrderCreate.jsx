@@ -1,21 +1,14 @@
-import {
-  Box,
-  Button,
-  Chip,
-  Divider,
-  Grid,
-  IconButton,
-  Snackbar,
-} from "@mui/material";
+import { Box, Button, Chip, Divider, Grid } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import CloseIcon from "@mui/icons-material/Close";
 import CustomTextField from "../../../Components/CustomTextField";
 import InventoryServices from "../../../services/InventoryService";
 import ProductService from "../../../services/ProductService";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -63,6 +56,9 @@ export const PurchaseOrderCreate = ({
   const [error, setError] = useState(null);
   const [productOption, setProductOption] = useState([]);
   const [currencyOption, setCurrencyOption] = useState([]);
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
+
   console.log("inputVales", inputValues);
 
   const handleInputChange = useCallback((event) => {
@@ -226,6 +222,7 @@ export const PurchaseOrderCreate = ({
         }
       }
     } catch (err) {
+      handleError(err);
       console.error("Error fetching currency data", err);
     } finally {
       setLoading(false);
@@ -239,6 +236,7 @@ export const PurchaseOrderCreate = ({
       setProductOption(res.data);
       setLoading(false);
     } catch (err) {
+      handleError(err);
       console.error("error potential", err);
       setLoading(false);
     }
@@ -267,21 +265,27 @@ export const PurchaseOrderCreate = ({
       const response = await InventoryServices.createPurchaseOrderData(req);
       if (response) {
         getAllVendorDetails();
-        setOpenPopup(false);
       }
+      handleSuccess("Purchase Order Created Successfully");
+      setTimeout(() => {
+        setOpenPopup(false);
+      }, 300);
       setLoading(false);
     } catch (error) {
+      handleError(error);
       console.log("createing Packing list error", error);
       setLoading(false);
     }
   };
 
-  const handleCloseSnackbar = () => {
-    setError(null);
-  };
-
   return (
-    <div>
+    <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={loading} />
 
       <Box
@@ -289,22 +293,6 @@ export const PurchaseOrderCreate = ({
         noValidate
         onSubmit={(e) => createPurchaseOrderDetails(e)}
       >
-        <Snackbar
-          open={Boolean(error)}
-          onClose={handleCloseSnackbar}
-          message={error}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              sx={{ p: 0.5 }}
-              onClick={handleCloseSnackbar}
-            >
-              <CloseIcon />
-            </IconButton>
-          }
-        />
         <Grid container spacing={2}>
           <Grid item xs={12} sm={3}>
             <CustomTextField
@@ -536,7 +524,7 @@ export const PurchaseOrderCreate = ({
           Submit
         </Button>
       </Box>
-    </div>
+    </>
   );
 };
 

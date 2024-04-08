@@ -16,6 +16,7 @@ import ProductService from "../../../services/ProductService";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -59,6 +60,8 @@ export const CreateChalan = memo(
     const [error, setError] = useState(null);
     const [productOption, setProductOption] = useState([]);
     console.log("inputVales", inputValues);
+    const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+      useNotificationHandling();
 
     const handleInputChange = useCallback((event) => {
       const { name, value } = event.target;
@@ -236,17 +239,17 @@ export const CreateChalan = memo(
         const response = await InventoryServices.createChalan(req);
         if (response) {
           getChalanDetails(currentPage);
-          setOpenPopup(false);
         }
+        handleSuccess("Chalan created successfully");
+        setTimeout(() => {
+          setOpenPopup(false);
+        }, 300);
         setLoading(false);
       } catch (error) {
+        handleError(error);
         console.log("createing Packing list error", error);
         setLoading(false);
       }
-    };
-
-    const handleCloseSnackbar = () => {
-      setError(null);
     };
 
     return (

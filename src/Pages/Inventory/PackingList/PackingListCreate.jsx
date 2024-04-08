@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback, memo } from "react";
-import { Box, Button, Grid, IconButton, Snackbar, styled } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Box, Button, Grid, styled } from "@mui/material";
 import CustomTextField from "../../../Components/CustomTextField";
 import InventoryServices from "../../../services/InventoryService";
 import { CustomLoader } from "../../../Components/CustomLoader";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -31,6 +32,8 @@ export const PackingListCreate = memo(
         quantity: product.pending_quantity,
       })),
     }));
+    const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+      useNotificationHandling();
 
     useEffect(() => {
       setDetails({
@@ -73,10 +76,13 @@ export const PackingListCreate = memo(
           purchase_order: details.purchase_order, // This is already an array
         };
         await InventoryServices.createPackingListData(dataToSend);
-
-        setOpenPopup(false);
+        handleSuccess("Packing list created successfully");
+        setTimeout(() => {
+          setOpenPopup(false);
+        }, 300);
         getAllPurchaseOrderDetails();
       } catch (error) {
+        handleError(error);
         console.error("Creating Packing list error", error);
         setError(error.message || "An error occurred");
       } finally {
@@ -84,28 +90,16 @@ export const PackingListCreate = memo(
       }
     };
 
-    const handleCloseSnackbar = useCallback(() => setError(null), []);
-
     return (
-      <Root>
+      <>
+        <MessageAlert
+          open={alertInfo.open}
+          onClose={handleCloseSnackbar}
+          severity={alertInfo.severity}
+          message={alertInfo.message}
+        />
         <CustomLoader open={loading} />
         <Box component="form" noValidate onSubmit={createPackingListDetails}>
-          <Snackbar
-            open={Boolean(error)}
-            onClose={handleCloseSnackbar}
-            message={error}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                sx={{ p: 0.5 }}
-                onClick={handleCloseSnackbar}
-              >
-                <CloseIcon />
-              </IconButton>
-            }
-          />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={3}>
               <CustomTextField
@@ -210,7 +204,7 @@ export const PackingListCreate = memo(
             Submit
           </Button>
         </Box>
-      </Root>
+      </>
     );
   }
 );

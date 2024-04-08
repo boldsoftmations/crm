@@ -45,6 +45,7 @@ import { CSVLink } from "react-csv";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import SearchComponent from "../../../Components/SearchComponent ";
 import { MessageAlert } from "../../../Components/MessageAlert";
+import { CustomPagination } from "../../../Components/CustomPagination";
 
 export const MaterialRequisitionFormView = () => {
   const [openPopup, setOpenPopup] = useState(false);
@@ -54,8 +55,8 @@ export const MaterialRequisitionFormView = () => {
   const [materialRequisitionData, setMaterialRequisitionData] = useState([]);
   const [materialRequisitionDataByID, setMaterialRequisitionDataByID] =
     useState(null);
-  const [pageCount, setPageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [idForEdit, setIDForEdit] = useState("");
   const [storesInventoryData, setStoresInventoryData] = useState([]);
@@ -158,7 +159,7 @@ export const MaterialRequisitionFormView = () => {
             search
           );
         setMaterialRequisitionData(response.data.results);
-        setPageCount(Math.ceil(response.data.count / 25));
+        setTotalPages(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
         handleError(error);
@@ -178,7 +179,7 @@ export const MaterialRequisitionFormView = () => {
     setSearchQuery("");
     setCurrentPage(1);
   };
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -381,12 +382,10 @@ export const MaterialRequisitionFormView = () => {
           <TableFooter
             sx={{ display: "flex", justifyContent: "center", marginTop: "2em" }}
           >
-            <Pagination
-              count={pageCount}
-              onChange={handlePageClick}
-              color={"primary"}
-              variant="outlined"
-              shape="circular"
+            <CustomPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              handlePageChange={handlePageChange}
             />
           </TableFooter>
         </Paper>
