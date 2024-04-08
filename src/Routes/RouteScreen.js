@@ -90,6 +90,7 @@ import { SourceBasedGRNView } from "../Pages/Inventory/SourceBasedGRN/SourceBase
 import { ChalanInvoiceView } from "../Pages/Inventory/ChallanInvoice/ChalanInvoiceView";
 import { ChalanView } from "../Pages/Inventory/Challan/ChalanView";
 import { PhysicalInventoryView } from "../Pages/Inventory/Physcical Inventory/PhysicalInventoryView";
+import { AllLeadsTabView } from "../Pages/Leads/AllLeadsTabView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -133,17 +134,7 @@ export const RouteScreen = () => {
               element={<UserProfileView />}
             />
             {/* Leads Routes */}
-            <Route path="/leads/hot-lead" element={<HotLeads />} />
-            <Route path="/leads/new-lead" element={<NewLeads />} />
-            <Route path="/leads/indiamart-lead" element={<IndiaMartLeads />} />
-            <Route path="/leads/open-lead" element={<OpenLead />} />
-            <Route path="/leads/closed-lead" element={<ClosedLead />} />
-            <Route path="/leads/duplicate-lead" element={<DuplicateLead />} />
-            <Route path="/leads/forecast-list" element={<LeadForecastView />} />
-            <Route
-              path="/leads/view-unassigned-lead"
-              element={<UnassignedLead />}
-            />
+            <Route path="/leads/all-lead" element={<AllLeadsTabView />} />
             {/* Products Routes */}
             <Route path="/products/view-colors" element={<ViewColors />} />
             <Route path="/products/view-brand" element={<ViewBrand />} />

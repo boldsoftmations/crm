@@ -1167,10 +1167,10 @@ export const TeamWiseDashboard = () => {
 
   const handleRowClick = (row) => {
     if (row.label === "New") {
-      navigate("/leads/new-lead");
+      navigate("/leads/all-lead");
     }
     if (row.label === "Open") {
-      navigate("/leads/open-lead");
+      navigate("/leads/all-lead");
     }
   };
 
