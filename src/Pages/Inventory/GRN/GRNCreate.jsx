@@ -24,7 +24,6 @@ export const GRNCreate = memo(
     searchQuery,
   }) => {
     const [open, setOpen] = useState(false);
-    const [error, setError] = useState(null);
     const [products, setProducts] = useState(
       idForEdit.products.map(({ product, unit, quantity }) => ({
         products: product,
@@ -45,6 +44,8 @@ export const GRNCreate = memo(
 
     const handleFormChange = (index, event) => {
       const { name, value } = event.target;
+      console.log("name", name);
+      console.log("value", value);
       const updatedProducts = products.map((item, idx) =>
         idx === index
           ? {
@@ -57,33 +58,55 @@ export const GRNCreate = memo(
             }
           : item
       );
-
+      console.log("updatedProducts", updatedProducts);
       setProducts(updatedProducts);
     };
+    console.log("products", products);
+    const createGrnDetails = useCallback(
+      async (e) => {
+        e.preventDefault();
+        setOpen(true);
 
-    const createGrnDetails = useCallback(async (e) => {
-      e.preventDefault();
-      setOpen(true);
-
-      try {
-        const response = await InventoryServices.createGRNData({
+        const payload = {
           packing_list: idForEdit.id,
           grn_source: "Purchase",
-          products,
-        });
-        const successMessage =
-          response.data.message || "GRN Created successfully";
-        handleSuccess(successMessage);
-        setTimeout(() => {
-          setOpenPopup(false);
-          getAllPackingListDetails(currentPage, acceptedFilter, searchQuery);
-        }, 300);
-      } catch (error) {
-        handleError(error); // Handle errors from the API call
-      } finally {
-        setOpen(false); // Always close the loader
-      }
-    }, []);
+          products: products.map((data) => ({
+            order_quantity: data.order_quantity,
+            products: data.products,
+            qa_accepted: data.qa_accepted,
+            qa_rejected: data.qa_rejected,
+            unit: data.unit,
+          })),
+        };
+
+        try {
+          const response = await InventoryServices.createGRNData(payload);
+          const successMessage =
+            response.data.message || "GRN Created successfully";
+          handleSuccess(successMessage);
+          setTimeout(() => {
+            setOpenPopup(false);
+            getAllPackingListDetails(currentPage, acceptedFilter, searchQuery);
+          }, 300);
+        } catch (error) {
+          handleError(error);
+        } finally {
+          setOpen(false);
+        }
+      },
+      [
+        products,
+        idForEdit,
+        handleSuccess,
+        handleError,
+        getAllPackingListDetails,
+        currentPage,
+        acceptedFilter,
+        searchQuery,
+        setOpen,
+        setOpenPopup,
+      ]
+    );
 
     return (
       <div>
@@ -192,7 +215,6 @@ export const GRNCreate = memo(
                             parseInt(input.qa_rejected)
                           : ""
                       }
-                      onChange={(event) => handleFormChange(index, event)}
                     />
                   </Grid>
                 </>
