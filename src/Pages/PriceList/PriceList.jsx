@@ -1,16 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Grid, Button, Paper, Box } from "@mui/material";
-import ProductService from "../../../services/ProductService";
-import { Popup } from "../../../Components/Popup";
-import { CreatePriceList } from "./CreatePriceList";
+import ProductService from "../../services/ProductService";
+import { useNotificationHandling } from "../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../Components/MessageAlert";
+import { CustomLoader } from "../../Components/CustomLoader";
+import CustomAutocomplete from "../../Components/CustomAutocomplete";
+import SearchComponent from "../../Components/SearchComponent ";
+import { CustomTable } from "../../Components/CustomTable";
+import { CustomPagination } from "../../Components/CustomPagination";
+import { Popup } from "../../Components/Popup";
 import { UpdatePriceList } from "./UpdatePriceList";
-import { CustomLoader } from "./../../../Components/CustomLoader";
-import { CustomPagination } from "./../../../Components/CustomPagination";
-import { CustomTable } from "../../../Components/CustomTable";
-import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
-import { MessageAlert } from "../../../Components/MessageAlert";
-import SearchComponent from "../../../Components/SearchComponent ";
-import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { CreatePriceList } from "./CreatePriceList";
 
 export const PriceList = () => {
   const [priceListData, setPriceListData] = useState([]);

@@ -1,23 +1,10 @@
 import { Routes, Route } from "react-router-dom";
 import { useSelector } from "react-redux";
 import React from "react";
-
-import { UnassignedLead } from "../Pages/Leads/UnassignedLead";
 import { ChangePassword } from "./../Pages/Auth/ChangePassword";
 import { Dashboard } from "../Pages/Dashboard/Dashboard";
 import { ForgotPassword } from "./../Pages/Auth/ForgotPassword";
-import { ViewBasicUnit } from "./../Pages/Products/BasicUnit/ViewBasicUnit";
-import { ViewBrand } from "./../Pages/Products/Brand/ViewBrand";
-import { ViewColors } from "../Pages/Products/Color/ViewColors";
-import { ViewConsumable } from "../Pages/Products/Consumable/ViewConsumable";
-import { ViewDescription } from "./../Pages/Products/Description/ViewDescription";
-import { ViewFinishGoods } from "./../Pages/Products/FinishGoods/ViewFinishGoods";
-import { ViewPackingUnit } from "./../Pages/Products/PackingUnit/ViewPackingUnit";
-import { ViewProductCode } from "./../Pages/Products/ProductCode/ViewProductCode";
-import { ViewRawMaterials } from "./../Pages/Products/RawMaterials/ViewRawMaterials";
-import { ViewUnit } from "./../Pages/Products/Unit/ViewUnit";
 import { CompanyDetails } from "../Pages/Cutomers/CompanyDetails/CompanyDetails";
-import { PriceList } from "./../Pages/Products/PriceList/PriceList";
 import { SellerAccount } from "./../Pages/Invoice/Seller Account/SellerAccount";
 import { CustomerOrderBookDetails } from "../Pages/OrderBooks/CustomerOrderBookDetails";
 import { ProductOrderBookDetails } from "./../Pages/OrderBooks/ProductOrderBookDetails";
@@ -49,15 +36,10 @@ import { TaskView } from "../Pages/Task/TaskView";
 import { DailyProductionReport } from "../Pages/Inventory/ProductionReport/DailyProductionReport";
 import { WeeklyProductionReport } from "../Pages/Inventory/ProductionReport/WeeklyProductionReport";
 import { UnassignedCustomer } from "../Pages/Cutomers/CompanyDetails/UnassignedCustomer";
-import { NewLeads } from "../Pages/Leads/NewLeads";
-import { OpenLead } from "../Pages/Leads/OpenLead";
-import { ClosedLead } from "../Pages/Leads/ClosedLead";
 import { AllProformaInvoice } from "./../Pages/Invoice/ProformaInvoice/AllProformaInvoice";
-import { DuplicateLead } from "../Pages/Leads/DuplicateLead";
 import { Followup } from "../Pages/FollowUp/Followup";
 import { ActivePI } from "../Pages/Invoice/ProformaInvoice/ActivePI";
 import { ApprovePi } from "../Pages/Invoice/ProformaInvoice/ApprovePi";
-import { HotLeads } from "../Pages/Leads/HotLeads";
 import { ActiveUsers } from "./../Pages/Users/ActiveUsers";
 import { InActiveUsers } from "./../Pages/Users/InActiveUsers";
 import { IncompleteKycDetails } from "../Pages/Cutomers/CompanyDetails/IncompleteKycDetails";
@@ -65,7 +47,6 @@ import { CompetitorView } from "../Pages/MarketAnalysis/CompetitorView";
 import { PriceApprovalPI } from "../Pages/Invoice/ProformaInvoice/PriceApprovalPI";
 import { TeamWiseDashboard } from "../Pages/TeamWiseDashboard";
 import { UserProfileView } from "../Pages/Profile/UserProfile/UserProfileView";
-import { IndiaMartLeads } from "../Pages/Leads/IndiaMartLeads";
 import { InActiveCustomer } from "../Pages/Cutomers/CompanyDetails/InActiveCustomer";
 import { FaqAllTab } from "../Pages/Faq/FaqAllTab/FaqAllTab";
 import { DailySaleReviewView } from "../Pages/DailySaleReview/DailySaleReviewView";
@@ -73,7 +54,6 @@ import { HrModelTabs } from "../Pages/HrModel/HrModelTabs";
 import { DesignationView } from "../Pages/HrModel/Designation/DesignationView";
 import { DepartmentView } from "../Pages/HrModel/Department/DepartmentView";
 import { SourceView } from "../Pages/HrModel/CandidateSource/SourceView";
-import { LeadForecastView } from "../Pages/Leads/LeadForecast/LeadForecastView";
 import { CurrencyView } from "../Pages/Inventory/Currency/CurrencyView";
 import { PurchaseOrderView } from "../Pages/Inventory/Purchase Order/PurchaseOrderView";
 import { GRNRegisterView } from "../Pages/Inventory/GRNRegister/GRNRegisterView";
@@ -91,6 +71,9 @@ import { ChalanInvoiceView } from "../Pages/Inventory/ChallanInvoice/ChalanInvoi
 import { ChalanView } from "../Pages/Inventory/Challan/ChalanView";
 import { PhysicalInventoryView } from "../Pages/Inventory/Physcical Inventory/PhysicalInventoryView";
 import { AllLeadsTabView } from "../Pages/Leads/AllLeadsTabView";
+import { AllProductsTabView } from "../Pages/Products/AllProductsTabView";
+import { PriceList } from "../Pages/PriceList/PriceList";
+import { AllSKUCodesTabView } from "../Pages/SKU Codes/AllSKUCodesTabView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -136,36 +119,14 @@ export const RouteScreen = () => {
             {/* Leads Routes */}
             <Route path="/leads/all-lead" element={<AllLeadsTabView />} />
             {/* Products Routes */}
-            <Route path="/products/view-colors" element={<ViewColors />} />
-            <Route path="/products/view-brand" element={<ViewBrand />} />
             <Route
-              path="/products/view-basic-unit"
-              element={<ViewBasicUnit />}
+              path="/products/all-product"
+              element={<AllProductsTabView />}
             />
-            <Route path="/products/view-unit" element={<ViewUnit />} />
+            {/* SKU Codes Routes */}
             <Route
-              path="/products/view-packing-unit"
-              element={<ViewPackingUnit />}
-            />
-            <Route
-              path="/products/view-description"
-              element={<ViewDescription />}
-            />
-            <Route
-              path="/products/view-product-code"
-              element={<ViewProductCode />}
-            />
-            <Route
-              path="/products/view-consumable"
-              element={<ViewConsumable />}
-            />
-            <Route
-              path="/products/view-finish-goods"
-              element={<ViewFinishGoods />}
-            />
-            <Route
-              path="/products/view-raw-materials"
-              element={<ViewRawMaterials />}
+              path="/products/all-sku-codes"
+              element={<AllSKUCodesTabView />}
             />
             <Route path="/products/view-price-list" element={<PriceList />} />
             {/* Customers Route */}

@@ -14,6 +14,8 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import CategoryIcon from "@mui/icons-material/Category";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import PersonIcon from "@mui/icons-material/Person";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
@@ -151,158 +153,44 @@ export const ListItems = (props) => {
           {/* Products */}
           <ListItem
             button
-            onClick={() => setExpandProduct(!expandProduct)}
+            component={RouterLink}
+            to="/products/all-product"
             style={{ width: 300 }}
+            onClick={() => setOpen(false)}
           >
             <ListItemIcon>
               <CategoryIcon />
             </ListItemIcon>
             <ListItemText primary="Products" />
-            {expandProduct ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItem>
-          <Collapse in={expandProduct} timeout="auto" unmountOnExit>
-            <Divider />
-            <List component="div" disablePadding>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/view-colors"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Colors"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/view-brand"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Brand"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/view-basic-unit"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Basic Unit"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/view-unit"
-                style={{ width: 300 }}
-              >
-                <ListItemText inset primary="Unit" />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/view-packing-unit"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Packing Unit"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/view-description"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Description"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/view-product-code"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Product Code"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/view-consumable"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Consumable"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/view-finish-goods"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Finish Goods"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/view-raw-materials"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Raw Materials"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/view-price-list"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Price List"
-                />
-              </ListItem>
-            </List>
-          </Collapse>
+
+          {/* SKU CODES */}
+          <ListItem
+            button
+            component={RouterLink}
+            to="/products/all-sku-codes"
+            style={{ width: 300 }}
+            onClick={() => setOpen(false)}
+          >
+            <ListItemIcon>
+              <ConfirmationNumberIcon />
+            </ListItemIcon>
+            <ListItemText primary="SKU Code" />
+          </ListItem>
+
+          {/* Price List */}
+          <ListItem
+            button
+            component={RouterLink}
+            to="/products/view-price-list"
+            style={{ width: 300 }}
+            onClick={() => setOpen(false)}
+          >
+            <ListItemIcon>
+              <ListAltIcon />
+            </ListItemIcon>
+            <ListItemText primary="Price List" />
+          </ListItem>
 
           {/* Leads */}
           <ListItem
@@ -4488,166 +4376,48 @@ export const ListItems = (props) => {
                   </ListItem>
                 </List>
               </Collapse>
+
               {/* Products */}
               <ListItem
                 button
-                onClick={() => setExpandProduct(!expandProduct)}
+                component={RouterLink}
+                to="/products/all-product"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <CategoryIcon />
                 </ListItemIcon>
                 <ListItemText primary="Products" />
-                {expandProduct ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandProduct} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-colors"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Colors"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-brand"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Brand"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-basic-unit"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Basic Unit"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-unit"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Unit"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-packing-unit"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Packing Unit"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-description"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Description"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-product-code"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Product Code"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-consumable"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Consumable"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-finish-goods"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Finish Goods"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-raw-materials"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Raw Materials"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-price-list"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Price List"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
+
+              {/* SKU CODES */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/products/all-sku-codes"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+              >
+                <ListItemIcon>
+                  <ConfirmationNumberIcon />
+                </ListItemIcon>
+                <ListItemText primary="SKU Code" />
+              </ListItem>
+
+              {/* Price List */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/products/view-price-list"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+              >
+                <ListItemIcon>
+                  <ListAltIcon />
+                </ListItemIcon>
+                <ListItemText primary="Price List" />
+              </ListItem>
 
               {/* Customer */}
               <ListItem
@@ -5262,163 +5032,44 @@ export const ListItems = (props) => {
               {/* Products */}
               <ListItem
                 button
-                onClick={() => setExpandProduct(!expandProduct)}
+                component={RouterLink}
+                to="/products/all-product"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <CategoryIcon />
                 </ListItemIcon>
                 <ListItemText primary="Products" />
-                {expandProduct ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandProduct} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-colors"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Colors"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-brand"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Brand"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-basic-unit"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Basic Unit"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-unit"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Unit"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-packing-unit"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Packing Unit"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-description"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Description"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-product-code"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Product Code"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-consumable"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Consumable"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-finish-goods"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Finish Goods"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-raw-materials"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Raw Materials"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-price-list"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Price List"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
+
+              {/* SKU CODES */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/products/all-sku-codes"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+              >
+                <ListItemIcon>
+                  <ConfirmationNumberIcon />
+                </ListItemIcon>
+                <ListItemText primary="SKU Code" />
+              </ListItem>
+
+              {/* Price List */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/products/view-price-list"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+              >
+                <ListItemIcon>
+                  <ListAltIcon />
+                </ListItemIcon>
+                <ListItemText primary="Price List" />
+              </ListItem>
 
               {/* Customer */}
               <ListItem
@@ -5591,163 +5242,44 @@ export const ListItems = (props) => {
               {/* Products */}
               <ListItem
                 button
-                onClick={() => setExpandProduct(!expandProduct)}
+                component={RouterLink}
+                to="/products/all-product"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <CategoryIcon />
                 </ListItemIcon>
                 <ListItemText primary="Products" />
-                {expandProduct ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandProduct} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-colors"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Colors"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-brand"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Brand"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-basic-unit"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Basic Unit"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-unit"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Unit"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-packing-unit"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Packing Unit"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-description"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Description"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-product-code"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Product Code"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-consumable"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Consumable"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-finish-goods"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Finish Goods"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-raw-materials"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Raw Materials"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/products/view-price-list"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Price List"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
+
+              {/* SKU CODES */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/products/all-sku-codes"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+              >
+                <ListItemIcon>
+                  <ConfirmationNumberIcon />
+                </ListItemIcon>
+                <ListItemText primary="SKU Code" />
+              </ListItem>
+
+              {/* Price List */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/products/view-price-list"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+              >
+                <ListItemIcon>
+                  <ListAltIcon />
+                </ListItemIcon>
+                <ListItemText primary="Price List" />
+              </ListItem>
 
               {/* Vendor */}
               <ListItem
