@@ -25,7 +25,7 @@ export const LeadForecastView = () => {
   const [open, setOpen] = useState(false);
   const [leadForecastData, setLeadForecastData] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [openPopup, setOpenPopup] = useState(false);
   const [currentRowData, setCurrentRowData] = useState(null);
   const { handleError, handleCloseSnackbar, alertInfo } =
