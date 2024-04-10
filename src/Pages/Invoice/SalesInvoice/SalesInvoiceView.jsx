@@ -47,8 +47,8 @@ export const SalesInvoiceView = () => {
   const [openPopup3, setOpenPopup3] = useState(false);
   const [openPopup4, setOpenPopup4] = useState(false);
   const [idForEdit, setIDForEdit] = useState();
-  const [pageCount, setpageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterQuery, setFilterQuery] = useState("search");
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
@@ -227,7 +227,7 @@ export const SalesInvoiceView = () => {
           );
         setSalesInvoiceData(response.data.results);
         const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
+        setTotalPages(Math.ceil(total / 25));
       } else {
         const response = await InvoiceServices.getSalesInvoiceData(
           StartDate,
@@ -235,7 +235,7 @@ export const SalesInvoiceView = () => {
         );
         setSalesInvoiceData(response.data.results);
         const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
+        setTotalPages(Math.ceil(total / 25));
       }
       setOpen(false);
     } catch (err) {
@@ -284,7 +284,7 @@ export const SalesInvoiceView = () => {
       if (response) {
         setSalesInvoiceData(response.data.results);
         const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
+        setTotalPages(Math.ceil(total / 25));
       } else {
         getSalesInvoiceDetails();
         setSearchQuery("");
@@ -296,7 +296,7 @@ export const SalesInvoiceView = () => {
     }
   };
 
-  const handlePageClick = async (event, value) => {
+  const handlePageChange = async (event, value) => {
     try {
       const page = value;
       setCurrentPage(page);
@@ -314,7 +314,7 @@ export const SalesInvoiceView = () => {
         if (response) {
           setSalesInvoiceData(response.data.results);
           const total = response.data.count;
-          setpageCount(Math.ceil(total / 25));
+          setTotalPages(Math.ceil(total / 25));
         } else {
           getSalesInvoiceDetails();
           setSearchQuery("");
@@ -331,7 +331,7 @@ export const SalesInvoiceView = () => {
         if (response) {
           setSalesInvoiceData(response.data.results);
           const total = response.data.count;
-          setpageCount(Math.ceil(total / 25));
+          setTotalPages(Math.ceil(total / 25));
         } else {
           getSalesInvoiceDetails();
           setSearchQuery("");
@@ -345,7 +345,7 @@ export const SalesInvoiceView = () => {
           );
         setSalesInvoiceData(response.data.results);
         const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
+        setTotalPages(Math.ceil(total / 25));
       }
 
       setOpen(false);
@@ -592,8 +592,9 @@ export const SalesInvoiceView = () => {
             </Table>
           </TableContainer>
           <CustomPagination
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>
