@@ -26,8 +26,9 @@ export const ProductOrderBookDetails = () => {
   const [openModal2, setOpenModal2] = useState(false);
   const [openModal3, setOpenModal3] = useState(false);
   const [pageCount, setpageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [totalPages, setTotalPages] = useState(0);
   const [exportData, setExportData] = useState([]);
   const [filterQuery, setFilterQuery] = useState("");
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
@@ -192,7 +193,7 @@ export const ProductOrderBookDetails = () => {
       if (response) {
         setOrderBookData(response.data.results);
         const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
+        setTotalPages(Math.ceil(total / 25));
       } else {
         getAllProductDataOrderBook();
         setSearchQuery("");
@@ -250,7 +251,7 @@ export const ProductOrderBookDetails = () => {
     });
   };
 
-  const handlePageClick = async (event, value) => {
+  const handlePageChange = async (event, value) => {
     const page = value;
     setCurrentPage(page);
     await fetchData({
@@ -452,8 +453,9 @@ export const ProductOrderBookDetails = () => {
             openInPopup2={null}
           />
           <CustomPagination
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>
