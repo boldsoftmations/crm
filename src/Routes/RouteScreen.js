@@ -74,6 +74,7 @@ import { AllLeadsTabView } from "../Pages/Leads/AllLeadsTabView";
 import { AllProductsTabView } from "../Pages/Products/AllProductsTabView";
 import { PriceList } from "../Pages/PriceList/PriceList";
 import { AllSKUCodesTabView } from "../Pages/SKU Codes/AllSKUCodesTabView";
+import { AllCustomerTabView } from "../Pages/Cutomers/CompanyDetails/AllCustomerTabView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -130,6 +131,10 @@ export const RouteScreen = () => {
             />
             <Route path="/products/view-price-list" element={<PriceList />} />
             {/* Customers Route */}
+            <Route
+              path="/customers/all-customer"
+              element={<AllCustomerTabView />}
+            />
             <Route
               path="/customers/company-details"
               element={<CompanyDetails />}

@@ -18,7 +18,7 @@ export const UnassignedCustomer = () => {
   const [errMsg, setErrMsg] = useState("");
   const [companyData, setCompanyData] = useState([]);
   const [recordForEdit, setRecordForEdit] = useState();
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
   const [assigned, setAssigned] = useState([]);

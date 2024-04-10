@@ -209,72 +209,16 @@ export const ListItems = (props) => {
           {/* Customer */}
           <ListItem
             button
-            onClick={() => setExpandCustomer(!expandCustomer)}
+            component={RouterLink}
+            to="/customers/all-customer"
             style={{ width: 300 }}
+            onClick={() => setOpen(false)}
           >
             <ListItemIcon>
               <PersonIcon />
             </ListItemIcon>
             <ListItemText primary="Customer" />
-            {expandCustomer ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItem>
-          <Collapse in={expandCustomer} timeout="auto" unmountOnExit>
-            <Divider />
-            <List component="div" disablePadding>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/company-details"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Customer"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/unassigned-company-details"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Unassigned Customer"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/inactive-company-details"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="InActive Employee"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/incomplete-kyc-details"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Incomplete KYC"
-                />
-              </ListItem>
-            </List>
-          </Collapse>
 
           {/* All Followup */}
           <ListItem
@@ -1497,35 +1441,20 @@ export const ListItems = (props) => {
           {userData.groups.includes("Customer Service") && (
             <>
               {/* Customer */}
+
               <ListItem
                 button
-                onClick={() => setExpandCustomer(!expandCustomer)}
+                component={RouterLink}
+                to="/customers/all-customer"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <PersonIcon />
                 </ListItemIcon>
                 <ListItemText primary="Customer" />
-                {expandCustomer ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandCustomer} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/company-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
+
               {/* Leads */}
               <ListItem
                 button
@@ -2695,74 +2624,19 @@ export const ListItems = (props) => {
               </ListItem>
 
               {/* Customer */}
+
               <ListItem
                 button
-                onClick={() => setExpandCustomer(!expandCustomer)}
+                component={RouterLink}
+                to="/customers/all-customer"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <PersonIcon />
                 </ListItemIcon>
                 <ListItemText primary="Customer" />
-                {expandCustomer ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandCustomer} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/company-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/unassigned-company-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Unassigned Customer"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/inactive-company-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="InActive Employee"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/incomplete-kyc-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Incomplete KYC"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* All Followup */}
               <ListItem
@@ -3049,48 +2923,19 @@ export const ListItems = (props) => {
               </ListItem>
 
               {/* Customer */}
+
               <ListItem
                 button
-                onClick={() => setExpandCustomer(!expandCustomer)}
+                component={RouterLink}
+                to="/customers/all-customer"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <PersonIcon />
                 </ListItemIcon>
                 <ListItemText primary="Customer" />
-                {expandCustomer ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandCustomer} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/company-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/incomplete-kyc-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Incomplete KYC"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* All Followup */}
               <ListItem
@@ -3317,48 +3162,19 @@ export const ListItems = (props) => {
               </ListItem>
 
               {/* Customer */}
+
               <ListItem
                 button
-                onClick={() => setExpandCustomer(!expandCustomer)}
+                component={RouterLink}
+                to="/customers/all-customer"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <PersonIcon />
                 </ListItemIcon>
                 <ListItemText primary="Customer" />
-                {expandCustomer ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandCustomer} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/company-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/incomplete-kyc-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Incomplete KYC"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* All Followup */}
               <ListItem
@@ -3589,46 +3405,16 @@ export const ListItems = (props) => {
               {/* Customer */}
               <ListItem
                 button
-                onClick={() => setExpandCustomer(!expandCustomer)}
+                component={RouterLink}
+                to="/customers/all-customer"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <PersonIcon />
                 </ListItemIcon>
                 <ListItemText primary="Customer" />
-                {expandCustomer ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandCustomer} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/company-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/incomplete-kyc-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Incomplete KYC"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* All Followup */}
               <ListItem
@@ -3857,46 +3643,16 @@ export const ListItems = (props) => {
               {/* Customer */}
               <ListItem
                 button
-                onClick={() => setExpandCustomer(!expandCustomer)}
+                component={RouterLink}
+                to="/customers/all-customer"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <PersonIcon />
                 </ListItemIcon>
                 <ListItemText primary="Customer" />
-                {expandCustomer ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandCustomer} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/company-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/incomplete-kyc-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Incomplete KYC"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* All Followup */}
               <ListItem
@@ -4126,46 +3882,16 @@ export const ListItems = (props) => {
               {/* Customer */}
               <ListItem
                 button
-                onClick={() => setExpandCustomer(!expandCustomer)}
+                component={RouterLink}
+                to="/customers/all-customer"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <PersonIcon />
                 </ListItemIcon>
                 <ListItemText primary="Customer" />
-                {expandCustomer ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandCustomer} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/company-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/incomplete-kyc-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Incomplete KYC"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* All Followup */}
               <ListItem
@@ -4422,72 +4148,16 @@ export const ListItems = (props) => {
               {/* Customer */}
               <ListItem
                 button
-                onClick={() => setExpandCustomer(!expandCustomer)}
+                component={RouterLink}
+                to="/customers/all-customer"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <PersonIcon />
                 </ListItemIcon>
                 <ListItemText primary="Customer" />
-                {expandCustomer ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandCustomer} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/company-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/unassigned-company-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Unassigned Customer"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/inactive-company-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="InActive Employee"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/incomplete-kyc-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Incomplete KYC"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/*Proforma Invoice  */}
               <ListItem
@@ -5074,33 +4744,16 @@ export const ListItems = (props) => {
               {/* Customer */}
               <ListItem
                 button
-                onClick={() => setExpandCustomer(!expandCustomer)}
+                component={RouterLink}
+                to="/customers/all-customer"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <PersonIcon />
                 </ListItemIcon>
                 <ListItemText primary="Customer" />
-                {expandCustomer ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandCustomer} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/company-details"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/*Proforma Invoice  */}
               <ListItem
