@@ -28,8 +28,8 @@ export const IncompleteKycDetails = () => {
   const [errMsg, setErrMsg] = useState("");
   const [companyData, setCompanyData] = useState([]);
   const [recordForEdit, setRecordForEdit] = useState();
-  const [pageCount, setpageCount] = useState(1);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [product, setProduct] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
@@ -215,7 +215,7 @@ export const IncompleteKycDetails = () => {
         });
       }
       setCompanyData(response.data.results);
-      setpageCount(Math.ceil(response.data.count / 25));
+      setTotalPages(Math.ceil(response.data.count / 25));
       setOpen(false);
     } catch (err) {
       setOpen(false);
@@ -257,14 +257,14 @@ export const IncompleteKycDetails = () => {
         });
       }
       setCompanyData(response.data.results);
-      setpageCount(Math.ceil(response.data.count / 25));
+      setTotalPages(Math.ceil(response.data.count / 25));
       setOpen(false);
     } catch (error) {
       console.log("error Search leads", error);
       setOpen(false);
     }
   };
-  const handlePageClick = async (event, value) => {
+  const handlePageChange = async (event, value) => {
     try {
       const page = value;
       setCurrentPage(page);
@@ -283,7 +283,7 @@ export const IncompleteKycDetails = () => {
         setCompanyData(response.data.results);
       }
       setCompanyData(response.data.results);
-      setpageCount(Math.ceil(response.data.count / 25));
+      setTotalPages(Math.ceil(response.data.count / 25));
 
       setOpen(false);
     } catch (error) {
@@ -474,8 +474,8 @@ export const IncompleteKycDetails = () => {
         >
           <CustomPagination
             currentPage={currentPage}
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </div>
       </div>

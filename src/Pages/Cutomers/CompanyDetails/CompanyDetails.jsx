@@ -43,6 +43,7 @@ export const CompanyDetails = () => {
   const [recordForEdit, setRecordForEdit] = useState();
   const [pageCount, setpageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [exportData, setExportData] = useState([]);
@@ -201,7 +202,7 @@ export const CompanyDetails = () => {
         );
 
         setCompanyData(response.data.results);
-        setpageCount(Math.ceil(response.data.count / 25));
+        setTotalPages(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
         setOpen(false);
@@ -215,7 +216,7 @@ export const CompanyDetails = () => {
     setSearchQuery(event.target.value);
   };
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -560,8 +561,8 @@ export const CompanyDetails = () => {
           >
             <CustomPagination
               currentPage={currentPage}
-              pageCount={pageCount}
-              handlePageClick={handlePageClick}
+              totalPages={totalPages}
+              handlePageChange={handlePageChange}
             />
           </div>
         </div>
