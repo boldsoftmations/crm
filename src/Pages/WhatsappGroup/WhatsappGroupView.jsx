@@ -7,12 +7,13 @@ import { CustomLoader } from "../../Components/CustomLoader";
 import CustomTextField from "../../Components/CustomTextField";
 import { WhatsappGroupDelete } from "./WhatsappGroupDelete";
 import { Popup } from "../../Components/Popup";
+import SearchComponent from "../../Components/SearchComponent ";
 
 export const WhatsappGroupView = () => {
   const [open, setOpen] = useState(false);
   const [whatsappGroupData, setWhatsappGroupData] = useState([]);
-  const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -21,7 +22,7 @@ export const WhatsappGroupView = () => {
 
   useEffect(() => {
     getAllWhatsappGroup();
-  }, [currentPage]);
+  }, [currentPage, searchQuery]);
 
   const getAllWhatsappGroup = async (
     page = currentPage,
@@ -34,7 +35,7 @@ export const WhatsappGroupView = () => {
         searchValue
       );
       setWhatsappGroupData(res.data.results);
-      setPageCount(Math.ceil(res.data.count / 25));
+      setTotalPages(Math.ceil(res.data.count / 25));
     } catch (err) {
       console.error(err);
     }
@@ -59,12 +60,18 @@ export const WhatsappGroupView = () => {
     getAllWhatsappGroup();
   };
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(1);
   };
 
   const Tabledata = Array.isArray(whatsappGroupData)
@@ -94,39 +101,10 @@ export const WhatsappGroupView = () => {
           <Box display="flex" marginBottom="10px">
             <Grid container spacing={2}>
               <Grid item xs={12} sm={3}>
-                <CustomTextField
-                  size="small"
-                  label="Search"
-                  variant="outlined"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  fullWidth
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
                 />
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    setCurrentPage(1);
-                    getAllWhatsappGroup(1, searchQuery);
-                  }}
-                >
-                  Search
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    setSearchQuery("");
-                    setCurrentPage(1);
-                    getAllWhatsappGroup(1, "");
-                  }}
-                >
-                  Reset
-                </Button>
               </Grid>
               <Grid item xs={12} sm={6} alignItems={"center"}>
                 <h3
@@ -149,9 +127,9 @@ export const WhatsappGroupView = () => {
             openDeletePopup={handleDelete}
           />
           <CustomPagination
-            key={currentPage}
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
           <Popup
             title={"Whatsapp Group Delete"}

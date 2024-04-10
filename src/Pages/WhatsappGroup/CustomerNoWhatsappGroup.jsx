@@ -7,6 +7,7 @@ import { CustomLoader } from "../../Components/CustomLoader";
 import KycUpdate from "../../Pages/Cutomers/KycDetails/KycUpdate";
 import { Popup } from "../../Components/Popup";
 import CustomTextField from "../../Components/CustomTextField";
+import SearchComponent from "../../Components/SearchComponent ";
 
 export const CustomerNoWhatsappGroup = () => {
   const [open, setOpen] = useState(false);
@@ -14,15 +15,15 @@ export const CustomerNoWhatsappGroup = () => {
     customerNotHavingWhatsappGroupData,
     setCustomerNotHavingWhatsappGroupData,
   ] = useState([]);
-  const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [openPopupKycUpdate, setOpenPopupKycUpdate] = useState(false);
   const [selectedCustomerData, setSelectedCustomerData] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     getAllCustomerNotHavingWhatsappGroup(currentPage);
-  }, [currentPage, getAllCustomerNotHavingWhatsappGroup]);
+  }, [currentPage, searchQuery, getAllCustomerNotHavingWhatsappGroup]);
 
   const getAllCustomerNotHavingWhatsappGroup = useCallback(
     async (page = currentPage, searchValue = searchQuery) => {
@@ -33,7 +34,7 @@ export const CustomerNoWhatsappGroup = () => {
           searchValue
         );
         setCustomerNotHavingWhatsappGroupData(res.data.results);
-        setPageCount(Math.ceil(res.data.count / 25));
+        setTotalPages(Math.ceil(res.data.count / 25));
         if (currentPage > Math.ceil(res.data.count / 25)) {
           setCurrentPage(1);
         }
@@ -46,12 +47,18 @@ export const CustomerNoWhatsappGroup = () => {
     [searchQuery]
   );
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(1);
   };
 
   const refreshData = async () => {
@@ -80,39 +87,10 @@ export const CustomerNoWhatsappGroup = () => {
           <Box display="flex" marginBottom="10px">
             <Grid container spacing={2}>
               <Grid item xs={12} sm={3}>
-                <CustomTextField
-                  size="small"
-                  label="Search"
-                  variant="outlined"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  fullWidth
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
                 />
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    setCurrentPage(1);
-                    getAllCustomerNotHavingWhatsappGroup(1, searchQuery);
-                  }}
-                >
-                  Search
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    setSearchQuery("");
-                    setCurrentPage(1);
-                    getAllCustomerNotHavingWhatsappGroup(1, "");
-                  }}
-                >
-                  Reset
-                </Button>
               </Grid>
               <Grid item xs={12} sm={6} alignItems={"center"}>
                 <h3
@@ -135,8 +113,9 @@ export const CustomerNoWhatsappGroup = () => {
             openInPopup={handleKycUpdate}
           />
           <CustomPagination
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
           <Popup
             title={"Kyc Update"}
