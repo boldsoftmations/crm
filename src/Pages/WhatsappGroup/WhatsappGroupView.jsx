@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { CustomTable } from "../../Components/CustomTable";
-import { Box, Button, Grid, Paper, Snackbar } from "@mui/material";
+import { Box, Grid, Paper } from "@mui/material";
 import CustomerServices from "../../services/CustomerService";
 import { CustomPagination } from "../../Components/CustomPagination";
 import { CustomLoader } from "../../Components/CustomLoader";
-import CustomTextField from "../../Components/CustomTextField";
 import { WhatsappGroupDelete } from "./WhatsappGroupDelete";
 import { Popup } from "../../Components/Popup";
 import SearchComponent from "../../Components/SearchComponent ";
+import { useNotificationHandling } from "../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../Components/MessageAlert";
 
 export const WhatsappGroupView = () => {
   const [open, setOpen] = useState(false);
@@ -15,10 +16,10 @@ export const WhatsappGroupView = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [deletePopupOpen, setDeletePopupOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+  const { handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   useEffect(() => {
     getAllWhatsappGroup();
@@ -37,6 +38,7 @@ export const WhatsappGroupView = () => {
       setWhatsappGroupData(res.data.results);
       setTotalPages(Math.ceil(res.data.count / 25));
     } catch (err) {
+      handleError(err);
       console.error(err);
     }
     setOpen(false);
@@ -45,14 +47,6 @@ export const WhatsappGroupView = () => {
   const handleDelete = async (data) => {
     setSelectedRow(data);
     setDeletePopupOpen(true);
-  };
-
-  const onDeleteSuccess = async (deletedId) => {
-    setWhatsappGroupData((prevData) =>
-      prevData.filter((row) => row.whatsapp_group_id !== deletedId)
-    );
-    setSnackbarMessage("Group deleted successfully");
-    setSnackbarOpen(true);
   };
 
   const closeDeletePopup = () => {
@@ -95,6 +89,12 @@ export const WhatsappGroupView = () => {
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
@@ -139,15 +139,8 @@ export const WhatsappGroupView = () => {
             <WhatsappGroupDelete
               selectedData={selectedRow}
               onClose={closeDeletePopup}
-              onDeleteSuccess={onDeleteSuccess}
             />
           </Popup>
-          <Snackbar
-            open={snackbarOpen}
-            autoHideDuration={3000}
-            onClose={() => setSnackbarOpen(false)}
-            message={snackbarMessage}
-          />
         </Paper>
       </Grid>
     </>

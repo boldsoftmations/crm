@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { CustomTable } from "../../Components/CustomTable";
-import { Box, Button, Grid, Paper } from "@mui/material";
+import { Box, Grid, Paper } from "@mui/material";
 import CustomerServices from "../../services/CustomerService";
 import { CustomPagination } from "../../Components/CustomPagination";
 import { CustomLoader } from "../../Components/CustomLoader";
 import KycUpdate from "../../Pages/Cutomers/KycDetails/KycUpdate";
 import { Popup } from "../../Components/Popup";
-import CustomTextField from "../../Components/CustomTextField";
 import SearchComponent from "../../Components/SearchComponent ";
+import { useNotificationHandling } from "../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../Components/MessageAlert";
 
 export const CustomerNoWhatsappGroup = () => {
   const [open, setOpen] = useState(false);
@@ -20,6 +21,8 @@ export const CustomerNoWhatsappGroup = () => {
   const [openPopupKycUpdate, setOpenPopupKycUpdate] = useState(false);
   const [selectedCustomerData, setSelectedCustomerData] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
+  const { handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   useEffect(() => {
     getAllCustomerNotHavingWhatsappGroup(currentPage);
@@ -39,6 +42,7 @@ export const CustomerNoWhatsappGroup = () => {
           setCurrentPage(1);
         }
       } catch (err) {
+        handleError(err);
         console.error(err);
       } finally {
         setOpen(false);
@@ -81,6 +85,12 @@ export const CustomerNoWhatsappGroup = () => {
 
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
