@@ -34,9 +34,9 @@ export const Dispatched = () => {
   const [open, setOpen] = useState(false);
   const errRef = useRef();
   const [errMsg, setErrMsg] = useState("");
-  const [pageCount, setpageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [totalPages, setTotalPages] = useState(0);
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
   useEffect(() => {
@@ -52,12 +52,12 @@ export const Dispatched = () => {
         );
         setDispatchData(response.data.results);
         const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
+        setTotalPages(Math.ceil(total / 25));
       } else {
         const response = await InvoiceServices.getDispatchData("true");
         setDispatchData(response.data.results);
         const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
+        setTotalPages(Math.ceil(total / 25));
       }
       setOpen(false);
     } catch (err) {
@@ -97,7 +97,7 @@ export const Dispatched = () => {
       if (response) {
         setDispatchData(response.data.results);
         const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
+        setTotalPages(Math.ceil(total / 25));
       } else {
         getAllDispatchDetails();
         setSearchQuery("");
@@ -114,7 +114,7 @@ export const Dispatched = () => {
     getAllDispatchDetails();
   };
 
-  const handlePageClick = async (event, value) => {
+  const handlePageChange = async (event, value) => {
     try {
       const page = value;
       setCurrentPage(page);
@@ -128,7 +128,7 @@ export const Dispatched = () => {
         if (response) {
           setDispatchData(response.data.results);
           const total = response.data.count;
-          setpageCount(Math.ceil(total / 25));
+          setTotalPages(Math.ceil(total / 25));
         } else {
           getAllDispatchDetails();
           setSearchQuery("");
@@ -140,7 +140,7 @@ export const Dispatched = () => {
         );
         setDispatchData(response.data.results);
         const total = response.data.count;
-        setpageCount(Math.ceil(total / 25));
+        setTotalPages(Math.ceil(total / 25));
       }
       setOpen(false);
     } catch (error) {
@@ -231,8 +231,9 @@ export const Dispatched = () => {
             </Table>
           </TableContainer>
           <CustomPagination
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>
