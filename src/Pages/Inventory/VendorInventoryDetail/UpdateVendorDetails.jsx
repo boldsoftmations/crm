@@ -17,6 +17,9 @@ import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
 import { country } from "../Country";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
+
 export const UpdateVendorDetails = (props) => {
   const { setOpenPopup, getAllVendorDetails, recordForEdit } = props;
   const [open, setOpen] = useState(false);
@@ -24,6 +27,9 @@ export const UpdateVendorDetails = (props) => {
   const [inputValue, setInputValue] = useState(recordForEdit);
   const [pinCodeData, setPinCodeData] = useState([]);
   const [errorMessage, setErrorMessage] = useState([]);
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
+
   const timeoutRef = useRef(null);
   const dispatch = useDispatch();
   const handleChange = (event) => {
@@ -102,10 +108,14 @@ export const UpdateVendorDetails = (props) => {
             : null,
       };
       await InventoryServices.updateVendorData(inputValue.id, req);
-      setOpenPopup(false);
+      handleSuccess("Vendor updated successfully");
+      setTimeout(() => {
+        setOpenPopup(false);
+      }, 300);
       setOpen(false);
       getAllVendorDetails();
     } catch (error) {
+      handleError(error);
       console.log("createing company detail error", error);
       setErrorMessage(
         error.response.data.errors ? error.response.data.errors.pan_number : ""
@@ -126,6 +136,12 @@ export const UpdateVendorDetails = (props) => {
   );
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Box

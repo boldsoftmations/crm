@@ -6,6 +6,8 @@ import { UpdateVendorDetails } from "./UpdateVendorDetails";
 import InventoryServices from "../../../services/InventoryService";
 import { CustomTabs } from "../../../Components/CustomTabs";
 import { CustomLoader } from "../../../Components/CustomLoader";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const UpdateAllVendorDetails = (props) => {
   const [open, setOpen] = useState(false);
@@ -15,6 +17,8 @@ export const UpdateAllVendorDetails = (props) => {
   const [wareHousedata, setWareHouseData] = useState([]);
   const [vendorData, setVendorData] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
+  const { handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const handleTabChange = (index) => {
     setActiveTab(index);
@@ -44,13 +48,20 @@ export const UpdateAllVendorDetails = (props) => {
 
       setOpen(false);
     } catch (err) {
+      handleError(err);
       setOpen(false);
       console.log("company data by id error", err);
     }
   };
 
   return (
-    <div>
+    <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
       <div>
         <CustomTabs
@@ -101,6 +112,6 @@ export const UpdateAllVendorDetails = (props) => {
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 };

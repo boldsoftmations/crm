@@ -17,6 +17,8 @@ import { CreateAllVendorDetails } from "./CreateAllVendorDetails";
 import { country } from "./../Country";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const CreateVendorDetails = (props) => {
   const { getAllVendorDetails } = props;
@@ -42,6 +44,8 @@ export const CreateVendorDetails = (props) => {
   });
   const [pinCodeData, setPinCodeData] = useState([]);
   const [idForEdit, setIdForEdit] = useState("");
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
   const timeoutRef = useRef(null);
   const handleChange = (event) => {
     const { value } = event.target;
@@ -157,10 +161,12 @@ export const CreateVendorDetails = (props) => {
       const response = await InventoryServices.createVendorData(req);
       setIdForEdit(response.data.vendor_id);
       // setOpenPopup(false);
+      handleSuccess("Vendor created successfully");
       getAllVendorDetails();
       setOpen(false);
       setOpenPopup2(true);
     } catch (error) {
+      handleError(error);
       console.log("createing company detail error", error);
 
       setOpen(false);
@@ -168,7 +174,13 @@ export const CreateVendorDetails = (props) => {
   };
 
   return (
-    <div>
+    <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Box
@@ -407,6 +419,6 @@ export const CreateVendorDetails = (props) => {
           recordForEdit={idForEdit}
         />
       </Popup>
-    </div>
+    </>
   );
 };

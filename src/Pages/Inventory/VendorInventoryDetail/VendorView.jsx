@@ -15,6 +15,8 @@ import { PurchaseOrderCreate } from "../Purchase Order/PurchaseOrderCreate";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { CreateChalan } from "../Challan/CreateChalan";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const VendorView = () => {
   const dispatch = useDispatch();
@@ -27,11 +29,13 @@ export const VendorView = () => {
   const [errMsg, setErrMsg] = useState("");
   const [vendorData, setVendorData] = useState([]);
   const [recordForEdit, setRecordForEdit] = useState();
-  const [pageCount, setPageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const userData = useSelector((state) => state.auth.profile);
   const [sourceFilter, setSourceFilter] = useState();
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
   const openInPopupUpdate = (item) => {
     const matchedVendor = vendorData.find((lead) => lead.id === item.id);
@@ -64,6 +68,7 @@ export const VendorView = () => {
       dispatch(getSellerAccountData(response.data));
       setOpen(false);
     } catch (err) {
+      handleError(err);
       setOpen(false);
     }
   };
@@ -82,9 +87,10 @@ export const VendorView = () => {
           sourceFilter
         );
         setVendorData(response.data.results);
-        setPageCount(Math.ceil(response.data.count / 25));
+        setTotalPages(Math.ceil(response.data.count / 25));
         setOpen(false);
       } catch (error) {
+        handleError(error);
         setOpen(false);
         console.error("error", error);
       }
@@ -96,7 +102,7 @@ export const VendorView = () => {
     setSearchQuery(event.target.value);
   };
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -130,6 +136,12 @@ export const VendorView = () => {
   ];
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
@@ -250,8 +262,9 @@ export const VendorView = () => {
             }
           />
           <CustomPagination
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>
