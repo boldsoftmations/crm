@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Box, Grid, Paper, Button, Typography, MenuItem } from "@mui/material";
+import React, { useState, useEffect, useCallback } from "react";
+import { Box, Grid, Paper, Button } from "@mui/material";
 import { Popup } from "../../../Components/Popup";
-import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 import { useDispatch, useSelector } from "react-redux";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
 import InvoiceServices from "../../../services/InvoiceService";
@@ -17,6 +16,7 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { CreateChalan } from "../Challan/CreateChalan";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
+import SearchComponent from "../../../Components/SearchComponent ";
 
 export const VendorView = () => {
   const dispatch = useDispatch();
@@ -25,8 +25,6 @@ export const VendorView = () => {
   const [openPopupPurchaseOrder, setOpenPopupPurchaseOrder] = useState(false);
   const [openPopupChalan, setOpenPopupChalan] = useState(false);
   const [open, setOpen] = useState(false);
-  const errRef = useRef();
-  const [errMsg, setErrMsg] = useState("");
   const [vendorData, setVendorData] = useState([]);
   const [recordForEdit, setRecordForEdit] = useState();
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,7 +32,7 @@ export const VendorView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const userData = useSelector((state) => state.auth.profile);
   const [sourceFilter, setSourceFilter] = useState();
-  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+  const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
   const openInPopupUpdate = (item) => {
@@ -75,7 +73,7 @@ export const VendorView = () => {
 
   useEffect(() => {
     getAllVendorDetails(currentPage);
-  }, [currentPage, sourceFilter, getAllVendorDetails]);
+  }, [currentPage, sourceFilter, searchQuery, getAllVendorDetails]);
 
   const getAllVendorDetails = useCallback(
     async (page, search = searchQuery) => {
@@ -98,12 +96,18 @@ export const VendorView = () => {
     [searchQuery, sourceFilter]
   );
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(1);
   };
 
   const sourceFilterOptions = [
@@ -145,7 +149,6 @@ export const VendorView = () => {
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
-        <ErrorMessage errRef={errRef} errMsg={errMsg} />
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid container spacing={2} alignItems="center">
@@ -173,38 +176,10 @@ export const VendorView = () => {
                 />
               </Grid>
               <Grid item xs={12} sm={3}>
-                <CustomTextField
-                  size="small"
-                  label="Search"
-                  variant="outlined"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  fullWidth
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
                 />
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    setCurrentPage(0);
-                    getAllVendorDetails(0, searchQuery);
-                  }}
-                >
-                  Search
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    setSearchQuery("");
-                    getAllVendorDetails(1, "");
-                  }}
-                >
-                  Reset
-                </Button>
               </Grid>
             </Grid>
           </Box>
