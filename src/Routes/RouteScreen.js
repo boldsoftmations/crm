@@ -76,6 +76,8 @@ import { PriceList } from "../Pages/PriceList/PriceList";
 import { AllSKUCodesTabView } from "../Pages/SKU Codes/AllSKUCodesTabView";
 import { AllCustomerTabView } from "../Pages/Cutomers/CompanyDetails/AllCustomerTabView";
 import { AllPerformaInvoiceTabView } from "../Pages/Invoice/ProformaInvoice/AllPerformaInvoiceTabView";
+import { HrMasterTabView } from "../Pages/HrModel/HrMasterTabView";
+
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -294,8 +296,8 @@ export const RouteScreen = () => {
             <Route path="/user/sale-review" element={<DailySaleReviewView />} />
             <Route path="/" element={<Home />} />
             <Route path="/hr-model" element={<HrModelTabs />} />
+            <Route path="/hr-model/hr-master" element={<HrMasterTabView />} />
             <Route path="/hr-model/designation" element={<DesignationView />} />
-            <Route path="/hr-model/department" element={<DepartmentView />} />
             <Route path="/hr-model/department" element={<DepartmentView />} />
             <Route path="/hr-model/source" element={<SourceView />} />
             <Route
