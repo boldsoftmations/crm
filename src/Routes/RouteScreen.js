@@ -75,6 +75,7 @@ import { AllProductsTabView } from "../Pages/Products/AllProductsTabView";
 import { PriceList } from "../Pages/PriceList/PriceList";
 import { AllSKUCodesTabView } from "../Pages/SKU Codes/AllSKUCodesTabView";
 import { AllCustomerTabView } from "../Pages/Cutomers/CompanyDetails/AllCustomerTabView";
+import { AllPerformaInvoiceTabView } from "../Pages/Invoice/ProformaInvoice/AllPerformaInvoiceTabView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -154,6 +155,7 @@ export const RouteScreen = () => {
             <Route path="/followp/view-followup" element={<Followup />} />
             {/* Invoice - Seller Account Route */}
             <Route path="/invoice/seller-account" element={<SellerAccount />} />
+            <Route path="/invoice/performa-invoice-tab" element={<AllPerformaInvoiceTabView />} />
             <Route path="/invoice/approve-pi" element={<ApprovePi />} />
             <Route path="/invoice/active-pi" element={<ActivePI />} />
             <Route

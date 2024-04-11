@@ -237,72 +237,16 @@ export const ListItems = (props) => {
           {/*Proforma Invoice  */}
           <ListItem
             button
-            onClick={() => setExpandProformaInvoice(!expandProformaInvoice)}
+            component={RouterLink}
+            to="/invoice/performa-invoice-tab"
             style={{ width: 300 }}
+            onClick={() => setOpen(false)}
           >
             <ListItemIcon>
               <InsertDriveFileIcon />
             </ListItemIcon>
-            <ListItemText primary="Proforma Invoice" />
-            {expandProformaInvoice ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            <ListItemText primary="Performa Invoice" />
           </ListItem>
-          <Collapse in={expandProformaInvoice} timeout="auto" unmountOnExit>
-            <Divider />
-            <List component="div" disablePadding>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/approve-pi"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Approve PI"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/active-pi"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Active PI"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/price-approval-pi"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Price Approval PI"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/all-performa-invoice"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="All PI"
-                />
-              </ListItem>
-            </List>
-          </Collapse>
           {/*Sales Invoice  */}
           <ListItem
             button
@@ -1486,37 +1430,16 @@ export const ListItems = (props) => {
               {/*Proforma Invoice  */}
               <ListItem
                 button
-                onClick={() => setExpandProformaInvoice(!expandProformaInvoice)}
+                component={RouterLink}
+                to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
                 </ListItemIcon>
-                <ListItemText primary="Proforma Invoice" />
-                {expandProformaInvoice ? (
-                  <ExpandLessIcon />
-                ) : (
-                  <ExpandMoreIcon />
-                )}
+                <ListItemText primary="Performa Invoice" />
               </ListItem>
-              <Collapse in={expandProformaInvoice} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/active-pi"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Active PI"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Forecast */}
               <ListItem
@@ -2654,50 +2577,16 @@ export const ListItems = (props) => {
               {/*Proforma Invoice  */}
               <ListItem
                 button
-                onClick={() => setExpandProformaInvoice(!expandProformaInvoice)}
+                component={RouterLink}
+                to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
                 </ListItemIcon>
-                <ListItemText primary="Proforma Invoice" />
-                {expandProformaInvoice ? (
-                  <ExpandLessIcon />
-                ) : (
-                  <ExpandMoreIcon />
-                )}
+                <ListItemText primary="Performa Invoice" />
               </ListItem>
-              <Collapse in={expandProformaInvoice} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/active-pi"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Active PI"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/all-performa-invoice"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="All PI"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Forecast */}
               <ListItem
@@ -2954,50 +2843,16 @@ export const ListItems = (props) => {
               {/*Proforma Invoice  */}
               <ListItem
                 button
-                onClick={() => setExpandProformaInvoice(!expandProformaInvoice)}
+                component={RouterLink}
+                to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
                 </ListItemIcon>
-                <ListItemText primary="Proforma Invoice" />
-                {expandProformaInvoice ? (
-                  <ExpandLessIcon />
-                ) : (
-                  <ExpandMoreIcon />
-                )}
+                <ListItemText primary="Performa Invoice" />
               </ListItem>
-              <Collapse in={expandProformaInvoice} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/active-pi"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Active PI"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/all-performa-invoice"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="All PI"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Forecast */}
               <ListItem
@@ -3193,50 +3048,16 @@ export const ListItems = (props) => {
               {/*Proforma Invoice  */}
               <ListItem
                 button
-                onClick={() => setExpandProformaInvoice(!expandProformaInvoice)}
+                component={RouterLink}
+                to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
                 </ListItemIcon>
-                <ListItemText primary="Proforma Invoice" />
-                {expandProformaInvoice ? (
-                  <ExpandLessIcon />
-                ) : (
-                  <ExpandMoreIcon />
-                )}
+                <ListItemText primary="Performa Invoice" />
               </ListItem>
-              <Collapse in={expandProformaInvoice} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/active-pi"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Active PI"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/all-performa-invoice"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="All PI"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Forecast */}
               <ListItem
@@ -3433,50 +3254,16 @@ export const ListItems = (props) => {
               {/*Proforma Invoice  */}
               <ListItem
                 button
-                onClick={() => setExpandProformaInvoice(!expandProformaInvoice)}
+                component={RouterLink}
+                to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
                 </ListItemIcon>
-                <ListItemText primary="Proforma Invoice" />
-                {expandProformaInvoice ? (
-                  <ExpandLessIcon />
-                ) : (
-                  <ExpandMoreIcon />
-                )}
+                <ListItemText primary="Performa Invoice" />
               </ListItem>
-              <Collapse in={expandProformaInvoice} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/active-pi"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Active PI"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/all-performa-invoice"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="All PI"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Forecast */}
               <ListItem
@@ -3671,50 +3458,16 @@ export const ListItems = (props) => {
               {/*Proforma Invoice  */}
               <ListItem
                 button
-                onClick={() => setExpandProformaInvoice(!expandProformaInvoice)}
+                component={RouterLink}
+                to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
                 </ListItemIcon>
-                <ListItemText primary="Proforma Invoice" />
-                {expandProformaInvoice ? (
-                  <ExpandLessIcon />
-                ) : (
-                  <ExpandMoreIcon />
-                )}
+                <ListItemText primary="Performa Invoice" />
               </ListItem>
-              <Collapse in={expandProformaInvoice} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/active-pi"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Active PI"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/all-performa-invoice"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="All PI"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Forecast */}
               <ListItem
@@ -3910,50 +3663,16 @@ export const ListItems = (props) => {
               {/*Proforma Invoice  */}
               <ListItem
                 button
-                onClick={() => setExpandProformaInvoice(!expandProformaInvoice)}
+                component={RouterLink}
+                to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
                 </ListItemIcon>
-                <ListItemText primary="Proforma Invoice" />
-                {expandProformaInvoice ? (
-                  <ExpandLessIcon />
-                ) : (
-                  <ExpandMoreIcon />
-                )}
+                <ListItemText primary="Performa Invoice" />
               </ListItem>
-              <Collapse in={expandProformaInvoice} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/active-pi"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Active PI"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/all-performa-invoice"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="All PI"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Forecast */}
               <ListItem
@@ -4162,77 +3881,16 @@ export const ListItems = (props) => {
               {/*Proforma Invoice  */}
               <ListItem
                 button
-                onClick={() => setExpandProformaInvoice(!expandProformaInvoice)}
+                component={RouterLink}
+                to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
                 </ListItemIcon>
-                <ListItemText primary="Proforma Invoice" />
-                {expandProformaInvoice ? (
-                  <ExpandLessIcon />
-                ) : (
-                  <ExpandMoreIcon />
-                )}
+                <ListItemText primary="Performa Invoice" />
               </ListItem>
-              <Collapse in={expandProformaInvoice} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/approve-pi"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Approve PI"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/active-pi"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Active PI"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/price-approval-pi"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Price Approval PI"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/all-performa-invoice"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="All PI"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
-
               {/*Sales Invoice  */}
               <ListItem
                 button
@@ -4758,50 +4416,16 @@ export const ListItems = (props) => {
               {/*Proforma Invoice  */}
               <ListItem
                 button
-                onClick={() => setExpandProformaInvoice(!expandProformaInvoice)}
+                component={RouterLink}
+                to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
                 </ListItemIcon>
-                <ListItemText primary="Proforma Invoice" />
-                {expandProformaInvoice ? (
-                  <ExpandLessIcon />
-                ) : (
-                  <ExpandMoreIcon />
-                )}
+                <ListItemText primary="Performa Invoice" />
               </ListItem>
-              <Collapse in={expandProformaInvoice} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/approve-pi"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Approve PI"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/all-performa-invoice"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="All PI"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/*Sales Invoice  */}
               <ListItem
