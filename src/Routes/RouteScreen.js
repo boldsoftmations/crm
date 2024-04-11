@@ -64,6 +64,7 @@ import { PurchaseAllTabView } from "../Pages/Purchase/PurchaseAllTabView";
 import { ProductionAllTabView } from "../Pages/Production/ProductionAllTabView";
 import { InventoryAllTabView } from "../Pages/Inventory/InventoryAllTabView";
 import { HrMasterTabView } from "../Pages/HrModel/HrMasterTabView";
+import { AllWhatsappTabs } from "../Pages/WhatsappGroup/AllWhatsappTabs";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -247,6 +248,7 @@ export const RouteScreen = () => {
             <Route path="/hr-model/designation" element={<DesignationView />} />
             <Route path="/hr-model/department" element={<DepartmentView />} />
             <Route path="/hr-model/source" element={<SourceView />} />
+            <Route path="/customers/whatsapp-tabs" element={<AllWhatsappTabs />} />
             <Route
               path="/customers/whatsapp-group"
               element={<WhatsappGroupView />}

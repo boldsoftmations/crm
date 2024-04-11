@@ -595,99 +595,17 @@ export const ListItems = (props) => {
           {/* Whatsapp Group */}
           <ListItem
             button
-            onClick={() => setExpandWhastapp(!expandWhatsapp)}
+            component={RouterLink}
+            to="/customers/whatsapp-tabs"
             style={{ width: 300 }}
+            onClick={() => setOpen(false)}
           >
             <ListItemIcon>
               <WhatsAppIcon />
             </ListItemIcon>
-            <ListItemText primary="WhatsApp" />
-            {expandWhatsapp ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            <ListItemText primary="Whatsapp" />
           </ListItem>
 
-          <Collapse in={expandWhatsapp} timeout="auto" unmountOnExit>
-            <Divider />
-            <List component="div" disablePadding>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/whatsapp-group"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Group Info"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/no-whatsapp-group"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Customer Not Having Group"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/no-sales-person-group"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Sales Person Not In Group"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/not-in-whatsapp-group"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Customer Not In Group"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/whatsapp"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Bulk Message"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/automation"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Scheduler"
-                />
-              </ListItem>
-            </List>
-          </Collapse>
           {/* <ListItem
             button
             component={RouterLink}
@@ -1199,73 +1117,16 @@ export const ListItems = (props) => {
               {/* Whatsapp Group */}
               <ListItem
                 button
-                onClick={() => setExpandWhastapp(!expandWhatsapp)}
+                component={RouterLink}
+                to="/customers/whatsapp-tabs"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <WhatsAppIcon />
                 </ListItemIcon>
-                <ListItemText primary="WhatsApp" />
-                {expandWhatsapp ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                <ListItemText primary="Whatsapp" />
               </ListItem>
-
-              <Collapse in={expandWhatsapp} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/not-in-whatsapp-group"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer Not In Group"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/no-sales-person-group"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Sales Person Not In Group"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/no-whatsapp-group"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer Not Having Group"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/customers/whatsapp"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Bulk Message"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
             </>
           )}
 
