@@ -17,15 +17,15 @@ import {
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material/styles";
-import { CustomLoader } from "../../../Components/CustomLoader";
-import InventoryServices from "../../../services/InventoryService";
-import { CustomPagination } from "../../../Components/CustomPagination";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { Popup } from "../../../Components/Popup";
-import { ChalanInvoiceCreate } from "../ChallanInvoice/ChalanInvoiceCreate";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
+import { CustomLoader } from "../../../Components/CustomLoader";
+import { Popup } from "../../../Components/Popup";
+import { CustomPagination } from "../../../Components/CustomPagination";
+import InventoryServices from "../../../services/InventoryService";
+import { ChalanInvoiceCreate } from "../ChallanInvoice/ChalanInvoiceCreate";
 
 export const ChalanView = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -277,6 +277,11 @@ export const ChalanView = () => {
               </TableBody>
             </Table>
           </TableContainer>
+          <CustomPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
+          />
           <Popup
             openPopup={openPopup}
             setOpenPopup={setOpenPopup}
@@ -290,12 +295,6 @@ export const ChalanView = () => {
               getChalanDetails={getChalanDetails}
             />
           </Popup>
-
-          <CustomPagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            handlePageChange={handlePageChange}
-          />
         </Paper>
       </Grid>
     </>

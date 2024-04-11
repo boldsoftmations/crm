@@ -8,15 +8,15 @@ import {
   Snackbar,
 } from "@mui/material";
 import React, { memo, useCallback, useEffect, useState } from "react";
-import { CustomLoader } from "../../../Components/CustomLoader";
-import CloseIcon from "@mui/icons-material/Close";
-import CustomTextField from "../../../Components/CustomTextField";
-import InventoryServices from "../../../services/InventoryService";
-import ProductService from "../../../services/ProductService";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
-import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { CustomLoader } from "../../../Components/CustomLoader";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import CustomTextField from "../../../Components/CustomTextField";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import ProductService from "../../../services/ProductService";
+import InventoryServices from "../../../services/InventoryService";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -32,8 +32,6 @@ export const CreateChalan = memo(
       sellerData: state.auth.sellerAccount,
       userData: state.auth.profile,
     }));
-    console.log("sellerData", sellerData);
-    console.log("userData", userData);
     const today = new Date().toISOString().slice(0, 10);
     const [inputValues, setInputValues] = useState({
       created_by: userData.email,
@@ -59,7 +57,6 @@ export const CreateChalan = memo(
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [productOption, setProductOption] = useState([]);
-    console.log("inputVales", inputValues);
     const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
       useNotificationHandling();
 
@@ -254,6 +251,12 @@ export const CreateChalan = memo(
 
     return (
       <>
+        <MessageAlert
+          open={alertInfo.open}
+          onClose={handleCloseSnackbar}
+          severity={alertInfo.severity}
+          message={alertInfo.message}
+        />
         <CustomLoader open={loading} />
 
         <Box
@@ -261,22 +264,6 @@ export const CreateChalan = memo(
           noValidate
           onSubmit={(e) => createChalanDetails(e)}
         >
-          <Snackbar
-            open={Boolean(error)}
-            onClose={handleCloseSnackbar}
-            message={error}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                sx={{ p: 0.5 }}
-                onClick={handleCloseSnackbar}
-              >
-                <CloseIcon />
-              </IconButton>
-            }
-          />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={3}>
               <CustomTextField

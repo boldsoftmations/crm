@@ -127,7 +127,7 @@ export const GRNView = () => {
                   label="Filter By Accepted"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={3}>
                 <SearchComponent
                   onSearch={handleSearch}
                   onReset={handleReset}

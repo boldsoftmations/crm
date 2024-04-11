@@ -1,30 +1,37 @@
-import { Box, Grid } from "@mui/material";
 import React, { useState } from "react";
-import CustomTextField from "../../../Components/CustomTextField";
-import { CustomLoader } from "../../../Components/CustomLoader";
-import { CustomButton } from "../../../Components/CustomButton";
-import InventoryServices from "../../../services/InventoryService";
+import { Box, Grid } from "@mui/material";
+import InventoryServices from "../../services/InventoryService";
+import { CustomLoader } from "../../Components/CustomLoader";
+import CustomTextField from "../../Components/CustomTextField";
+import { CustomButton } from "../../Components/CustomButton";
 
-export const CurrencyCreate = ({ setOpenPopup, getCurrencyDetails }) => {
+export const CurrencyUpdate = ({
+  setOpenPopup,
+  selectedRow,
+  getCurrencyDetails,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [currencyData, setCurrencyData] = useState([]);
+  const [currencyData, setCurrencyData] = useState(selectedRow);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCurrencyData({ ...currencyData, [name]: value });
   };
 
-  const createCurrencyDetails = async (e) => {
+  const updateCurrencyDetails = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await InventoryServices.createCurrencyData(currencyData);
+      const response = await InventoryServices.updateCurrencyData(
+        selectedRow.id,
+        currencyData
+      );
       if (response && response.data) {
         getCurrencyDetails();
         setOpenPopup(false);
       }
     } catch (err) {
-      console.error("Error creating currency data", err);
+      console.error("Error updating currency data", err);
     } finally {
       setIsLoading(false);
     }
@@ -36,7 +43,7 @@ export const CurrencyCreate = ({ setOpenPopup, getCurrencyDetails }) => {
       <Box
         component="form"
         noValidate
-        onSubmit={createCurrencyDetails}
+        onSubmit={(e) => updateCurrencyDetails(e)}
         sx={{ mt: 1 }}
       >
         <Grid container spacing={2}>

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
+import InventoryServices from "../../../services/InventoryService";
 import { CustomLoader } from "../../../Components/CustomLoader";
+import { CustomTabs } from "../../../Components/CustomTabs";
 import { BankInventoryDetails } from "../BanksInventoryDetail/BankInventoryDetails";
 import { ContactInventoryDetails } from "../ContactInventoryDetail/ContactInventoryDetails";
-import InventoryServices from "../../../services/InventoryService";
 import { WareHouseInventoryDetails } from "../WareHouseInventoryDetail/WareHouseInventoryDetails";
-import { getVendorName } from "../../../Redux/Action/Action";
 import { useDispatch } from "react-redux";
-import { CustomTabs } from "../../../Components/CustomTabs";
+import { getVendorName } from "../../../Redux/Action/Action";
 
 export const CreateAllVendorDetails = (props) => {
   const { recordForEdit } = props;

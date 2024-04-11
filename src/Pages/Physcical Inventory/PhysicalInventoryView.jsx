@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Box, Button, Grid, Paper } from "@mui/material";
-import InventoryServices from "../../../services/InventoryService";
-import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
-import { CustomTable } from "../../../Components/CustomTable";
-import { MessageAlert } from "../../../Components/MessageAlert";
-import { CustomLoader } from "../../../Components/CustomLoader";
-import SearchComponent from "../../../Components/SearchComponent ";
-import { Popup } from "../../../Components/Popup";
+import { useNotificationHandling } from "../../Components/useNotificationHandling ";
+import InventoryServices from "../../services/InventoryService";
+import { MessageAlert } from "../../Components/MessageAlert";
+import { CustomLoader } from "../../Components/CustomLoader";
+import SearchComponent from "../../Components/SearchComponent ";
+import { CustomTable } from "../../Components/CustomTable";
+import { CustomPagination } from "../../Components/CustomPagination";
+import { Popup } from "../../Components/Popup";
 import { PhysicalInventoryCreate } from "./PhysicalInventoryCreate";
 import { PhysicalInventoryUpdate } from "./PhysicalInventoryUpdate";
-import { CustomPagination } from "../../../Components/CustomPagination";
 
 export const PhysicalInventoryView = () => {
   const [open, setOpen] = useState(false);

@@ -14,7 +14,7 @@ import { Popup } from "../../../Components/Popup";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { CreateAllVendorDetails } from "./CreateAllVendorDetails";
-import { country } from "./../Country";
+import { country } from "../../Inventory/Country";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";

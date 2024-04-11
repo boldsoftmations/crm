@@ -25,16 +25,16 @@ import { PurchaseOrderUpdate } from "./PurchaseOrderUpdate";
 import InvoiceServices from "../../../services/InvoiceService";
 import { useDispatch } from "react-redux";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
-import { PackingListCreate } from "../PackingList/PackingListCreate";
 import { PurchaseOrderPDF } from "./PurchaseOrderPDF";
 import jsPDF from "jspdf";
 import { pdf } from "@react-pdf/renderer";
-import { PackingListMergeCreate } from "../PackingList/PackingListMergeCreate";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import SearchComponent from "../../../Components/SearchComponent ";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { PackingListCreate } from "./../../Inventory/PackingList/PackingListCreate";
+import { PackingListMergeCreate } from "./../../Inventory/PackingList/PackingListMergeCreate";
 
 export const PurchaseOrderView = () => {
   const [openPopupUpdate, setOpenPopupUpdate] = useState(false);
@@ -200,7 +200,7 @@ export const PurchaseOrderView = () => {
                   label="Filter By Accepted"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={3}>
                 <SearchComponent
                   onSearch={handleSearch}
                   onReset={handleReset}

@@ -27,12 +27,12 @@ import { PackingListUpdate } from "./PackingListUpdate";
 import InvoiceServices from "../../../services/InvoiceService";
 import { useDispatch, useSelector } from "react-redux";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
-import { GRNCreate } from "../GRN/GRNCreate";
 import SearchComponent from "../../../Components/SearchComponent ";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { CustomPagination } from "../../../Components/CustomPagination";
+import { GRNCreate } from "../../Purchase/GRN/GRNCreate";
 
 export const PackingListView = () => {
   const dispatch = useDispatch();

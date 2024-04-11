@@ -5,7 +5,6 @@ import InventoryServices from "../../../services/InventoryService";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { CustomTable } from "../../../Components/CustomTable";
 import { Box, Button, Grid, Paper } from "@mui/material";
-import CustomTextField from "../../../Components/CustomTextField";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import SearchComponent from "../../../Components/SearchComponent ";

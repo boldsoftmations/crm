@@ -122,7 +122,7 @@ export const PurchaseInvoiceView = () => {
                   // sx={{ width: 200, marginRight: "15rem" }}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={3}>
                 <SearchComponent
                   onSearch={handleSearch}
                   onReset={handleReset}

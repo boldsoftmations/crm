@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { BankInventoryDetails } from "../BanksInventoryDetail/BankInventoryDetails";
+import InventoryServices from "../../../services/InventoryService";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import { CustomLoader } from "../../../Components/CustomLoader";
+import { CustomTabs } from "../../../Components/CustomTabs";
+import { UpdateVendorDetails } from "./UpdateVendorDetails";
 import { ContactInventoryDetails } from "../ContactInventoryDetail/ContactInventoryDetails";
 import { WareHouseInventoryDetails } from "../WareHouseInventoryDetail/WareHouseInventoryDetails";
-import { UpdateVendorDetails } from "./UpdateVendorDetails";
-import InventoryServices from "../../../services/InventoryService";
-import { CustomTabs } from "../../../Components/CustomTabs";
-import { CustomLoader } from "../../../Components/CustomLoader";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
-import { MessageAlert } from "../../../Components/MessageAlert";
+import { BankInventoryDetails } from "../BanksInventoryDetail/BankInventoryDetails";
 
 export const UpdateAllVendorDetails = (props) => {
   const [open, setOpen] = useState(false);

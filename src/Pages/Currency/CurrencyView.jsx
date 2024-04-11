@@ -13,12 +13,12 @@ import {
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material/styles";
-import CustomTextField from "../../../Components/CustomTextField";
-import { CustomLoader } from "../../../Components/CustomLoader";
-import { Popup } from "../../../Components/Popup";
-import { CurrencyUpdate } from "./CurrencyUpdate";
+import InventoryServices from "../../services/InventoryService";
+import { CustomLoader } from "../../Components/CustomLoader";
+import CustomTextField from "../../Components/CustomTextField";
+import { Popup } from "../../Components/Popup";
 import { CurrencyCreate } from "./CurrencyCreate";
-import InventoryServices from "./../../../services/InventoryService";
+import { CurrencyUpdate } from "./CurrencyUpdate";
 
 export const CurrencyView = () => {
   const [isLoading, setIsLoading] = useState(false);

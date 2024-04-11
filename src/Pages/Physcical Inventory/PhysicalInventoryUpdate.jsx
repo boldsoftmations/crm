@@ -1,11 +1,11 @@
 import React, { memo, useCallback, useState } from "react";
-import { MessageAlert } from "../../../Components/MessageAlert";
-import { CustomLoader } from "../../../Components/CustomLoader";
 import { Box, Button, Grid } from "@mui/material";
-import CustomTextField from "../../../Components/CustomTextField";
-import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
-import InventoryServices from "../../../services/InventoryService";
-import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useNotificationHandling } from "../../Components/useNotificationHandling ";
+import InventoryServices from "../../services/InventoryService";
+import { CustomLoader } from "../../Components/CustomLoader";
+import CustomTextField from "../../Components/CustomTextField";
+import CustomAutocomplete from "../../Components/CustomAutocomplete";
+import { MessageAlert } from "../../Components/MessageAlert";
 
 export const PhysicalInventoryUpdate = memo((props) => {
   const {

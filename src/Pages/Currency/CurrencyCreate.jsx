@@ -1,37 +1,30 @@
-import React, { useState } from "react";
-import { CustomButton } from "../../../Components/CustomButton";
-import CustomTextField from "../../../Components/CustomTextField";
 import { Box, Grid } from "@mui/material";
-import InventoryServices from "../../../services/InventoryService";
-import { CustomLoader } from "../../../Components/CustomLoader";
+import React, { useState } from "react";
+import InventoryServices from "../../services/InventoryService";
+import { CustomLoader } from "../../Components/CustomLoader";
+import CustomTextField from "../../Components/CustomTextField";
+import { CustomButton } from "../../Components/CustomButton";
 
-export const CurrencyUpdate = ({
-  setOpenPopup,
-  selectedRow,
-  getCurrencyDetails,
-}) => {
+export const CurrencyCreate = ({ setOpenPopup, getCurrencyDetails }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [currencyData, setCurrencyData] = useState(selectedRow);
+  const [currencyData, setCurrencyData] = useState([]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCurrencyData({ ...currencyData, [name]: value });
   };
 
-  const updateCurrencyDetails = async (e) => {
+  const createCurrencyDetails = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await InventoryServices.updateCurrencyData(
-        selectedRow.id,
-        currencyData
-      );
+      const response = await InventoryServices.createCurrencyData(currencyData);
       if (response && response.data) {
         getCurrencyDetails();
         setOpenPopup(false);
       }
     } catch (err) {
-      console.error("Error updating currency data", err);
+      console.error("Error creating currency data", err);
     } finally {
       setIsLoading(false);
     }
@@ -43,7 +36,7 @@ export const CurrencyUpdate = ({
       <Box
         component="form"
         noValidate
-        onSubmit={(e) => updateCurrencyDetails(e)}
+        onSubmit={createCurrencyDetails}
         sx={{ mt: 1 }}
       >
         <Grid container spacing={2}>

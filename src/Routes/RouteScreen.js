@@ -11,30 +11,18 @@ import { ProductOrderBookDetails } from "./../Pages/OrderBooks/ProductOrderBookD
 import { SalesInvoiceView } from "./../Pages/Invoice/SalesInvoice/SalesInvoiceView";
 import { Auths } from "../Pages/Auth/Auths";
 import { Profile } from "./../Pages/Profile/Profile";
-
 import { ViewDispatch } from "./../Pages/Dispatch/ViewDispatch";
 import { Dispatched } from "./../Pages/Dispatch/Dispatched";
 import { SalesRegisterView } from "./../Pages/Dispatch/SalesRegisterView";
 import { PIOrderBookDetails } from "../Pages/OrderBooks/PIOrderBookDetails";
 import { Home } from "../Pages/Home";
-import { VendorView } from "../Pages/Inventory/VendorInventoryDetail/VendorView";
-import { PackingListView } from "../Pages/Inventory/PackingList/PackingListView";
-import { GRNView } from "../Pages/Inventory/GRN/GRNView";
-import { PurchaseInvoiceView } from "../Pages/Inventory/Purchase Invoice/PurchaseInvoiceView";
+import { VendorView } from "../Pages/Vendor/VendorInventoryDetail/VendorView";
 import { StoresInventoryView } from "../Pages/Inventory/Stores Inventory/StoresInventoryView";
-import { MaterialRequisitionFormView } from "../Pages/Inventory/Material Requisition Form/MaterialRequisitionFormView";
-import { BillofMaterialsView } from "../Pages/Inventory/Bill of Materials/BillofMaterialsView";
-import { ProductionEntryView } from "../Pages/Inventory/Production Entry/ProductionEntryView";
-import { MaterialTransferNoteView } from "../Pages/Inventory/Material Transfer Note/MaterialTransferNoteView";
 import { ProductionInventoryView } from "../Pages/Inventory/Production Inventory/ProductionInventoryView";
 import { ProductionInventoryConsView } from "../Pages/Inventory/Production Inventory/ProductionInventoryConsView";
 import { StoresInventoryConsView } from "../Pages/Inventory/Stores Inventory/StoresInventoryConsView";
-import { ProductionInventoryGAndLView } from "../Pages/Inventory/Production Entry/ProductionInventoryGAndLView";
-import { ProductionShortFallView } from "../Pages/Inventory/ProductionShortFall/ProductionShortFallView";
 import { ProductForecastViewAll } from "../Pages/ProductForecast/ProductForecastViewAll";
 import { TaskView } from "../Pages/Task/TaskView";
-import { DailyProductionReport } from "../Pages/Inventory/ProductionReport/DailyProductionReport";
-import { WeeklyProductionReport } from "../Pages/Inventory/ProductionReport/WeeklyProductionReport";
 import { UnassignedCustomer } from "../Pages/Cutomers/CompanyDetails/UnassignedCustomer";
 import { AllProformaInvoice } from "./../Pages/Invoice/ProformaInvoice/AllProformaInvoice";
 import { Followup } from "../Pages/FollowUp/Followup";
@@ -54,9 +42,7 @@ import { HrModelTabs } from "../Pages/HrModel/HrModelTabs";
 import { DesignationView } from "../Pages/HrModel/Designation/DesignationView";
 import { DepartmentView } from "../Pages/HrModel/Department/DepartmentView";
 import { SourceView } from "../Pages/HrModel/CandidateSource/SourceView";
-import { CurrencyView } from "../Pages/Inventory/Currency/CurrencyView";
-import { PurchaseOrderView } from "../Pages/Inventory/Purchase Order/PurchaseOrderView";
-import { GRNRegisterView } from "../Pages/Inventory/GRNRegister/GRNRegisterView";
+import { CurrencyView } from "../Pages/Currency/CurrencyView";
 import { SafetyStockView } from "../Pages/Inventory/SafetyStockLevel/SafetyStockView";
 import { WhatsappGroupView } from "../Pages/WhatsappGroup/WhatsappGroupView";
 import { WhatsappGroup } from "../Pages/WhatsappGroup/WhatsappGroup";
@@ -67,15 +53,16 @@ import { RetailCustomerData } from "../Pages/RetailCustomerData";
 import { DashboardLeadData } from "../Pages/DashboardLeadData";
 import { Automation } from "../Pages/WhatsappGroup/Automation";
 import { SourceBasedGRNView } from "../Pages/Inventory/SourceBasedGRN/SourceBasedGRNView";
-import { ChalanInvoiceView } from "../Pages/Inventory/ChallanInvoice/ChalanInvoiceView";
-import { ChalanView } from "../Pages/Inventory/Challan/ChalanView";
-import { PhysicalInventoryView } from "../Pages/Inventory/Physcical Inventory/PhysicalInventoryView";
+import { PhysicalInventoryView } from "../Pages/Physcical Inventory/PhysicalInventoryView";
 import { AllLeadsTabView } from "../Pages/Leads/AllLeadsTabView";
 import { AllProductsTabView } from "../Pages/Products/AllProductsTabView";
 import { PriceList } from "../Pages/PriceList/PriceList";
 import { AllSKUCodesTabView } from "../Pages/SKU Codes/AllSKUCodesTabView";
 import { AllCustomerTabView } from "../Pages/Cutomers/CompanyDetails/AllCustomerTabView";
 import { AllPerformaInvoiceTabView } from "../Pages/Invoice/ProformaInvoice/AllPerformaInvoiceTabView";
+import { PurchaseAllTabView } from "../Pages/Purchase/PurchaseAllTabView";
+import { ProductionAllTabView } from "../Pages/Production/ProductionAllTabView";
+import { InventoryAllTabView } from "../Pages/Inventory/InventoryAllTabView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -155,7 +142,10 @@ export const RouteScreen = () => {
             <Route path="/followp/view-followup" element={<Followup />} />
             {/* Invoice - Seller Account Route */}
             <Route path="/invoice/seller-account" element={<SellerAccount />} />
-            <Route path="/invoice/performa-invoice-tab" element={<AllPerformaInvoiceTabView />} />
+            <Route
+              path="/invoice/performa-invoice-tab"
+              element={<AllPerformaInvoiceTabView />}
+            />
             <Route path="/invoice/approve-pi" element={<ApprovePi />} />
             <Route path="/invoice/active-pi" element={<ActivePI />} />
             <Route
@@ -191,29 +181,19 @@ export const RouteScreen = () => {
               element={<SalesRegisterView />}
             />
             {/* inventory Routes */}
+            <Route
+              path="/inventory/view-purchase"
+              element={<PurchaseAllTabView />}
+            />
+            <Route
+              path="/inventory/view-production"
+              element={<ProductionAllTabView />}
+            />
+            <Route
+              path="/inventory/view-inventory"
+              element={<InventoryAllTabView />}
+            />
             <Route path="/inventory/view-vendor" element={<VendorView />} />
-            <Route
-              path="/inventory/view-purchase-order"
-              element={<PurchaseOrderView />}
-            />
-            <Route
-              path="/inventory/view-packing-list"
-              element={<PackingListView />}
-            />
-            <Route path="/inventory/view-grn" element={<GRNView />} />
-            <Route
-              path="/inventory/view-grn-register"
-              element={<GRNRegisterView />}
-            />
-            <Route
-              path="/inventory/view-purchase-invoice"
-              element={<PurchaseInvoiceView />}
-            />
-            <Route path="/inventory/chalan-view" element={<ChalanView />} />
-            <Route
-              path="/inventory/chalan-invoice"
-              element={<ChalanInvoiceView />}
-            />
             <Route
               path="/inventory/view-stores-inventory"
               element={<StoresInventoryView />}
@@ -223,44 +203,12 @@ export const RouteScreen = () => {
               element={<StoresInventoryConsView />}
             />
             <Route
-              path="/inventory/view-material-requisition-form"
-              element={<MaterialRequisitionFormView />}
-            />
-            <Route
-              path="/inventory/view-bill-of-materials"
-              element={<BillofMaterialsView />}
-            />
-            <Route
-              path="/inventory/view-production-entry"
-              element={<ProductionEntryView />}
-            />
-            <Route
-              path="/inventory/view-material-transfer-note"
-              element={<MaterialTransferNoteView />}
-            />
-            <Route
               path="/inventory/view-production-inventory"
               element={<ProductionInventoryView />}
             />
             <Route
               path="/inventory/view-production-inventory-cons"
               element={<ProductionInventoryConsView />}
-            />
-            <Route
-              path="/inventory/view-production-inventory-g&l"
-              element={<ProductionInventoryGAndLView />}
-            />
-            <Route
-              path="/inventory/view-production-shortfall"
-              element={<ProductionShortFallView />}
-            />
-            <Route
-              path="/inventory/view-daily-production"
-              element={<DailyProductionReport />}
-            />
-            <Route
-              path="/inventory/view-weekly-production"
-              element={<WeeklyProductionReport />}
             />
             <Route
               path="/inventory/source-based-grn"

@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Box, Grid, Paper, Button } from "@mui/material";
-import { Popup } from "../../../Components/Popup";
 import { useDispatch, useSelector } from "react-redux";
-import { getSellerAccountData } from "../../../Redux/Action/Action";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import InvoiceServices from "../../../services/InvoiceService";
+import { getSellerAccountData } from "../../../Redux/Action/Action";
+import { MessageAlert } from "../../../Components/MessageAlert";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import { CreateVendorDetails } from "./CreateVendorDetails";
-import { UpdateAllVendorDetails } from "./UpdateAllVendorDetails";
-import InventoryServices from "../../../services/InventoryService";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import CustomTextField from "../../../Components/CustomTextField";
+import SearchComponent from "../../../Components/SearchComponent ";
 import { CustomTable } from "../../../Components/CustomTable";
 import { CustomPagination } from "../../../Components/CustomPagination";
-import { PurchaseOrderCreate } from "../Purchase Order/PurchaseOrderCreate";
-import CustomTextField from "../../../Components/CustomTextField";
-import CustomAutocomplete from "../../../Components/CustomAutocomplete";
-import { CreateChalan } from "../Challan/CreateChalan";
-import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
-import { MessageAlert } from "../../../Components/MessageAlert";
-import SearchComponent from "../../../Components/SearchComponent ";
+import { Popup } from "../../../Components/Popup";
+import { CreateVendorDetails } from "../VendorInventoryDetail/CreateVendorDetails";
+import { UpdateAllVendorDetails } from "../VendorInventoryDetail/UpdateAllVendorDetails";
+import { PurchaseOrderCreate } from "../../Purchase/Purchase Order/PurchaseOrderCreate";
+import { CreateChalan } from "../../Purchase/Challan/CreateChalan";
+import InventoryServices from "../../../services/InventoryService";
 
 export const VendorView = () => {
   const dispatch = useDispatch();
