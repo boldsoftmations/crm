@@ -63,6 +63,7 @@ import { AllPerformaInvoiceTabView } from "../Pages/Invoice/ProformaInvoice/AllP
 import { PurchaseAllTabView } from "../Pages/Purchase/PurchaseAllTabView";
 import { ProductionAllTabView } from "../Pages/Production/ProductionAllTabView";
 import { InventoryAllTabView } from "../Pages/Inventory/InventoryAllTabView";
+import { HrMasterTabView } from "../Pages/HrModel/HrMasterTabView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -242,8 +243,8 @@ export const RouteScreen = () => {
             <Route path="/user/sale-review" element={<DailySaleReviewView />} />
             <Route path="/" element={<Home />} />
             <Route path="/hr-model" element={<HrModelTabs />} />
+            <Route path="/hr-model/hr-master" element={<HrMasterTabView />} />
             <Route path="/hr-model/designation" element={<DesignationView />} />
-            <Route path="/hr-model/department" element={<DepartmentView />} />
             <Route path="/hr-model/department" element={<DepartmentView />} />
             <Route path="/hr-model/source" element={<SourceView />} />
             <Route
