@@ -7,7 +7,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import React, { useState } from "react";
@@ -41,11 +41,15 @@ import StorageIcon from "@mui/icons-material/Storage";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 export const ListItems = (props) => {
   const { setOpen } = props;
-  const [expandOrderBook, setExpandOrderBook] = useState(false);
   const [dispatchDetails, setDispatchDetails] = useState(false);
   const [expandUser, setExpandUser] = useState(false);
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
+  const location = useLocation();
+
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
 
   // Check if userData and userData.groups are defined before rendering
   if (!userData || !userData.groups) {
@@ -65,6 +69,7 @@ export const ListItems = (props) => {
             to="/user/report"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/user/report")}
           >
             <ListItemIcon>
               <AssessmentIcon />
@@ -79,6 +84,7 @@ export const ListItems = (props) => {
             to="/user/analytics"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/user/analytics")}
           >
             <ListItemIcon>
               <DashboardIcon />
@@ -93,6 +99,7 @@ export const ListItems = (props) => {
             to="/products/all-product"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/products/all-product")}
           >
             <ListItemIcon>
               <CategoryIcon />
@@ -107,6 +114,7 @@ export const ListItems = (props) => {
             to="/products/all-sku-codes"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/products/all-sku-codes")}
           >
             <ListItemIcon>
               <ConfirmationNumberIcon />
@@ -121,6 +129,7 @@ export const ListItems = (props) => {
             to="/products/view-price-list"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/products/view-price-list")}
           >
             <ListItemIcon>
               <ListAltIcon />
@@ -135,6 +144,7 @@ export const ListItems = (props) => {
             to="/leads/all-lead"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/leads/all-lead")}
           >
             <ListItemIcon>
               <AssignmentIndIcon />
@@ -149,6 +159,7 @@ export const ListItems = (props) => {
             to="/customers/all-customer"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/customers/all-customer")}
           >
             <ListItemIcon>
               <PersonIcon />
@@ -163,6 +174,7 @@ export const ListItems = (props) => {
             to="/followp/view-followup"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/followp/view-followup")}
           >
             <ListItemIcon>
               <FollowTheSignsIcon />
@@ -177,12 +189,14 @@ export const ListItems = (props) => {
             to="/invoice/performa-invoice-tab"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/invoice/performa-invoice-tab")}
           >
             <ListItemIcon>
               <InsertDriveFileIcon />
             </ListItemIcon>
             <ListItemText primary="Performa Invoice" />
           </ListItem>
+
           {/*Sales Invoice  */}
           <ListItem
             button
@@ -190,6 +204,7 @@ export const ListItems = (props) => {
             to="/invoice/sales-invoice"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/invoice/sales-invoice")}
           >
             <ListItemIcon>
               <DescriptionIcon />
@@ -204,12 +219,14 @@ export const ListItems = (props) => {
             to="/forecast/view-product-forecast"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/forecast/view-product-forecast")}
           >
             <ListItemIcon>
               <TrendingUpIcon />
             </ListItemIcon>
             <ListItemText primary="Forecast" />
           </ListItem>
+
           {/* Seller Account */}
           <ListItem
             button
@@ -217,6 +234,7 @@ export const ListItems = (props) => {
             to="/invoice/seller-account"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/invoice/seller-account")}
           >
             <ListItemIcon>
               <AccountCircleIcon />
@@ -231,12 +249,14 @@ export const ListItems = (props) => {
             to="/invoice/orderbook-tab"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/invoice/orderbook-tab")}
           >
             <ListItemIcon>
               <ReceiptIcon />
             </ListItemIcon>
             <ListItemText primary="Order Book" />
           </ListItem>
+
           {/* Dispatch */}
           <ListItem
             button
@@ -258,6 +278,7 @@ export const ListItems = (props) => {
             to="/inventory/view-vendor"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/inventory/view-vendor")}
           >
             <ListItemIcon>
               <BusinessIcon />
@@ -272,6 +293,7 @@ export const ListItems = (props) => {
             to="/inventory/view-purchase"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/inventory/view-purchase")}
           >
             <ListItemIcon>
               <ShoppingCartIcon />
@@ -286,6 +308,7 @@ export const ListItems = (props) => {
             to="/inventory/view-production"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/inventory/view-production")}
           >
             <ListItemIcon>
               <FactoryIcon />
@@ -300,6 +323,7 @@ export const ListItems = (props) => {
             to="/inventory/view-inventory"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/inventory/view-inventory")}
           >
             <ListItemIcon>
               <Inventory2Icon />
@@ -314,6 +338,7 @@ export const ListItems = (props) => {
             to="/inventory/physical"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/inventory/physical")}
           >
             <ListItemIcon>
               <StorageIcon />
@@ -328,6 +353,7 @@ export const ListItems = (props) => {
             to="/inventory/view-currency"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/inventory/view-currency")}
           >
             <ListItemIcon>
               <AttachMoneyIcon />
@@ -342,6 +368,7 @@ export const ListItems = (props) => {
             to="/task/view-task"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/task/view-task")}
           >
             <ListItemIcon>
               <AssignmentTurnedInIcon />
@@ -356,6 +383,7 @@ export const ListItems = (props) => {
             to="/market-analysis/competitor"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/market-analysis/competitor")}
           >
             <ListItemIcon>
               <BarChartIcon />
@@ -428,6 +456,7 @@ export const ListItems = (props) => {
             to="/user/faq"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/user/faq")}
           >
             <ListItemIcon>
               <HelpOutlineIcon />
@@ -442,6 +471,7 @@ export const ListItems = (props) => {
             to="/user/sale-review"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/user/sale-review")}
           >
             <ListItemIcon>
               <AnalyticsIcon />
@@ -455,6 +485,7 @@ export const ListItems = (props) => {
             to="/customers/whatsapp-tabs"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/customers/whatsapp-tabs")}
           >
             <ListItemIcon>
               <WhatsAppIcon />
@@ -482,6 +513,7 @@ export const ListItems = (props) => {
             to="/hr-model/hr-master"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/hr-model/hr-master")}
           >
             <ListItemIcon>
               <AddToPhotosRoundedIcon />
@@ -494,6 +526,7 @@ export const ListItems = (props) => {
             to="/hr-model"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/hr-model")}
           >
             <ListItemIcon>
               <WorkIcon />
@@ -571,12 +604,14 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
                 </ListItemIcon>
                 <ListItemText primary="Task" />
               </ListItem>
+
               {/* Hr Recruitment Model */}
               <ListItem
                 button
@@ -584,6 +619,7 @@ export const ListItems = (props) => {
                 to="/hr-model/hr-master"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/hr-model/hr-master")}
               >
                 <ListItemIcon>
                   <AddToPhotosRoundedIcon />
@@ -596,6 +632,7 @@ export const ListItems = (props) => {
                 to="/hr-model"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/hr-model")}
               >
                 <ListItemIcon>
                   <WorkIcon />
@@ -615,6 +652,7 @@ export const ListItems = (props) => {
                 to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/orderbook-tab")}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
@@ -663,6 +701,7 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
@@ -676,13 +715,13 @@ export const ListItems = (props) => {
           {userData.groups.includes("Customer Service") && (
             <>
               {/* Customer */}
-
               <ListItem
                 button
                 component={RouterLink}
                 to="/customers/all-customer"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/customers/all-customer")}
               >
                 <ListItemIcon>
                   <PersonIcon />
@@ -697,6 +736,7 @@ export const ListItems = (props) => {
                 to="/leads/all-lead"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/leads/all-lead")}
               >
                 <ListItemIcon>
                   <AssignmentIndIcon />
@@ -711,6 +751,7 @@ export const ListItems = (props) => {
                 to="/followp/view-followup"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/followp/view-followup")}
               >
                 <ListItemIcon>
                   <FollowTheSignsIcon />
@@ -725,6 +766,7 @@ export const ListItems = (props) => {
                 to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/performa-invoice-tab")}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
@@ -739,6 +781,7 @@ export const ListItems = (props) => {
                 to="/forecast/view-product-forecast"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/forecast/view-product-forecast")}
               >
                 <ListItemIcon>
                   <TrendingUpIcon />
@@ -753,12 +796,14 @@ export const ListItems = (props) => {
                 to="/invoice/seller-account"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/seller-account")}
               >
                 <ListItemIcon>
                   <AccountCircleIcon />
                 </ListItemIcon>
                 <ListItemText primary="Seller Account" />
               </ListItem>
+
               {/* Order book */}
               <ListItem
                 button
@@ -766,6 +811,7 @@ export const ListItems = (props) => {
                 to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/orderbook-tab")}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
@@ -794,6 +840,7 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
@@ -808,6 +855,7 @@ export const ListItems = (props) => {
                 to="/user/faq"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/faq")}
               >
                 <ListItemIcon>
                   <HelpOutlineIcon />
@@ -822,6 +870,7 @@ export const ListItems = (props) => {
                 to="/customers/whatsapp-tabs"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/customers/whatsapp-tabs")}
               >
                 <ListItemIcon>
                   <WhatsAppIcon />
@@ -841,6 +890,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-vendor"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-vendor")}
               >
                 <ListItemIcon>
                   <BusinessIcon />
@@ -855,6 +905,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-purchase"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-purchase")}
               >
                 <ListItemIcon>
                   <ShoppingCartIcon />
@@ -869,6 +920,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-production"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-production")}
               >
                 <ListItemIcon>
                   <FactoryIcon />
@@ -883,6 +935,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-inventory"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-inventory")}
               >
                 <ListItemIcon>
                   <Inventory2Icon />
@@ -897,6 +950,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-currency"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-currency")}
               >
                 <ListItemIcon>
                   <AttachMoneyIcon />
@@ -911,6 +965,7 @@ export const ListItems = (props) => {
                 to="/forecast/view-product-forecast"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/forecast/view-product-forecast")}
               >
                 <ListItemIcon>
                   <TrendingUpIcon />
@@ -925,6 +980,7 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
@@ -944,6 +1000,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-production"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-production")}
               >
                 <ListItemIcon>
                   <FactoryIcon />
@@ -958,6 +1015,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-inventory"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-inventory")}
               >
                 <ListItemIcon>
                   <Inventory2Icon />
@@ -972,6 +1030,7 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
@@ -992,6 +1051,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-purchase"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-purchase")}
               >
                 <ListItemIcon>
                   <ShoppingCartIcon />
@@ -1006,6 +1066,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-production"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-production")}
               >
                 <ListItemIcon>
                   <FactoryIcon />
@@ -1020,6 +1081,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-inventory"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-inventory")}
               >
                 <ListItemIcon>
                   <Inventory2Icon />
@@ -1034,6 +1096,7 @@ export const ListItems = (props) => {
                 to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/orderbook-tab")}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
@@ -1062,6 +1125,7 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
@@ -1081,6 +1145,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-production"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-production")}
               >
                 <ListItemIcon>
                   <FactoryIcon />
@@ -1095,6 +1160,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-inventory"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-inventory")}
               >
                 <ListItemIcon>
                   <Inventory2Icon />
@@ -1109,6 +1175,7 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
@@ -1128,6 +1195,7 @@ export const ListItems = (props) => {
                 to="/user/report"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/report")}
               >
                 <ListItemIcon>
                   <AssessmentIcon />
@@ -1142,6 +1210,7 @@ export const ListItems = (props) => {
                 to="/user/analytics"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/analytics")}
               >
                 <ListItemIcon>
                   <DashboardIcon />
@@ -1156,6 +1225,7 @@ export const ListItems = (props) => {
                 to="/leads/all-lead"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/leads/all-lead")}
               >
                 <ListItemIcon>
                   <AssignmentIndIcon />
@@ -1164,13 +1234,13 @@ export const ListItems = (props) => {
               </ListItem>
 
               {/* Customer */}
-
               <ListItem
                 button
                 component={RouterLink}
                 to="/customers/all-customer"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/customers/all-customer")}
               >
                 <ListItemIcon>
                   <PersonIcon />
@@ -1185,12 +1255,14 @@ export const ListItems = (props) => {
                 to="/followp/view-followup"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/followp/view-followup")}
               >
                 <ListItemIcon>
                   <FollowTheSignsIcon />
                 </ListItemIcon>
                 <ListItemText primary="Followup" />
               </ListItem>
+
               {/*Proforma Invoice  */}
               <ListItem
                 button
@@ -1198,6 +1270,7 @@ export const ListItems = (props) => {
                 to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/performa-invoice-tab")}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
@@ -1212,13 +1285,13 @@ export const ListItems = (props) => {
                 to="/forecast/view-product-forecast"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/forecast/view-product-forecast")}
               >
                 <ListItemIcon>
                   <TrendingUpIcon />
                 </ListItemIcon>
                 <ListItemText primary="Forecast" />
               </ListItem>
-              {/* Seller Account */}
 
               {/* Order book */}
               <ListItem
@@ -1227,13 +1300,13 @@ export const ListItems = (props) => {
                 to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/orderbook-tab")}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary="Order Book" />
               </ListItem>
-              {/* Dispatch */}
 
               {/* Tasks */}
               <ListItem
@@ -1242,6 +1315,7 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
@@ -1256,6 +1330,7 @@ export const ListItems = (props) => {
                 to="/market-analysis/competitor"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/market-analysis/competitor")}
               >
                 <ListItemIcon>
                   <BarChartIcon />
@@ -1270,6 +1345,7 @@ export const ListItems = (props) => {
                 to="/user/faq"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/faq")}
               >
                 <ListItemIcon>
                   <HelpOutlineIcon />
@@ -1284,12 +1360,14 @@ export const ListItems = (props) => {
                 to="/user/sale-review"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/sale-review")}
               >
                 <ListItemIcon>
                   <AnalyticsIcon />
                 </ListItemIcon>
                 <ListItemText primary="Sales Review" />
               </ListItem>
+
               {/* Hr Recruitment Model */}
               <ListItem
                 button
@@ -1316,6 +1394,7 @@ export const ListItems = (props) => {
                 to="/user/analytics"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/analytics")}
               >
                 <ListItemIcon>
                   <DashboardIcon />
@@ -1330,6 +1409,7 @@ export const ListItems = (props) => {
                 to="/leads/all-lead"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/leads/all-lead")}
               >
                 <ListItemIcon>
                   <AssignmentIndIcon />
@@ -1338,13 +1418,13 @@ export const ListItems = (props) => {
               </ListItem>
 
               {/* Customer */}
-
               <ListItem
                 button
                 component={RouterLink}
                 to="/customers/all-customer"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/customers/all-customer")}
               >
                 <ListItemIcon>
                   <PersonIcon />
@@ -1359,6 +1439,7 @@ export const ListItems = (props) => {
                 to="/followp/view-followup"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/followp/view-followup")}
               >
                 <ListItemIcon>
                   <FollowTheSignsIcon />
@@ -1373,6 +1454,7 @@ export const ListItems = (props) => {
                 to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/performa-invoice-tab")}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
@@ -1387,6 +1469,7 @@ export const ListItems = (props) => {
                 to="/forecast/view-product-forecast"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/forecast/view-product-forecast")}
               >
                 <ListItemIcon>
                   <TrendingUpIcon />
@@ -1401,6 +1484,7 @@ export const ListItems = (props) => {
                 to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/orderbook-tab")}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
@@ -1415,6 +1499,7 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
@@ -1428,6 +1513,7 @@ export const ListItems = (props) => {
                 to="/user/faq"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/faq")}
               >
                 <ListItemIcon>
                   <HelpOutlineIcon />
@@ -1441,6 +1527,7 @@ export const ListItems = (props) => {
                 to="/user/sale-review"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/sale-review")}
               >
                 <ListItemIcon>
                   <AnalyticsIcon />
@@ -1460,6 +1547,7 @@ export const ListItems = (props) => {
                 to="/user/analytics"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/analytics")}
               >
                 <ListItemIcon>
                   <DashboardIcon />
@@ -1474,6 +1562,7 @@ export const ListItems = (props) => {
                 to="/leads/all-lead"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/leads/all-lead")}
               >
                 <ListItemIcon>
                   <AssignmentIndIcon />
@@ -1482,13 +1571,13 @@ export const ListItems = (props) => {
               </ListItem>
 
               {/* Customer */}
-
               <ListItem
                 button
                 component={RouterLink}
                 to="/customers/all-customer"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/customers/all-customer")}
               >
                 <ListItemIcon>
                   <PersonIcon />
@@ -1503,6 +1592,7 @@ export const ListItems = (props) => {
                 to="/followp/view-followup"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/followp/view-followup")}
               >
                 <ListItemIcon>
                   <FollowTheSignsIcon />
@@ -1517,6 +1607,7 @@ export const ListItems = (props) => {
                 to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/performa-invoice-tab")}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
@@ -1531,6 +1622,7 @@ export const ListItems = (props) => {
                 to="/forecast/view-product-forecast"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/forecast/view-product-forecast")}
               >
                 <ListItemIcon>
                   <TrendingUpIcon />
@@ -1545,6 +1637,7 @@ export const ListItems = (props) => {
                 to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/orderbook-tab")}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
@@ -1559,6 +1652,7 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
@@ -1573,6 +1667,7 @@ export const ListItems = (props) => {
                 to="/user/faq"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/faq")}
               >
                 <ListItemIcon>
                   <HelpOutlineIcon />
@@ -1587,6 +1682,7 @@ export const ListItems = (props) => {
                 to="/user/sale-review"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/sale-review")}
               >
                 <ListItemIcon>
                   <AnalyticsIcon />
@@ -1606,12 +1702,14 @@ export const ListItems = (props) => {
                 to="/user/analytics"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/analytics")}
               >
                 <ListItemIcon>
                   <DashboardIcon />
                 </ListItemIcon>
                 <ListItemText primary="Analytics" />
               </ListItem>
+
               {/* Leads */}
               <ListItem
                 button
@@ -1619,6 +1717,7 @@ export const ListItems = (props) => {
                 to="/leads/all-lead"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/leads/all-lead")}
               >
                 <ListItemIcon>
                   <AssignmentIndIcon />
@@ -1633,6 +1732,7 @@ export const ListItems = (props) => {
                 to="/customers/all-customer"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/customers/all-customer")}
               >
                 <ListItemIcon>
                   <PersonIcon />
@@ -1647,6 +1747,7 @@ export const ListItems = (props) => {
                 to="/followp/view-followup"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/followp/view-followup")}
               >
                 <ListItemIcon>
                   <FollowTheSignsIcon />
@@ -1661,6 +1762,7 @@ export const ListItems = (props) => {
                 to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/performa-invoice-tab")}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
@@ -1675,6 +1777,7 @@ export const ListItems = (props) => {
                 to="/forecast/view-product-forecast"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/forecast/view-product-forecast")}
               >
                 <ListItemIcon>
                   <TrendingUpIcon />
@@ -1689,6 +1792,7 @@ export const ListItems = (props) => {
                 to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/orderbook-tab")}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
@@ -1703,6 +1807,7 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
@@ -1717,6 +1822,7 @@ export const ListItems = (props) => {
                 to="/user/faq"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/faq")}
               >
                 <ListItemIcon>
                   <HelpOutlineIcon />
@@ -1731,6 +1837,7 @@ export const ListItems = (props) => {
                 to="/user/sale-review"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/sale-review")}
               >
                 <ListItemIcon>
                   <AnalyticsIcon />
@@ -1742,7 +1849,6 @@ export const ListItems = (props) => {
           {/* Sales Manager without Leads  */}
           {userData.groups.includes("Sales Manager without Leads") && (
             <>
-              {/* Dashboard */}
               {/* Analytics  */}
               <ListItem
                 button
@@ -1750,6 +1856,7 @@ export const ListItems = (props) => {
                 to="/user/analytics"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/analytics")}
               >
                 <ListItemIcon>
                   <DashboardIcon />
@@ -1764,12 +1871,14 @@ export const ListItems = (props) => {
                 to="/leads/all-lead"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/leads/all-lead")}
               >
                 <ListItemIcon>
                   <AssignmentIndIcon />
                 </ListItemIcon>
                 <ListItemText primary="Leads" />
               </ListItem>
+
               {/* Customer */}
               <ListItem
                 button
@@ -1791,6 +1900,7 @@ export const ListItems = (props) => {
                 to="/followp/view-followup"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/followp/view-followup")}
               >
                 <ListItemIcon>
                   <FollowTheSignsIcon />
@@ -1805,6 +1915,7 @@ export const ListItems = (props) => {
                 to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/performa-invoice-tab")}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
@@ -1819,6 +1930,7 @@ export const ListItems = (props) => {
                 to="/forecast/view-product-forecast"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/forecast/view-product-forecast")}
               >
                 <ListItemIcon>
                   <TrendingUpIcon />
@@ -1833,6 +1945,7 @@ export const ListItems = (props) => {
                 to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/orderbook-tab")}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
@@ -1847,6 +1960,7 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
@@ -1861,6 +1975,7 @@ export const ListItems = (props) => {
                 to="/user/faq"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/faq")}
               >
                 <ListItemIcon>
                   <HelpOutlineIcon />
@@ -1875,6 +1990,7 @@ export const ListItems = (props) => {
                 to="/user/sale-review"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/sale-review")}
               >
                 <ListItemIcon>
                   <AnalyticsIcon />
@@ -1893,6 +2009,7 @@ export const ListItems = (props) => {
                 to="/user/analytics"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/analytics")}
               >
                 <ListItemIcon>
                   <DashboardIcon />
@@ -1907,6 +2024,7 @@ export const ListItems = (props) => {
                 to="/leads/all-lead"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/leads/all-lead")}
               >
                 <ListItemIcon>
                   <AssignmentIndIcon />
@@ -1921,6 +2039,7 @@ export const ListItems = (props) => {
                 to="/customers/all-customer"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/customers/all-customer")}
               >
                 <ListItemIcon>
                   <PersonIcon />
@@ -1935,6 +2054,7 @@ export const ListItems = (props) => {
                 to="/followp/view-followup"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/followp/view-followup")}
               >
                 <ListItemIcon>
                   <FollowTheSignsIcon />
@@ -1949,6 +2069,7 @@ export const ListItems = (props) => {
                 to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/performa-invoice-tab")}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
@@ -1963,6 +2084,7 @@ export const ListItems = (props) => {
                 to="/forecast/view-product-forecast"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/forecast/view-product-forecast")}
               >
                 <ListItemIcon>
                   <TrendingUpIcon />
@@ -1977,6 +2099,7 @@ export const ListItems = (props) => {
                 to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/orderbook-tab")}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
@@ -1991,6 +2114,7 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
@@ -2005,6 +2129,7 @@ export const ListItems = (props) => {
                 to="/user/faq"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/faq")}
               >
                 <ListItemIcon>
                   <HelpOutlineIcon />
@@ -2037,13 +2162,13 @@ export const ListItems = (props) => {
                 to="/user/report"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/report")}
               >
                 <ListItemIcon>
                   <AssessmentIcon />
                 </ListItemIcon>
                 <ListItemText primary="Report" />
               </ListItem>
-
               {/* Analytics  */}
               <ListItem
                 button
@@ -2051,13 +2176,13 @@ export const ListItems = (props) => {
                 to="/user/analytics"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/user/analytics")}
               >
                 <ListItemIcon>
                   <DashboardIcon />
                 </ListItemIcon>
                 <ListItemText primary="Analytics" />
               </ListItem>
-
               {/* Products */}
               <ListItem
                 button
@@ -2065,13 +2190,13 @@ export const ListItems = (props) => {
                 to="/products/all-product"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/products/all-product")}
               >
                 <ListItemIcon>
                   <CategoryIcon />
                 </ListItemIcon>
                 <ListItemText primary="Products" />
               </ListItem>
-
               {/* SKU CODES */}
               <ListItem
                 button
@@ -2079,13 +2204,13 @@ export const ListItems = (props) => {
                 to="/products/all-sku-codes"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/products/all-sku-codes")}
               >
                 <ListItemIcon>
                   <ConfirmationNumberIcon />
                 </ListItemIcon>
                 <ListItemText primary="SKU Code" />
               </ListItem>
-
               {/* Price List */}
               <ListItem
                 button
@@ -2093,13 +2218,13 @@ export const ListItems = (props) => {
                 to="/products/view-price-list"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/products/view-price-list")}
               >
                 <ListItemIcon>
                   <ListAltIcon />
                 </ListItemIcon>
                 <ListItemText primary="Price List" />
               </ListItem>
-
               {/* Customer */}
               <ListItem
                 button
@@ -2107,13 +2232,13 @@ export const ListItems = (props) => {
                 to="/customers/all-customer"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/customers/all-customer")}
               >
                 <ListItemIcon>
                   <PersonIcon />
                 </ListItemIcon>
                 <ListItemText primary="Customer" />
               </ListItem>
-
               {/*Proforma Invoice  */}
               <ListItem
                 button
@@ -2121,6 +2246,7 @@ export const ListItems = (props) => {
                 to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/performa-invoice-tab")}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
@@ -2134,6 +2260,7 @@ export const ListItems = (props) => {
                 to="/invoice/sales-invoice"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/sales-invoice")}
               >
                 <ListItemIcon>
                   <DescriptionIcon />
@@ -2147,13 +2274,13 @@ export const ListItems = (props) => {
                 to="/forecast/view-product-forecast"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/forecast/view-product-forecast")}
               >
                 <ListItemIcon>
                   <TrendingUpIcon />
                 </ListItemIcon>
                 <ListItemText primary="Forecast" />
               </ListItem>
-
               {/* Seller Account */}
               <ListItem
                 button
@@ -2161,13 +2288,13 @@ export const ListItems = (props) => {
                 to="/invoice/seller-account"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/seller-account")}
               >
                 <ListItemIcon>
                   <AccountCircleIcon />
                 </ListItemIcon>
                 <ListItemText primary="Seller Account" />
               </ListItem>
-
               {/* Order book */}
               <ListItem
                 button
@@ -2175,13 +2302,13 @@ export const ListItems = (props) => {
                 to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/orderbook-tab")}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary="Order Book" />
               </ListItem>
-
               {/* Dispatch */}
               <ListItem
                 button
@@ -2195,7 +2322,6 @@ export const ListItems = (props) => {
                 </ListItemIcon>
                 <ListItemText primary="Dispatch" />
               </ListItem>
-
               {/* Vendor */}
               <ListItem
                 button
@@ -2203,13 +2329,13 @@ export const ListItems = (props) => {
                 to="/inventory/view-vendor"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-vendor")}
               >
                 <ListItemIcon>
                   <BusinessIcon />
                 </ListItemIcon>
                 <ListItemText primary="Vendor" />
               </ListItem>
-
               {/* Purchase */}
               <ListItem
                 button
@@ -2217,13 +2343,13 @@ export const ListItems = (props) => {
                 to="/inventory/view-purchase"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-purchase")}
               >
                 <ListItemIcon>
                   <ShoppingCartIcon />
                 </ListItemIcon>
                 <ListItemText primary="Purchase" />
               </ListItem>
-
               {/* Production */}
               <ListItem
                 button
@@ -2231,13 +2357,13 @@ export const ListItems = (props) => {
                 to="/inventory/view-production"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-production")}
               >
                 <ListItemIcon>
                   <FactoryIcon />
                 </ListItemIcon>
                 <ListItemText primary="Production" />
               </ListItem>
-
               {/* Inventory */}
               <ListItem
                 button
@@ -2245,13 +2371,13 @@ export const ListItems = (props) => {
                 to="/inventory/view-inventory"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-inventory")}
               >
                 <ListItemIcon>
                   <Inventory2Icon />
                 </ListItemIcon>
                 <ListItemText primary="Inventory" />
               </ListItem>
-
               {/* Physical Inventory */}
               <ListItem
                 button
@@ -2259,13 +2385,13 @@ export const ListItems = (props) => {
                 to="/inventory/physical"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/physical")}
               >
                 <ListItemIcon>
                   <StorageIcon />
                 </ListItemIcon>
                 <ListItemText primary="Physical Inventory" />
               </ListItem>
-
               {/* Tasks */}
               <ListItem
                 button
@@ -2273,6 +2399,7 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
@@ -2292,6 +2419,7 @@ export const ListItems = (props) => {
                 to="/products/all-product"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/products/all-product")}
               >
                 <ListItemIcon>
                   <CategoryIcon />
@@ -2306,6 +2434,7 @@ export const ListItems = (props) => {
                 to="/products/all-sku-codes"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/products/all-sku-codes")}
               >
                 <ListItemIcon>
                   <ConfirmationNumberIcon />
@@ -2320,6 +2449,7 @@ export const ListItems = (props) => {
                 to="/products/view-price-list"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/products/view-price-list")}
               >
                 <ListItemIcon>
                   <ListAltIcon />
@@ -2334,6 +2464,7 @@ export const ListItems = (props) => {
                 to="/customers/all-customer"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/customers/all-customer")}
               >
                 <ListItemIcon>
                   <PersonIcon />
@@ -2348,6 +2479,7 @@ export const ListItems = (props) => {
                 to="/invoice/performa-invoice-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/performa-invoice-tab")}
               >
                 <ListItemIcon>
                   <InsertDriveFileIcon />
@@ -2362,12 +2494,14 @@ export const ListItems = (props) => {
                 to="/invoice/sales-invoice"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/sales-invoice")}
               >
                 <ListItemIcon>
                   <DescriptionIcon />
                 </ListItemIcon>
                 <ListItemText primary="Sales Invoice" />
               </ListItem>
+
               {/* Order book */}
               <ListItem
                 button
@@ -2375,6 +2509,7 @@ export const ListItems = (props) => {
                 to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/invoice/orderbook-tab")}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
@@ -2389,6 +2524,7 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
@@ -2408,6 +2544,7 @@ export const ListItems = (props) => {
                 to="/products/all-product"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/products/all-product")}
               >
                 <ListItemIcon>
                   <CategoryIcon />
@@ -2422,6 +2559,7 @@ export const ListItems = (props) => {
                 to="/products/all-sku-codes"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/products/all-sku-codes")}
               >
                 <ListItemIcon>
                   <ConfirmationNumberIcon />
@@ -2436,6 +2574,7 @@ export const ListItems = (props) => {
                 to="/products/view-price-list"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/products/view-price-list")}
               >
                 <ListItemIcon>
                   <ListAltIcon />
@@ -2450,6 +2589,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-vendor"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-vendor")}
               >
                 <ListItemIcon>
                   <BusinessIcon />
@@ -2464,6 +2604,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-purchase"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-purchase")}
               >
                 <ListItemIcon>
                   <ShoppingCartIcon />
@@ -2478,6 +2619,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-production"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-production")}
               >
                 <ListItemIcon>
                   <FactoryIcon />
@@ -2492,6 +2634,7 @@ export const ListItems = (props) => {
                 to="/inventory/view-inventory"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-inventory")}
               >
                 <ListItemIcon>
                   <Inventory2Icon />
@@ -2506,6 +2649,7 @@ export const ListItems = (props) => {
                 to="/task/view-task"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
               >
                 <ListItemIcon>
                   <AssignmentTurnedInIcon />
