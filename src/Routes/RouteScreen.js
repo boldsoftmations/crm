@@ -63,6 +63,7 @@ import { AllWhatsappTabs } from "../Pages/WhatsappGroup/AllWhatsappTabs";
 import { AllOrderBookTabView } from "../Pages/OrderBooks/AllOrderBookTabView";
 import { Report } from "../Pages/Report/Report";
 import { AnalyticsAllTabView } from "../Pages/Analytics/AnalyticsAllTabView";
+import { AllDispatchTabView } from "../Pages/Dispatch/AllDispatchTabView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -169,6 +170,7 @@ export const RouteScreen = () => {
               element={<PIOrderBookDetails />}
             />
             {/* Dispatch Routes */}
+            <Route path="/dispatch/tab-view" element={<AllDispatchTabView />} />
             <Route path="/dispatch/view-dispatch" element={<ViewDispatch />} />
             <Route path="/dispatch/view-dispatched" element={<Dispatched />} />
             <Route

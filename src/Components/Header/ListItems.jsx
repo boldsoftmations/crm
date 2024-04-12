@@ -240,59 +240,16 @@ export const ListItems = (props) => {
           {/* Dispatch */}
           <ListItem
             button
-            onClick={() => setDispatchDetails(!dispatchDetails)}
+            component={RouterLink}
+            to="/dispatch/tab-view"
             style={{ width: 300 }}
+            onClick={() => setOpen(false)}
           >
             <ListItemIcon>
               <LocalShippingIcon />
             </ListItemIcon>
             <ListItemText primary="Dispatch" />
-            {dispatchDetails ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItem>
-          <Collapse in={dispatchDetails} timeout="auto" unmountOnExit>
-            <Divider />
-            <List component="div" disablePadding>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/dispatch/view-dispatch"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Pending Dispatch"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/dispatch/view-dispatched"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Dispatched"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/dispatch/view-sales-register"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Sales Register"
-                />
-              </ListItem>
-            </List>
-          </Collapse>
 
           {/* Vendor */}
           <ListItem
@@ -688,47 +645,16 @@ export const ListItems = (props) => {
               {/* Dispatch */}
               <ListItem
                 button
-                onClick={() => setDispatchDetails(!dispatchDetails)}
+                component={RouterLink}
+                to="/dispatch/tab-view"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <LocalShippingIcon />
                 </ListItemIcon>
                 <ListItemText primary="Dispatch" />
-                {dispatchDetails ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-
-              <Collapse in={dispatchDetails} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/dispatch/view-dispatch"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Pending Dispatch"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/dispatch/view-dispatched"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Dispatched"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Tasks */}
               <ListItem
@@ -850,54 +776,16 @@ export const ListItems = (props) => {
               {/* Dispatch */}
               <ListItem
                 button
-                onClick={() => setDispatchDetails(!dispatchDetails)}
+                component={RouterLink}
+                to="/dispatch/tab-view"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <LocalShippingIcon />
                 </ListItemIcon>
                 <ListItemText primary="Dispatch" />
-                {dispatchDetails ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={dispatchDetails} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  {/* <ListItem
-               button
-               component={RouterLink}
-               to="/dispatch/view-dispatch"
-               style={{ width: 300 }}
-             >
-               <ListItemText inset primary="Peding Dispatch" />
-             </ListItem> */}
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/dispatch/view-dispatched"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Dispatched"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/dispatch/view-sales-register"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Sales Register"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Tasks */}
               <ListItem
@@ -1156,47 +1044,16 @@ export const ListItems = (props) => {
               {/* Dispatch */}
               <ListItem
                 button
-                onClick={() => setDispatchDetails(!dispatchDetails)}
+                component={RouterLink}
+                to="/dispatch/tab-view"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <LocalShippingIcon />
                 </ListItemIcon>
                 <ListItemText primary="Dispatch" />
-                {dispatchDetails ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-
-              <Collapse in={dispatchDetails} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/dispatch/view-dispatch"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Pending Dispatch"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/dispatch/view-dispatched"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Dispatched"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Tasks */}
               <ListItem
@@ -2328,59 +2185,16 @@ export const ListItems = (props) => {
               {/* Dispatch */}
               <ListItem
                 button
-                onClick={() => setDispatchDetails(!dispatchDetails)}
+                component={RouterLink}
+                to="/dispatch/tab-view"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <LocalShippingIcon />
                 </ListItemIcon>
                 <ListItemText primary="Dispatch" />
-                {dispatchDetails ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={dispatchDetails} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/dispatch/view-dispatch"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Pending Dispatch"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/dispatch/view-dispatched"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Dispatched"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/dispatch/view-sales-register"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Sales Register"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Vendor */}
               <ListItem
