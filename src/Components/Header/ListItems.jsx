@@ -264,6 +264,7 @@ export const ListItems = (props) => {
             to="/dispatch/tab-view"
             style={{ width: 300 }}
             onClick={() => setOpen(false)}
+            selected={isActive("/dispatch/tab-view")}
           >
             <ListItemIcon>
               <LocalShippingIcon />
@@ -394,60 +395,17 @@ export const ListItems = (props) => {
           {/* Users */}
           <ListItem
             button
-            onClick={() => setExpandUser(!expandUser)}
+            component={RouterLink}
+            to="/user/profile-tab"
             style={{ width: 300 }}
+            onClick={() => setOpen(false)}
+            selected={isActive("/user/profile-tab")}
           >
             <ListItemIcon>
               <PersonIcon />
             </ListItemIcon>
             <ListItemText primary="Profile" />
-            {expandUser ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItem>
-
-          <Collapse in={expandUser} timeout="auto" unmountOnExit>
-            <Divider />
-            <List component="div" disablePadding>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/user/active-user"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Active Users"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/user/inactive-user"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="InActive Users"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/user/personal-profile"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Personal Profile"
-                />
-              </ListItem>
-            </List>
-          </Collapse>
 
           {/* Script */}
           <ListItem
@@ -542,60 +500,17 @@ export const ListItems = (props) => {
               {/* Users */}
               <ListItem
                 button
-                onClick={() => setExpandUser(!expandUser)}
+                component={RouterLink}
+                to="/user/profile-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+                selected={isActive("/user/profile-tab")}
               >
                 <ListItemIcon>
                   <PersonIcon />
                 </ListItemIcon>
                 <ListItemText primary="Profile" />
-                {expandUser ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-
-              <Collapse in={expandUser} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/user/active-user"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Active Users"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/user/inactive-user"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="InActive Users"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/user/personal-profile"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Personal Profile"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Tasks */}
               <ListItem
@@ -687,6 +602,7 @@ export const ListItems = (props) => {
                 to="/dispatch/tab-view"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/dispatch/tab-view")}
               >
                 <ListItemIcon>
                   <LocalShippingIcon />
@@ -826,6 +742,7 @@ export const ListItems = (props) => {
                 to="/dispatch/tab-view"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/dispatch/tab-view")}
               >
                 <ListItemIcon>
                   <LocalShippingIcon />
@@ -1111,6 +1028,7 @@ export const ListItems = (props) => {
                 to="/dispatch/tab-view"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/dispatch/tab-view")}
               >
                 <ListItemIcon>
                   <LocalShippingIcon />
@@ -2316,6 +2234,7 @@ export const ListItems = (props) => {
                 to="/dispatch/tab-view"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
+                selected={isActive("/dispatch/tab-view")}
               >
                 <ListItemIcon>
                   <LocalShippingIcon />

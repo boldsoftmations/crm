@@ -64,6 +64,7 @@ import { AllOrderBookTabView } from "../Pages/OrderBooks/AllOrderBookTabView";
 import { Report } from "../Pages/Report/Report";
 import { AnalyticsAllTabView } from "../Pages/Analytics/AnalyticsAllTabView";
 import { AllDispatchTabView } from "../Pages/Dispatch/AllDispatchTabView";
+import { AllProfileTabView } from "../Pages/Users/AllProfileTabView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -92,6 +93,7 @@ export const RouteScreen = () => {
             />
             <Route path="/user/report" element={<Report />} />
             <Route path="/user/profile" exact element={<Profile />} />
+            <Route path="/user/profile-tab" exact element={<AllProfileTabView />} />
             <Route
               path="/user/personal-profile"
               exact
