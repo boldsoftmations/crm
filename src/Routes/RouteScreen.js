@@ -65,6 +65,7 @@ import { ProductionAllTabView } from "../Pages/Production/ProductionAllTabView";
 import { InventoryAllTabView } from "../Pages/Inventory/InventoryAllTabView";
 import { HrMasterTabView } from "../Pages/HrModel/HrMasterTabView";
 import { AllWhatsappTabs } from "../Pages/WhatsappGroup/AllWhatsappTabs";
+import { AllOrderBookTabView } from "../Pages/OrderBooks/AllOrderBookTabView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -163,6 +164,10 @@ export const RouteScreen = () => {
               element={<SalesInvoiceView />}
             />
             {/* Order Book */}
+            <Route
+              path="/invoice/orderbook-tab"
+              element={<AllOrderBookTabView />}
+            />
             <Route
               path="/invoice/customer-order-book"
               element={<CustomerOrderBookDetails />}

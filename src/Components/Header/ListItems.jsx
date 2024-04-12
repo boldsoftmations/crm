@@ -285,59 +285,16 @@ export const ListItems = (props) => {
           {/* Order book */}
           <ListItem
             button
-            onClick={() => setExpandOrderBook(!expandOrderBook)}
+            component={RouterLink}
+            to="/invoice/orderbook-tab"
             style={{ width: 300 }}
+            onClick={() => setOpen(false)}
           >
             <ListItemIcon>
               <ReceiptIcon />
             </ListItemIcon>
             <ListItemText primary="Order Book" />
-            {expandOrderBook ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItem>
-          <Collapse in={expandOrderBook} timeout="auto" unmountOnExit>
-            <Divider />
-            <List component="div" disablePadding>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/customer-order-book"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Customer Wise Order Book"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/product-order-book"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Product Wise Order Book"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/pi-order-book"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="PI Wise Order Book"
-                />
-              </ListItem>
-            </List>
-          </Collapse>
           {/* Dispatch */}
           <ListItem
             button
@@ -755,72 +712,16 @@ export const ListItems = (props) => {
               {/* Order book */}
               <ListItem
                 button
-                onClick={() => setExpandOrderBook(!expandOrderBook)}
+                component={RouterLink}
+                to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary="Order Book" />
-                {expandOrderBook ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandOrderBook} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/customer-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/product-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Product Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/pi-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="PI Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/inventory/view-safety-stock"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Safety Stock Level"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Tasks */}
               {/* <ListItem
@@ -993,46 +894,16 @@ export const ListItems = (props) => {
               {/* Order book */}
               <ListItem
                 button
-                onClick={() => setExpandOrderBook(!expandOrderBook)}
+                component={RouterLink}
+                to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary="Order Book" />
-                {expandOrderBook ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandOrderBook} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/customer-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/product-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Product Wise Order Book"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Dispatch */}
               <ListItem
@@ -1329,59 +1200,16 @@ export const ListItems = (props) => {
               {/* Order book */}
               <ListItem
                 button
-                onClick={() => setExpandOrderBook(!expandOrderBook)}
+                component={RouterLink}
+                to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary="Order Book" />
-                {expandOrderBook ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandOrderBook} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/customer-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/product-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Product Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/pi-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="PI Wise Order Book"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Dispatch */}
               <ListItem
@@ -1625,59 +1453,16 @@ export const ListItems = (props) => {
               {/* Order book */}
               <ListItem
                 button
-                onClick={() => setExpandOrderBook(!expandOrderBook)}
+                component={RouterLink}
+                to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary="Order Book" />
-                {expandOrderBook ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandOrderBook} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/customer-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/product-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Product Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/pi-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="PI Wise Order Book"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
               {/* Dispatch */}
 
               {/* Tasks */}
@@ -1872,59 +1657,16 @@ export const ListItems = (props) => {
               {/* Order book */}
               <ListItem
                 button
-                onClick={() => setExpandOrderBook(!expandOrderBook)}
+                component={RouterLink}
+                to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary="Order Book" />
-                {expandOrderBook ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandOrderBook} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/customer-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/product-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Product Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/pi-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="PI Wise Order Book"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Tasks */}
               <ListItem
@@ -2077,59 +1819,16 @@ export const ListItems = (props) => {
               {/* Order book */}
               <ListItem
                 button
-                onClick={() => setExpandOrderBook(!expandOrderBook)}
+                component={RouterLink}
+                to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary="Order Book" />
-                {expandOrderBook ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandOrderBook} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/customer-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/product-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Product Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/pi-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="PI Wise Order Book"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Tasks */}
               <ListItem
@@ -2283,59 +1982,16 @@ export const ListItems = (props) => {
               {/* Order book */}
               <ListItem
                 button
-                onClick={() => setExpandOrderBook(!expandOrderBook)}
+                component={RouterLink}
+                to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary="Order Book" />
-                {expandOrderBook ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandOrderBook} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/customer-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/product-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Product Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/pi-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="PI Wise Order Book"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Tasks */}
               <ListItem
@@ -2487,59 +2143,16 @@ export const ListItems = (props) => {
               {/* Order book */}
               <ListItem
                 button
-                onClick={() => setExpandOrderBook(!expandOrderBook)}
+                component={RouterLink}
+                to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary="Order Book" />
-                {expandOrderBook ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandOrderBook} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/customer-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/product-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Product Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/pi-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="PI Wise Order Book"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Tasks */}
               <ListItem
@@ -2692,59 +2305,16 @@ export const ListItems = (props) => {
               {/* Order book */}
               <ListItem
                 button
-                onClick={() => setExpandOrderBook(!expandOrderBook)}
+                component={RouterLink}
+                to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary="Order Book" />
-                {expandOrderBook ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandOrderBook} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/customer-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/product-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Product Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/pi-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="PI Wise Order Book"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Tasks */}
               <ListItem
@@ -2936,60 +2506,16 @@ export const ListItems = (props) => {
               {/* Order book */}
               <ListItem
                 button
-                onClick={() => setExpandOrderBook(!expandOrderBook)}
+                component={RouterLink}
+                to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary="Order Book" />
-                {expandOrderBook ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-
-              <Collapse in={expandOrderBook} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/customer-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/product-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Product Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/pi-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="PI Wise Order Book"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Dispatch */}
               <ListItem
@@ -3223,59 +2749,16 @@ export const ListItems = (props) => {
               {/* Order book */}
               <ListItem
                 button
-                onClick={() => setExpandOrderBook(!expandOrderBook)}
+                component={RouterLink}
+                to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText primary="Order Book" />
-                {expandOrderBook ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </ListItem>
-              <Collapse in={expandOrderBook} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/customer-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Customer Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/product-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Product Wise Order Book"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/invoice/pi-order-book"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="PI Wise Order Book"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Tasks */}
               <ListItem
