@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom";
 import { useSelector } from "react-redux";
 import React from "react";
 import { ChangePassword } from "./../Pages/Auth/ChangePassword";
-import { Dashboard } from "../Pages/Dashboard/Dashboard";
 import { ForgotPassword } from "./../Pages/Auth/ForgotPassword";
 import { CompanyDetails } from "../Pages/Cutomers/CompanyDetails/CompanyDetails";
 import { SellerAccount } from "./../Pages/Invoice/Seller Account/SellerAccount";
@@ -15,7 +14,6 @@ import { ViewDispatch } from "./../Pages/Dispatch/ViewDispatch";
 import { Dispatched } from "./../Pages/Dispatch/Dispatched";
 import { SalesRegisterView } from "./../Pages/Dispatch/SalesRegisterView";
 import { PIOrderBookDetails } from "../Pages/OrderBooks/PIOrderBookDetails";
-import { Home } from "../Pages/Home";
 import { VendorView } from "../Pages/Vendor/VendorInventoryDetail/VendorView";
 import { StoresInventoryView } from "../Pages/Inventory/Stores Inventory/StoresInventoryView";
 import { ProductionInventoryView } from "../Pages/Inventory/Production Inventory/ProductionInventoryView";
@@ -33,7 +31,6 @@ import { InActiveUsers } from "./../Pages/Users/InActiveUsers";
 import { IncompleteKycDetails } from "../Pages/Cutomers/CompanyDetails/IncompleteKycDetails";
 import { CompetitorView } from "../Pages/MarketAnalysis/CompetitorView";
 import { PriceApprovalPI } from "../Pages/Invoice/ProformaInvoice/PriceApprovalPI";
-import { TeamWiseDashboard } from "../Pages/TeamWiseDashboard";
 import { UserProfileView } from "../Pages/Profile/UserProfile/UserProfileView";
 import { InActiveCustomer } from "../Pages/Cutomers/CompanyDetails/InActiveCustomer";
 import { FaqAllTab } from "../Pages/Faq/FaqAllTab/FaqAllTab";
@@ -49,8 +46,6 @@ import { WhatsappGroup } from "../Pages/WhatsappGroup/WhatsappGroup";
 import { CustomerNoWhatsappGroup } from "../Pages/WhatsappGroup/CustomerNoWhatsappGroup";
 import { CustomerNotInGroup } from "../Pages/WhatsappGroup/CustomerNotInGroup";
 import { SalesPersonNotInGroup } from "../Pages/WhatsappGroup/SalesPersonNotInGroup";
-import { RetailCustomerData } from "../Pages/RetailCustomerData";
-import { DashboardLeadData } from "../Pages/DashboardLeadData";
 import { Automation } from "../Pages/WhatsappGroup/Automation";
 import { SourceBasedGRNView } from "../Pages/Inventory/SourceBasedGRN/SourceBasedGRNView";
 import { PhysicalInventoryView } from "../Pages/Physcical Inventory/PhysicalInventoryView";
@@ -65,6 +60,8 @@ import { ProductionAllTabView } from "../Pages/Production/ProductionAllTabView";
 import { InventoryAllTabView } from "../Pages/Inventory/InventoryAllTabView";
 import { HrMasterTabView } from "../Pages/HrModel/HrMasterTabView";
 import { AllWhatsappTabs } from "../Pages/WhatsappGroup/AllWhatsappTabs";
+import { Report } from "../Pages/Report/Report";
+import { AnalyticsAllTabView } from "../Pages/Analytics/AnalyticsAllTabView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -86,21 +83,12 @@ export const RouteScreen = () => {
 
         {token && (
           <>
-            <Route path="/user/analytics" exact element={<Home />} />
             <Route
-              path="/user/team-analytics"
+              path="/user/analytics"
               exact
-              element={<TeamWiseDashboard />}
+              element={<AnalyticsAllTabView />}
             />
-            <Route
-              path="/user/retailer-data"
-              element={<RetailCustomerData />}
-            />
-            <Route
-              path="/user/dasboard-lead-data"
-              element={<DashboardLeadData />}
-            />
-            <Route path="/user/dashoard" element={<Dashboard />} />
+            <Route path="/user/report" element={<Report />} />
             <Route path="/user/profile" exact element={<Profile />} />
             <Route
               path="/user/personal-profile"
@@ -242,13 +230,15 @@ export const RouteScreen = () => {
             <Route path="/user/faq" element={<FaqAllTab />} />
             {/* Daily sale review */}
             <Route path="/user/sale-review" element={<DailySaleReviewView />} />
-            <Route path="/" element={<Home />} />
             <Route path="/hr-model" element={<HrModelTabs />} />
             <Route path="/hr-model/hr-master" element={<HrMasterTabView />} />
             <Route path="/hr-model/designation" element={<DesignationView />} />
             <Route path="/hr-model/department" element={<DepartmentView />} />
             <Route path="/hr-model/source" element={<SourceView />} />
-            <Route path="/customers/whatsapp-tabs" element={<AllWhatsappTabs />} />
+            <Route
+              path="/customers/whatsapp-tabs"
+              element={<AllWhatsappTabs />}
+            />
             <Route
               path="/customers/whatsapp-group"
               element={<WhatsappGroupView />}

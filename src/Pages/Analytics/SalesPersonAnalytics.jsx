@@ -17,10 +17,10 @@ import {
   Divider,
 } from "@mui/material";
 import PropTypes from "prop-types";
-import { CustomChart } from "../Components/CustomChart";
+import { CustomChart } from "../../Components/CustomChart";
 import { useSelector } from "react-redux";
-import CustomTextField from "../Components/CustomTextField";
-import CustomAutocomplete from "../Components/CustomAutocomplete";
+import CustomTextField from "../../Components/CustomTextField";
+import CustomAutocomplete from "../../Components/CustomAutocomplete";
 
 export const SalesPersonAnalytics = (props) => {
   // Destructuring the props passed to this component

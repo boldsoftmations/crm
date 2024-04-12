@@ -25,7 +25,7 @@ import { Popup } from "../../Components/Popup";
 import { DescriptionWiseTurnover } from "./DescriptionWiseTurnover/DescriptionWiseTurnover";
 import CustomTextField from "../../Components/CustomTextField";
 
-export function Dashboard() {
+export function Report() {
   const [open, setOpen] = useState(false);
   const [openPopup, setOpenPopup] = useState(false);
   const [activeTab, setActiveTab] = useState(0);

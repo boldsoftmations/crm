@@ -7,9 +7,9 @@ import {
   Container,
   Paper,
 } from "@mui/material";
-import CustomAutocomplete from "../Components/CustomAutocomplete";
-import CustomTextField from "../Components/CustomTextField";
-import DashboardService from "../services/DashboardService";
+import CustomAutocomplete from "../../Components/CustomAutocomplete";
+import CustomTextField from "../../Components/CustomTextField";
+import DashboardService from "../../services/DashboardService";
 
 const StateOption = [
   { id: 1, value: "All", label: "All States" },
