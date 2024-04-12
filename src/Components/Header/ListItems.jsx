@@ -38,15 +38,12 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import BusinessIcon from "@mui/icons-material/Business";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import StorageIcon from "@mui/icons-material/Storage";
-
+import AssessmentIcon from "@mui/icons-material/Assessment";
 export const ListItems = (props) => {
   const { setOpen } = props;
-  const [expandDashboard, setExpandDashboard] = useState(false);
   const [expandOrderBook, setExpandOrderBook] = useState(false);
   const [dispatchDetails, setDispatchDetails] = useState(false);
-  const [expandInventory, setExpandInventory] = useState(false);
   const [expandUser, setExpandUser] = useState(false);
-  const [expandWhatsapp, setExpandWhastapp] = useState(false);
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
 
@@ -61,88 +58,33 @@ export const ListItems = (props) => {
       {/* Staff */}
       {userData.groups.includes("Director") ? (
         <>
-          {/* Dashboard */}
+          {/* Report  */}
           <ListItem
             button
-            onClick={() => setExpandDashboard(!expandDashboard)}
+            component={RouterLink}
+            to="/user/report"
             style={{ width: 300 }}
+            onClick={() => setOpen(false)}
+          >
+            <ListItemIcon>
+              <AssessmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Report" />
+          </ListItem>
+
+          {/* Analytics  */}
+          <ListItem
+            button
+            component={RouterLink}
+            to="/user/analytics"
+            style={{ width: 300 }}
+            onClick={() => setOpen(false)}
           >
             <ListItemIcon>
               <DashboardIcon />
             </ListItemIcon>
-            <ListItemText primary="Dashboard" />
-            {expandDashboard ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            <ListItemText primary="Analytics" />
           </ListItem>
-          <Collapse in={expandDashboard} timeout="auto" unmountOnExit>
-            <Divider />
-            <List component="div" disablePadding>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/user/dashoard"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Reports"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/user/analytics"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Sales Person Analytics"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/user/team-analytics"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Sales Team Analytics"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/user/retailer-data"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Distribution Customer Data"
-                />
-              </ListItem>
-              <ListItem
-                button
-                component={RouterLink}
-                to="/user/dasboard-lead-data"
-                style={{ width: 300 }}
-              >
-                <ListItemText
-                  component={Button}
-                  onClick={() => setOpen(false)}
-                  inset
-                  primary="Lead Data"
-                />
-              </ListItem>
-            </List>
-          </Collapse>
 
           {/* Products */}
           <ListItem
@@ -1322,62 +1264,33 @@ export const ListItems = (props) => {
           {/* Sales Manager */}
           {userData.groups.includes("Sales Manager") && (
             <>
-              {/* Dashboard */}
+              {/* Report  */}
               <ListItem
                 button
-                onClick={() => setExpandDashboard(!expandDashboard)}
+                component={RouterLink}
+                to="/user/report"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+              >
+                <ListItemIcon>
+                  <AssessmentIcon />
+                </ListItemIcon>
+                <ListItemText primary="Report" />
+              </ListItem>
+
+              {/* Analytics  */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/analytics"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <DashboardIcon />
                 </ListItemIcon>
-                <ListItemText primary="Dashboard" />
-                {expandDashboard ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                <ListItemText primary="Analytics" />
               </ListItem>
-              <Collapse in={expandDashboard} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/user/dashoard"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Reports"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/user/analytics"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Sales Person Analytics"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/user/team-analytics"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Sales Team Analytics"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Leads */}
               <ListItem
@@ -1539,49 +1452,19 @@ export const ListItems = (props) => {
           {/* Sales Deputy Manager */}
           {userData.groups.includes("Sales Deputy Manager") && (
             <>
-              {/* Dashboard */}
+              {/* Analytics  */}
               <ListItem
                 button
-                onClick={() => setExpandDashboard(!expandDashboard)}
+                component={RouterLink}
+                to="/user/analytics"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <DashboardIcon />
                 </ListItemIcon>
-                <ListItemText primary="Dashboard" />
-                {expandDashboard ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                <ListItemText primary="Analytics" />
               </ListItem>
-              <Collapse in={expandDashboard} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/user/analytics"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Sales Person Analytics"
-                    />
-                  </ListItem>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/user/team-analytics"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Sales Team Analytics"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Leads */}
               <ListItem
@@ -1713,37 +1596,19 @@ export const ListItems = (props) => {
           {/* Sales Assistant Deputy Manager */}
           {userData.groups.includes("Sales Assistant Deputy Manager") && (
             <>
-              {/* Dashboard */}
+              {/* Analytics  */}
               <ListItem
                 button
-                onClick={() => setExpandDashboard(!expandDashboard)}
+                component={RouterLink}
+                to="/user/analytics"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <DashboardIcon />
                 </ListItemIcon>
-                <ListItemText primary="Dashboard" />
-                {expandDashboard ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                <ListItemText primary="Analytics" />
               </ListItem>
-
-              <Collapse in={expandDashboard} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/user/analytics"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Sales Person Analytics"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Leads */}
               <ListItem
@@ -1877,38 +1742,19 @@ export const ListItems = (props) => {
           {/* Sales Executives */}
           {userData.groups.includes("Sales Executive") && (
             <>
-              {/* Dashboard */}
+              {/* Analytics  */}
               <ListItem
                 button
-                onClick={() => setExpandDashboard(!expandDashboard)}
+                component={RouterLink}
+                to="/user/analytics"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <DashboardIcon />
                 </ListItemIcon>
-                <ListItemText primary="Dashboard" />
-                {expandDashboard ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                <ListItemText primary="Analytics" />
               </ListItem>
-
-              <Collapse in={expandDashboard} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/user/analytics"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Sales Person Analytics"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
-
               {/* Leads */}
               <ListItem
                 button
@@ -2040,36 +1886,19 @@ export const ListItems = (props) => {
           {userData.groups.includes("Sales Manager without Leads") && (
             <>
               {/* Dashboard */}
+              {/* Analytics  */}
               <ListItem
                 button
-                onClick={() => setExpandDashboard(!expandDashboard)}
+                component={RouterLink}
+                to="/user/analytics"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <DashboardIcon />
                 </ListItemIcon>
-                <ListItemText primary="Dashboard" />
-                {expandDashboard ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                <ListItemText primary="Analytics" />
               </ListItem>
-
-              <Collapse in={expandDashboard} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/user/analytics"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Sales Person Analytics"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Leads */}
               <ListItem
@@ -2200,37 +2029,19 @@ export const ListItems = (props) => {
           {/* Sales Manager with Leads  */}
           {userData.groups.includes("Sales Manager with Lead") && (
             <>
-              {/* Dashboard */}
+              {/* Analytics  */}
               <ListItem
                 button
-                onClick={() => setExpandDashboard(!expandDashboard)}
+                component={RouterLink}
+                to="/user/analytics"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <DashboardIcon />
                 </ListItemIcon>
-                <ListItemText primary="Dashboard" />
-                {expandDashboard ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                <ListItemText primary="Analytics" />
               </ListItem>
-
-              <Collapse in={expandDashboard} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/user/analytics"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Sales Person Analytics"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Leads */}
               <ListItem
@@ -2362,36 +2173,33 @@ export const ListItems = (props) => {
           {/* accounts */}
           {userData.groups.includes("Accounts") && (
             <>
-              {/* Dashboard */}
+              {/* Report  */}
               <ListItem
                 button
-                onClick={() => setExpandDashboard(!expandDashboard)}
+                component={RouterLink}
+                to="/user/report"
                 style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+              >
+                <ListItemIcon>
+                  <AssessmentIcon />
+                </ListItemIcon>
+                <ListItemText primary="Report" />
+              </ListItem>
+
+              {/* Analytics  */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/analytics"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
               >
                 <ListItemIcon>
                   <DashboardIcon />
                 </ListItemIcon>
-                <ListItemText primary="Dashboard" />
-                {expandDashboard ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                <ListItemText primary="Analytics" />
               </ListItem>
-              <Collapse in={expandDashboard} timeout="auto" unmountOnExit>
-                <Divider />
-                <List component="div" disablePadding>
-                  <ListItem
-                    button
-                    component={RouterLink}
-                    to="/user/dashoard"
-                    style={{ width: 300 }}
-                  >
-                    <ListItemText
-                      component={Button}
-                      onClick={() => setOpen(false)}
-                      inset
-                      primary="Reports"
-                    />
-                  </ListItem>
-                </List>
-              </Collapse>
 
               {/* Products */}
               <ListItem

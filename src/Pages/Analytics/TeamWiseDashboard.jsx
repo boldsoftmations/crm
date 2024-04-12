@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import DashboardService from "../services/DashboardService";
-import { Popup } from "../Components/Popup";
-import { DispatchData } from "./DispatchData";
-import { CustomLoader } from "../Components/CustomLoader";
-import InvoiceServices from "../services/InvoiceService";
+import DashboardService from "../../services/DashboardService";
+import { Popup } from "../../Components/Popup";
+import { DispatchData } from "../DispatchData";
+import { CustomLoader } from "../../Components/CustomLoader";
+import InvoiceServices from "../../services/InvoiceService";
 import { SalesTeamAnalytics } from "./SalesTeamAnalytics";
 
 export const TeamWiseDashboard = () => {

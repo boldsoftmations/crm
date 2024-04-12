@@ -5,8 +5,8 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
-import CustomAutocomplete from "../Components/CustomAutocomplete";
-import DashboardService from "../services/DashboardService";
+import CustomAutocomplete from "../../Components/CustomAutocomplete";
+import DashboardService from "../../services/DashboardService";
 
 export const DashboardLeadData = () => {
   const [leadData, setLeadData] = useState({
