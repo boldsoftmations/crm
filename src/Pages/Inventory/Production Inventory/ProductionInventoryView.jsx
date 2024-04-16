@@ -120,7 +120,7 @@ export const ProductionInventoryView = () => {
     "PRODUCT",
     "SELLER STATE",
     "DESCRIPTION",
-    "SOURCE",
+    "BATCH NO",
     "DATE",
     "UNIT",
     "QUANTITY",
