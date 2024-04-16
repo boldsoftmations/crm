@@ -39,7 +39,7 @@ export const BillofMaterialsUpdate = memo((props) => {
     () =>
       RawAndConsumableProduct.map((data) => ({
         product: data.product,
-        unit: data.product,
+        unit: data.unit,
         quantity: data.quantity,
       })),
     [RawAndConsumableProduct]

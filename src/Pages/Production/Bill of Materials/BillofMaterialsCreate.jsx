@@ -38,7 +38,7 @@ export const BillofMaterialsCreate = memo((props) => {
     () =>
       RawAndConsumableProduct.map((data) => ({
         product: data.product,
-        unit: data.product,
+        unit: data.unit,
         quantity: data.quantity,
       })),
     [RawAndConsumableProduct]
