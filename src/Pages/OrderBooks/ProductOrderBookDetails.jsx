@@ -14,7 +14,6 @@ import {
 import { TotalPendingQuantity } from "./TotalPendingQuantity";
 import { CustomTable } from "../../Components/CustomTable";
 import { CustomSearchWithButton } from "../../Components/CustomSearchWithButton";
-import CustomTextField from "../../Components/CustomTextField";
 import CustomAutocomplete from "../../Components/CustomAutocomplete";
 
 export const ProductOrderBookDetails = () => {
@@ -25,7 +24,6 @@ export const ProductOrderBookDetails = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openModal2, setOpenModal2] = useState(false);
   const [openModal3, setOpenModal3] = useState(false);
-  const [pageCount, setpageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [totalPages, setTotalPages] = useState(0);
@@ -84,6 +82,7 @@ export const ProductOrderBookDetails = () => {
         ) {
           return {
             product: item.product,
+            order_book_date: item.order_book_date,
             pi_date: item.pi_date,
             proforma_invoice: item.proforma_invoice,
             quantity: item.quantity,
@@ -100,6 +99,7 @@ export const ProductOrderBookDetails = () => {
         } else if (userData.groups.includes("Customer Service")) {
           return {
             product: item.product,
+            order_book_date: item.order_book_date,
             pi_date: item.pi_date,
             proforma_invoice: item.proforma_invoice,
             quantity: item.quantity,
@@ -117,6 +117,7 @@ export const ProductOrderBookDetails = () => {
         } else {
           return {
             product: item.product,
+            order_book_date: item.order_book_date,
             pi_date: item.pi_date,
             proforma_invoice: item.proforma_invoice,
             quantity: item.quantity,
@@ -265,6 +266,7 @@ export const ProductOrderBookDetails = () => {
 
   const Tableheaders = [
     "ID",
+    "Approval Date",
     "Product",
     "Raised By",
     "Pi Date",
@@ -284,6 +286,7 @@ export const ProductOrderBookDetails = () => {
 
   const Tabledata = orderBookData.map((row, i) => ({
     id: row.id,
+    approval_data: row.order_book_date,
     product: row.product,
     raised_by: row.raised_by,
     pi_date: row.pi_date,
@@ -302,6 +305,7 @@ export const ProductOrderBookDetails = () => {
 
   const Tableheaders2 = [
     "ID",
+    "Approval Date",
     "Product",
     "Raised By",
     "Pi Date",
@@ -320,6 +324,7 @@ export const ProductOrderBookDetails = () => {
 
   const Tabledata2 = orderBookData.map((row, i) => ({
     id: row.id,
+    approval_data: row.order_book_date,
     product: row.product,
     raised_by: row.raised_by,
     pi_date: row.pi_date,
@@ -408,7 +413,7 @@ export const ProductOrderBookDetails = () => {
                 }
                 data={exportData}
                 ref={csvLinkRef}
-                filename="Customer Order Book.csv"
+                filename="Product Order Book.csv"
                 target="_blank"
                 style={{
                   textDecoration: "none",
@@ -500,6 +505,7 @@ const headers = [
     label: "Product",
     key: "product",
   },
+  { label: "Approval Date", key: "order_book_date" },
   { label: "PI Date", key: "pi_date" },
   { label: "PI Number", key: "proforma_invoice" },
   {
@@ -542,6 +548,7 @@ const Customerheaders = [
     label: "Product",
     key: "product",
   },
+  { label: "Approval Date", key: "order_book_date" },
   { label: "PI Date", key: "pi_date" },
   { label: "PI Number", key: "proforma_invoice" },
   {
