@@ -9,6 +9,7 @@ import { StoresInventoryView } from "./Stores Inventory/StoresInventoryView";
 import { StoresInventoryConsView } from "./Stores Inventory/StoresInventoryConsView";
 import { ProductionInventoryView } from "./Production Inventory/ProductionInventoryView";
 import { ProductionInventoryConsView } from "./Production Inventory/ProductionInventoryConsView";
+import { DescriptionStoreInventoryView } from "./Description Store Inventory/DescriptionStoreInventoryView";
 
 export const InventoryAllTabView = () => {
   const userData = useSelector((state) => state.auth.profile);
@@ -69,6 +70,11 @@ export const InventoryAllTabView = () => {
         "Accounts Executive",
       ],
       component: <StoresInventoryConsView />,
+    },
+    {
+      label: "Description Stores Inventory",
+      roles: ["Director", "Accounts", "Production", "Accounts Executive"],
+      component: <DescriptionStoreInventoryView />,
     },
     {
       label: "Production Inventory",

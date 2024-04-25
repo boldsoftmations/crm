@@ -244,6 +244,37 @@ const getAllConsStoresInventoryData = () => {
   return CustomAxios.get(`/api/inventory/list-con-stores-inventory/`);
 };
 
+// Description Stores Inventory List Api
+const getDescriptionStoresInventoryDetails = (filter, searchValue) => {
+  const params = new URLSearchParams();
+
+  if (filter) {
+    params.append("unit", filter);
+  }
+
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
+
+  return CustomAxios.get(
+    `api/inventory/description-stores-inventory/?${params.toString()}`
+  );
+};
+
+const getProductCodeStoresInventoryDetails = (data) => {
+  return CustomAxios.post(
+    "api/inventory/description-stores-inventory/cons_store_product/",
+    data
+  );
+};
+
+const getAllProductStoresInventoryDetails = (data) => {
+  return CustomAxios.post(
+    "api/inventory/description-stores-inventory/store_product/",
+    data
+  );
+};
+
 // Material Requisition Form List Api
 
 const getAllMaterialRequisitionFormData = (page, searchValue) => {
@@ -563,6 +594,9 @@ const InventoryServices = {
   getPurchaseInvoiceDataById,
   createStoresInventoryData,
   getAllConsStoresInventoryData,
+  getDescriptionStoresInventoryDetails,
+  getProductCodeStoresInventoryDetails,
+  getAllProductStoresInventoryDetails,
   getAllMaterialRequisitionFormData,
   createMaterialRequisitionFormData,
   updateMaterialRequisitionFormData,
