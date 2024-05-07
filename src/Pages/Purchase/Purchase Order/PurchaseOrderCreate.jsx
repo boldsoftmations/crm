@@ -53,7 +53,6 @@ export const PurchaseOrderCreate = ({
   });
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [productOption, setProductOption] = useState([]);
   const [currencyOption, setCurrencyOption] = useState([]);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -138,16 +137,6 @@ export const PurchaseOrderCreate = ({
     const isDuplicate = inputValues.products.some(
       (product, idx) => product.product === selectedProductName && idx !== index
     );
-
-    if (isDuplicate) {
-      // If the product is already selected, show an error message and exit the function
-      setError(
-        `Product ${selectedProductName} is already selected in another field.`
-      );
-      return;
-    } else {
-      setError(null); // Reset any previous error messages
-    }
 
     // Safely update the state with the new products list
     setInputValues((prevValues) => {

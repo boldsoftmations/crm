@@ -17,6 +17,7 @@ export const DashboardLeadData = () => {
   const [filterType, setFilterType] = useState("");
   const [totalLeads, setTotalLeads] = useState(0);
 
+  console.log("filterType", filterType);
   useEffect(() => {
     fetchLeadData();
   }, []);

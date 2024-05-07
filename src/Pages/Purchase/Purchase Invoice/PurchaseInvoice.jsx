@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
-import { styled } from "@mui/material/styles";
 import logo from "../../../Images/LOGOS3.png";
 import ISO from "../../../Images/ISOLogo.ico";
 import AllLogo from "../../../Images/allLogo.jpg";

@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import DashboardService from "../../../services/DashboardService";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
-import { Box, Grid, Paper } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { CustomTable } from "../../../Components/CustomTable";
 import { CSVLink } from "react-csv";
 
 export const DailyProfitableSalesReport = (props) => {
-  const { idForEdit, setOpenPopup } = props;
+  const { idForEdit } = props;
   const [open, setOpen] = useState(false);
   const [dailyProfitableReportsData, setDailyProfitableReportsData] = useState(
     []

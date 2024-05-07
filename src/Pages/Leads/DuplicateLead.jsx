@@ -45,7 +45,7 @@ export const DuplicateLead = () => {
   const [openModalPotential, setOpenModalPotential] = useState(false);
   const [leadsByID, setLeadsByID] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  const [selectedRows, setSelectedRows] = useState([]);
+  // const [selectedRows, setSelectedRows] = useState([]);
   const tokenData = useSelector((state) => state.auth);
   const users = tokenData.profile;
   const { handleError, handleCloseSnackbar, alertInfo } =
@@ -66,26 +66,24 @@ export const DuplicateLead = () => {
     setOpenModalPotential(true);
   };
 
-  const handleCheckboxChange = (row) => {
-    setSelectedRows((prevSelectedRows) => {
-      const rowIndex = prevSelectedRows.findIndex(
-        (item) => item.lead_id === row.lead_id
-      );
-      if (rowIndex > -1) {
-        // Row already exists in selectedRows, remove it
-        const newSelectedRows = [...prevSelectedRows];
-        newSelectedRows.splice(rowIndex, 1);
-        return newSelectedRows;
-      } else {
-        // Row does not exist in selectedRows, add it
-        const newRowData = {
-          lead_id: row.lead_id,
-          assigned_to: row.assigned_to,
-        };
-        return [...prevSelectedRows, newRowData];
-      }
-    });
-  };
+  // const handleCheckboxChange = (row) => {
+  //   setSelectedRows((prevSelectedRows) => {
+  //     const rowIndex = prevSelectedRows.findIndex(
+  //       (item) => item.lead_id === row.lead_id
+  //     );
+  //     if (rowIndex > -1) {
+  //       const newSelectedRows = [...prevSelectedRows];
+  //       newSelectedRows.splice(rowIndex, 1);
+  //       return newSelectedRows;
+  //     } else {
+  //       const newRowData = {
+  //         lead_id: row.lead_id,
+  //         assigned_to: row.assigned_to,
+  //       };
+  //       return [...prevSelectedRows, newRowData];
+  //     }
+  //   });
+  // };
 
   useEffect(() => {
     getleads();
@@ -410,17 +408,6 @@ const FilterOptions = [
   { label: "Email", value: "email" },
   { label: "Company", value: "company" },
   { label: "Pan No", value: "pan_number" },
-];
-
-const StageOptions = [
-  { label: "New", value: "new" },
-  { label: "Open", value: "open" },
-  { label: "Opportunity", value: "opportunity" },
-  { label: "Potential", value: "potential" },
-  { label: "Interested", value: "interested" },
-  { label: "Converted", value: "converted" },
-  { label: "Not Interested", value: "not_interested" },
-  { label: "Close", value: "close" },
 ];
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({

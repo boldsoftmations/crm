@@ -53,6 +53,8 @@ export const UpdateConsumable = memo((props) => {
     return parts.join("-");
   }, [formData, shortName]);
 
+  const GST = JSON.stringify(formData.gst / 2);
+
   const updatesconsumable = useCallback(
     async (e) => {
       e.preventDefault();
@@ -90,8 +92,6 @@ export const UpdateConsumable = memo((props) => {
     [formData, productName, GST, currentPage, searchQuery]
   );
 
-  const GST = JSON.stringify(formData.gst / 2);
-  console.log("formData", formData);
   return (
     <>
       <MessageAlert

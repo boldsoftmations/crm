@@ -183,10 +183,6 @@ export const MaterialTransferNoteView = () => {
     }
   };
 
-  useEffect(() => {
-    getAllMaterialTransferNoteDetails(currentPage);
-  }, [currentPage, searchQuery, getAllMaterialTransferNoteDetails]);
-
   const getAllMaterialTransferNoteDetails = useCallback(
     async (page, filter = acceptedFilter, search = searchQuery) => {
       try {
@@ -210,6 +206,10 @@ export const MaterialTransferNoteView = () => {
     [acceptedFilter, searchQuery]
   );
 
+  useEffect(() => {
+    getAllMaterialTransferNoteDetails(currentPage);
+  }, [currentPage, searchQuery, getAllMaterialTransferNoteDetails]);
+
   const handleSearch = (query) => {
     setSearchQuery(query);
     setCurrentPage(1);
@@ -220,22 +220,22 @@ export const MaterialTransferNoteView = () => {
     setCurrentPage(1);
   };
   // Usage
-  const isAcceptedEdit =
-    userData.groups.includes("Accounts") ||
-    userData.groups.includes("Production") ||
-    userData.groups.includes("Production Delhi");
+  // const isAcceptedEdit =
+  //   userData.groups.includes("Accounts") ||
+  //   userData.groups.includes("Production") ||
+  //   userData.groups.includes("Production Delhi");
 
   const isAcceptedView =
     userData.groups.includes("Director") ||
     userData.groups.includes("Stores") ||
     userData.groups.includes("Stores Delhi");
 
-  const filteredMaterialTransferNote = Object.keys(materialTransferNote)
-    .filter((key) => !materialTransferNote[key].accepted)
-    .reduce((obj, key) => {
-      obj[key] = materialTransferNote[key];
-      return obj;
-    }, {});
+  // const filteredMaterialTransferNote = Object.keys(materialTransferNote)
+  //   .filter((key) => !materialTransferNote[key].accepted)
+  //   .reduce((obj, key) => {
+  //     obj[key] = materialTransferNote[key];
+  //     return obj;
+  //   }, {});
 
   return (
     <>

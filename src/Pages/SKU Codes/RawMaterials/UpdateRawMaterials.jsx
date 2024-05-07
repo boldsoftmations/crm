@@ -54,6 +54,8 @@ export const UpdateRawMaterials = memo((props) => {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   }, []);
 
+  const GST = JSON.stringify(formData.gst / 2);
+
   const updateRawMaterial = useCallback(
     async (e) => {
       try {
@@ -96,8 +98,6 @@ export const UpdateRawMaterials = memo((props) => {
     },
     [formData, productName, GST, currentPage, searchQuery]
   );
-
-  const GST = JSON.stringify(formData.gst / 2);
 
   return (
     <>

@@ -16,22 +16,7 @@ import LeadServices from "../../services/LeadService";
 import CustomTextField from "./../../Components/CustomTextField";
 import { CustomLoader } from "./../../Components/CustomLoader";
 
-const monthOptions = [
-  { value: "1", label: "January" },
-  { value: "2", label: "February" },
-  { value: "3", label: "March" },
-  { value: "4", label: "April" },
-  { value: "5", label: "May" },
-  { value: "6", label: "June" },
-  { value: "7", label: "July" },
-  { value: "8", label: "August" },
-  { value: "9", label: "September" },
-  { value: "10", label: "October" },
-  { value: "11", label: "November" },
-  { value: "12", label: "December" },
-];
 export const IndiaMartLeads = () => {
-  const currentMonth = new Date().getMonth() + 1;
   const [open, setOpen] = useState(false);
   const [data, setData] = useState([]);
   const currentYearMonth = `${new Date().getFullYear()}-${(
@@ -48,10 +33,6 @@ export const IndiaMartLeads = () => {
     "Total Lead",
   ];
 
-  useEffect(() => {
-    getIndiaMartLeads();
-  }, [selectedYearMonth]);
-
   const getIndiaMartLeads = async () => {
     try {
       setOpen(true);
@@ -63,6 +44,10 @@ export const IndiaMartLeads = () => {
       setOpen(false);
     }
   };
+
+  useEffect(() => {
+    getIndiaMartLeads();
+  }, [selectedYearMonth]);
 
   const filteredData = data.filter((row) => {
     const rowDate = new Date(row.date_time__date);

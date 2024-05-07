@@ -30,10 +30,6 @@ export const ScriptView = () => {
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
 
-  useEffect(() => {
-    getScriptDetails(currentPage);
-  }, [currentPage, searchQuery, getScriptDetails]);
-
   const formatDate = useCallback((dateString) => {
     const options = {
       year: "numeric",
@@ -63,6 +59,10 @@ export const ScriptView = () => {
     },
     [searchQuery]
   );
+
+  useEffect(() => {
+    getScriptDetails(currentPage);
+  }, [currentPage, searchQuery, getScriptDetails]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);

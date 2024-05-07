@@ -402,11 +402,6 @@ export const UnassignedLead = () => {
   );
 };
 
-const FilterOptions = [
-  { label: "References", value: "references__source" },
-  { label: "Search", value: "search" },
-];
-
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,

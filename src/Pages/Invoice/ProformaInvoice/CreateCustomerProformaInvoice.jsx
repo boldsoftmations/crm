@@ -49,7 +49,7 @@ const values = {
 };
 
 export const CreateCustomerProformaInvoice = (props) => {
-  const { setOpenPopup, recordForEdit } = props;
+  const { recordForEdit } = props;
   const [productOption, setProductOption] = useState([]);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
@@ -189,7 +189,6 @@ export const CreateCustomerProformaInvoice = (props) => {
       contact: contactData.contact,
       contact_person_name: contactData.name,
       alternate_contact: contactData.alternate_contact,
-      company_name: customerData.name,
       gst_number: customerData.gst_number || null,
       pan_number: customerData.pan_number,
       billing_address: customerData.address,

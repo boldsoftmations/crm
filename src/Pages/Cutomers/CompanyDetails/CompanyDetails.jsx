@@ -41,7 +41,6 @@ export const CompanyDetails = () => {
   const [open, setOpen] = useState(false);
   const [companyData, setCompanyData] = useState([]);
   const [recordForEdit, setRecordForEdit] = useState();
-  const [pageCount, setpageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
@@ -180,10 +179,6 @@ export const CompanyDetails = () => {
     setOpenSnackbar(false);
   };
 
-  useEffect(() => {
-    getAllCompanyDetails(currentPage, statusFilter, filterSelectedQuery);
-  }, [currentPage, statusFilter, filterSelectedQuery, getAllCompanyDetails]);
-
   const getAllCompanyDetails = useCallback(
     async (
       page,
@@ -211,6 +206,10 @@ export const CompanyDetails = () => {
     },
     [searchQuery]
   );
+
+  useEffect(() => {
+    getAllCompanyDetails(currentPage, statusFilter, filterSelectedQuery);
+  }, [currentPage, statusFilter, filterSelectedQuery, getAllCompanyDetails]);
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);

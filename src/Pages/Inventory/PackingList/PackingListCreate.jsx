@@ -1,24 +1,15 @@
 import React, { useEffect, useState, useCallback, memo } from "react";
-import { Box, Button, Grid, styled } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import CustomTextField from "../../../Components/CustomTextField";
 import InventoryServices from "../../../services/InventoryService";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 
-const Root = styled("div")(({ theme }) => ({
-  width: "100%",
-  ...theme.typography.body2,
-  "& > :not(style) + :not(style)": {
-    marginTop: theme.spacing(2),
-  },
-}));
-
 export const PackingListCreate = memo(
   ({ selectedRow, setOpenPopup, getAllPurchaseOrderDetails }) => {
     console.log("selectedRow", selectedRow);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
     const today = new Date().toISOString().slice(0, 10);
     const [details, setDetails] = useState(() => ({
       seller_account: selectedRow.seller_account,
@@ -84,7 +75,6 @@ export const PackingListCreate = memo(
       } catch (error) {
         handleError(error);
         console.error("Creating Packing list error", error);
-        setError(error.message || "An error occurred");
       } finally {
         setLoading(false);
       }

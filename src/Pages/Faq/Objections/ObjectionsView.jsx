@@ -30,10 +30,6 @@ export const ObjectionsView = () => {
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
 
-  useEffect(() => {
-    getObjectionDetails(currentPage);
-  }, [currentPage, searchQuery, getObjectionDetails]);
-
   const formatDate = useCallback((dateString) => {
     const options = {
       year: "numeric",
@@ -66,6 +62,10 @@ export const ObjectionsView = () => {
     },
     [searchQuery]
   );
+
+  useEffect(() => {
+    getObjectionDetails(currentPage);
+  }, [currentPage, searchQuery, getObjectionDetails]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);

@@ -91,15 +91,6 @@ export const PriceApprovalPI = () => {
     setOpenPopup2(true);
   };
 
-  const openInPopup2 = (item) => {
-    setIDForEdit(item);
-    if (item.type === "Customer") {
-      setOpenPopup(true);
-    } else {
-      setOpenPopup1(true);
-    }
-  };
-
   useEffect(() => {
     getAllSellerAccountsDetails();
     getProformaInvoiceData();
@@ -156,7 +147,6 @@ export const PriceApprovalPI = () => {
   const getSearchData = async (filterValue) => {
     try {
       setOpen(true);
-      const Search = searchValue ? "search" : "";
       if (filterValue || searchValue) {
         const response = await InvoiceServices.getAllPIData({
           piType: "price_approval",

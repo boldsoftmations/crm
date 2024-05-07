@@ -20,7 +20,6 @@ import {
   Typography,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import { useSelector } from "react-redux";
 import CustomTextField from "../../../Components/CustomTextField";
 import { GRNPDFDownload } from "./GRNPDFDownload";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
@@ -33,8 +32,6 @@ export const GRNRegisterView = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [exportData, setExportData] = useState([]);
   const csvLinkRef = useRef(null);
-  const data = useSelector((state) => state.auth);
-  const userData = data.profile;
   const currentYearMonth = `${new Date().getFullYear()}-${(
     new Date().getMonth() + 1
   )
@@ -143,14 +140,6 @@ export const GRNRegisterView = () => {
     }
   };
 
-  useEffect(() => {
-    getAllGRNRegisterDetails();
-  }, []);
-
-  useEffect(() => {
-    getAllGRNRegisterDetails(currentPage);
-  }, [currentPage, getAllGRNRegisterDetails]);
-
   const getAllGRNRegisterDetails = useCallback(
     async (page, filter = selectedYearMonth) => {
       try {
@@ -170,6 +159,10 @@ export const GRNRegisterView = () => {
     },
     [selectedYearMonth]
   );
+
+  useEffect(() => {
+    getAllGRNRegisterDetails(currentPage);
+  }, [currentPage, getAllGRNRegisterDetails]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);

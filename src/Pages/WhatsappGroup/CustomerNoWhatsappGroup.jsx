@@ -24,10 +24,6 @@ export const CustomerNoWhatsappGroup = () => {
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
-  useEffect(() => {
-    getAllCustomerNotHavingWhatsappGroup(currentPage);
-  }, [currentPage, searchQuery, getAllCustomerNotHavingWhatsappGroup]);
-
   const getAllCustomerNotHavingWhatsappGroup = useCallback(
     async (page = currentPage, searchValue = searchQuery) => {
       try {
@@ -50,6 +46,10 @@ export const CustomerNoWhatsappGroup = () => {
     },
     [searchQuery]
   );
+
+  useEffect(() => {
+    getAllCustomerNotHavingWhatsappGroup(currentPage);
+  }, [currentPage, searchQuery, getAllCustomerNotHavingWhatsappGroup]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);

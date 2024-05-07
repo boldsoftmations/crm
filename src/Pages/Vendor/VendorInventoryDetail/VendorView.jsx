@@ -71,10 +71,6 @@ export const VendorView = () => {
     }
   };
 
-  useEffect(() => {
-    getAllVendorDetails(currentPage);
-  }, [currentPage, sourceFilter, searchQuery, getAllVendorDetails]);
-
   const getAllVendorDetails = useCallback(
     async (page, search = searchQuery) => {
       try {
@@ -95,6 +91,10 @@ export const VendorView = () => {
     },
     [searchQuery, sourceFilter]
   );
+
+  useEffect(() => {
+    getAllVendorDetails(currentPage);
+  }, [currentPage, sourceFilter, searchQuery, getAllVendorDetails]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);

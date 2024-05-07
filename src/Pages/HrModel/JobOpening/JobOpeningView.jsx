@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Box, Grid, Button, Paper, Snackbar, Alert } from "@mui/material";
+import { Box, Grid, Button, Paper } from "@mui/material";
 import { Popup } from "../../../Components/Popup";
 import { JobOpeningCreate } from "./JobOpeningCreate";
 import { JobOpeningUpdate } from "./JobOpeningUpdate";
@@ -18,8 +18,6 @@ export const JobOpeningView = () => {
   const [jobOpenings, setJobOpenings] = useState([]);
   const [openCreatePopup, setOpenCreatePopup] = useState(false);
   const [openUpdatePopup, setOpenUpdatePopup] = useState(false);
-  const [editJobOpening, setEditJobOpening] = useState({});
-  const [openEditPopup, setOpenEditPopup] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(false);
   const [openApplicantListPopup, setOpenApplicantListPopup] = useState(false);
   const data = useSelector((state) => state.auth);
@@ -43,10 +41,6 @@ export const JobOpeningView = () => {
     handleAddApplicantClick(item);
   };
 
-  useEffect(() => {
-    fetchJobOpenings(currentPage, searchQuery);
-  }, [currentPage, searchQuery, fetchJobOpenings]);
-
   const fetchJobOpenings = useCallback(
     async (page, query = searchQuery) => {
       try {
@@ -66,6 +60,10 @@ export const JobOpeningView = () => {
     },
     [searchQuery]
   );
+
+  useEffect(() => {
+    fetchJobOpenings(currentPage, searchQuery);
+  }, [currentPage, searchQuery, fetchJobOpenings]);
 
   const addNewJobOpening = async (newJob) => {
     try {
@@ -94,7 +92,6 @@ export const JobOpeningView = () => {
       setTimeout(() => {
         setOpenCreatePopup(false);
       }, 300);
-      setOpenEditPopup(false);
       setIsLoading(false);
     } catch (error) {
       handleError(error);
@@ -115,10 +112,7 @@ export const JobOpeningView = () => {
   };
 
   const handleAddJobOpeningClick = () => setOpenCreatePopup(true);
-  const handleEditJobOpeningClick = (job) => {
-    setEditJobOpening(job);
-    setOpenUpdatePopup(true);
-  };
+
   const handleAddApplicantClick = (job) => {
     setRecordForEdit(job);
     setOpenApplicantListPopup(true);
@@ -206,7 +200,6 @@ export const JobOpeningView = () => {
             data={TableData}
             openInPopup={openInPopup}
             openInPopup7={!isSalesManager ? openInPopup7 : null}
-            onEdit={handleEditJobOpeningClick}
           />
           <CustomPagination
             currentPage={currentPage}

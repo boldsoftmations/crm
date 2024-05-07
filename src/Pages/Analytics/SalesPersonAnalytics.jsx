@@ -27,7 +27,6 @@ export const SalesPersonAnalytics = (props) => {
   const {
     barChartData,
     pieChartData,
-    horizontalBarData,
     newCustomerData,
     pendingTask,
     pendingFollowup,
@@ -56,8 +55,6 @@ export const SalesPersonAnalytics = (props) => {
     endDate,
     maxDate,
     minDate,
-    openPopup3,
-    setOpenPopup3,
     getResetDate,
     team,
     selectedWeek,
@@ -70,10 +67,6 @@ export const SalesPersonAnalytics = (props) => {
   const [dOBQdata, setDOBQData] = useState([]);
   const [selectedDOBQData, setSelectedDOBQData] = useState(null);
   const [activeButton, setActiveButton] = useState("monthly");
-  // Get the current date
-  const currentDate = new Date();
-  const formattedCurrentDate = currentDate.toISOString().split("T")[0];
-  // Filter user data to determine the sales roles assigned to the user
   const assigned = userData.sales_users || [];
   // Determine if the user has limited privacy rights based on group membership
   const [privacy] = useState(
@@ -215,17 +208,6 @@ export const SalesPersonAnalytics = (props) => {
     "#adff2f",
     "#008080",
   ];
-
-  // Define styles for chart containers
-  const chartContainerStyle = {
-    margin: "20px",
-    borderRadius: "10px",
-    boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-    backgroundColor: "#fff",
-    paddingTop: "20px",
-    width: "100%",
-    minHeight: "300px",
-  };
 
   // Define text style
   const textStyle = {

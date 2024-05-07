@@ -82,10 +82,6 @@ export const ProductionInventoryGAndLView = () => {
     }
   };
 
-  useEffect(() => {
-    getAllProductionInventoryGAndLDetails(currentPage);
-  }, [currentPage, searchQuery, getAllProductionInventoryGAndLDetails]);
-
   const getAllProductionInventoryGAndLDetails = useCallback(
     async (page, search = searchQuery) => {
       try {
@@ -106,6 +102,10 @@ export const ProductionInventoryGAndLView = () => {
     },
     [searchQuery]
   );
+
+  useEffect(() => {
+    getAllProductionInventoryGAndLDetails(currentPage);
+  }, [currentPage, searchQuery, getAllProductionInventoryGAndLDetails]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);

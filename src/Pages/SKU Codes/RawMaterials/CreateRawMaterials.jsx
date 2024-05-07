@@ -48,6 +48,8 @@ export const CreateRawMaterials = memo((props) => {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   }, []);
 
+  const GST = formData.gst / 2;
+
   const createrawMaterials = useCallback(
     async (e) => {
       try {
@@ -85,8 +87,6 @@ export const CreateRawMaterials = memo((props) => {
     },
     [formData, productName, GST, currentPage, searchQuery]
   );
-
-  const GST = formData.gst / 2;
 
   return (
     <>

@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  pdf,
   Image,
   Document,
   Page,

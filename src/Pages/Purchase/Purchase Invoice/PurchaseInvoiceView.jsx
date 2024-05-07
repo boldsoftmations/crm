@@ -46,10 +46,6 @@ export const PurchaseInvoiceView = () => {
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
-  useEffect(() => {
-    getAllPurchaseInvoiceDetails(currentPage);
-  }, [currentPage, getAllPurchaseInvoiceDetails]);
-
   const getAllPurchaseInvoiceDetails = useCallback(
     async (page, filter = selectedYearMonth, search = searchQuery) => {
       try {
@@ -70,6 +66,10 @@ export const PurchaseInvoiceView = () => {
     },
     [selectedYearMonth, searchQuery] // Depend on acceptedFilter directly
   );
+
+  useEffect(() => {
+    getAllPurchaseInvoiceDetails(currentPage);
+  }, [currentPage, getAllPurchaseInvoiceDetails]);
 
   const handlePageClick = (event, value) => {
     setCurrentPage(value);

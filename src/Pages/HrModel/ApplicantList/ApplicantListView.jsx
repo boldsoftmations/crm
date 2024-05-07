@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Box, Grid, Button, Paper } from "@mui/material";
+import { Box, Grid, Paper } from "@mui/material";
 import { Popup } from "../../../Components/Popup";
 import { ApplicantListCreate } from "./ApplicantListCreate";
 import { ApplicantListUpdate } from "./ApplicantListUpdate";
 import { CustomTable } from "../../../Components/CustomTable";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import Hr from "./../../../services/Hr";
-import CustomTextField from "../../../Components/CustomTextField";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import SearchComponent from "../../../Components/SearchComponent ";
 
@@ -22,10 +21,6 @@ export const ApplicantListView = () => {
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
-  };
-
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
   };
 
   const openInPopup = (item) => {

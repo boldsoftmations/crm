@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Chip,
-  Divider,
-  Grid,
-  IconButton,
-  Snackbar,
-} from "@mui/material";
+import { Box, Button, Chip, Divider, Grid } from "@mui/material";
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
@@ -55,7 +47,6 @@ export const CreateChalan = memo(
     });
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
     const [productOption, setProductOption] = useState([]);
     const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
       useNotificationHandling();
@@ -134,23 +125,6 @@ export const CreateChalan = memo(
         console.error("Selected product not found in product options");
         return;
       }
-
-      // Check if the new value is already included in the selected products list to prevent duplicates
-      const isDuplicate = inputValues.products.some(
-        (product, idx) =>
-          product.product === selectedProductName && idx !== index
-      );
-
-      if (isDuplicate) {
-        // If the product is already selected, show an error message and exit the function
-        setError(
-          `Product ${selectedProductName} is already selected in another field.`
-        );
-        return;
-      } else {
-        setError(null); // Reset any previous error messages
-      }
-
       // Safely update the state with the new products list
       setInputValues((prevValues) => {
         const newProducts = prevValues.products.map((product, idx) => {
@@ -225,7 +199,6 @@ export const CreateChalan = memo(
           payment_terms: inputValues.payment_terms,
           delivery_term: inputValues.delivery_terms,
           schedule_date: inputValues.schedule_date,
-          buyer_account: inputValues.buyer_account || null,
           transporter_name: inputValues.transporter_name,
           challan_no: inputValues.challan_no,
           transpotation_cost: parseFloat(inputValues.transpotation_cost),
@@ -244,7 +217,7 @@ export const CreateChalan = memo(
         setLoading(false);
       } catch (error) {
         handleError(error);
-        console.log("createing Packing list error", error);
+        console.log("createing Challan error", error);
         setLoading(false);
       }
     };

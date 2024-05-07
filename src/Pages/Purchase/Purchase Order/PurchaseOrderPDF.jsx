@@ -4,7 +4,6 @@ import logo from "../../../Images/LOGOS3.png";
 import ISO from "../../../Images/ISO.png";
 import AllLogo from "../../../Images/allLogo.jpg";
 import MSME from "../../../Images/MSME.jpeg";
-import moment from "moment";
 import "../../../App.css";
 
 export const PurchaseOrderPDF = ({ purchaseOrderData, AMOUNT_IN_WORDS }) => {
@@ -711,10 +710,6 @@ const logoStyle = {
 const logo2Style = {
   height: "auto",
   width: "50pt",
-};
-const alllogoStyle = {
-  height: "auto",
-  width: "100%",
 };
 const lightTextStyle = {
   fontWeight: 300,
