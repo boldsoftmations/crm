@@ -89,8 +89,13 @@ const BranchInvoicesCreate = ({ getSalesInvoiceDetails, setOpenPopup }) => {
     }
   };
 
-  const createLeadProformaInvoiceDetails = async (e) => {
+  const createBranchInvoiceDetails = async (e) => {
     e.preventDefault();
+    const formattedProducts = products.map((prod) => ({
+      product: prod.product,
+      quantity: prod.quantity,
+    }));
+
     const payload = {
       invoice_type: "unit",
       generation_date: inputValue.generation_date || values.someDate,
@@ -98,17 +103,17 @@ const BranchInvoicesCreate = ({ getSalesInvoiceDetails, setOpenPopup }) => {
       from_unit: inputValue.from_unit,
       transporter_name: inputValue.transporter_name,
       transport_cost: inputValue.transport_cost,
-      products: products,
+      products: formattedProducts, // Now only sending product and quantity
     };
+
     try {
       setOpen(true);
-
       const response = await InvoiceServices.createSalesnvoiceData(payload);
       const successMessage =
         response.data.message || "Branch Invoice created successfully!";
       handleSuccess(successMessage);
-      getSalesInvoiceDetails();
       setOpenPopup(false);
+      getSalesInvoiceDetails();
     } catch (error) {
       handleError(error); // Using the custom hook's method to handle errors
       console.error("Creating BI error", error);
@@ -130,7 +135,7 @@ const BranchInvoicesCreate = ({ getSalesInvoiceDetails, setOpenPopup }) => {
       <Box
         component="form"
         noValidate
-        onSubmit={(e) => createLeadProformaInvoiceDetails(e)}
+        onSubmit={(e) => createBranchInvoiceDetails(e)}
       >
         <Grid container spacing={2}>
           <Grid item xs={12} sm={4}>
