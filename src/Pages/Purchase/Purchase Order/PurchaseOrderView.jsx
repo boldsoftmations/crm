@@ -120,10 +120,6 @@ export const PurchaseOrderView = () => {
     }
   };
 
-  useEffect(() => {
-    getAllPurchaseOrderDetails(currentPage, acceptedFilter, searchQuery);
-  }, [currentPage, acceptedFilter, searchQuery]);
-
   const getAllPurchaseOrderDetails = useCallback(
     async (page, filter, query) => {
       try {
@@ -143,6 +139,10 @@ export const PurchaseOrderView = () => {
     },
     []
   );
+
+  useEffect(() => {
+    getAllPurchaseOrderDetails(currentPage, acceptedFilter, searchQuery);
+  }, [currentPage, acceptedFilter, searchQuery]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
