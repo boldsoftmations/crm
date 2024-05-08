@@ -25,7 +25,7 @@ export const BillofMaterialsCreate = memo((props) => {
     filterApproved,
   } = props;
   const [open, setOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState([]);
+  const [inputChange, setInputChange] = useState([]);
   const data = useSelector((state) => state.auth);
   const FinishGoodsProduct = data.finishgoodsProduct;
   const ConsumableProduct = data.consumableProduct;
@@ -63,12 +63,20 @@ export const BillofMaterialsCreate = memo((props) => {
     productOption
   );
 
+  const handleSelectChanges = (name, value) => {
+    setInputChange({
+      ...inputChange,
+      [name]: value,
+    });
+  };
+
   const createMaterialRequisitionFormDetails = async (e) => {
     try {
       e.preventDefault();
       setOpen(true);
       const req = {
-        product: selectedProduct,
+        product: inputChange.product,
+        bom_type: inputChange.bom_type,
         products_data: products,
       };
       await InventoryServices.createBillofMaterialsData(req);
@@ -106,7 +114,7 @@ export const BillofMaterialsCreate = memo((props) => {
               size="small"
               disablePortal
               id="combo-box-demo"
-              onChange={(event, value) => setSelectedProduct(value)}
+              onChange={(event, value) => handleSelectChanges("product", value)}
               options={
                 FinishGoodsProduct
                   ? FinishGoodsProduct.map((option) => option.product)
@@ -115,6 +123,20 @@ export const BillofMaterialsCreate = memo((props) => {
               getOptionLabel={(option) => option}
               sx={{ minWidth: 300 }}
               label="Product Name"
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomAutocomplete
+              size="small"
+              disablePortal
+              id="combo-box-demo"
+              onChange={(event, value) =>
+                handleSelectChanges("bom_type", value)
+              }
+              options={BOM_CHOICE}
+              getOptionLabel={(option) => option}
+              sx={{ minWidth: 300 }}
+              label="Bom Type"
             />
           </Grid>
           <Grid item xs={12}>
@@ -209,3 +231,5 @@ export const BillofMaterialsCreate = memo((props) => {
     </>
   );
 });
+
+const BOM_CHOICE = ["production", "job_worker"];

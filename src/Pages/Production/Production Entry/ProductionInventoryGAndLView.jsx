@@ -155,25 +155,54 @@ export const ProductionInventoryGAndLView = () => {
 
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
-          <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={6}>
+          <Box sx={{ marginBottom: 2 }}>
+            <Grid
+              container
+              spacing={2}
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              {/* Left Section: Search Component */}
+              <Grid item xs={12} sm={4} display="flex" alignItems="center">
                 <SearchComponent
                   onSearch={handleSearch}
                   onReset={handleReset}
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
-                <Button variant="contained" onClick={handleDownload}>
+              {/* Center Section: Title */}
+              <Grid item xs={12} sm={4} display="flex" justifyContent="center">
+                <h3
+                  style={{
+                    fontSize: "24px",
+                    color: "rgb(34, 34, 34)",
+                    fontWeight: 800,
+                    textAlign: "center",
+                  }}
+                >
+                  Production Gain And Loss
+                </h3>
+              </Grid>
+
+              {/* Right Section: Download and Add Buttons */}
+              <Grid
+                item
+                xs={12}
+                sm={4}
+                display="flex"
+                justifyContent="flex-end"
+                alignItems="center"
+                gap={2}
+              >
+                <Button onClick={handleDownload} variant="contained">
                   Download CSV
                 </Button>
                 {exportData.length > 0 && (
                   <CSVLink
-                    data={exportData}
+                    data={[...exportData]}
                     headers={headers}
                     ref={csvLinkRef}
-                    filename="Production Gain And Loss.csv"
+                    filename="Store Inventory.csv"
                     target="_blank"
                     style={{
                       textDecoration: "none",
@@ -185,25 +214,7 @@ export const ProductionInventoryGAndLView = () => {
               </Grid>
             </Grid>
           </Box>
-          <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={5}></Grid>
 
-              <Grid item xs={12} sm={3}>
-                <h3
-                  style={{
-                    textAlign: "left",
-                    fontSize: "24px",
-                    color: "rgb(34, 34, 34)",
-                    fontWeight: 800,
-                  }}
-                >
-                  Production Gain And Loss
-                </h3>
-              </Grid>
-              <Grid item xs={12} sm={3}></Grid>
-            </Grid>
-          </Box>
           <CustomTable
             headers={Tableheaders}
             data={Tabledata}

@@ -145,10 +145,6 @@ export const MaterialRequisitionFormView = () => {
     }
   };
 
-  useEffect(() => {
-    getAllMaterialRequisitionFormDetails(currentPage, searchQuery);
-  }, [currentPage, searchQuery]);
-
   const getAllMaterialRequisitionFormDetails = useCallback(
     async (page, search = searchQuery) => {
       try {
@@ -169,6 +165,10 @@ export const MaterialRequisitionFormView = () => {
     },
     [searchQuery]
   );
+
+  useEffect(() => {
+    getAllMaterialRequisitionFormDetails(currentPage, searchQuery);
+  }, [currentPage, searchQuery]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -263,19 +263,45 @@ export const MaterialRequisitionFormView = () => {
 
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
-          <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={6}>
+          <Box sx={{ marginBottom: 2 }}>
+            <Grid
+              container
+              spacing={2}
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              {/* Left Section: Search Component */}
+              <Grid item xs={12} sm={4} display="flex" alignItems="center">
                 <SearchComponent
                   onSearch={handleSearch}
                   onReset={handleReset}
                 />
               </Grid>
-            </Grid>
-          </Box>
-          <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={5}>
+
+              {/* Center Section: Title */}
+              <Grid item xs={12} sm={4} display="flex" justifyContent="center">
+                <h3
+                  style={{
+                    fontSize: "24px",
+                    color: "rgb(34, 34, 34)",
+                    fontWeight: 800,
+                    textAlign: "center",
+                  }}
+                >
+                  Material Requisition Form
+                </h3>
+              </Grid>
+
+              {/* Right Section: Download and Add Buttons */}
+              <Grid
+                item
+                xs={12}
+                sm={4}
+                display="flex"
+                justifyContent="flex-end"
+                alignItems="center"
+                gap={2}
+              >
                 {(users.groups.includes("Accounts") ||
                   users.groups.includes("Director")) && (
                   <>
@@ -298,21 +324,6 @@ export const MaterialRequisitionFormView = () => {
                     )}
                   </>
                 )}
-              </Grid>
-
-              <Grid item xs={12} sm={3}>
-                <h3
-                  style={{
-                    textAlign: "left",
-                    fontSize: "24px",
-                    color: "rgb(34, 34, 34)",
-                    fontWeight: 800,
-                  }}
-                >
-                  Material Requisition Form
-                </h3>
-              </Grid>
-              <Grid item xs={12} sm={3}>
                 {(users.groups.includes("Production") ||
                   users.groups.includes("Production Delhi") ||
                   users.groups.includes("Director")) && (
@@ -320,7 +331,6 @@ export const MaterialRequisitionFormView = () => {
                     onClick={() => setOpenPopup2(true)}
                     variant="contained"
                     color="success"
-                    // startIcon={<AddIcon />}
                   >
                     Add
                   </Button>

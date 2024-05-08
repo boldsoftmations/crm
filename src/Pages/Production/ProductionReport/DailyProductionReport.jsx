@@ -1,20 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
-import moment from "moment";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import InventoryServices from "./../../../services/InventoryService";
-import { CustomSearchWithButton } from "../../../Components/CustomSearchWithButton";
 import { CSVLink } from "react-csv";
 import { CustomTable } from "../../../Components/CustomTable";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { Box, Button, Grid, Paper } from "@mui/material";
-import { ErrorMessage } from "../../../Components/ErrorMessage/ErrorMessage";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
+import SearchComponent from "../../../Components/SearchComponent ";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
 
 export const DailyProductionReport = () => {
-  const errRef = useRef();
   const [open, setOpen] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
-  const [pageCount, setpageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [dailyProductionReport, setDailyProductionReport] = useState([]);
@@ -25,165 +22,14 @@ export const DailyProductionReport = () => {
   const minDate = new Date().toISOString().split("T")[0];
   const maxDate = new Date("2030-12-31").toISOString().split("T")[0];
   const csvLinkRef = useRef(null);
+  const { handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
 
-  const getResetData = () => {
-    setSearchQuery("");
-    getDailyProductionReport();
-  };
-
-  const handleStartDateChange = (event) => {
-    const date = new Date(event.target.value);
-    setStartDate(date);
-    setEndDate(new Date());
-  };
-
-  const handleEndDateChange = (event) => {
-    const date = new Date(event.target.value);
-    setEndDate(date);
-  };
-
-  const handleInputChange = () => {
-    setSearchQuery(searchQuery);
-    getSearchData(searchQuery);
-  };
-
-  const handleDownload = async () => {
-    try {
-      const data = await handleExport();
-      setExportData(data);
-      setTimeout(() => {
-        csvLinkRef.current.link.click();
-      });
-    } catch (error) {
-      console.log("CSVLink Download error", error);
-    }
-  };
-
-  useEffect(() => {
-    getDailyProductionReport();
-  }, [startDate, endDate]);
-
-  const getDailyProductionReport = async () => {
-    try {
-      setOpen(true);
-      const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
-      const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
-      if (currentPage) {
-        const response =
-          await InventoryServices.getDailyProductionReportWithPagination(
-            StartDate,
-            EndDate,
-            currentPage
-          );
-        setDailyProductionReport(response.data.results);
-        const total = response.data.count;
-        setTotalPages(Math.ceil(total / 25));
-      } else {
-        let response = await InventoryServices.getAllDailyProductionReport(
-          StartDate,
-          EndDate
-        );
-        if (response) {
-          setDailyProductionReport(response.data.results);
-          const total = response.data.count;
-          setTotalPages(Math.ceil(total / 25));
-        }
-      }
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-      if (!err.response) {
-        setErrMsg(
-          "“Sorry, You Are Not Allowed to Access This Page” Please contact to admin"
-        );
-      } else if (err.response.status === 400) {
-        setErrMsg(
-          err.response.data.errors.name
-            ? err.response.data.errors.name
-            : err.response.data.errors.non_field_errors
-        );
-      } else if (err.response.status === 401) {
-        setErrMsg(err.response.data.errors.code);
-      } else {
-        setErrMsg("Server Error");
-      }
-      errRef.current.focus();
-    }
-  };
-
-  const getSearchData = async (value) => {
-    try {
-      setOpen(true);
-      const filterSearch = value;
-      const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
-      const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
-      const response =
-        await InventoryServices.getDailyProductionReportWithSearch(
-          StartDate,
-          EndDate,
-          filterSearch
-        );
-      if (response) {
-        setDailyProductionReport(response.data.results);
-        const total = response.data.count;
-        setTotalPages(Math.ceil(total / 25));
-      } else {
-        getDailyProductionReport();
-
-        setSearchQuery("");
-      }
-      setOpen(false);
-    } catch (error) {
-      console.log("error Search sale register", error);
-      setOpen(false);
-    }
-  };
-
-  const handlePageChange = async (event, value) => {
-    try {
-      const page = value;
-      const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
-      const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
-      setCurrentPage(page);
-      setOpen(true);
-      if (searchQuery) {
-        const response =
-          await InventoryServices.getDailyProductionReportWithPaginationAndSearch(
-            StartDate,
-            EndDate,
-            page,
-            searchQuery
-          );
-        if (response) {
-          setDailyProductionReport(response.data.results);
-          const total = response.data.count;
-          setTotalPages(Math.ceil(total / 25));
-        } else {
-          getDailyProductionReport();
-          setSearchQuery("");
-        }
-      } else {
-        const response =
-          await InventoryServices.getDailyProductionReportWithPagination(
-            StartDate,
-            EndDate,
-            page
-          );
-        setDailyProductionReport(response.data.results);
-        const total = response.data.count;
-        setTotalPages(Math.ceil(total / 25));
-      }
-      setOpen(false);
-    } catch (error) {
-      console.log("error", error);
-      setOpen(false);
-    }
-  };
-
+  // Headers for CSV export
   const headers = [
     { label: "Date", key: "created_on" },
     { label: "Seller Account", key: "seller_account" },
-    { label: "Bom", key: "bom" },
+    { label: "BOM", key: "bom" },
     { label: "Product", key: "product" },
     { label: "Description", key: "description" },
     { label: "Brand", key: "brand" },
@@ -193,50 +39,81 @@ export const DailyProductionReport = () => {
     { label: "Amount", key: "amount" },
   ];
 
+  // Fetch data for CSV download
   const handleExport = async () => {
+    setOpen(true);
     try {
-      setOpen(true);
-      const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
-      const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
-      let response;
-      if (searchQuery) {
-        response =
-          await InventoryServices.getDailyProductionReportWithPaginationAndSearch(
-            StartDate,
-            EndDate,
-            "all",
-            searchQuery
-          );
-      } else {
-        response =
-          await InventoryServices.getDailyProductionReportWithPagination(
-            StartDate,
-            EndDate,
-            "all"
-          );
-      }
-      const data = response.data.map((row) => {
-        return {
-          created_on: row.created_on,
-          seller_account: row.seller_account,
-          bom: row.bom,
-          product: row.product,
-          description: row.description,
-          brand: row.brand,
-          unit: row.unit,
-          quantity: row.quantity,
-          rate: row.rate.toFixed(2),
-          amount: row.amount,
-        };
-      });
-      setOpen(false);
-      return data;
+      const response = await InventoryServices.getAllDailyProductionReport(
+        startDate.toISOString().split("T")[0],
+        endDate.toISOString().split("T")[0],
+        "all",
+        searchQuery
+      );
+      const data = response.data.map((row) => ({
+        created_on: row.created_on,
+        seller_account: row.seller_account,
+        bom: row.bom,
+        product: row.product,
+        description: row.description,
+        brand: row.brand,
+        unit: row.unit,
+        quantity: row.quantity,
+        rate: row.rate.toFixed(2),
+        amount: row.amount,
+      }));
+      setExportData(data);
+      setTimeout(() => csvLinkRef.current.link.click(), 0);
     } catch (err) {
-      console.log(err);
+      handleError(err);
     } finally {
       setOpen(false);
     }
   };
+
+  const handleDownload = () => handleExport();
+
+  const getDailyProductionReport = useCallback(
+    async (page = currentPage, search = searchQuery) => {
+      setOpen(true);
+      try {
+        const response = await InventoryServices.getAllDailyProductionReport(
+          startDate.toISOString().split("T")[0],
+          endDate.toISOString().split("T")[0],
+          page,
+          search
+        );
+        setDailyProductionReport(response.data.results);
+        setTotalPages(Math.ceil(response.data.count / 25));
+      } catch (error) {
+        handleError(error);
+      } finally {
+        setOpen(false);
+      }
+    },
+    [searchQuery, startDate, endDate, currentPage]
+  );
+
+  useEffect(() => {
+    getDailyProductionReport(currentPage, searchQuery);
+  }, [startDate, endDate, currentPage, searchQuery]);
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (event, value) => setCurrentPage(value);
+
+  const handleStartDateChange = (event) =>
+    setStartDate(new Date(event.target.value));
+
+  const handleEndDateChange = (event) =>
+    setEndDate(new Date(event.target.value));
 
   const Tabledata = dailyProductionReport.map((row) => ({
     created_on: row.created_on,
@@ -265,81 +142,124 @@ export const DailyProductionReport = () => {
   ];
 
   return (
-    <div>
+    <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
       <Grid item xs={12}>
-        <ErrorMessage errRef={errRef} errMsg={errMsg} />
         <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
-          <Box display="flex">
-            <Box flexGrow={2}>
-              <Box flexGrow={2}>
-                <CustomTextField
-                  label="Start Date"
-                  variant="outlined"
-                  size="small"
-                  type="date"
-                  id="start-date"
-                  value={startDate ? startDate.toISOString().split("T")[0] : ""}
-                  min={minDate}
-                  max={maxDate}
-                  onChange={handleStartDateChange}
-                />
-
-                <CustomTextField
-                  label="End Date"
-                  variant="outlined"
-                  size="small"
-                  type="date"
-                  id="end-date"
-                  value={endDate ? endDate.toISOString().split("T")[0] : ""}
-                  min={
-                    startDate ? startDate.toISOString().split("T")[0] : minDate
-                  }
-                  max={maxDate}
-                  onChange={handleEndDateChange}
-                  disabled={!startDate}
-                />
-                <CustomSearchWithButton
-                  filterSelectedQuery={searchQuery}
-                  setFilterSelectedQuery={setSearchQuery}
-                  handleInputChange={handleInputChange}
-                  getResetData={getResetData}
-                />
-              </Box>
-            </Box>
-            <Box flexGrow={2}>
-              <h3
-                style={{
-                  textAlign: "left",
-                  marginBottom: "1em",
-                  fontSize: "24px",
-                  color: "rgb(34, 34, 34)",
-                  fontWeight: 800,
-                }}
+          <Box sx={{ marginBottom: 2, width: "100%" }}>
+            <Grid
+              container
+              spacing={2}
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              {/* Left Section: Date Filters and Search */}
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                display="flex"
+                alignItems="center"
+                gap={2}
               >
-                Daily Production Report
-              </h3>
-            </Box>
-            <Box flexGrow={0.5}>
-              <Button variant="contained" onClick={handleDownload}>
-                Download CSV
-              </Button>
-              {exportData.length > 0 && (
-                <CSVLink
-                  data={exportData}
-                  headers={headers}
-                  ref={csvLinkRef}
-                  filename="Daily Production Report.csv"
-                  target="_blank"
+                {/* Grid item for the start date */}
+                <Grid item>
+                  <CustomTextField
+                    label="Start Date"
+                    variant="outlined"
+                    size="small"
+                    type="date"
+                    id="start-date"
+                    value={
+                      startDate ? startDate.toISOString().split("T")[0] : ""
+                    }
+                    min={minDate}
+                    max={maxDate}
+                    onChange={handleStartDateChange}
+                    sx={{ width: "120px" }}
+                  />
+                </Grid>
+
+                {/* Grid item for the end date */}
+                <Grid item>
+                  <CustomTextField
+                    label="End Date"
+                    variant="outlined"
+                    size="small"
+                    type="date"
+                    id="end-date"
+                    value={endDate ? endDate.toISOString().split("T")[0] : ""}
+                    min={
+                      startDate
+                        ? startDate.toISOString().split("T")[0]
+                        : minDate
+                    }
+                    max={maxDate}
+                    onChange={handleEndDateChange}
+                    disabled={!startDate}
+                    sx={{ width: "120px" }}
+                  />
+                </Grid>
+
+                {/* Grid item for the SearchComponent */}
+                <Grid item>
+                  <SearchComponent
+                    onSearch={handleSearch}
+                    onReset={handleReset}
+                  />
+                </Grid>
+              </Grid>
+
+              {/* Center Section: Title */}
+              <Grid item xs={12} sm={3} display="flex" justifyContent="center">
+                <h3
                   style={{
-                    textDecoration: "none",
-                    outline: "none",
-                    height: "5vh",
+                    fontSize: "24px",
+                    color: "rgb(34, 34, 34)",
+                    fontWeight: 800,
+                    textAlign: "center",
                   }}
-                />
-              )}
-            </Box>
+                >
+                  Daily Production Report
+                </h3>
+              </Grid>
+
+              {/* Right Section: Download Button */}
+              <Grid
+                item
+                xs={12}
+                sm={3}
+                display="flex"
+                justifyContent="flex-end"
+                alignItems="center"
+              >
+                <Button variant="contained" onClick={handleDownload}>
+                  Download CSV
+                </Button>
+                {exportData.length > 0 && (
+                  <CSVLink
+                    data={exportData}
+                    headers={headers}
+                    ref={csvLinkRef}
+                    filename="Daily Production Report.csv"
+                    target="_blank"
+                    style={{
+                      textDecoration: "none",
+                      outline: "none",
+                      height: "5vh",
+                    }}
+                  />
+                )}
+              </Grid>
+            </Grid>
           </Box>
+
           <CustomTable
             headers={Tableheaders}
             data={Tabledata}
@@ -355,6 +275,6 @@ export const DailyProductionReport = () => {
           />
         </Paper>
       </Grid>
-    </div>
+    </>
   );
 };

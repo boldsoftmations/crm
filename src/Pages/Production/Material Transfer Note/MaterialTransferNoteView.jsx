@@ -257,10 +257,16 @@ export const MaterialTransferNoteView = () => {
           backgroundColor: "rgb(255, 255, 255)", // set background color to default Paper color
         }}
       >
-        <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={3}>
-              <FormControl sx={{ minWidth: "100px" }} fullWidth size="small">
+        <Box sx={{ marginBottom: 2 }}>
+          <Grid
+            container
+            spacing={2}
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            {/* Left Section: Filter and Search */}
+            <Grid item xs={12} sm={6} display="flex" alignItems="center">
+              <FormControl fullWidth size="small" sx={{ marginRight: 2 }}>
                 <InputLabel id="demo-simple-select-label">
                   Filter By Accepted
                 </InputLabel>
@@ -296,16 +302,33 @@ export const MaterialTransferNoteView = () => {
                   </IconButton>
                 )}
               </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
               <SearchComponent onSearch={handleSearch} onReset={handleReset} />
             </Grid>
-          </Grid>
-        </Box>
-        <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={6}>
-              {/* Add Button */}
+
+            {/* Center Section: Title */}
+            <Grid item xs={12} sm={3} display="flex" justifyContent="center">
+              <h3
+                style={{
+                  fontSize: "24px",
+                  color: "rgb(34, 34, 34)",
+                  fontWeight: 800,
+                  textAlign: "center",
+                }}
+              >
+                Material Transfer Note
+              </h3>
+            </Grid>
+
+            {/* Right Section: Add and Download Buttons */}
+            <Grid
+              item
+              xs={12}
+              sm={3}
+              display="flex"
+              justifyContent="flex-end"
+              alignItems="center"
+              gap={2}
+            >
               {(userData.groups.includes("Production") ||
                 userData.groups.includes("Director") ||
                 userData.groups.includes("Production Delhi")) && (
@@ -316,23 +339,6 @@ export const MaterialTransferNoteView = () => {
                   Add
                 </Button>
               )}
-            </Grid>
-
-            <Grid item xs={12} sm={3}>
-              {/* Customer Header */}
-              <h3
-                style={{
-                  textAlign: "left",
-                  fontSize: "24px",
-                  color: "rgb(34, 34, 34)",
-                  fontWeight: 800,
-                }}
-              >
-                Material Transfer Note
-              </h3>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              {/* Download CSV Button */}
               <Button variant="contained" onClick={handleDownload}>
                 Download CSV
               </Button>

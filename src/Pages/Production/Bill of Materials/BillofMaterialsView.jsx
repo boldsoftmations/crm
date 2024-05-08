@@ -199,10 +199,23 @@ export const BillofMaterialsView = () => {
 
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
-          <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={3}>
-                <FormControl sx={{ minWidth: "100px" }} fullWidth size="small">
+          <Box sx={{ marginBottom: 2 }}>
+            <Grid
+              container
+              spacing={2}
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              {/* Left Section: Filter and Search */}
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                display="flex"
+                alignItems="center"
+              >
+                <FormControl fullWidth size="small" sx={{ marginRight: 2 }}>
                   <InputLabel id="demo-simple-select-label">
                     Filter By Approved
                   </InputLabel>
@@ -210,7 +223,7 @@ export const BillofMaterialsView = () => {
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     name="status"
-                    label="Filter By Accepted"
+                    label="Filter By Approved"
                     value={filterApproved}
                     onChange={handleFilterChange}
                   >
@@ -238,38 +251,46 @@ export const BillofMaterialsView = () => {
                     </IconButton>
                   )}
                 </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={6}>
                 <SearchComponent
                   onSearch={handleSearch}
                   onReset={handleReset}
                 />
               </Grid>
-            </Grid>
-          </Box>
-          <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={6}></Grid>
 
-              <Grid item xs={12} sm={3}>
-                {/* Customer Header */}
+              {/* Center Section: Title */}
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                display="flex"
+                justifyContent="center"
+              >
                 <h3
                   style={{
-                    textAlign: "left",
                     fontSize: "24px",
                     color: "rgb(34, 34, 34)",
                     fontWeight: 800,
+                    textAlign: "center",
                   }}
                 >
                   Bill of Materials
                 </h3>
               </Grid>
-              <Grid item xs={12} sm={3}>
+
+              {/* Right Section: Add Button */}
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                display="flex"
+                justifyContent="flex-end"
+              >
                 <Button
                   onClick={() => setOpenPopup2(true)}
                   variant="contained"
                   color="success"
-                  // startIcon={<AddIcon />}
                 >
                   Add
                 </Button>

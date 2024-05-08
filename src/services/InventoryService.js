@@ -446,38 +446,23 @@ const getAllProductionShortFallData = () => {
   return CustomAxios.get(`/api/inventory/list-production-shortfall/`);
 };
 
-// Daily Production Repor Api
-
-const getAllDailyProductionReport = (startDate, endDate) => {
-  return CustomAxios.get(
-    `/api/inventory/list-daily-production-report/?date_range_after=${startDate}&date_range_before=${endDate}`
-  );
-};
-
-const getDailyProductionReportWithPagination = (
+// Improved API Call Implementation
+const getAllDailyProductionReport = (
   startDate,
   endDate,
-  currentPage
+  page = 1,
+  searchValue = ""
 ) => {
-  return CustomAxios.get(
-    `/api/inventory/list-daily-production-report/?date_range_after=${startDate}&date_range_before=${endDate}&page=${currentPage}`
-  );
-};
+  // Construct query parameters
+  const params = new URLSearchParams();
+  if (startDate) params.append("date_range_after", startDate);
+  if (endDate) params.append("date_range_before", endDate);
+  params.append("page", page);
+  if (searchValue) params.append("search", searchValue);
 
-const getDailyProductionReportWithSearch = (startDate, endDate, search) => {
+  // Make GET request with all parameters
   return CustomAxios.get(
-    `/api/inventory/list-daily-production-report/?date_range_after=${startDate}&date_range_before=${endDate}&search=${search}`
-  );
-};
-
-const getDailyProductionReportWithPaginationAndSearch = (
-  startDate,
-  endDate,
-  currentPage,
-  search
-) => {
-  return CustomAxios.get(
-    `/api/inventory/list-daily-production-report/?date_range_after=${startDate}&date_range_before=${endDate}&page=${currentPage}&search=${search}`
+    `api/inventory/list-daily-production-report/?${params.toString()}`
   );
 };
 
@@ -613,9 +598,6 @@ const InventoryServices = {
   getAllProductionGAndLInventoryData,
   getAllProductionShortFallData,
   getAllDailyProductionReport,
-  getDailyProductionReportWithPagination,
-  getDailyProductionReportWithSearch,
-  getDailyProductionReportWithPaginationAndSearch,
   getWeeklyProductionReportFilterData,
   getCurrencyData,
   createCurrencyData,
