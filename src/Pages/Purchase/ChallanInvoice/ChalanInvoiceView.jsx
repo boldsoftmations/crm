@@ -18,15 +18,14 @@ import { styled } from "@mui/material/styles";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { CustomPagination } from "../../../Components/CustomPagination";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 export const ChalanInvoiceView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [invoiceData, setInvoiceData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [pageCount, setPageCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [open, setOpen] = useState({});
 
   useEffect(() => {
@@ -41,8 +40,7 @@ export const ChalanInvoiceView = () => {
       if (response && response.data.results) {
         setInvoiceData(response.data.results);
       }
-      const total = response.data.count;
-      setPageCount(Math.ceil(total / 25));
+      setTotalPages(Math.ceil(response.data.count / 25));
     } catch (err) {
       console.error("Error fetching invoice data", err);
     } finally {
@@ -50,7 +48,7 @@ export const ChalanInvoiceView = () => {
     }
   };
 
-  const handlePageClick = (event, value) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
@@ -61,22 +59,11 @@ export const ChalanInvoiceView = () => {
     }));
   };
 
-  const filteredInvoiceData = Array.isArray(invoiceData)
-    ? invoiceData.filter(
-        (invoice) =>
-          invoice.buyer_account &&
-          invoice.buyer_account
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase())
-      )
-    : [];
-
   return (
     <>
       <CustomLoader open={isLoading} />
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
-          <Box marginBottom="10px"></Box>
           <Box display="flex" justifyContent="center" marginBottom="10px">
             <h3
               style={{
@@ -129,7 +116,7 @@ export const ChalanInvoiceView = () => {
                 </StyledTableRow>
               </TableHead>
               <TableBody>
-                {filteredInvoiceData.map((chalan) => (
+                {invoiceData.map((chalan) => (
                   <React.Fragment key={chalan.id}>
                     <StyledTableRow sx={{ "& > *": { borderBottom: "unset" } }}>
                       <StyledTableCell>
@@ -192,9 +179,7 @@ export const ChalanInvoiceView = () => {
                                   <TableCell>Unit</TableCell>
                                   <TableCell>Description</TableCell>
                                   <TableCell align="right">Quantity</TableCell>
-                                  <TableCell align="right">
-                                    Consumption Rate
-                                  </TableCell>
+                                  <TableCell align="right">Rate</TableCell>
                                   <TableCell align="right">Amount</TableCell>
                                 </TableRow>
                               </TableHead>
@@ -210,7 +195,7 @@ export const ChalanInvoiceView = () => {
                                       {product.quantity}
                                     </TableCell>
                                     <TableCell align="right">
-                                      {product.cunsuption_rate}
+                                      {product.rate}
                                     </TableCell>
                                     <TableCell align="right">
                                       {product.amount}
@@ -229,8 +214,9 @@ export const ChalanInvoiceView = () => {
             </Table>
           </TableContainer>
           <CustomPagination
-            pageCount={pageCount}
-            handlePageClick={handlePageClick}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
           />
         </Paper>
       </Grid>
@@ -242,11 +228,11 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
-    padding: 0, // Remove padding from header cells
+    padding: 0,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
-    padding: 0, // Remove padding from body cells
+    padding: 0,
   },
 }));
 
@@ -254,7 +240,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
   },
-  // hide last border
   "&:last-child td, &:last-child th": {
     border: 0,
   },

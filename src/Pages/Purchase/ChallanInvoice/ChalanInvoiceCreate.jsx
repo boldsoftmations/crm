@@ -21,34 +21,34 @@ export const ChalanInvoiceCreate = ({
     service_charge: "",
     transport_cost: "",
     invoice_no: "",
-    products: [{ product: "", quantity: "", cunsuption_rate: "", amount: "" }],
+    products: [{ product: "", quantity: "", bom_id: "" }],
   });
+  const [productOptions, setProductOptions] = useState([]);
+  const [bomIdOptions, setBomIdOptions] = useState([]);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-  const [productOption, setProductOption] = useState([]);
 
   useEffect(() => {
-    createChalanInvoice();
-    getProduct();
+    const fetchInitialData = async () => {
+      try {
+        // Fetch product data
+        const productResponse = await ProductService.getAllProduct();
+        setProductOptions(productResponse.data);
+
+        // Fetch BOM data
+        const bomResponse = await InventoryServices.getAllBillofMaterialsData(
+          "all"
+        );
+        setBomIdOptions(bomResponse.data);
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
+      }
+    };
+
+    fetchInitialData();
   }, []);
 
-  const createChalanInvoice = async (formData) => {
-    try {
-      const response = await InventoryServices.createChalanInvoice(formData);
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
-  const getProduct = async () => {
-    try {
-      const res = await ProductService.getAllProduct();
-      setProductOption(res.data);
-    } catch (err) {
-      console.error("error potential", err);
-    }
-  };
-
+  // Generic input handler for other form data
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => ({
@@ -57,49 +57,40 @@ export const ChalanInvoiceCreate = ({
     }));
   };
 
-  const handleProductChange = (index, event) => {
-    const { name, value } = event.target;
-    const updatedProducts = [...formData.products];
-
-    updatedProducts[index][name] = value;
-    if (name === "quantity" || name === "cunsuption_rate") {
-      const quantity = parseFloat(updatedProducts[index]["quantity"]) || 0;
-      const cunsuptionRate =
-        parseFloat(updatedProducts[index]["cunsuption_rate"]) || 0;
-      const amount = quantity * cunsuptionRate;
-      updatedProducts[index]["amount"] = amount.toString(); // Convert back to string if your form expects string inputs
-    }
-
-    // Update the state with the new products array
-    setFormData({ ...formData, products: updatedProducts });
+  // Handles changes to product-specific data
+  const handleProductChange = (index, name, value) => {
+    const updatedProducts = formData.products.map((item, idx) =>
+      idx === index ? { ...item, [name]: value } : item
+    );
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      products: updatedProducts,
+    }));
   };
 
+  // Add a new product entry field
   const addProductField = () => {
     setFormData((prevFormData) => ({
       ...prevFormData,
       products: [
         ...prevFormData.products,
-        { product: "", quantity: "", cunsuption_rate: "", amount: "" },
+        { product: "", quantity: "", bom_id: "" },
       ],
     }));
   };
 
+  // Remove a product entry field
   const removeProductField = (index) => {
-    const filteredProducts = [...formData.products];
-    filteredProducts.splice(index, 1);
-    setFormData({ ...formData, products: filteredProducts });
+    const filteredProducts = formData.products.filter(
+      (_, idx) => idx !== index
+    );
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      products: filteredProducts,
+    }));
   };
 
-  const handleProductAutocompleteChange = (index, value) => {
-    const updatedProducts = formData.products.map((item, idx) => {
-      if (idx === index) {
-        return { ...item, product: value };
-      }
-      return item;
-    });
-    setFormData({ ...formData, products: updatedProducts });
-  };
-
+  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -110,20 +101,17 @@ export const ChalanInvoiceCreate = ({
         products: formData.products.map((product) => ({
           ...product,
           quantity: parseInt(product.quantity, 10),
-          cunsuption_rate: parseInt(product.cunsuption_rate, 10),
-          amount: parseInt(product.amount, 10),
         })),
       };
-      const response = await createChalanInvoice(preparedFormData);
+      const response = await InventoryServices.createChalanInvoice(
+        preparedFormData
+      );
       console.log("Invoice Created:", response);
       getChalanDetails();
       handleSuccess("Chalan Invoice Created Successfully");
-      setTimeout(() => {
-        setOpenPopup(false);
-      }, 300);
+      setOpenPopup(false);
     } catch (error) {
       handleError(error);
-      console.error("Failed to create chalan invoice", error);
     }
   };
 
@@ -137,6 +125,7 @@ export const ChalanInvoiceCreate = ({
       />
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
+          {/* Main Inputs */}
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -162,8 +151,8 @@ export const ChalanInvoiceCreate = ({
               size="small"
               fullWidth
               label="Buyer Account"
-              value={formData.buyer_account}
               name="buyer_account"
+              value={formData.buyer_account}
               onChange={handleChange}
             />
           </Grid>
@@ -199,9 +188,11 @@ export const ChalanInvoiceCreate = ({
               onChange={handleChange}
             />
           </Grid>
+
+          {/* Product Inputs */}
           {formData.products.map((product, index) => (
             <React.Fragment key={index}>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={4}>
                 <CustomAutocomplete
                   name="product"
                   size="small"
@@ -209,14 +200,14 @@ export const ChalanInvoiceCreate = ({
                   id={`combo-box-demo-${index}`}
                   value={product.product}
                   onChange={(event, value) =>
-                    handleProductAutocompleteChange(index, value)
+                    handleProductChange(index, "product", value)
                   }
-                  options={productOption.map((option) => option.name)}
+                  options={productOptions.map((option) => option.name)}
                   getOptionLabel={(option) => option}
                   label="Product"
                 />
               </Grid>
-              <Grid item xs={12} sm={2}>
+              <Grid item xs={12} sm={3}>
                 <CustomTextField
                   fullWidth
                   size="small"
@@ -224,33 +215,28 @@ export const ChalanInvoiceCreate = ({
                   name="quantity"
                   type="number"
                   value={product.quantity}
-                  onChange={(e) => handleProductChange(index, e)}
-                />
-              </Grid>
-              <Grid item xs={12} sm={2}>
-                <CustomTextField
-                  fullWidth
-                  size="small"
-                  label="Consumption Rate"
-                  name="cunsuption_rate"
-                  type="number"
-                  value={product.cunsuption_rate}
-                  onChange={(e) => handleProductChange(index, e)}
+                  onChange={(e) =>
+                    handleProductChange(index, "quantity", e.target.value)
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={3}>
-                <CustomTextField
-                  fullWidth
+                <CustomAutocomplete
+                  name="bom_id"
                   size="small"
-                  label="Amount"
-                  name="amount"
-                  type="number"
-                  value={product.amount}
-                  onChange={(e) => handleProductChange(index, e)}
+                  disablePortal
+                  id={`bom-box-${index}`}
+                  value={product.bom_id}
+                  onChange={(event, value) =>
+                    handleProductChange(index, "bom_id", value)
+                  }
+                  options={bomIdOptions.map((option) => option.bom_id)}
+                  getOptionLabel={(option) => option}
+                  label="BOM ID"
                 />
               </Grid>
               <Grid item xs={12} sm={2}>
-                <IconButton onClick={() => addProductField()}>
+                <IconButton onClick={addProductField}>
                   <AddCircleOutlineIcon />
                 </IconButton>
                 {index > 0 && (

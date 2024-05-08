@@ -288,6 +288,7 @@ export const VendorView = () => {
           setOpenPopup={setOpenPopupChalan}
           getAllVendorDetails={getAllVendorDetails}
           recordForEdit={recordForEdit}
+          currentPage={currentPage}
         />
       </Popup>
     </>

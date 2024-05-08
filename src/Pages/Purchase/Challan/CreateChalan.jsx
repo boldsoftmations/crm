@@ -19,7 +19,7 @@ const Root = styled("div")(({ theme }) => ({
 }));
 
 export const CreateChalan = memo(
-  ({ recordForEdit, setOpenPopup, getChalanDetails, currentPage }) => {
+  ({ recordForEdit, setOpenPopup, getAllVendorDetails, currentPage }) => {
     const { sellerData, userData } = useSelector((state) => ({
       sellerData: state.auth.sellerAccount,
       userData: state.auth.profile,
@@ -177,8 +177,8 @@ export const CreateChalan = memo(
     const getProduct = async () => {
       try {
         setLoading(true);
-        const res = await ProductService.getAllProduct();
-        setProductOption(res.data);
+        const response = await ProductService.getAllRawMaterials("all");
+        setProductOption(response.data);
         setLoading(false);
       } catch (err) {
         console.error("error potential", err);
@@ -208,7 +208,7 @@ export const CreateChalan = memo(
 
         const response = await InventoryServices.createChalan(req);
         if (response) {
-          getChalanDetails(currentPage);
+          getAllVendorDetails(currentPage);
         }
         handleSuccess("Chalan created successfully");
         setTimeout(() => {
