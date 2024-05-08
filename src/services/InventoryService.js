@@ -261,6 +261,11 @@ const getDescriptionStoresInventoryDetails = (filter, searchValue) => {
   );
 };
 
+// job worker store inventory api
+const getJobWorkerInventoryData = () => {
+  return CustomAxios.get(`api/inventory/job-worker-inventory/`);
+};
+
 const getProductCodeStoresInventoryDetails = (data) => {
   return CustomAxios.post(
     "api/inventory/description-stores-inventory/cons_store_product/",
@@ -580,6 +585,7 @@ const InventoryServices = {
   createStoresInventoryData,
   getAllConsStoresInventoryData,
   getDescriptionStoresInventoryDetails,
+  getJobWorkerInventoryData,
   getProductCodeStoresInventoryDetails,
   getAllProductStoresInventoryDetails,
   getAllMaterialRequisitionFormData,

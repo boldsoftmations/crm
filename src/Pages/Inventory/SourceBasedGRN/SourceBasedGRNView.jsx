@@ -131,10 +131,21 @@ export const SourceBasedGRNView = () => {
               container
               spacing={2}
               alignItems="center"
-              justifyContent="flex-start"
+              justifyContent="space-between"
             >
-              <Grid item xs={12} md={3}>
+              {/* Left Section: Filter and Search */}
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                display="flex"
+                alignItems="center"
+                gap={2}
+              >
+                {/* CustomAutocomplete with Specific Width */}
                 <CustomAutocomplete
+                  sx={{ width: "200px" }} // Set specific width
                   value={grnSourceFilter}
                   onChange={handleGrnSourceChange}
                   options={grnSourceOptions}
@@ -147,49 +158,58 @@ export const SourceBasedGRNView = () => {
                     />
                   )}
                 />
-              </Grid>
-              <Grid item xs={12} md={5}>
+
+                {/* SearchComponent */}
                 <SearchComponent
                   onSearch={handleSearch}
                   onReset={handleReset}
                 />
               </Grid>
-              {(userData.groups.includes("Production") ||
-                userData.groups.includes("Director") ||
-                userData.groups.includes("Production Delhi")) && (
-                <Grid item xs={12} md={4}>
+
+              {/* Center Section: Title */}
+              <Grid
+                item
+                xs={12}
+                sm={4}
+                md={4}
+                display="flex"
+                justifyContent="center"
+              >
+                <h3
+                  style={{
+                    textAlign: "center",
+                    fontSize: "24px",
+                    color: "rgb(34, 34, 34)",
+                    fontWeight: 800,
+                  }}
+                >
+                  Source Based GRN
+                </h3>
+              </Grid>
+
+              {/* Right Section: Add Button */}
+              <Grid
+                item
+                xs={12}
+                sm={4}
+                md={4}
+                display="flex"
+                justifyContent="flex-end"
+              >
+                {(userData.groups.includes("Production") ||
+                  userData.groups.includes("Director") ||
+                  userData.groups.includes("Production Delhi")) && (
                   <Button
                     variant="contained"
                     onClick={() => setOpenCreatePopup(true)}
                   >
                     Add
                   </Button>
-                </Grid>
-              )}
+                )}
+              </Grid>
             </Grid>
           </Box>
 
-          <Box
-            sx={{
-              marginBottom: 2,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Grid item xs={12} sm={6}>
-              <h3
-                style={{
-                  textAlign: "center",
-                  fontSize: "24px",
-                  color: "rgb(34, 34, 34)",
-                  fontWeight: 800,
-                }}
-              >
-                Source Based GRN
-              </h3>
-            </Grid>
-          </Box>
           <TableContainer
             sx={{
               maxHeight: 360,

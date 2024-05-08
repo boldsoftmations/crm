@@ -320,6 +320,7 @@ export const BillofMaterialsView = () => {
                 <StyledTableRow>
                   <StyledTableCell align="center"></StyledTableCell>
                   <StyledTableCell align="center">ID</StyledTableCell>
+                  <StyledTableCell align="center">BOM TYPE</StyledTableCell>
                   <StyledTableCell align="center">PRODUCT</StyledTableCell>
                   <StyledTableCell align="center">QUANTITY</StyledTableCell>
                   <StyledTableCell align="center">DATE</StyledTableCell>
@@ -404,6 +405,7 @@ function Row(props) {
         </StyledTableCell>
 
         <StyledTableCell align="center">{row.bom_id}</StyledTableCell>
+        <StyledTableCell align="center">{row.bom_type}</StyledTableCell>
         <StyledTableCell align="center">{row.product}</StyledTableCell>
         <StyledTableCell align="center">{row.quantity}</StyledTableCell>
         <StyledTableCell align="center">{row.created_on}</StyledTableCell>

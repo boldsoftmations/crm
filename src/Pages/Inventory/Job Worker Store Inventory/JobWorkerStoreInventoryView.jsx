@@ -9,41 +9,24 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  Button,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import React, { useCallback, useEffect, useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import { Popup } from "../../../Components/Popup";
 import InventoryServices from "../../../services/InventoryService";
-import { useSelector } from "react-redux";
-import InvoiceServices from "../../../services/InvoiceService";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
-import CustomAutocomplete from "../../../Components/CustomAutocomplete";
-import CustomTextField from "../../../Components/CustomTextField";
-import SearchComponent from "../../../Components/SearchComponent ";
-import { ProductCodeStoreInventoryView } from "./ProductCodeStoreInventoryView";
 
-export const DescriptionStoreInventoryView = () => {
-  const [openPopup, setOpenPopup] = useState(false);
+export const JobWorkerStoreInventoryView = () => {
   const [open, setOpen] = useState(false);
   const [inventoryData, setInventoryData] = useState([]);
-  const [idForEdit, setIDForEdit] = useState("");
-  const [sellerOption, setSellerOption] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-  const [unitFilter, setUnitFilter] = useState(null);
 
-  const getDescriptionData = useCallback(async () => {
+  const getJobWorkerData = useCallback(async () => {
     try {
       setOpen(true);
-      const response =
-        await InventoryServices.getDescriptionStoresInventoryDetails(
-          unitFilter,
-          searchQuery
-        );
+      const response = await InventoryServices.getJobWorkerInventoryData();
       setInventoryData(response.data);
     } catch (err) {
       handleError(err);
@@ -52,45 +35,9 @@ export const DescriptionStoreInventoryView = () => {
     }
   }, []);
 
-  const handleRowClick = (item) => {
-    setIDForEdit(item);
-    setOpenPopup(true);
-    console.log("seus");
-  };
-
   useEffect(() => {
-    getDescriptionData();
-  }, [unitFilter, searchQuery]);
-
-  const getAllSellerAccountsDetails = async () => {
-    try {
-      setOpen(true);
-      const response = await InvoiceServices.getAllPaginateSellerAccountData(
-        "all"
-      );
-      setSellerOption(response.data);
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-      console.log("err", err);
-    }
-  };
-
-  useEffect(() => {
-    getAllSellerAccountsDetails();
+    getJobWorkerData();
   }, []);
-
-  const handleUnitChange = (event, newValue) => {
-    setUnitFilter(newValue);
-  };
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-  };
-  const handleReset = () => {
-    setSearchQuery("");
-  };
-
-  console.log("seller option", sellerOption);
 
   return (
     <>
@@ -111,30 +58,9 @@ export const DescriptionStoreInventoryView = () => {
               alignItems="center"
               justifyContent="flex-start"
             >
-              <Grid item xs={12} md={3}>
-                <CustomAutocomplete
-                  value={unitFilter}
-                  onChange={handleUnitChange}
-                  options={
-                    sellerOption && sellerOption.map((option) => option.unit)
-                  }
-                  renderInput={(params) => (
-                    <CustomTextField
-                      {...params}
-                      label="Unit Filter"
-                      fullWidth
-                      size="small"
-                    />
-                  )}
-                />
-              </Grid>
+              <Grid item xs={12} md={3}></Grid>
 
-              <Grid item xs={12} md={3}>
-                <SearchComponent
-                  onSearch={handleSearch}
-                  onReset={handleReset}
-                />
-              </Grid>
+              <Grid item xs={12} md={3}></Grid>
               <Grid item xs={12} sm={4}>
                 <h3
                   style={{
@@ -144,7 +70,7 @@ export const DescriptionStoreInventoryView = () => {
                     fontWeight: 800,
                   }}
                 >
-                  Description Store Inventory
+                  Job Worker Store Inventory
                 </h3>
               </Grid>
             </Grid>
@@ -171,6 +97,7 @@ export const DescriptionStoreInventoryView = () => {
             >
               <TableHead>
                 <StyledTableRow>
+                  <StyledTableCell align="center">PRODUCT</StyledTableCell>
                   <StyledTableCell align="center">DESCRIPTION</StyledTableCell>
                   <StyledTableCell align="center">QUANTITY</StyledTableCell>
                   <StyledTableCell align="center">
@@ -179,12 +106,14 @@ export const DescriptionStoreInventoryView = () => {
                   <StyledTableCell align="center">RATE</StyledTableCell>
                   <StyledTableCell align="center">TOTAL AMOUNT</StyledTableCell>
                   <StyledTableCell align="center">UNIT</StyledTableCell>
-                  <StyledTableCell align="center">ACTION</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
               <TableBody>
                 {inventoryData.map((row, i) => (
                   <StyledTableRow>
+                    <StyledTableCell align="center">
+                      {row.product}
+                    </StyledTableCell>
                     <StyledTableCell align="center">
                       {row.description}
                     </StyledTableCell>
@@ -199,11 +128,6 @@ export const DescriptionStoreInventoryView = () => {
                       {row.total_amount}
                     </StyledTableCell>
                     <StyledTableCell align="center">{row.unit}</StyledTableCell>
-                    <StyledTableCell align="center">
-                      <Button onClick={() => handleRowClick(row)}>
-                        Product Code
-                      </Button>
-                    </StyledTableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>{" "}
@@ -211,17 +135,6 @@ export const DescriptionStoreInventoryView = () => {
           </TableContainer>
         </Paper>
       </Grid>
-      <Popup
-        openPopup={openPopup}
-        setOpenPopup={setOpenPopup}
-        maxWidth="xl"
-        title={"Consolidate product code"}
-      >
-        <ProductCodeStoreInventoryView
-          idForEdit={idForEdit}
-          setOpenCreatePopup={setOpenPopup}
-        />
-      </Popup>
     </>
   );
 };
