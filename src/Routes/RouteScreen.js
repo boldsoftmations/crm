@@ -47,7 +47,6 @@ import { CustomerNoWhatsappGroup } from "../Pages/WhatsappGroup/CustomerNoWhatsa
 import { CustomerNotInGroup } from "../Pages/WhatsappGroup/CustomerNotInGroup";
 import { SalesPersonNotInGroup } from "../Pages/WhatsappGroup/SalesPersonNotInGroup";
 import { Automation } from "../Pages/WhatsappGroup/Automation";
-import { SourceBasedGRNView } from "../Pages/Inventory/SourceBasedGRN/SourceBasedGRNView";
 import { PhysicalInventoryView } from "../Pages/Physcical Inventory/PhysicalInventoryView";
 import { AllLeadsTabView } from "../Pages/Leads/AllLeadsTabView";
 import { AllProductsTabView } from "../Pages/Products/AllProductsTabView";
@@ -93,7 +92,11 @@ export const RouteScreen = () => {
             />
             <Route path="/user/report" element={<Report />} />
             <Route path="/user/profile" exact element={<Profile />} />
-            <Route path="/user/profile-tab" exact element={<AllProfileTabView />} />
+            <Route
+              path="/user/profile-tab"
+              exact
+              element={<AllProfileTabView />}
+            />
             <Route
               path="/user/personal-profile"
               exact
@@ -208,10 +211,6 @@ export const RouteScreen = () => {
             <Route
               path="/inventory/view-production-inventory-cons"
               element={<ProductionInventoryConsView />}
-            />
-            <Route
-              path="/inventory/source-based-grn"
-              element={<SourceBasedGRNView />}
             />
             <Route path="/inventory/view-currency" element={<CurrencyView />} />
             <Route

@@ -1,16 +1,6 @@
-import {
-  Button,
-  Collapse,
-  Divider,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
+import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import { Link as RouterLink, useLocation } from "react-router-dom";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import React, { useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import CategoryIcon from "@mui/icons-material/Category";
@@ -41,8 +31,6 @@ import StorageIcon from "@mui/icons-material/Storage";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 export const ListItems = (props) => {
   const { setOpen } = props;
-  const [dispatchDetails, setDispatchDetails] = useState(false);
-  const [expandUser, setExpandUser] = useState(false);
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
   const location = useLocation();

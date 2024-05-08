@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
-import TextField from "@mui/material/TextField";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
+import { Grid, Card, CardContent, Typography, Paper } from "@mui/material";
 import CustomAutocomplete from "../../Components/CustomAutocomplete";
 import DashboardService from "../../services/DashboardService";
+import CustomTextField from "../../Components/CustomTextField";
 
 export const DashboardLeadData = () => {
   const [leadData, setLeadData] = useState({
@@ -14,10 +10,8 @@ export const DashboardLeadData = () => {
     source_based_leads: [],
   });
   const [filteredData, setFilteredData] = useState([]);
-  const [filterType, setFilterType] = useState("");
   const [totalLeads, setTotalLeads] = useState(0);
 
-  console.log("filterType", filterType);
   useEffect(() => {
     fetchLeadData();
   }, []);
@@ -33,35 +27,37 @@ export const DashboardLeadData = () => {
       converted: "Converted",
       "not interested": "Not Interested",
     };
+
     try {
       const response = await DashboardService.getLeadRetailData();
       const data = response.data;
+
+      // Map and update stage names
+      const stageLeads = data.stage_based_leads.map((item) => ({
+        ...item,
+        updated_stage_name: leadStage[item.stage] || "Unknown Stage",
+        type: "stage",
+      }));
+
+      // Source-based leads
+      const sourceLeads = data.source_based_leads.map((item) => ({
+        ...item,
+        type: "source",
+        references__source: item.references__source || "Unknown Source",
+      }));
+
+      // Combine both sets of leads
+      const combinedData = [...stageLeads, ...sourceLeads];
+
       setLeadData(data);
       setTotalLeads(data.total_leads);
-      const combinedData = [
-        ...data.stage_based_leads.map(
-          (item) => (
-            (item.updated_stage_name = leadStage[item.stage]),
-            {
-              ...item,
-              type: "stage",
-            }
-          )
-        ),
-        ...data.source_based_leads.map((item) => ({
-          ...item,
-          type: "source",
-          references__source: item.references__source || "Unknown Source",
-        })),
-      ];
       setFilteredData(combinedData);
     } catch (error) {
       console.error("Error fetching lead data:", error);
     }
   };
 
-  const handleFilterChange = (event, value, reason, type) => {
-    setFilterType(type);
+  const handleFilterChange = (event, value, type) => {
     if (type === "stage" && value) {
       setFilteredData(
         leadData.stage_based_leads
@@ -77,18 +73,17 @@ export const DashboardLeadData = () => {
           .map((item) => ({ ...item, type: "source" }))
       );
     } else {
-      const combinedData = [
-        ...leadData.stage_based_leads.map((item) => ({
-          ...item,
-          type: "stage",
-        })),
-        ...leadData.source_based_leads.map((item) => ({
-          ...item,
-          type: "source",
-          references__source: item.references__source || "Unknown Source",
-        })),
-      ];
-      setFilteredData(combinedData);
+      // If no specific filter is selected, show all leads
+      const stageLeads = leadData.stage_based_leads.map((item) => ({
+        ...item,
+        type: "stage",
+      }));
+      const sourceLeads = leadData.source_based_leads.map((item) => ({
+        ...item,
+        type: "source",
+        references__source: item.references__source || "Unknown Source",
+      }));
+      setFilteredData([...stageLeads, ...sourceLeads]);
     }
   };
 
@@ -99,11 +94,11 @@ export const DashboardLeadData = () => {
           <CustomAutocomplete
             options={leadData.stage_based_leads}
             getOptionLabel={(option) => option.updated_stage_name}
-            onChange={(event, value, reason) =>
-              handleFilterChange(event, value, reason, "stage")
+            onChange={(event, value) =>
+              handleFilterChange(event, value, "stage")
             }
             renderInput={(params) => (
-              <TextField
+              <CustomTextField
                 {...params}
                 label="Filter by Stage"
                 variant="outlined"
@@ -118,11 +113,11 @@ export const DashboardLeadData = () => {
             getOptionLabel={(option) =>
               option.references__source || "Unknown Source"
             }
-            onChange={(event, value, reason) =>
-              handleFilterChange(event, value, reason, "source")
+            onChange={(event, value) =>
+              handleFilterChange(event, value, "source")
             }
             renderInput={(params) => (
-              <TextField
+              <CustomTextField
                 {...params}
                 label="Filter by Source"
                 variant="outlined"
@@ -131,7 +126,7 @@ export const DashboardLeadData = () => {
             style={{ width: "100%" }}
           />
         </Grid>
-        <Grid item xs={12} md={6} style={{ textAlign: "centre" }}>
+        <Grid item xs={12} md={6} style={{ textAlign: "center" }}>
           <Typography
             variant="h6"
             style={{

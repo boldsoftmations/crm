@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { CustomTabs } from "../../Components/CustomTabs";
-import { SourceBasedGRNView } from "./SourceBasedGRN/SourceBasedGRNView";
 import { PackingListView } from "./PackingList/PackingListView";
 import { SafetyStockView } from "./SafetyStockLevel/SafetyStockView";
 import { GRNRegisterView } from "./GRNRegister/GRNRegisterView";
@@ -19,11 +18,6 @@ export const InventoryAllTabView = () => {
     groups.some((group) => userData.groups.includes(group));
 
   const tabs = [
-    {
-      label: "Source Based GRN",
-      roles: ["Director"],
-      component: <SourceBasedGRNView />,
-    },
     {
       label: "Pending GRN",
       roles: [
