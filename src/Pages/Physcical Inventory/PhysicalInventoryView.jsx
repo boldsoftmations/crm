@@ -23,10 +23,6 @@ export const PhysicalInventoryView = () => {
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
-  useEffect(() => {
-    getPhysicalInventoryData();
-  }, [currentPage, searchQuery, getPhysicalInventoryData]);
-
   const getPhysicalInventoryData = useCallback(async () => {
     setOpen(true);
     try {
@@ -42,6 +38,10 @@ export const PhysicalInventoryView = () => {
       setOpen(false);
     }
   }, [currentPage, searchQuery]);
+
+  useEffect(() => {
+    getPhysicalInventoryData();
+  }, [currentPage, searchQuery, getPhysicalInventoryData]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { getVendorName } from "../../../Redux/Action/Action";
-import axios from "axios";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import CustomTextField from "../../../Components/CustomTextField";
@@ -25,13 +24,12 @@ export const UpdateVendorDetails = (props) => {
   const [open, setOpen] = useState(false);
   const [typeData, setTypeData] = useState(recordForEdit.type);
   const [inputValue, setInputValue] = useState(recordForEdit);
-  const [pinCodeData, setPinCodeData] = useState([]);
+  // const [pinCodeData, setPinCodeData] = useState([]);
   const [errorMessage, setErrorMessage] = useState([]);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-
-  const timeoutRef = useRef(null);
   const dispatch = useDispatch();
+
   const handleChange = (event) => {
     const { value } = event.target;
     setTypeData(value);
@@ -56,16 +54,16 @@ export const UpdateVendorDetails = (props) => {
     }
   };
 
-  const validatePinCode = async (pinCode) => {
-    try {
-      const response = await axios.get(
-        `https://api.postalpincode.in/pincode/${pinCode}`
-      );
-      setPinCodeData(response.data[0].PostOffice[0]);
-    } catch (error) {
-      console.log("Creating Bank error ", error);
-    }
-  };
+  // const validatePinCode = async (pinCode) => {
+  //   try {
+  //     const response = await axios.get(
+  //       `https://api.postalpincode.in/pincode/${pinCode}`
+  //     );
+  //     setPinCodeData(response.data[0].PostOffice[0]);
+  //   } catch (error) {
+  //     console.log("Creating Bank error ", error);
+  //   }
+  // };
 
   useEffect(() => {
     dispatch(getVendorName(recordForEdit.name));
@@ -83,18 +81,8 @@ export const UpdateVendorDetails = (props) => {
         vendor_source: inputValue.vendor_source,
         address: inputValue.address,
         pincode: inputValue.pincode,
-        state:
-          typeData === "Domestic"
-            ? pinCodeData.State
-              ? pinCodeData.State
-              : inputValue.state
-            : inputValue.state,
-        city:
-          typeData === "Domestic"
-            ? pinCodeData.District
-              ? pinCodeData.District
-              : inputValue.city
-            : inputValue.city,
+        state: typeData === "Domestic" && inputValue.state,
+        city: typeData === "Domestic" && inputValue.city,
         website: inputValue.website,
         estd_date: inputValue.estd_date,
         gst_number: inputValue.gst_number,
@@ -253,13 +241,7 @@ export const UpdateVendorDetails = (props) => {
               name="state"
               label="State"
               variant="outlined"
-              value={
-                typeData === "Domestic"
-                  ? pinCodeData.State
-                    ? pinCodeData.State
-                    : inputValue.state
-                  : inputValue.state
-              }
+              value={typeData === "Domestic" && inputValue.state}
               onChange={handleInputChange}
               InputLabelProps={{
                 shrink: true,
@@ -273,13 +255,7 @@ export const UpdateVendorDetails = (props) => {
               size="small"
               label="City"
               variant="outlined"
-              value={
-                typeData === "Domestic"
-                  ? pinCodeData.District
-                    ? pinCodeData.District
-                    : inputValue.city
-                  : inputValue.city
-              }
+              value={typeData === "Domestic" && inputValue.city}
               onChange={handleInputChange}
               InputLabelProps={{
                 shrink: true,

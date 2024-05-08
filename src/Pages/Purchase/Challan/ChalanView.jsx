@@ -30,7 +30,6 @@ import { ChalanInvoiceCreate } from "../ChallanInvoice/ChalanInvoiceCreate";
 export const ChalanView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [chalanData, setChalanData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [open, setOpen] = useState({});
@@ -86,13 +85,6 @@ export const ChalanView = () => {
     setOpenPopup(true);
     setChallanNumbers(chalan);
   };
-  const filteredChalanData = Array.isArray(chalanData)
-    ? chalanData.filter(
-        (chalan) =>
-          chalan.buyer_account &&
-          chalan.buyer_account.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
 
   return (
     <>
@@ -157,7 +149,7 @@ export const ChalanView = () => {
                 </StyledTableRow>
               </TableHead>
               <TableBody>
-                {filteredChalanData.map((chalan) => (
+                {chalanData.map((chalan) => (
                   <React.Fragment key={chalan.id}>
                     <StyledTableRow sx={{ "& > *": { borderBottom: "unset" } }}>
                       <StyledTableCell>

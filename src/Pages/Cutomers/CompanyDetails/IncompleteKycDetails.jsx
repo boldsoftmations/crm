@@ -10,7 +10,6 @@ import { CustomSearchWithButton } from "../../../Components/CustomSearchWithButt
 import { BulkCustomerAssign } from "./BulkCustomerAssign";
 import { CustomTable } from "./../../../Components/CustomTable";
 import { CustomPagination } from "../../../Components/CustomPagination";
-import ProductService from "../../../services/ProductService";
 import { CSVLink } from "react-csv";
 import { Button } from "@mui/material";
 import { Helmet } from "react-helmet";
@@ -30,7 +29,6 @@ export const IncompleteKycDetails = () => {
   const [recordForEdit, setRecordForEdit] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [product, setProduct] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterSelectedQuery, setFilterSelectedQuery] = useState("");
   const [exportData, setExportData] = useState([]);
@@ -168,7 +166,6 @@ export const IncompleteKycDetails = () => {
   useEffect(() => {
     getAllSellerAccountsDetails();
     getIncompleteKycCustomerData();
-    getProduct();
   }, []);
 
   const getAllSellerAccountsDetails = async () => {
@@ -180,18 +177,6 @@ export const IncompleteKycDetails = () => {
       dispatch(getSellerAccountData(response.data));
       setOpen(false);
     } catch (err) {
-      setOpen(false);
-    }
-  };
-
-  const getProduct = async () => {
-    try {
-      setOpen(true);
-      const res = await ProductService.getAllProduct();
-      setProduct(res.data);
-      setOpen(false);
-    } catch (err) {
-      console.error("error potential", err);
       setOpen(false);
     }
   };

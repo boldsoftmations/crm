@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import DashboardService from "../../services/DashboardService";
-import { Popup } from "../../Components/Popup";
-import { DispatchData } from "../DispatchData";
 import { CustomLoader } from "../../Components/CustomLoader";
 import InvoiceServices from "../../services/InvoiceService";
 import { SalesPersonAnalytics } from "./SalesPersonAnalytics";
@@ -28,11 +26,8 @@ export const SalesPersonDashboard = () => {
   const [callPerformance, setCallPerformance] = useState([]);
   const [dailyInvoiceQuantity, setDailyInvoiceQuantity] = useState([]);
   const [dailyOrderBookQuantity, setDailyOrderBookQuantity] = useState([]);
-  const [dispatchDataByID, setDispatchDataByID] = useState(null);
-  const [openPopup2, setOpenPopup2] = useState(false);
   const [openPopup3, setOpenPopup3] = useState(false);
   const [hoveredSegment, setHoveredSegment] = useState(null);
-  const [assigned, setAssigned] = useState([]);
   const [assign, setAssign] = useState(null);
   const [total, setTotal] = useState(0);
   const [filterValue, setFilterValue] = useState(null);
@@ -1204,10 +1199,6 @@ export const SalesPersonDashboard = () => {
     setHoveredSegment(segment);
   };
 
-  const handleSegmentLeave = () => {
-    setHoveredSegment(null);
-  };
-
   const handleRowClick = (row) => {
     if (row.label === "New") {
       navigate("/leads/all-lead");
@@ -1237,7 +1228,6 @@ export const SalesPersonDashboard = () => {
         handleAutocompleteChange={handleAutocompleteChange}
         assign={assign}
         total={total}
-        assigned={assigned}
         getResetDate={getResetDate}
         funnelData={funnelData}
         hoveredSegment={hoveredSegment}
@@ -1260,17 +1250,6 @@ export const SalesPersonDashboard = () => {
         selectedWeek={selectedWeek}
         handleDateChange={handleDateChange}
       />
-      <Popup
-        maxWidth={"xl"}
-        title={`View ${dispatchDataByID && dispatchDataByID.type} dashboard`}
-        openPopup={openPopup2}
-        setOpenPopup={setOpenPopup2}
-      >
-        <DispatchData
-          dispatchDataByID={dispatchDataByID}
-          setOpenPopup={setOpenPopup2}
-        />
-      </Popup>
     </>
   );
 };
@@ -1288,19 +1267,4 @@ const shortMonths = [
   "Oct",
   "Nov",
   "Dec",
-];
-
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
 ];

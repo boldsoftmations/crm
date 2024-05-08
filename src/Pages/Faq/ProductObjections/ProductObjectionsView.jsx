@@ -30,10 +30,6 @@ export const ProductObjectionsView = () => {
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
 
-  useEffect(() => {
-    getProductObjectionDetails(currentPage);
-  }, [currentPage, searchQuery, getProductObjectionDetails]);
-
   const formatDate = useCallback((dateString) => {
     const options = {
       year: "numeric",
@@ -66,6 +62,10 @@ export const ProductObjectionsView = () => {
     },
     [searchQuery]
   );
+
+  useEffect(() => {
+    getProductObjectionDetails(currentPage);
+  }, [currentPage, searchQuery, getProductObjectionDetails]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);

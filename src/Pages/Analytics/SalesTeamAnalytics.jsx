@@ -24,7 +24,6 @@ export const SalesTeamAnalytics = (props) => {
   const {
     barChartData,
     pieChartData,
-    horizontalBarData,
     newCustomerData,
     pendingTask,
     pendingFollowup,
@@ -52,8 +51,6 @@ export const SalesTeamAnalytics = (props) => {
     endDate,
     maxDate,
     minDate,
-    openPopup3,
-    setOpenPopup3,
     getResetDate,
     team,
   } = props;
@@ -191,15 +188,15 @@ export const SalesTeamAnalytics = (props) => {
     "#008080",
   ];
 
-  const chartContainerStyle = {
-    margin: "20px",
-    borderRadius: "10px",
-    boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-    backgroundColor: "#fff",
-    paddingTop: "20px",
-    width: "100%",
-    minHeight: "300px",
-  };
+  // const chartContainerStyle = {
+  //   margin: "20px",
+  //   borderRadius: "10px",
+  //   boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+  //   backgroundColor: "#fff",
+  //   paddingTop: "20px",
+  //   width: "100%",
+  //   minHeight: "300px",
+  // };
 
   const textStyle = {
     color: "#fff",

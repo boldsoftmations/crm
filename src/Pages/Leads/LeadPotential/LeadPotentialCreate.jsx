@@ -31,7 +31,7 @@ export const LeadPotentialCreate = memo((props) => {
   };
 
   const handleAutocompleteChange = (value) => {
-    setPotential({ ...potential, ["product"]: value });
+    setPotential((prev) => ({ ...prev, product: value }));
   };
 
   useEffect(() => {

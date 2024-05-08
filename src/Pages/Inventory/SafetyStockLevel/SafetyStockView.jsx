@@ -21,6 +21,7 @@ import InventoryServices from "../../../services/InventoryService";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
+import { CustomLoader } from "../../../Components/CustomLoader";
 
 export const SafetyStockView = () => {
   const [openPopupCreate, setOpenPopupCreate] = useState(false);
@@ -45,10 +46,6 @@ export const SafetyStockView = () => {
     }
   };
 
-  useEffect(() => {
-    getAllSafetyStockDetails(currentPage);
-  }, [currentPage, getAllSafetyStockDetails]);
-
   const getAllSafetyStockDetails = useCallback(async (page) => {
     setOpen(true); // Set loading state before making the API call
     try {
@@ -63,6 +60,10 @@ export const SafetyStockView = () => {
     }
   }, []);
 
+  useEffect(() => {
+    getAllSafetyStockDetails(currentPage);
+  }, [currentPage, getAllSafetyStockDetails]);
+
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
@@ -75,6 +76,7 @@ export const SafetyStockView = () => {
         severity={alertInfo.severity}
         message={alertInfo.message}
       />
+      <CustomLoader open={open} />
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
           <Box display="flex" marginBottom="10px">
