@@ -211,7 +211,7 @@ const cancelSalesInvoice = (id, data) => {
 };
 
 const getSalesnvoiceDataById = (id) => {
-  return CustomAxios.get(`/api/invoice/list-sales-invoice/${id}`);
+  return CustomAxios.get(`api/invoice/list-sales-invoice/${id}`);
 };
 
 const getAllSaleRegisterData = (startDate, endDate) => {
