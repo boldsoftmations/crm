@@ -26,10 +26,13 @@ export const JobWorkerStoreInventoryView = () => {
   const getJobWorkerData = useCallback(async () => {
     try {
       setOpen(true);
+      console.log("before api");
       const response = await InventoryServices.getJobWorkerInventoryData();
+      console.log("after api");
       setInventoryData(response.data);
-    } catch (err) {
-      handleError(err);
+    } catch (error) {
+      handleError(error);
+      console.log("error", error);
     } finally {
       setOpen(false);
     }

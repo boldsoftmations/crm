@@ -1,13 +1,61 @@
 import React, { useState, useEffect } from "react";
-import { Button, Grid, IconButton } from "@mui/material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import {
+  Button,
+  Grid,
+  Typography,
+  ListItem,
+  styled,
+  Divider,
+  Chip,
+  Box,
+} from "@mui/material";
 import InventoryServices from "../../../services/InventoryService";
 import ProductService from "../../../services/ProductService";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import CustomTextField from "../../../Components/CustomTextField";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
+
+const Root = styled("div")(({ theme }) => ({
+  width: "100%",
+  ...theme.typography.body2,
+  "& > :not(style) + :not(style)": {
+    marginTop: theme.spacing(2),
+  },
+}));
+
+function BOMProductsList({ bomProducts }) {
+  return (
+    <Grid container spacing={2} sx={{ marginBottom: 2 }}>
+      {bomProducts.map((bomProduct, index) => (
+        <ListItem key={index}>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={4} sm={2}>
+              <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+                Product:
+              </Typography>
+            </Grid>
+            <Grid item xs={8} sm={4}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                {bomProduct.product}
+              </Typography>
+            </Grid>
+            <Grid item xs={4} sm={2}>
+              <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+                Quantity:
+              </Typography>
+            </Grid>
+            <Grid item xs={8} sm={4}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                {bomProduct.quantity}
+              </Typography>
+            </Grid>
+          </Grid>
+        </ListItem>
+      ))}
+    </Grid>
+  );
+}
 
 export const ChalanInvoiceCreate = ({
   setOpenPopup,
@@ -23,22 +71,19 @@ export const ChalanInvoiceCreate = ({
     invoice_no: "",
     products: [{ product: "", quantity: "", bom_id: "" }],
   });
-  const [productOptions, setProductOptions] = useState([]);
   const [bomIdOptions, setBomIdOptions] = useState([]);
+  const [productOptions, setProductOptions] = useState([]);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        // Fetch product data
-        const productResponse = await ProductService.getAllProduct();
+        const [productResponse, bomResponse] = await Promise.all([
+          ProductService.getAllProduct(),
+          InventoryServices.getAllBillofMaterialsData("all"),
+        ]);
         setProductOptions(productResponse.data);
-
-        // Fetch BOM data
-        const bomResponse = await InventoryServices.getAllBillofMaterialsData(
-          "all"
-        );
         setBomIdOptions(bomResponse.data);
       } catch (error) {
         console.error("Error fetching initial data:", error);
@@ -48,7 +93,6 @@ export const ChalanInvoiceCreate = ({
     fetchInitialData();
   }, []);
 
-  // Generic input handler for other form data
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => ({
@@ -57,18 +101,42 @@ export const ChalanInvoiceCreate = ({
     }));
   };
 
-  // Handles changes to product-specific data
   const handleProductChange = (index, name, value) => {
-    const updatedProducts = formData.products.map((item, idx) =>
-      idx === index ? { ...item, [name]: value } : item
-    );
+    const updatedProducts = [...formData.products];
+    updatedProducts[index][name] = value;
     setFormData((prevFormData) => ({
       ...prevFormData,
       products: updatedProducts,
     }));
   };
 
-  // Add a new product entry field
+  const handleBomIdChange = async (index, value) => {
+    const updatedProducts = [...formData.products];
+    updatedProducts[index]["bom_id"] = value;
+
+    const selectedBom = bomIdOptions.find((option) => option.bom_id === value);
+
+    if (selectedBom) {
+      const bomProductData = selectedBom.products_data || [];
+
+      const bomProductsFormatted = bomProductData.map(
+        ({ product, quantity }) => ({
+          product,
+          quantity,
+        })
+      );
+
+      updatedProducts[index]["bom_products"] = bomProductsFormatted;
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        products: updatedProducts,
+      }));
+    } else {
+      console.error("Selected BOM not found in bomIdOptions");
+    }
+  };
+
   const addProductField = () => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -79,7 +147,6 @@ export const ChalanInvoiceCreate = ({
     }));
   };
 
-  // Remove a product entry field
   const removeProductField = (index) => {
     const filteredProducts = formData.products.filter(
       (_, idx) => idx !== index
@@ -90,7 +157,6 @@ export const ChalanInvoiceCreate = ({
     }));
   };
 
-  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -99,8 +165,10 @@ export const ChalanInvoiceCreate = ({
         service_charge: parseInt(formData.service_charge, 10),
         transport_cost: parseInt(formData.transport_cost, 10),
         products: formData.products.map((product) => ({
-          ...product,
+          // Only include the desired fields for each product
+          product: product.product,
           quantity: parseInt(product.quantity, 10),
+          bom_id: product.bom_id,
         })),
       };
       const response = await InventoryServices.createChalanInvoice(
@@ -125,71 +193,38 @@ export const ChalanInvoiceCreate = ({
       />
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
-          {/* Main Inputs */}
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Challan"
-              name="challan"
-              value={formData.challan}
-              onChange={handleChange}
-            />
+          {[
+            "challan",
+            "job_worker",
+            "buyer_account",
+            "service_charge",
+            "transport_cost",
+            "invoice_no",
+          ].map((fieldName, index) => (
+            <Grid item xs={12} sm={4} key={index}>
+              <CustomTextField
+                fullWidth
+                size="small"
+                label={fieldName.replace(/_/g, " ")}
+                name={fieldName}
+                type={
+                  fieldName === "service_charge" ||
+                  fieldName === "transport_cost"
+                    ? "number"
+                    : "text"
+                }
+                value={formData[fieldName]}
+                onChange={handleChange}
+              />
+            </Grid>
+          ))}
+          <Grid item xs={12}>
+            <Root>
+              <Divider>
+                <Chip label="Product" />
+              </Divider>
+            </Root>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Job Worker"
-              name="job_worker"
-              value={formData.job_worker}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              size="small"
-              fullWidth
-              label="Buyer Account"
-              name="buyer_account"
-              value={formData.buyer_account}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Service Charge"
-              name="service_charge"
-              type="number"
-              value={formData.service_charge}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Transport Cost"
-              name="transport_cost"
-              type="number"
-              value={formData.transport_cost}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              label="Invoice No"
-              name="invoice_no"
-              value={formData.invoice_no}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          {/* Product Inputs */}
           {formData.products.map((product, index) => (
             <React.Fragment key={index}>
               <Grid item xs={12} sm={4}>
@@ -227,29 +262,46 @@ export const ChalanInvoiceCreate = ({
                   disablePortal
                   id={`bom-box-${index}`}
                   value={product.bom_id}
-                  onChange={(event, value) =>
-                    handleProductChange(index, "bom_id", value)
-                  }
+                  onChange={(event, value) => handleBomIdChange(index, value)}
                   options={bomIdOptions.map((option) => option.bom_id)}
                   getOptionLabel={(option) => option}
                   label="BOM ID"
                 />
               </Grid>
               <Grid item xs={12} sm={2}>
-                <IconButton onClick={addProductField}>
-                  <AddCircleOutlineIcon />
-                </IconButton>
-                {index > 0 && (
-                  <IconButton onClick={() => removeProductField(index)}>
-                    <RemoveCircleOutlineIcon />
-                  </IconButton>
+                {index !== 0 && (
+                  <Button
+                    disabled={index === 0}
+                    onClick={() => removeProductField(index)}
+                    variant="contained"
+                  >
+                    Remove
+                  </Button>
                 )}
               </Grid>
+              {product.bom_products && product.bom_products.length > 0 && (
+                <Grid item xs={12}>
+                  <Box sx={{ mt: 2, mb: 1 }}>
+                    <Divider>
+                      <Chip label="BOM Products" />
+                    </Divider>
+                  </Box>
+                  <BOMProductsList bomProducts={product.bom_products} />
+                </Grid>
+              )}
             </React.Fragment>
           ))}
-
+          <Grid item xs={12} sm={4} alignContent="right">
+            <Button
+              onClick={addProductField}
+              variant="contained"
+              sx={{ marginRight: "1em" }}
+            >
+              Add More...
+            </Button>
+          </Grid>
           <Grid item xs={12}>
-            <Button type="submit" variant="contained" color="primary">
+            <Button fullWidth type="submit" variant="contained" color="primary">
               Create Invoice
             </Button>
           </Grid>

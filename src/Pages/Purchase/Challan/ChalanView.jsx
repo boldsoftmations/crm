@@ -108,7 +108,7 @@ export const ChalanView = () => {
                 textAlign: "center",
               }}
             >
-              Job Work Chalan
+              Job Work Challan
             </h3>
             <div></div>
           </Box>
@@ -277,8 +277,8 @@ export const ChalanView = () => {
           <Popup
             openPopup={openPopup}
             setOpenPopup={setOpenPopup}
-            title={"Create Chalan Invoice"}
-            maxWidth="xl"
+            title={"Create Challan Invoice"}
+            fullScreen={true}
           >
             <ChalanInvoiceCreate
               currentPage={currentPage}

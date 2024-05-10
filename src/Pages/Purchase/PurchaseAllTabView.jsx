@@ -36,12 +36,12 @@ export const PurchaseAllTabView = () => {
       component: <GRNView />,
     },
     {
-      label: "Job Work Chalan",
+      label: "Job Work Challan",
       roles: ["Director"],
       component: <ChalanView />,
     },
     {
-      label: "Job Work Chalan Invoice",
+      label: "Job Work Challan Invoice",
       roles: ["Director"],
       component: <ChalanInvoiceView />,
     },

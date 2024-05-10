@@ -30,7 +30,7 @@ export const DepartmentView = () => {
 
   useEffect(() => {
     fetchDepartments();
-  }, [fetchDepartments]);
+  }, []);
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);

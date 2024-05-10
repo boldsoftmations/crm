@@ -74,7 +74,7 @@ export const ChalanInvoiceView = () => {
                 textAlign: "center",
               }}
             >
-              Chalan Invoice
+              Challan Invoice
             </h3>
           </Box>
 
