@@ -79,10 +79,8 @@ export const AllProductStoreInventoryView = ({ idForEdit, selectedRow }) => {
               <TableHead>
                 <StyledTableRow>
                   <StyledTableCell align="center">PRODUCT</StyledTableCell>
+                  <StyledTableCell align="center">PRODUCT</StyledTableCell>
                   <StyledTableCell align="center">QUANTITY</StyledTableCell>
-                  <StyledTableCell align="center">
-                    PENDING QUANTITY
-                  </StyledTableCell>
                   <StyledTableCell align="center">RATE</StyledTableCell>
                   <StyledTableCell align="center">TOTAL AMOUNT</StyledTableCell>
                 </StyledTableRow>
@@ -91,10 +89,10 @@ export const AllProductStoreInventoryView = ({ idForEdit, selectedRow }) => {
                 {detailsData.map((row, i) => (
                   <StyledTableRow>
                     <StyledTableCell align="center">
-                      {row.product}
+                      {row.source_key}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.quantity}
+                      {row.product}
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {row.pending_quantity}

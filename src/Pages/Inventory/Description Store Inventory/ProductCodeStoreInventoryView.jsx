@@ -90,9 +90,6 @@ export const ProductCodeStoreInventoryView = ({ idForEdit }) => {
                 <StyledTableRow>
                   <StyledTableCell align="center">PRODUCT</StyledTableCell>
                   <StyledTableCell align="center">QUANTITY</StyledTableCell>
-                  <StyledTableCell align="center">
-                    PENDING QUANTITY
-                  </StyledTableCell>
                   <StyledTableCell align="center">RATE</StyledTableCell>
                   <StyledTableCell align="center">TOTAL AMOUNT</StyledTableCell>
                   <StyledTableCell align="center">ACTION</StyledTableCell>
@@ -103,9 +100,6 @@ export const ProductCodeStoreInventoryView = ({ idForEdit }) => {
                   <StyledTableRow>
                     <StyledTableCell align="center">
                       {row.product}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {row.quantity}
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {row.pending_quantity}

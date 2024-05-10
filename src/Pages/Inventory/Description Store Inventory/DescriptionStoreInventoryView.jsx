@@ -173,9 +173,7 @@ export const DescriptionStoreInventoryView = () => {
                 <StyledTableRow>
                   <StyledTableCell align="center">DESCRIPTION</StyledTableCell>
                   <StyledTableCell align="center">QUANTITY</StyledTableCell>
-                  <StyledTableCell align="center">
-                    PENDING QUANTITY
-                  </StyledTableCell>
+
                   <StyledTableCell align="center">RATE</StyledTableCell>
                   <StyledTableCell align="center">TOTAL AMOUNT</StyledTableCell>
                   <StyledTableCell align="center">UNIT</StyledTableCell>
@@ -188,9 +186,7 @@ export const DescriptionStoreInventoryView = () => {
                     <StyledTableCell align="center">
                       {row.description}
                     </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {row.quantity}
-                    </StyledTableCell>
+
                     <StyledTableCell align="center">
                       {row.pending_quantity}
                     </StyledTableCell>
