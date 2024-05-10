@@ -18,7 +18,7 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const CreateChalan = memo(
+export const CreateChallanRegister = memo(
   ({ recordForEdit, setOpenPopup, getAllVendorDetails, currentPage }) => {
     const { sellerData, userData } = useSelector((state) => ({
       sellerData: state.auth.sellerAccount,

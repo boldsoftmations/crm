@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { PurchaseOrderView } from "./Purchase Order/PurchaseOrderView";
 import { GRNView } from "./GRN/GRNView";
 import { PurchaseInvoiceView } from "./Purchase Invoice/PurchaseInvoiceView";
-import { ChalanView } from "./Challan/ChalanView";
+import { ChallanRegisterView } from "./Challan Register/ChallanRegisterView";
 import { ChalanInvoiceView } from "./ChallanInvoice/ChalanInvoiceView";
 import { CustomTabs } from "../../Components/CustomTabs";
 
@@ -36,9 +36,9 @@ export const PurchaseAllTabView = () => {
       component: <GRNView />,
     },
     {
-      label: "Job Work Challan",
+      label: "Challan Register",
       roles: ["Director"],
-      component: <ChalanView />,
+      component: <ChallanRegisterView />,
     },
     {
       label: "Job Work Challan Invoice",

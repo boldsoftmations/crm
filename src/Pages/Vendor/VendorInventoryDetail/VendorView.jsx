@@ -15,7 +15,7 @@ import { Popup } from "../../../Components/Popup";
 import { CreateVendorDetails } from "../VendorInventoryDetail/CreateVendorDetails";
 import { UpdateAllVendorDetails } from "../VendorInventoryDetail/UpdateAllVendorDetails";
 import { PurchaseOrderCreate } from "../../Purchase/Purchase Order/PurchaseOrderCreate";
-import { CreateChalan } from "../../Purchase/Challan/CreateChalan";
+import { CreateChallanRegister } from "../../Purchase/Challan Register/CreateChallanRegister";
 import InventoryServices from "../../../services/InventoryService";
 
 export const VendorView = () => {
@@ -284,7 +284,7 @@ export const VendorView = () => {
         openPopup={openPopupChalan}
         setOpenPopup={setOpenPopupChalan}
       >
-        <CreateChalan
+        <CreateChallanRegister
           setOpenPopup={setOpenPopupChalan}
           getAllVendorDetails={getAllVendorDetails}
           recordForEdit={recordForEdit}

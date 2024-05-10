@@ -27,7 +27,7 @@ import { CustomPagination } from "../../../Components/CustomPagination";
 import InventoryServices from "../../../services/InventoryService";
 import { ChalanInvoiceCreate } from "../ChallanInvoice/ChalanInvoiceCreate";
 
-export const ChalanView = () => {
+export const ChallanRegisterView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [chalanData, setChalanData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -108,7 +108,7 @@ export const ChalanView = () => {
                 textAlign: "center",
               }}
             >
-              Job Work Challan
+              Challan Register
             </h3>
             <div></div>
           </Box>

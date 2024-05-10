@@ -174,7 +174,7 @@ export const PurchaseInvoiceView = () => {
                   <StyledTableCell align="center">GRN NO</StyledTableCell>
                   <StyledTableCell align="center">GRN Date</StyledTableCell>
                   <StyledTableCell align="center">
-                    SALES ORDER NO
+                    PURCHASE ORDER NO
                   </StyledTableCell>
                   <StyledTableCell align="center">VENDOR</StyledTableCell>
                   <StyledTableCell align="center">INVOICE NO </StyledTableCell>
