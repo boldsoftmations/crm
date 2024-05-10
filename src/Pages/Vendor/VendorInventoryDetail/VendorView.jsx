@@ -233,7 +233,7 @@ export const VendorView = () => {
             ButtonText1={
               (!userData.groups.includes("Accounts Executive") ||
                 !userData.groups.includes("Accounts")) &&
-              "Chalan"
+              "Challan Register"
             }
           />
           <CustomPagination
@@ -280,7 +280,7 @@ export const VendorView = () => {
       </Popup>
       <Popup
         fullScreen={true}
-        title={"Create Chalan"}
+        title={"Create Challan Register"}
         openPopup={openPopupChalan}
         setOpenPopup={setOpenPopupChalan}
       >
