@@ -100,9 +100,6 @@ export const ChalanInvoiceView = () => {
               <TableHead>
                 <StyledTableRow>
                   <StyledTableCell align="center">Toggle</StyledTableCell>
-                  <StyledTableCell align="center">
-                    Challan Number
-                  </StyledTableCell>
                   <StyledTableCell align="center">Job Worker</StyledTableCell>
                   <StyledTableCell align="center">
                     Buyer Account
@@ -131,9 +128,6 @@ export const ChalanInvoiceView = () => {
                             <KeyboardArrowDownIcon />
                           )}
                         </IconButton>
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {chalan.challan}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {chalan.job_worker}
