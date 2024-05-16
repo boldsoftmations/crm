@@ -435,7 +435,7 @@ export const MaterialRequisitionFormView = () => {
       </Popup>
       <Popup
         maxWidth="xl"
-        title={"View Material Transfer Note"}
+        title={"View Material Requisition Note"}
         openPopup={openPopup3}
         setOpenPopup={setOpenPopup3}
       >

@@ -535,6 +535,33 @@ const updatePhysical = (id, data) => {
   return CustomAxios.patch(`/api/inventory/physical-inventory/${id}/`, data);
 };
 
+// Sales Return inventory api
+const getSalesReturnData = (page, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
+
+  if (page) {
+    params.append("page", page);
+  }
+
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
+
+  // Sending a GET request with query parameters
+  return CustomAxios.get(
+    `api/inventory/list-purchase-invoice/?${params.toString()}`
+  );
+};
+
+const getSalesReturnByIDData = (id) => {
+  return CustomAxios.get(`api/invoice/list-sales-invoice/${id}`);
+};
+
+const createSalesReturn = (data) => {
+  return CustomAxios.post(`/api/inventory/list-purchase-invoice/`, data);
+};
+
 const InventoryServices = {
   getAllVendorData,
   createVendorData,
@@ -598,6 +625,9 @@ const InventoryServices = {
   getPhysical,
   createPhysical,
   updatePhysical,
+  getSalesReturnData,
+  getSalesReturnByIDData,
+  createSalesReturn,
 };
 
 export default InventoryServices;

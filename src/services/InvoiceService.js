@@ -172,33 +172,42 @@ const getAllOrderBookDataWithSearch = (data, type, searchvalue) => {
 };
 
 // sales invoice api
-const getSalesInvoiceData = (startDate, endDate) => {
-  return CustomAxios.get(
-    `/api/invoice/list-sales-invoice/?start_date=${startDate}&end_date=${endDate}`
-  );
-};
-
-const getSalesInvoiceDataWithSearch = (startDate, endDate, type, search) => {
-  return CustomAxios.get(
-    `/api/invoice/list-sales-invoice/?start_date=${startDate}&end_date=${endDate}&${type}=${search}`
-  );
-};
-
-const getSalesInvoiceDataWithPagination = (startDate, endDate, currentPage) => {
-  return CustomAxios.get(
-    `/api/invoice/list-sales-invoice/?start_date=${startDate}&end_date=${endDate}&page=${currentPage}`
-  );
-};
-
-const getSalesInvoiceDataWithPaginationAndSearch = (
+const getSalesInvoiceData = (
   startDate,
   endDate,
-  currentPage,
-  type,
-  search
+  page,
+  filterValue,
+  searchValue
 ) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
+
+  if (startDate) {
+    params.append("start_date", startDate);
+  }
+
+  if (endDate) {
+    params.append("end_date", endDate);
+  }
+
+  if (page) {
+    params.append("page", page);
+  }
+
+  if (filterValue) {
+    params.append(
+      "order_book__proforma_invoice__seller_account__unit",
+      filterValue
+    );
+  }
+
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
+
+  // Sending a GET request with query parameters
   return CustomAxios.get(
-    `/api/invoice/list-sales-invoice/?start_date=${startDate}&end_date=${endDate}&page=${currentPage}&${type}=${search}`
+    `api/invoice/list-sales-invoice/?${params.toString()}`
   );
 };
 
@@ -353,9 +362,6 @@ const InvoiceServices = {
   getTotalPendingQuantity,
   getAllOrderBookDataWithSearch,
   getSalesInvoiceData,
-  getSalesInvoiceDataWithSearch,
-  getSalesInvoiceDataWithPagination,
-  getSalesInvoiceDataWithPaginationAndSearch,
   createSalesnvoiceData,
   cancelSalesInvoice,
   getSalesnvoiceDataById,
