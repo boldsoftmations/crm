@@ -64,7 +64,7 @@ import { Report } from "../Pages/Report/Report";
 import { AnalyticsAllTabView } from "../Pages/Analytics/AnalyticsAllTabView";
 import { AllDispatchTabView } from "../Pages/Dispatch/AllDispatchTabView";
 import { AllProfileTabView } from "../Pages/Users/AllProfileTabView";
-import { SalesReturnView } from "../Pages/SalesReturn/SalesReturnView";
+import { SalesReturnAllTabView } from "../Pages/SalesReturn/SalesReturnAllTabView";
 
 export const RouteScreen = () => {
   const tokenData = useSelector((state) => state.auth);
@@ -224,7 +224,7 @@ export const RouteScreen = () => {
             />
             <Route
               path="/inventory/sales-return"
-              element={<SalesReturnView />}
+              element={<SalesReturnAllTabView />}
             />
             {/* ProductForecast Route */}
             <Route

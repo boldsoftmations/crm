@@ -173,6 +173,8 @@ const getAllPurchaseInvoiceData = (yearMonthFilter, page, searchValue) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
 
+  params.append("invoice_type", "Purchase");
+
   if (yearMonthFilter) {
     params.append("year_month", yearMonthFilter);
   }
@@ -540,6 +542,8 @@ const getSalesReturnData = (page, searchValue) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
 
+  params.append("invoice_type", "Sales Return");
+
   if (page) {
     params.append("page", page);
   }
@@ -562,6 +566,24 @@ const createSalesReturn = (data) => {
   return CustomAxios.post(`/api/inventory/list-purchase-invoice/`, data);
 };
 
+//sales return inventory get data api
+const getSalesReturnInventoryData = (page, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
+
+  if (page) {
+    params.append("page", page);
+  }
+
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
+
+  // Sending a GET request with query parameters
+  return CustomAxios.get(
+    `api/inventory/sales-return-inventory/?${params.toString()}`
+  );
+};
 const InventoryServices = {
   getAllVendorData,
   createVendorData,
@@ -628,6 +650,7 @@ const InventoryServices = {
   getSalesReturnData,
   getSalesReturnByIDData,
   createSalesReturn,
+  getSalesReturnInventoryData,
 };
 
 export default InventoryServices;
