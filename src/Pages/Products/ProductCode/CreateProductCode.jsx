@@ -58,7 +58,7 @@ export const CreateProductCode = memo((props) => {
         setOpen(false); // Always close the loader
       }
     },
-    [productCode, currentPage, searchQuery]
+    [productCode, description, currentPage, searchQuery]
   );
   return (
     <>
