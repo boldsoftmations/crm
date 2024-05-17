@@ -75,18 +75,29 @@ const getPIPaginationWithFilterByWithDateRange = (
 };
 
 // Generic function to get order book data
-const getAllPIData = ({
-  piType,
-  page,
-  filterType,
-  filterValue,
-  searchValue,
-}) => {
-  let url = `/api/invoice/list-proforma-invoice/?pi=${piType}`;
-  if (page) url += `&page=${page}`;
-  if (filterType && filterValue) url += `&${filterType}=${filterValue}`;
-  if (searchValue) url += `&search=${searchValue}`;
-  return CustomAxios.get(url);
+const getAllPIData = (piType, page, filterType, filterValue, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
+
+  if (piType) {
+    params.append("pi", piType);
+  }
+  if (page) {
+    params.append("page", page);
+  }
+
+  if (filterType && filterValue) {
+    params.append(filterType, filterValue);
+  }
+
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
+
+  // Sending a GET request with query parameters
+  return CustomAxios.get(
+    `api/invoice/list-proforma-invoice/?${params.toString()}`
+  );
 };
 
 // All Lead Api
