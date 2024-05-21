@@ -34,11 +34,13 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import SearchComponent from "../../../Components/SearchComponent ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import SupplierInvoicesCreate from "../SupplierInvoices/SupplierInvoicesCreate";
 
 export const SalesInvoiceView = () => {
   const [open, setOpen] = useState(false);
   const [salesInvoiceData, setSalesInvoiceData] = useState([]);
   const [openModalBI, setOpenModalBI] = useState(false);
+  const [openModalSI, setOpenModalSI] = useState(false);
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [openPopup3, setOpenPopup3] = useState(false);
@@ -199,34 +201,30 @@ export const SalesInvoiceView = () => {
     getAllSellerAccountsDetails();
   }, []);
 
-  const getSalesInvoiceDetails = useCallback(
-    async (page, filterQuery, searchQuery) => {
-      try {
-        setOpen(true);
-        const StartDate = startDate
-          ? startDate.toISOString().split("T")[0]
-          : "";
-        const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
-        const response = await InvoiceServices.getSalesInvoiceData(
-          StartDate,
-          EndDate,
-          page,
-          filterQuery,
-          searchQuery
-        );
-        setSalesInvoiceData(response.data.results);
-        setTotalPages(Math.ceil(response.data.count / 25));
-      } catch (error) {
-        handleError(error);
-      } finally {
-        setOpen(false);
-      }
-    },
-    [startDate, endDate]
-  ); // Ensure dependencies are correctly listed
+  const getSalesInvoiceDetails = useCallback(async () => {
+    try {
+      setOpen(true);
+      const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
+      const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
+      const response = await InvoiceServices.getSalesInvoiceData(
+        "customer",
+        StartDate,
+        EndDate,
+        currentPage,
+        filterSelectedQuery,
+        searchQuery
+      );
+      setSalesInvoiceData(response.data.results);
+      setTotalPages(Math.ceil(response.data.count / 25));
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setOpen(false);
+    }
+  }, [startDate, endDate, currentPage, filterSelectedQuery, searchQuery]); // Ensure dependencies are correctly listed
 
   useEffect(() => {
-    getSalesInvoiceDetails(currentPage, filterSelectedQuery, searchQuery);
+    getSalesInvoiceDetails();
   }, [startDate, endDate, currentPage, filterSelectedQuery, searchQuery]);
 
   const handleSearch = (query) => {
@@ -328,15 +326,18 @@ export const SalesInvoiceView = () => {
                 )}
               </Grid>
               {/* Title and Buttons - Second Row */}
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={4}>
                 <Button
                   onClick={() => setOpenModalBI(true)}
                   variant="contained"
                 >
                   BranchInvoice
                 </Button>
+                <Button onClick={() => setOpenModalSI(true)} variant="outlined">
+                  Supplier Invoice
+                </Button>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={5}>
                 <Box display="flex" justifyContent="center">
                   <Typography
                     variant="h4"
@@ -436,7 +437,18 @@ export const SalesInvoiceView = () => {
       >
         <BranchInvoicesCreate
           getSalesInvoiceDetails={getSalesInvoiceDetails}
-          setOpenPopup={setOpenPopup}
+          setOpenPopup={setOpenModalBI}
+        />
+      </Popup>
+      <Popup
+        fullScreen={true}
+        title={"Create Supplier Invoice"}
+        openPopup={openModalSI}
+        setOpenPopup={setOpenModalSI}
+      >
+        <SupplierInvoicesCreate
+          getSalesInvoiceDetails={getSalesInvoiceDetails}
+          setOpenPopup={setOpenModalSI}
         />
       </Popup>
       <Popup
