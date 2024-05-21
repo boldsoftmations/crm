@@ -46,7 +46,7 @@ export const CreateConsumable = memo((props) => {
     descriptionOptions,
     "name",
     formData.description,
-    "short_name"
+    "auto_number"
   );
 
   const productName = `${formData.description || ""}-${
@@ -136,18 +136,6 @@ export const CreateConsumable = memo((props) => {
               label="Shelf Life (Month)"
               variant="outlined"
               value={formData.shelf_life || ""}
-              onChange={handleInputChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              size="small"
-              type="number"
-              name="shelfLife"
-              label="Shelf Life (Months)"
-              variant="outlined"
-              value={formData.shelf_life}
               onChange={handleInputChange}
             />
           </Grid>
