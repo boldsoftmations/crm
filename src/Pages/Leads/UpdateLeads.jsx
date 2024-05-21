@@ -101,17 +101,6 @@ export const UpdateLeads = memo((props) => {
     setChecked(event.target.checked);
   };
 
-  // Fetch data on component mount
-  useEffect(() => {
-    if (leadsByID) getLeadsData(leadsByID);
-  }, []);
-
-  useEffect(() => {
-    getDescriptionNoData();
-    getCompetitors();
-    getAssignedData();
-  }, []);
-
   const getDescriptionNoData = async () => {
     try {
       const res = await ProductService.getNoDescription();
@@ -150,6 +139,12 @@ export const UpdateLeads = memo((props) => {
     }
   };
 
+  useEffect(() => {
+    getDescriptionNoData();
+    getCompetitors();
+    getAssignedData();
+  }, []);
+
   const getLeadsData = async (recordForEdit) => {
     try {
       setOpen(true);
@@ -165,6 +160,10 @@ export const UpdateLeads = memo((props) => {
     }
   };
 
+  // Fetch data on component mount
+  useEffect(() => {
+    if (leadsByID) getLeadsData(leadsByID);
+  }, []);
   // Update leads data
   const updateLeadsData = useCallback(
     async (e) => {
