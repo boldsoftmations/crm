@@ -12,16 +12,13 @@ import {
   TableCell,
   Button,
   TableFooter,
-  Pagination,
   Collapse,
   Typography,
   IconButton,
   Switch,
-  Snackbar,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import jsPDF from "jspdf";
-import CloseIcon from "@mui/icons-material/Close";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { CustomLoader } from "../../../Components/CustomLoader";
