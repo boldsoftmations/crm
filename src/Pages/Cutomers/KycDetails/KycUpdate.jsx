@@ -26,17 +26,6 @@ const KycUpdate = ({
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
-  // Fetch company details based on the active tab when the component mounts or the active tab changes
-  useEffect(() => {
-    if (recordForEdit) {
-      getAllCompanyDetailsByID();
-    }
-  }, [recordForEdit]);
-
-  useEffect(() => {
-    getCompetitors();
-  }, []);
-
   // Fetch competitors
   const getCompetitors = async () => {
     try {
@@ -48,19 +37,11 @@ const KycUpdate = ({
     }
   };
 
-  //fetch group companies
   useEffect(() => {
-    setLoading(true);
-    fetchGroupCompanies()
-      .then((data) => {
-        setGroupCompanies(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch group companies", error);
-        setLoading(false);
-      });
+    getCompetitors();
   }, []);
+
+  //fetch group companies
 
   const fetchGroupCompanies = async () => {
     try {
@@ -75,6 +56,19 @@ const KycUpdate = ({
       return [];
     }
   };
+
+  useEffect(() => {
+    setLoading(true);
+    fetchGroupCompanies()
+      .then((data) => {
+        setGroupCompanies(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch group companies", error);
+        setLoading(false);
+      });
+  }, []);
 
   // Fetch company details based on ID
   const getAllCompanyDetailsByID = async () => {
@@ -155,6 +149,12 @@ const KycUpdate = ({
       setOpen(false);
     }
   };
+
+  useEffect(() => {
+    if (recordForEdit) {
+      getAllCompanyDetailsByID();
+    }
+  }, [recordForEdit]);
 
   // Handle input changes
   const handleInputChange = (name, value) => {
