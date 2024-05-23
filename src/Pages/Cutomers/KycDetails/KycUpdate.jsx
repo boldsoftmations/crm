@@ -41,7 +41,7 @@ const KycUpdate = ({
   const getCompetitors = async () => {
     try {
       setOpen(true);
-      const response = await CustomerServices.getAllPaginateCompetitors("all");
+      const response = await CustomerServices.getAllCompetitors("all");
       setAllCompetitors(response.data);
     } finally {
       setOpen(false);

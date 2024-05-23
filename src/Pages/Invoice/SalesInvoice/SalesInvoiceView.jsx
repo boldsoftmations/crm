@@ -29,7 +29,6 @@ import { CancelSalesInvoice } from "./CancelSalesInvoice";
 import { CSVLink } from "react-csv";
 import CustomTextField from "../../../Components/CustomTextField";
 import BranchInvoicesCreate from "../BranchInvoices/BranchInvoicesCreate";
-import { SalesReturnCreate } from "../../SalesReturn/SalesReturnCreate";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import SearchComponent from "../../../Components/SearchComponent ";
 import { MessageAlert } from "../../../Components/MessageAlert";
@@ -45,7 +44,6 @@ export const SalesInvoiceView = () => {
   const [openPopup2, setOpenPopup2] = useState(false);
   const [openPopup3, setOpenPopup3] = useState(false);
   const [openPopup4, setOpenPopup4] = useState(false);
-  const [openPopupSalesReturn, setOpenPopupSalesReturn] = useState(false);
   const [idForEdit, setIDForEdit] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -275,11 +273,6 @@ export const SalesInvoiceView = () => {
     setOpenPopup3(true);
   };
 
-  const openInPopupSalesReturn = (item) => {
-    console.log("item", item);
-    setIDForEdit(item);
-    setOpenPopupSalesReturn(true);
-  };
   return (
     <>
       <MessageAlert
@@ -449,7 +442,6 @@ export const SalesInvoiceView = () => {
                     row={row}
                     openInPopup={openInPopup}
                     openInPopup2={openInPopup2}
-                    openInPopupSalesReturn={openInPopupSalesReturn}
                   />
                 ))}
               </TableBody>
@@ -520,18 +512,6 @@ export const SalesInvoiceView = () => {
         />
       </Popup>
       <Popup
-        fullScreen={true}
-        title={"Create Sales Return"}
-        openPopup={openPopupSalesReturn}
-        setOpenPopup={setOpenPopupSalesReturn}
-      >
-        <SalesReturnCreate
-          idForEdit={idForEdit}
-          getSalesInvoiceDetails={getSalesInvoiceDetails}
-          setOpenPopup={setOpenPopupSalesReturn}
-        />
-      </Popup>
-      <Popup
         openPopup={openPopup4}
         setOpenPopup={setOpenPopup4}
         title="Date Filter"
@@ -595,7 +575,7 @@ export const SalesInvoiceView = () => {
 };
 
 function Row(props) {
-  const { row, openInPopup, openInPopup2, openInPopupSalesReturn } = props;
+  const { row, openInPopup, openInPopup2 } = props;
   const [tableExpand, setTableExpand] = useState(false);
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
@@ -652,16 +632,6 @@ function Row(props) {
               onClick={() => openInPopup2(row)}
             >
               Cancel
-            </Button>
-          )}
-          {(userData.groups.includes("Director") ||
-            userData.groups.includes("Accounts")) && (
-            <Button
-              variant="text"
-              color="success"
-              onClick={() => openInPopupSalesReturn(row.invoice_no)}
-            >
-              Sales Return
             </Button>
           )}
         </StyledTableCell>
