@@ -34,6 +34,7 @@ import SearchComponent from "../../../Components/SearchComponent ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import SupplierInvoicesCreate from "../SupplierInvoices/SupplierInvoicesCreate";
+import ScrapInvoicesCreate from "../ScrapInvoices/ScrapInvoicesCreate";
 
 export const SalesInvoiceView = () => {
   const [open, setOpen] = useState(false);
@@ -44,6 +45,7 @@ export const SalesInvoiceView = () => {
   const [openPopup2, setOpenPopup2] = useState(false);
   const [openPopup3, setOpenPopup3] = useState(false);
   const [openPopup4, setOpenPopup4] = useState(false);
+  const [openPopup5, setOpenPopup5] = useState(false);
   const [idForEdit, setIDForEdit] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -333,7 +335,7 @@ export const SalesInvoiceView = () => {
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid container spacing={2}>
               {/* Title and Buttons - Second Row */}
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={5}>
                 <Button
                   onClick={() => setOpenModalBI(true)}
                   variant="contained"
@@ -342,14 +344,23 @@ export const SalesInvoiceView = () => {
                 </Button>
 
                 <Button
-                  sx={{ marginLeft: "10px" }}
+                  sx={{ marginLeft: "5px" }}
                   onClick={() => setOpenModalSI(true)}
                   variant="outlined"
                 >
                   Supplier Invoice
                 </Button>
+
+                <Button
+                  sx={{ marginLeft: "5px" }}
+                  onClick={() => setOpenPopup5(true)}
+                  variant="outlined"
+                  color="success"
+                >
+                  Scrap Invoice
+                </Button>
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={3}>
                 <Box display="flex" justifyContent="center">
                   <Typography variant="h4" sx={{ fontWeight: "bold" }}>
                     Sales Invoice
@@ -367,7 +378,7 @@ export const SalesInvoiceView = () => {
                 </Button>
 
                 <Button
-                  sx={{ marginLeft: "10px" }}
+                  sx={{ marginLeft: "5px" }}
                   onClick={handleDownload}
                   variant="contained"
                 >
@@ -476,6 +487,19 @@ export const SalesInvoiceView = () => {
           setOpenPopup={setOpenModalSI}
         />
       </Popup>
+
+      <Popup
+        fullScreen={true}
+        title={"Create Scrap Invoice"}
+        openPopup={openPopup5}
+        setOpenPopup={setOpenPopup5}
+      >
+        <ScrapInvoicesCreate
+          getSalesInvoiceDetails={getSalesInvoiceDetails}
+          setOpenPopup={setOpenPopup5}
+        />
+      </Popup>
+
       <Popup
         fullScreen={true}
         title={"Create Sales Invoice"}
