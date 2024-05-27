@@ -33,6 +33,7 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import SearchComponent from "../../../Components/SearchComponent ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { SourceViewList } from "./SourceViewList";
 
 export const SalesInvoiceView = () => {
   const [open, setOpen] = useState(false);
@@ -556,9 +557,16 @@ export const SalesInvoiceView = () => {
 function Row(props) {
   const { row, openInPopup, openInPopup2 } = props;
   const [tableExpand, setTableExpand] = useState(false);
+  const [openPopupProductViewList, setOpenPopupProductViewList] =
+    useState(false);
+  const [IDForViewList, setIDForViewList] = useState();
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
 
+  const handleOpenPopUp = (value) => {
+    setIDForViewList(value.source_list);
+    setOpenPopupProductViewList(true);
+  };
   return (
     <>
       <StyledTableRow
@@ -629,6 +637,7 @@ function Row(props) {
                     <TableCell align="center">QUANTITY</TableCell>
                     <TableCell align="center">AMOUNT</TableCell>
                     <TableCell align="center">PROFIT/LOSS(PER UNIT)</TableCell>
+                    <TableCell align="center">ACTION</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -644,6 +653,16 @@ function Row(props) {
                       <TableCell align="center">
                         {historyRow.profit_or_loss}
                       </TableCell>
+                      <TableCell align="center">
+                        <Button
+                          style={{ fontSize: "13px" }}
+                          variant="outlined"
+                          color="success"
+                          onClick={() => handleOpenPopUp(historyRow)}
+                        >
+                          Source View List
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -652,6 +671,14 @@ function Row(props) {
           </Collapse>
         </TableCell>
       </TableRow>
+      <Popup
+        maxWidth="md"
+        title={"Source View List"}
+        openPopup={openPopupProductViewList}
+        setOpenPopup={setOpenPopupProductViewList}
+      >
+        <SourceViewList maxWidth="md" selectedRow={IDForViewList} />
+      </Popup>
     </>
   );
 }
