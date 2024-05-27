@@ -154,7 +154,6 @@ export const MaterialRequisitionFormView = () => {
         "all"
       );
       setSellerAccountOption(response.data);
-      console.log(response.data.results);
     } catch (error) {
       handleError(error);
     } finally {
