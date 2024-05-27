@@ -121,7 +121,7 @@ const SupplierInvoicesCreate = ({
               size="small"
               label="Invoice No"
               variant="outlined"
-              value={inputValue.invoice_no}
+              value={inputValue.batch_no}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
