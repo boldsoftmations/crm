@@ -7,9 +7,7 @@ import { useNotificationHandling } from "./../../../Components/useNotificationHa
 import InvoiceServices from "../../../services/InvoiceService";
 import { MessageAlert } from "./../../../Components/MessageAlert";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import CustomAutocomplete from "./../../../Components/CustomAutocomplete";
 import CustomTextField from "../../../Components/CustomTextField";
-import InventoryServices from "../../../services/InventoryService";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -23,35 +21,28 @@ const values = {
   someDate: new Date().toISOString().substring(0, 10),
 };
 
-const SupplierInvoicesCreate = ({ getSalesInvoiceDetails, setOpenPopup }) => {
+const SupplierInvoicesCreate = ({
+  getSalesReturnInventoryDetails,
+  setOpenPopup,
+  selectedRow,
+}) => {
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
   const [open, setOpen] = useState(false);
-  const [products, setProducts] = useState([
-    {
-      product: "",
-      quantity: "",
-      rate: "",
-      amount: "",
-    },
-  ]);
+  const [products, setProducts] = useState(selectedRow.products);
   const [inputValue, setInputValue] = useState({
-    invoice_type: "",
-    sales_return: "",
-    generation_date: values.someDate,
+    invoice_type: "Supplier",
+    batch_no: selectedRow.batch_no.join(", "),
+    generation_date: new Date().toISOString().substring(0, 10),
     vendor: "",
     transporter_name: "",
+    seller_unit: selectedRow.unit,
   });
-  const [sellerData, setSellerData] = useState([]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setInputValue({ ...inputValue, [name]: value });
-  };
-
-  const handleAutocompleteChangeForUnits = (name, value) => {
-    setInputValue({ ...inputValue, [name]: value ? value.unit : "" });
   };
 
   const handleFormChange = (index, event) => {
@@ -78,61 +69,12 @@ const SupplierInvoicesCreate = ({ getSalesInvoiceDetails, setOpenPopup }) => {
     setProducts(data);
   };
 
-  const getSalesReturnData = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const response = await InventoryServices.getSalesReturnData(
-        "all",
-        inputValue.invoice_no
-      );
-      // Assume response.data[0] is the relevant invoice data
-      const invoiceData = response.data[0];
-
-      const productsArray = invoiceData.products_data.map((product) => ({
-        product: product.product,
-        quantity: product.quantity,
-      }));
-
-      // Update products state
-      setProducts(productsArray);
-
-      // Update inputValue state with new invoice details
-      setInputValue((prev) => ({
-        ...prev,
-        sales_return: invoiceData.invoice_no,
-      }));
-      const successMessage =
-        response.data.message || "Sales Return Data Get successfully!";
-      handleSuccess(successMessage);
-    } catch (error) {
-      handleError(error);
-      console.error("Error fetching sales return data:", error);
-    } finally {
-      setOpen(false);
-    }
-  };
-
-  const getAllSellerAccountsDetails = async () => {
-    try {
-      const response = await InvoiceServices.getAllPaginateSellerAccountData(
-        "all"
-      );
-      setSellerData(response.data);
-    } catch (error) {
-      console.log("Error fetching seller account data:", error);
-    }
-  };
-
-  useEffect(() => {
-    getAllSellerAccountsDetails();
-  }, []);
-
   const createSupplierInvoiceDetails = async (e) => {
     e.preventDefault();
 
     const payload = {
-      invoice_type: "Supplier",
+      invoice_type: inputValue.invoice_type,
+      batch_no: inputValue.batch_no,
       generation_date: inputValue.generation_date,
       sales_return: inputValue.sales_return,
       transporter_name: inputValue.transporter_name,
@@ -143,22 +85,21 @@ const SupplierInvoicesCreate = ({ getSalesInvoiceDetails, setOpenPopup }) => {
 
     try {
       setOpen(true);
-      const response = await InvoiceServices.createSalesnvoiceData(payload);
-      const successMessage =
-        response.data.message || "Supplier Invoice created successfully!";
-      handleSuccess(successMessage);
+      const response = await InvoiceServices.createSalesinvoiceData(payload);
+      handleSuccess(
+        response.data.message || "Supplier Invoice created successfully!"
+      );
       setOpenPopup(false);
-      getSalesInvoiceDetails();
+      getSalesReturnInventoryDetails();
     } catch (error) {
-      handleError(error); // Using the custom hook's method to handle errors
-      console.error("Creating BI error", error);
+      handleError(error);
     } finally {
-      setOpen(false); // Close the loading indicator
+      setOpen(false);
     }
   };
 
   return (
-    <div>
+    <>
       <MessageAlert
         open={alertInfo.open}
         onClose={handleCloseSnackbar}
@@ -174,53 +115,22 @@ const SupplierInvoicesCreate = ({ getSalesInvoiceDetails, setOpenPopup }) => {
       >
         <Grid container spacing={2}>
           <Grid item xs={12} sm={4}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 1, // Adjust gap between elements
-              }}
-            >
-              <CustomTextField
-                required
-                sx={{ flexGrow: 1 }} // Makes the TextField flexible in taking available space
-                fullWidth
-                name="invoice_no"
-                size="small"
-                label="Search By Invoice No"
-                variant="outlined"
-                onChange={(event) =>
-                  setInputValue((prev) => ({
-                    ...prev,
-                    [event.target.name]: event.target.value,
-                  }))
-                }
-                value={inputValue.company}
-              />
-
-              <Button
-                onClick={(e) => getSalesReturnData(e)}
-                variant="contained"
-                sx={{ height: "40px" }} // Optional, adjust to align height with the TextField
-              >
-                Submit
-              </Button>
-            </Box>
+            <CustomTextField
+              fullWidth
+              multiline
+              size="small"
+              label="Invoice No"
+              variant="outlined"
+              value={inputValue.batch_no}
+            />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <CustomAutocomplete
-              name="seller_unit"
-              size="small"
-              disablePortal
-              id="combo-box-demo"
-              onChange={(event, value) =>
-                handleAutocompleteChangeForUnits("seller_unit", value)
-              }
-              options={sellerData}
-              getOptionLabel={(option) => option.unit}
+            <CustomTextField
               fullWidth
-              label="Seller Unit"
+              size="small"
+              label="seller Unit"
+              variant="outlined"
+              value={inputValue.seller_unit}
             />
           </Grid>
 
@@ -270,12 +180,9 @@ const SupplierInvoicesCreate = ({ getSalesInvoiceDetails, setOpenPopup }) => {
           </Grid>
 
           {products.map((input, index) => {
-            const amount =
-              (Number(input.quantity) || 0) * (Number(input.rate) || 0);
-
             return (
               <React.Fragment key={index}>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={5}>
                   <CustomTextField
                     fullWidth
                     name="product"
@@ -283,7 +190,6 @@ const SupplierInvoicesCreate = ({ getSalesInvoiceDetails, setOpenPopup }) => {
                     label="Product"
                     variant="outlined"
                     value={input.product}
-                    onChange={(event) => handleFormChange(index, event)}
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
@@ -294,7 +200,6 @@ const SupplierInvoicesCreate = ({ getSalesInvoiceDetails, setOpenPopup }) => {
                     label="Quantity"
                     variant="outlined"
                     value={input.quantity}
-                    onChange={(event) => handleFormChange(index, event)}
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
@@ -315,7 +220,7 @@ const SupplierInvoicesCreate = ({ getSalesInvoiceDetails, setOpenPopup }) => {
                     size="small"
                     label="Amount"
                     variant="outlined"
-                    value={amount.toFixed(2)}
+                    value={input.amount || "0.00"} // Ensure this reads from the correct source
                     InputProps={{
                       readOnly: true,
                     }}
@@ -330,7 +235,7 @@ const SupplierInvoicesCreate = ({ getSalesInvoiceDetails, setOpenPopup }) => {
                   </Button>
                 </Grid>
               </React.Fragment>
-            );
+            ); // Close the return statement properly
           })}
         </Grid>
         <Button
@@ -342,7 +247,7 @@ const SupplierInvoicesCreate = ({ getSalesInvoiceDetails, setOpenPopup }) => {
           Submit
         </Button>
       </Box>
-    </div>
+    </>
   );
 };
 

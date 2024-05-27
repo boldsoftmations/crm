@@ -11,6 +11,7 @@ import {
   TableCell,
   Paper,
   Button,
+  Checkbox,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import SearchComponent from "../../Components/SearchComponent ";
@@ -20,7 +21,9 @@ import { useNotificationHandling } from "../../Components/useNotificationHandlin
 import { CustomPagination } from "../../Components/CustomPagination";
 import { CustomLoader } from "../../Components/CustomLoader";
 import { Popup } from "../../Components/Popup";
-import { SalesReturnInventoryUpdate } from "./SalesReturnInventoryUpdate";
+import SupplierInvoicesCreate from "./../Invoice/SupplierInvoices/SupplierInvoicesCreate";
+import ScrapInvoicesCreate from "./../Invoice/ScrapInvoices/ScrapInvoicesCreate";
+import { ReworkInvoiceCreate } from "../Invoice/Rework Invoice/ReworkInvoiceCreate";
 
 export const SaleReturnInventory = () => {
   const [open, setOpen] = useState(false);
@@ -28,8 +31,16 @@ export const SaleReturnInventory = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [openPopup, setOpenPopup] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
+  const [openModalSupplierInvoice, setOpenModalSupplierInvoice] =
+    useState(false);
+  const [openModalScrapInvoice, setOpenModalScrapInvoice] = useState(false);
+  const [openModalReworkInvoice, setOpenModalReworkInvoice] = useState(false);
+  const [selectedRow, setSelectedRow] = useState({
+    unit: "",
+    batch_no: [],
+    products: [],
+  });
+
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
@@ -67,11 +78,40 @@ export const SaleReturnInventory = () => {
     setCurrentPage(value);
   };
 
-  const openInPopup = (item) => {
-    setSelectedRow(item);
-    setOpenPopup(true);
+  const handleCheckboxChange = (row) => {
+    const existingProductIndex = selectedRow.products.findIndex(
+      (item) => item.id === row.id
+    );
+    if (existingProductIndex > -1) {
+      // Product is already selected, remove it from products array and corresponding batch number
+      const newProducts = selectedRow.products.filter(
+        (item) => item.id !== row.id
+      );
+      const newBatchNos = selectedRow.batch_no.filter(
+        (_, index) => index !== existingProductIndex
+      );
+      setSelectedRow((prev) => ({
+        ...prev,
+        batch_no: newBatchNos,
+        products: newProducts,
+      }));
+    } else {
+      // Product is not selected, add it
+      setSelectedRow((prev) => ({
+        unit: row.unit || prev.unit, // Set unit if not already set
+        batch_no: [...prev.batch_no, row.batch_no],
+        products: [
+          ...prev.products,
+          {
+            id: row.id,
+            product: row.product,
+            quantity: row.quantity,
+          },
+        ],
+      }));
+    }
   };
-
+  console.log("selectedRow", selectedRow);
   return (
     <>
       <MessageAlert
@@ -91,7 +131,7 @@ export const SaleReturnInventory = () => {
           >
             <Grid container spacing={2} alignItems="center">
               {/* Search Component on the left */}
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={3}>
                 <SearchComponent
                   onSearch={handleSearch}
                   onReset={handleReset}
@@ -118,15 +158,30 @@ export const SaleReturnInventory = () => {
               </Grid>
 
               {/* Add Button on the right */}
-              <Grid
-                item
-                xs={12}
-                md={4}
-                sx={{
-                  display: "flex",
-                  justifyContent: { xs: "center", md: "flex-end" },
-                }}
-              ></Grid>
+              <Grid item xs={12} md={5}>
+                <Button
+                  onClick={() => setOpenModalSupplierInvoice(true)}
+                  variant="outlined"
+                >
+                  Supplier Invoice
+                </Button>
+                <Button
+                  sx={{ marginLeft: "5px" }}
+                  onClick={() => setOpenModalScrapInvoice(true)}
+                  variant="outlined"
+                  color="success"
+                >
+                  Scrap Invoice
+                </Button>
+                <Button
+                  sx={{ marginLeft: "5px" }}
+                  onClick={() => setOpenModalReworkInvoice(true)}
+                  variant="outlined"
+                  color="secondary"
+                >
+                  Rework Invoice
+                </Button>
+              </Grid>
             </Grid>
           </Box>
 
@@ -151,6 +206,7 @@ export const SaleReturnInventory = () => {
             >
               <TableHead>
                 <TableRow>
+                  <StyledTableCell align="center">Checkbox</StyledTableCell>
                   <StyledTableCell align="center">UNIT</StyledTableCell>
                   <StyledTableCell align="center">BATCH_NO</StyledTableCell>
                   <StyledTableCell align="center">INVOICE TYPE</StyledTableCell>
@@ -158,12 +214,20 @@ export const SaleReturnInventory = () => {
                   <StyledTableCell align="center">QUANTITY</StyledTableCell>
                   <StyledTableCell align="center">RATE</StyledTableCell>
                   <StyledTableCell align="center">AMOUNT</StyledTableCell>
-                  <StyledTableCell align="center">ACTION</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {salesReturnInventoryData.map((row) => (
                   <StyledTableRow>
+                    <StyledTableCell align="center">
+                      <Checkbox
+                        checked={selectedRow.products.some(
+                          (item) => item.id === row.id
+                        )}
+                        onChange={() => handleCheckboxChange(row)}
+                        inputProps={{ "aria-label": "controlled" }}
+                      />
+                    </StyledTableCell>
                     <StyledTableCell align="center">{row.unit}</StyledTableCell>
                     <StyledTableCell align="center">
                       {row.batch_no}
@@ -181,9 +245,6 @@ export const SaleReturnInventory = () => {
                     <StyledTableCell align="center">
                       {row.amount}
                     </StyledTableCell>
-                    <StyledTableCell align="center">
-                      <Button onClick={() => openInPopup(row)}>View</Button>
-                    </StyledTableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>
@@ -197,16 +258,40 @@ export const SaleReturnInventory = () => {
         </Paper>
       </Grid>
       <Popup
-        title={"Update Sales Return Inventory"}
-        openPopup={openPopup}
-        setOpenPopup={setOpenPopup}
+        fullScreen={true}
+        title={"Create Supplier Invoice"}
+        openPopup={openModalSupplierInvoice}
+        setOpenPopup={setOpenModalSupplierInvoice}
       >
-        <SalesReturnInventoryUpdate
-          selectedRow={selectedRow}
-          setOpenPopup={setOpenPopup}
+        <SupplierInvoicesCreate
           getSalesReturnInventoryDetails={getSalesReturnInventoryDetails}
-          currentPage={currentPage}
-          searchQuery={searchQuery}
+          setOpenPopup={setOpenModalSupplierInvoice}
+          selectedRow={selectedRow}
+        />
+      </Popup>
+
+      <Popup
+        fullScreen={true}
+        title={"Create Scrap Invoice"}
+        openPopup={openModalScrapInvoice}
+        setOpenPopup={setOpenModalScrapInvoice}
+      >
+        <ScrapInvoicesCreate
+          getSalesReturnInventoryDetails={getSalesReturnInventoryDetails}
+          setOpenPopup={setOpenModalScrapInvoice}
+          selectedRow={selectedRow}
+        />
+      </Popup>
+      <Popup
+        fullScreen={true}
+        title={"Create Rework Invoice"}
+        openPopup={openModalReworkInvoice}
+        setOpenPopup={setOpenModalReworkInvoice}
+      >
+        <ReworkInvoiceCreate
+          getSalesReturnInventoryDetails={getSalesReturnInventoryDetails}
+          setOpenPopup={setOpenModalReworkInvoice}
+          selectedRow={selectedRow}
         />
       </Popup>
     </>
