@@ -4,7 +4,6 @@ import { styled } from "@mui/material/styles";
 import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
-import InvoiceServices from "../../../services/InvoiceService";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
@@ -146,7 +145,7 @@ export const ReworkInvoiceCreate = ({
 
     try {
       setOpen(true);
-      const response = await InvoiceServices.createReworkinvoiceData(payload);
+      const response = await InventoryServices.createReworkinvoiceData(payload);
       handleSuccess(
         response.data.message || "Supplier Invoice created successfully!"
       );
