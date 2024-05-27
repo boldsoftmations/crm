@@ -33,19 +33,15 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import SearchComponent from "../../../Components/SearchComponent ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
-import SupplierInvoicesCreate from "../SupplierInvoices/SupplierInvoicesCreate";
-import ScrapInvoicesCreate from "../ScrapInvoices/ScrapInvoicesCreate";
 
 export const SalesInvoiceView = () => {
   const [open, setOpen] = useState(false);
   const [salesInvoiceData, setSalesInvoiceData] = useState([]);
   const [openModalBI, setOpenModalBI] = useState(false);
-  const [openModalSI, setOpenModalSI] = useState(false);
   const [openPopup, setOpenPopup] = useState(false);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [openPopup3, setOpenPopup3] = useState(false);
   const [openPopup4, setOpenPopup4] = useState(false);
-  const [openPopup5, setOpenPopup5] = useState(false);
   const [idForEdit, setIDForEdit] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -342,23 +338,6 @@ export const SalesInvoiceView = () => {
                 >
                   Branch Invoice
                 </Button>
-
-                <Button
-                  sx={{ marginLeft: "5px" }}
-                  onClick={() => setOpenModalSI(true)}
-                  variant="outlined"
-                >
-                  Supplier Invoice
-                </Button>
-
-                <Button
-                  sx={{ marginLeft: "5px" }}
-                  onClick={() => setOpenPopup5(true)}
-                  variant="outlined"
-                  color="success"
-                >
-                  Scrap Invoice
-                </Button>
               </Grid>
               <Grid item xs={12} md={3}>
                 <Box display="flex" justifyContent="center">
@@ -476,30 +455,6 @@ export const SalesInvoiceView = () => {
           setOpenPopup={setOpenModalBI}
         />
       </Popup>
-      <Popup
-        fullScreen={true}
-        title={"Create Supplier Invoice"}
-        openPopup={openModalSI}
-        setOpenPopup={setOpenModalSI}
-      >
-        <SupplierInvoicesCreate
-          getSalesInvoiceDetails={getSalesInvoiceDetails}
-          setOpenPopup={setOpenModalSI}
-        />
-      </Popup>
-
-      <Popup
-        fullScreen={true}
-        title={"Create Scrap Invoice"}
-        openPopup={openPopup5}
-        setOpenPopup={setOpenPopup5}
-      >
-        <ScrapInvoicesCreate
-          getSalesInvoiceDetails={getSalesInvoiceDetails}
-          setOpenPopup={setOpenPopup5}
-        />
-      </Popup>
-
       <Popup
         fullScreen={true}
         title={"Create Sales Invoice"}

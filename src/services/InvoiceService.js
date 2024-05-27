@@ -250,7 +250,7 @@ const getSalesInvoiceData = (
   );
 };
 
-const createSalesnvoiceData = (data) => {
+const createSalesinvoiceData = (data) => {
   return CustomAxios.post("/api/invoice/list-sales-invoice/", data);
 };
 
@@ -369,6 +369,11 @@ const getSalesReturnBySearchCompany = (unitValue, companyValue) => {
   );
 };
 
+// Rework Invoice Api endpoints
+const createReworkinvoiceData = (data) => {
+  return CustomAxios.post("api/inventory/rework-entry/", data);
+};
+
 const InvoiceServices = {
   getAllSellerAccountData,
   getfilterSellerAccountData,
@@ -397,7 +402,7 @@ const InvoiceServices = {
   getTotalPendingQuantity,
   getAllOrderBookDataWithSearch,
   getSalesInvoiceData,
-  createSalesnvoiceData,
+  createSalesinvoiceData,
   cancelSalesInvoice,
   getSalesnvoiceDataById,
   getAllSaleRegisterData,
@@ -410,6 +415,7 @@ const InvoiceServices = {
   getPODCopyDashboardData,
   checkPrice,
   getSalesReturnBySearchCompany,
+  createReworkinvoiceData,
 };
 
 export default InvoiceServices;
