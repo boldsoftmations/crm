@@ -593,6 +593,7 @@ const updateSalesReturnInventoryData = (id, data) => {
   return CustomAxios.patch(`api/inventory/sales-return-inventory/${id}/`, data);
 };
 
+
 const InventoryServices = {
   getAllVendorData,
   createVendorData,
