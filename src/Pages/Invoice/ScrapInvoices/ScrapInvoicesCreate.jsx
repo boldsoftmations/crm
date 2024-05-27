@@ -30,7 +30,12 @@ const SupplierInvoicesCreate = ({
     useNotificationHandling();
 
   const [open, setOpen] = useState(false);
-  const [products, setProducts] = useState(selectedRow.products);
+  const [products, setProducts] = useState(
+    selectedRow.products.map((product) => ({
+      ...product,
+      rate: "", // Initialize rate as an empty string to be filled by the user
+    }))
+  );
   const [inputValue, setInputValue] = useState({
     invoice_type: "Scrap",
     batch_no: selectedRow.batch_no.join(", "),
