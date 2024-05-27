@@ -79,17 +79,19 @@ export const SaleReturnInventory = () => {
   };
 
   const handleCheckboxChange = (row) => {
+    const { id, unit, batch_no, product, quantity, rate } = row;
+
     const existingProductIndex = selectedRow.products.findIndex(
-      (item) => item.id === row.id
+      (item) => item.id === id
     );
+
     if (existingProductIndex > -1) {
       // Product is already selected, remove it from products array and corresponding batch number
-      const newProducts = selectedRow.products.filter(
-        (item) => item.id !== row.id
-      );
+      const newProducts = selectedRow.products.filter((item) => item.id !== id);
       const newBatchNos = selectedRow.batch_no.filter(
         (_, index) => index !== existingProductIndex
       );
+
       setSelectedRow((prev) => ({
         ...prev,
         batch_no: newBatchNos,
@@ -98,20 +100,22 @@ export const SaleReturnInventory = () => {
     } else {
       // Product is not selected, add it
       setSelectedRow((prev) => ({
-        unit: row.unit || prev.unit, // Set unit if not already set
-        batch_no: [...prev.batch_no, row.batch_no],
+        ...prev,
+        unit: unit || prev.unit, // Set unit if not already set
+        batch_no: [...prev.batch_no, batch_no],
         products: [
           ...prev.products,
           {
-            id: row.id,
-            product: row.product,
-            quantity: row.quantity,
+            id,
+            product,
+            quantity,
+            rate: rate,
           },
         ],
       }));
     }
   };
-  console.log("selectedRow", selectedRow);
+
   return (
     <>
       <MessageAlert
@@ -209,7 +213,6 @@ export const SaleReturnInventory = () => {
                   <StyledTableCell align="center">Checkbox</StyledTableCell>
                   <StyledTableCell align="center">UNIT</StyledTableCell>
                   <StyledTableCell align="center">BATCH_NO</StyledTableCell>
-                  <StyledTableCell align="center">INVOICE TYPE</StyledTableCell>
                   <StyledTableCell align="center">PRODUCT</StyledTableCell>
                   <StyledTableCell align="center">QUANTITY</StyledTableCell>
                   <StyledTableCell align="center">RATE</StyledTableCell>
@@ -231,9 +234,6 @@ export const SaleReturnInventory = () => {
                     <StyledTableCell align="center">{row.unit}</StyledTableCell>
                     <StyledTableCell align="center">
                       {row.batch_no}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {row.inv_type}
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {row.product}

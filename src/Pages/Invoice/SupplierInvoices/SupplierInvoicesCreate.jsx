@@ -28,9 +28,13 @@ const SupplierInvoicesCreate = ({
 }) => {
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-
   const [open, setOpen] = useState(false);
-  const [products, setProducts] = useState(selectedRow.products);
+  const [products, setProducts] = useState(
+    selectedRow.products.map((product) => ({
+      ...product,
+      rate: "", // Initialize rate as an empty string to be filled by the user
+    }))
+  );
   const [inputValue, setInputValue] = useState({
     invoice_type: "Supplier",
     batch_no: selectedRow.batch_no.join(", "),
@@ -74,7 +78,6 @@ const SupplierInvoicesCreate = ({
 
     const payload = {
       invoice_type: inputValue.invoice_type,
-      batch_no: inputValue.batch_no,
       generation_date: inputValue.generation_date,
       sales_return: inputValue.sales_return,
       transporter_name: inputValue.transporter_name,

@@ -4,7 +4,6 @@ import { styled } from "@mui/material/styles";
 import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
-import InvoiceServices from "../../../services/InvoiceService";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
@@ -33,8 +32,12 @@ export const ReworkInvoiceCreate = ({
 
   const [open, setOpen] = useState(false);
   const [products, setProducts] = useState(
-    selectedRow.products.map((product) => ({ ...product, raw_materials: [] }))
+    selectedRow.products.map((product) => ({
+      ...product,
+      raw_materials: product.raw_materials || [], // Ensure each product has a raw_materials array
+    }))
   );
+
   const [inputValue, setInputValue] = useState({
     batch_no: selectedRow.batch_no.join(", "),
     generation_date: new Date().toISOString().substring(0, 10),
@@ -48,7 +51,6 @@ export const ReworkInvoiceCreate = ({
     try {
       setOpen(true);
       const response = await InventoryServices.getAllConsStoresInventoryData();
-      console.log("response products", response.data);
       setRawMaterialOptions(response.data);
     } catch (error) {
       handleError(error);
@@ -71,32 +73,17 @@ export const ReworkInvoiceCreate = ({
     const { name, value } = event.target;
     let data = [...products];
     if (rawMaterialIndex === -1) {
+      // Changes for main product
       data[productIndex] = {
         ...data[productIndex],
         [name]: value,
       };
-      if (name === "rate" || name === "quantity") {
-        const rate = parseFloat(data[productIndex].rate) || 0;
-        const quantity = parseFloat(data[productIndex].quantity) || 0;
-        data[productIndex].amount = (rate * quantity).toFixed(2);
-      }
     } else {
+      // Changes for raw materials
       data[productIndex].raw_materials[rawMaterialIndex] = {
         ...data[productIndex].raw_materials[rawMaterialIndex],
         [name]: value,
       };
-      if (name === "rate" || name === "quantity") {
-        const rate =
-          parseFloat(data[productIndex].raw_materials[rawMaterialIndex].rate) ||
-          0;
-        const quantity =
-          parseFloat(
-            data[productIndex].raw_materials[rawMaterialIndex].quantity
-          ) || 0;
-        data[productIndex].raw_materials[rawMaterialIndex].amount = (
-          rate * quantity
-        ).toFixed(2);
-      }
     }
     setProducts(data);
   };
@@ -121,13 +108,9 @@ export const ReworkInvoiceCreate = ({
   const addRawMaterial = (productIndex) => {
     let data = [...products];
     data[productIndex].raw_materials.push({
-      user: "admin@glutape.com",
       product: "",
-      description: "",
       unit: "",
       quantity: 0,
-      rate: 0,
-      amount: "0.00",
     });
     setProducts(data);
   };
@@ -153,15 +136,16 @@ export const ReworkInvoiceCreate = ({
       products: products.map((product) => ({
         ...product,
         raw_materials: product.raw_materials.map((rm) => ({
-          ...rm,
-          amount: (rm.quantity * rm.rate).toFixed(2),
+          product: rm.product,
+          unit: rm.unit,
+          quantity: rm.quantity,
         })),
       })),
     };
 
     try {
       setOpen(true);
-      const response = await InvoiceServices.createReworkinvoiceData(payload);
+      const response = await InventoryServices.createReworkinvoiceData(payload);
       handleSuccess(
         response.data.message || "Supplier Invoice created successfully!"
       );
@@ -267,7 +251,6 @@ export const ReworkInvoiceCreate = ({
                     label="Product"
                     variant="outlined"
                     value={input.product}
-                    onChange={(event) => handleFormChange(index, -1, event)}
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
@@ -278,31 +261,6 @@ export const ReworkInvoiceCreate = ({
                     label="Quantity"
                     variant="outlined"
                     value={input.quantity}
-                    onChange={(event) => handleFormChange(index, -1, event)}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={2}>
-                  <CustomTextField
-                    fullWidth
-                    name="rate"
-                    size="small"
-                    label="Rate"
-                    variant="outlined"
-                    value={input.rate}
-                    onChange={(event) => handleFormChange(index, -1, event)}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={2}>
-                  <CustomTextField
-                    fullWidth
-                    name="amount"
-                    size="small"
-                    label="Amount"
-                    variant="outlined"
-                    value={input.amount || "0.00"}
-                    InputProps={{
-                      readOnly: true,
-                    }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={1}>
@@ -364,32 +322,6 @@ export const ReworkInvoiceCreate = ({
                         onChange={(event) =>
                           handleFormChange(index, rmIndex, event)
                         }
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={2}>
-                      <CustomTextField
-                        fullWidth
-                        name="rate"
-                        size="small"
-                        label="Raw Material Rate"
-                        variant="outlined"
-                        value={rm.rate}
-                        onChange={(event) =>
-                          handleFormChange(index, rmIndex, event)
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={2}>
-                      <CustomTextField
-                        fullWidth
-                        name="amount"
-                        size="small"
-                        label="Raw Material Amount"
-                        variant="outlined"
-                        value={rm.amount || "0.00"}
-                        InputProps={{
-                          readOnly: true,
-                        }}
                       />
                     </Grid>
                     <Grid item xs={12} sm={1}>

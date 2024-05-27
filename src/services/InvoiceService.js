@@ -369,11 +369,6 @@ const getSalesReturnBySearchCompany = (unitValue, companyValue) => {
   );
 };
 
-// Rework Invoice Api endpoints
-const createReworkinvoiceData = (data) => {
-  return CustomAxios.post("api/inventory/rework-entry/", data);
-};
-
 const InvoiceServices = {
   getAllSellerAccountData,
   getfilterSellerAccountData,
@@ -415,7 +410,6 @@ const InvoiceServices = {
   getPODCopyDashboardData,
   checkPrice,
   getSalesReturnBySearchCompany,
-  createReworkinvoiceData,
 };
 
 export default InvoiceServices;
