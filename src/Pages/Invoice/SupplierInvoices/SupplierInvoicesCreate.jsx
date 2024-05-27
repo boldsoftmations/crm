@@ -74,7 +74,6 @@ const SupplierInvoicesCreate = ({
 
     const payload = {
       invoice_type: inputValue.invoice_type,
-      batch_no: inputValue.batch_no,
       generation_date: inputValue.generation_date,
       sales_return: inputValue.sales_return,
       transporter_name: inputValue.transporter_name,
