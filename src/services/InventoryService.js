@@ -613,6 +613,10 @@ const getReworkinvoiceData = (page, searchValue) => {
   return CustomAxios.get(`api/inventory/rework-entry/?${params.toString()}`);
 };
 
+const updateReworkInvoiceData = (id, data) => {
+  return CustomAxios.patch(`api/inventory/rework-entry/${id}/`, data);
+};
+
 const InventoryServices = {
   getAllVendorData,
   createVendorData,
@@ -683,6 +687,7 @@ const InventoryServices = {
   updateSalesReturnInventoryData,
   createReworkinvoiceData,
   getReworkinvoiceData,
+  updateReworkInvoiceData
 };
 
 export default InventoryServices;
