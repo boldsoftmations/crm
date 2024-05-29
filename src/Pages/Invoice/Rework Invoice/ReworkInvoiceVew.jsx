@@ -202,7 +202,6 @@ function Row(props) {
     useNotificationHandling();
 
   const handleUpdateReworkInvoice = async (data) => {
-    console.log("data", data);
     try {
       setOpen(true);
       const req = {
