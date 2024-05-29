@@ -9,6 +9,7 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "./../../../Components/CustomAutocomplete";
 import InventoryServices from "../../../services/InventoryService";
+import ProductService from "../../../services/ProductService";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -25,83 +26,71 @@ export const ReworkInvoiceCreate = ({
 }) => {
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-
+  const [productOption, setProductOption] = useState([]);
   const [open, setOpen] = useState(false);
-  const [products, setProducts] = useState(
-    selectedRow.products.map((product) => ({
-      ...product,
-      raw_materials: product.raw_materials || [], // Ensure each product has a raw_materials array
-    }))
+  const [inputValue, setInputValue] = useState("");
+  const [products, setProducts] = useState(selectedRow.products);
+  const [consumables, setConsumables] = useState([]);
+  const [consumableOptions, setConsumableOptions] = useState([]);
+  const [quantityError, setQuantityError] = useState(
+    Array(products.length).fill(false)
   );
-  const [rawMaterialOptions, setRawMaterialOptions] = useState([]);
 
-  const fetchRawMaterials = async () => {
+  const getconsumables = async () => {
     try {
       setOpen(true);
-      const response = await InventoryServices.getAllConsStoresInventoryData();
-      setRawMaterialOptions(response.data);
-    } catch (error) {
-      handleError(error);
-      console.error("Error fetching raw materials:", error);
-    } finally {
+      const response = await ProductService.getAllConsumable("all");
+      console.log("consumable", response.data);
+      var arr = response.data.map((ProductData) => ({
+        product: ProductData.name,
+        unit: ProductData.unit,
+      }));
+      setConsumableOptions(arr);
       setOpen(false);
+    } catch (err) {
+      handleError(err);
+      setOpen(false);
+      console.log("err", err);
+    }
+  };
+
+  const getProduct = async () => {
+    try {
+      const res = await ProductService.getAllValidPriceList("all");
+      setProductOption(res.data);
+    } catch (err) {
+      console.error("error potential", err);
     }
   };
 
   useEffect(() => {
-    fetchRawMaterials();
+    getconsumables();
+    getProduct();
   }, []);
 
-  const handleFormChange = (productIndex, rawMaterialIndex, event) => {
-    const { name, value } = event.target;
-    let data = [...products];
-    if (rawMaterialIndex === -1) {
-      // Changes for main product
-      data[productIndex] = {
-        ...data[productIndex],
-        [name]: value,
-      };
+  const handleInputChange = (name, value) => {
+    setInputValue({ ...inputValue, [name]: value });
+  };
+
+  const handleQuantityChange = (index, event) => {
+    const newQuantity = Number(event.target.value); // Convert the input value to a number
+    if (newQuantity >= 0 && newQuantity <= products[index].initialQuantity) {
+      // Update is valid
+      setProducts((currentProducts) =>
+        currentProducts.map((item, i) =>
+          i === index ? { ...item, quantity: newQuantity } : item
+        )
+      );
+      // Reset error state if previously set
+      const newErrors = [...quantityError];
+      newErrors[index] = false;
+      setQuantityError(newErrors);
     } else {
-      // Changes for raw materials
-      data[productIndex].raw_materials[rawMaterialIndex] = {
-        ...data[productIndex].raw_materials[rawMaterialIndex],
-        [name]: value,
-      };
+      // Set error for this index
+      const newErrors = [...quantityError];
+      newErrors[index] = true;
+      setQuantityError(newErrors);
     }
-    setProducts(data);
-  };
-
-  const handleRawMaterialChange = (
-    productIndex,
-    rawMaterialIndex,
-    newValue
-  ) => {
-    let data = [...products];
-    const selectedProduct = rawMaterialOptions.find(
-      (option) => option.product__name === newValue.product__name
-    );
-    data[productIndex].raw_materials[rawMaterialIndex] = {
-      ...data[productIndex].raw_materials[rawMaterialIndex],
-      product: selectedProduct.product__name,
-      unit: selectedProduct.product__unit,
-    };
-    setProducts(data);
-  };
-
-  const addRawMaterial = (productIndex) => {
-    let data = [...products];
-    data[productIndex].raw_materials.push({
-      product: "",
-      unit: "",
-      quantity: 0,
-    });
-    setProducts(data);
-  };
-
-  const removeRawMaterial = (productIndex, rawMaterialIndex) => {
-    let data = [...products];
-    data[productIndex].raw_materials.splice(rawMaterialIndex, 1);
-    setProducts(data);
   };
 
   const removeFields = (index) => {
@@ -110,20 +99,31 @@ export const ReworkInvoiceCreate = ({
     setProducts(data);
   };
 
+  const addConsumable = () => {
+    setConsumables((prev) => [...prev, { product: "", quantity: 0 }]);
+  };
+
+  const removeConsumable = (index) => {
+    setConsumables((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleConsumableChange = (index, event) => {
+    const { name, value } = event.target;
+    setConsumables((current) =>
+      current.map((item, i) =>
+        i === index ? { ...item, [name]: value } : item
+      )
+    );
+  };
+
   const createSupplierInvoiceDetails = async (e) => {
     e.preventDefault();
 
     const payload = {
       seller_account: selectedRow.unit,
       batch_no: selectedRow.batch_no.join(", "),
-      products: products.map((product) => ({
-        ...product,
-        raw_materials: product.raw_materials.map((rm) => ({
-          product: rm.product,
-          unit: rm.unit,
-          quantity: rm.quantity,
-        })),
-      })),
+      products,
+      consumables,
     };
 
     try {
@@ -176,7 +176,32 @@ export const ReworkInvoiceCreate = ({
               value={selectedRow.unit}
             />
           </Grid>
-
+          <Grid item xs={12} sm={4}>
+            <CustomAutocomplete
+              name="product"
+              size="small"
+              disablePortal
+              id="combo-box-demo"
+              onChange={(event, value) => handleInputChange("product", value)}
+              options={productOption.map((option) => option.product)}
+              getOptionLabel={(option) => option}
+              fullWidth
+              label="Product"
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              name="quantity"
+              size="small"
+              label="Quantity"
+              variant="outlined"
+              value={inputValue.quantity}
+              onChange={(event, value) =>
+                handleInputChange("quantity", event.target.value)
+              }
+            />
+          </Grid>
           <Grid item xs={12}>
             <Root>
               <Divider>
@@ -184,112 +209,130 @@ export const ReworkInvoiceCreate = ({
               </Divider>
             </Root>
           </Grid>
+          {products.map((product, index) => (
+            <React.Fragment key={index}>
+              <Grid item xs={12} sm={5}>
+                <CustomTextField
+                  fullWidth
+                  name="product"
+                  size="small"
+                  label="Product"
+                  variant="outlined"
+                  value={product.product}
+                />
+              </Grid>
+              <Grid item xs={12} sm={2}>
+                <CustomTextField
+                  fullWidth
+                  name="quantity"
+                  size="small"
+                  label="Quantity"
+                  variant="outlined"
+                  value={product.quantity.toString()}
+                  onChange={(event) => handleQuantityChange(index, event)}
+                  inputProps={{
+                    type: "number",
+                    min: "0",
+                    max: product.initialQuantity.toString(),
+                  }}
+                  error={quantityError[index]}
+                  helperText={
+                    quantityError[index]
+                      ? `Max available: ${product.initialQuantity}`
+                      : ""
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} sm={1}>
+                <Button onClick={() => removeFields(index)} variant="contained">
+                  Remove
+                </Button>
+              </Grid>
+            </React.Fragment>
+          ))}
 
-          {products.map((input, index) => {
-            return (
-              <React.Fragment key={index}>
-                <Grid item xs={12} sm={5}>
-                  <CustomTextField
-                    fullWidth
-                    name="product"
-                    size="small"
-                    label="Product"
-                    variant="outlined"
-                    value={input.product}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={2}>
-                  <CustomTextField
-                    fullWidth
-                    name="quantity"
-                    size="small"
-                    label="Quantity"
-                    variant="outlined"
-                    value={input.quantity}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={1}>
-                  <Button
-                    onClick={() => removeFields(index)}
-                    variant="contained"
-                  >
-                    Remove
-                  </Button>
-                </Grid>
-                <Grid item xs={12}>
-                  <Root>
-                    <Divider>
-                      <Chip label="RAW MATERIALS" />
-                    </Divider>
-                  </Root>
-                </Grid>
-                {input.raw_materials.map((rm, rmIndex) => (
-                  <React.Fragment key={`${index}-${rmIndex}`}>
-                    <Grid item xs={12} sm={3}>
-                      <CustomAutocomplete
-                        options={rawMaterialOptions}
-                        getOptionLabel={(option) => option.product__name}
-                        value={{ product__name: rm.product }}
-                        onChange={(event, newValue) =>
-                          handleRawMaterialChange(index, rmIndex, newValue)
-                        }
-                        renderInput={(params) => (
-                          <CustomTextField
-                            {...params}
-                            label="Raw Material Product"
-                            variant="outlined"
-                            size="small"
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={2}>
-                      <CustomTextField
-                        fullWidth
-                        name="unit"
-                        size="small"
-                        label="Unit"
-                        variant="outlined"
-                        value={rm.unit}
-                        InputProps={{
-                          readOnly: true,
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={2}>
-                      <CustomTextField
-                        fullWidth
-                        name="quantity"
-                        size="small"
-                        label="Raw Material Quantity"
-                        variant="outlined"
-                        value={rm.quantity}
-                        onChange={(event) =>
-                          handleFormChange(index, rmIndex, event)
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={1}>
-                      <Button
-                        onClick={() => removeRawMaterial(index, rmIndex)}
-                        variant="contained"
-                      >
-                        Remove
-                      </Button>
-                    </Grid>
-                  </React.Fragment>
-                ))}
-                <Grid item xs={12}>
-                  <Button
-                    onClick={() => addRawMaterial(index)}
-                    variant="contained"
-                  >
-                    Add Raw Material
-                  </Button>
-                </Grid>
-              </React.Fragment>
-            );
-          })}
+          <Grid item xs={12}>
+            <Root>
+              <Divider>
+                <Chip label="CONSUMABLES" />
+              </Divider>
+            </Root>
+          </Grid>
+          {consumables.map((consumable, index) => (
+            <React.Fragment key={index}>
+              <Grid item xs={12} sm={5}>
+                <CustomAutocomplete
+                  options={consumableOptions}
+                  getOptionLabel={(option) => option.product || ""}
+                  value={
+                    consumableOptions.find(
+                      (opt) => opt.product === consumable.product
+                    ) || null
+                  }
+                  onChange={(event, newValue) => {
+                    handleConsumableChange(index, {
+                      target: {
+                        name: "product",
+                        value: newValue ? newValue.product : "",
+                      },
+                    });
+                    handleConsumableChange(index, {
+                      target: {
+                        name: "unit",
+                        value: newValue ? newValue.unit : "",
+                      },
+                    });
+                  }}
+                  renderInput={(params) => (
+                    <CustomTextField
+                      {...params}
+                      label="Consumable Product"
+                      variant="outlined"
+                      size="small"
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} sm={2}>
+                <CustomTextField
+                  fullWidth
+                  name="unit"
+                  size="small"
+                  label="Unit"
+                  variant="outlined"
+                  value={consumable.unit || ""}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={2}>
+                <CustomTextField
+                  fullWidth
+                  name="quantity"
+                  size="small"
+                  label="Quantity"
+                  variant="outlined"
+                  value={consumable.quantity}
+                  onChange={(event) => handleConsumableChange(index, event)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={1}>
+                <Button
+                  onClick={() => removeConsumable(index)}
+                  variant="contained"
+                >
+                  Remove
+                </Button>
+              </Grid>
+            </React.Fragment>
+          ))}
+          <Grid item xs={12}>
+            <Button onClick={addConsumable} variant="contained">
+              Add Consumable
+            </Button>
+          </Grid>
         </Grid>
         <Button
           type="submit"

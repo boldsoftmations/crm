@@ -12,6 +12,7 @@ import {
   Paper,
   Button,
   Checkbox,
+  Alert,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import SearchComponent from "../../Components/SearchComponent ";
@@ -40,6 +41,8 @@ export const SaleReturnInventory = () => {
     batch_no: [],
     products: [],
   });
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
 
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
@@ -78,42 +81,47 @@ export const SaleReturnInventory = () => {
     setCurrentPage(value);
   };
 
-  const handleCheckboxChange = (row) => {
-    const { id, unit, batch_no, product, quantity, rate } = row;
-
-    const existingProductIndex = selectedRow.products.findIndex(
-      (item) => item.id === id
+  const handleReworkEntry = () => {
+    const descriptions = new Set(
+      selectedRow.products.map((product) => product.description)
     );
+    if (descriptions.size === 1) {
+      setOpenModalReworkInvoice(true);
+    } else {
+      setShowAlert(true);
+    }
+  };
 
-    if (existingProductIndex > -1) {
-      // Product is already selected, remove it from products array and corresponding batch number
-      const newProducts = selectedRow.products.filter((item) => item.id !== id);
-      const newBatchNos = selectedRow.batch_no.filter(
-        (_, index) => index !== existingProductIndex
+  const handleCheckboxChange = (row) => {
+    const { id, unit, batch_no, product, quantity, rate, description } = row;
+
+    setSelectedRow((prev) => {
+      const existingProductIndex = prev.products.findIndex(
+        (item) => item.id === id
       );
+      let newProducts, newBatchNos;
 
-      setSelectedRow((prev) => ({
+      if (existingProductIndex > -1) {
+        newProducts = prev.products.filter((item) => item.id !== id);
+        newBatchNos = prev.batch_no.filter(
+          (_, index) => index !== existingProductIndex
+        );
+      } else {
+        newProducts = [
+          ...prev.products,
+          { id, product, quantity, rate, description },
+        ];
+        newBatchNos = [...prev.batch_no, batch_no];
+      }
+
+      setButtonDisabled(newProducts.length === 0);
+      return {
         ...prev,
+        unit: unit || prev.unit,
         batch_no: newBatchNos,
         products: newProducts,
-      }));
-    } else {
-      // Product is not selected, add it
-      setSelectedRow((prev) => ({
-        ...prev,
-        unit: unit || prev.unit, // Set unit if not already set
-        batch_no: [...prev.batch_no, batch_no],
-        products: [
-          ...prev.products,
-          {
-            id,
-            product,
-            quantity,
-            rate: rate,
-          },
-        ],
-      }));
-    }
+      };
+    });
   };
 
   return (
@@ -124,6 +132,12 @@ export const SaleReturnInventory = () => {
         severity={alertInfo.severity}
         message={alertInfo.message}
       />
+      {showAlert && (
+        <Alert severity="error" onClose={() => setShowAlert(false)}>
+          All selected items must have the same description to create a rework
+          entry.
+        </Alert>
+      )}
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
@@ -164,6 +178,7 @@ export const SaleReturnInventory = () => {
               {/* Add Button on the right */}
               <Grid item xs={12} md={5}>
                 <Button
+                  disabled={buttonDisabled}
                   onClick={() => setOpenModalSupplierInvoice(true)}
                   variant="outlined"
                 >
@@ -171,6 +186,7 @@ export const SaleReturnInventory = () => {
                 </Button>
                 <Button
                   sx={{ marginLeft: "5px" }}
+                  disabled={buttonDisabled}
                   onClick={() => setOpenModalScrapInvoice(true)}
                   variant="outlined"
                   color="success"
@@ -179,11 +195,12 @@ export const SaleReturnInventory = () => {
                 </Button>
                 <Button
                   sx={{ marginLeft: "5px" }}
-                  onClick={() => setOpenModalReworkInvoice(true)}
+                  disabled={buttonDisabled}
+                  onClick={() => handleReworkEntry()}
                   variant="outlined"
                   color="secondary"
                 >
-                  Rework Invoice
+                  Rework Entry
                 </Button>
               </Grid>
             </Grid>
@@ -214,6 +231,7 @@ export const SaleReturnInventory = () => {
                   <StyledTableCell align="center">UNIT</StyledTableCell>
                   <StyledTableCell align="center">BATCH_NO</StyledTableCell>
                   <StyledTableCell align="center">PRODUCT</StyledTableCell>
+                  <StyledTableCell align="center">DESCRIPTION</StyledTableCell>
                   <StyledTableCell align="center">QUANTITY</StyledTableCell>
                   <StyledTableCell align="center">RATE</StyledTableCell>
                   <StyledTableCell align="center">AMOUNT</StyledTableCell>
@@ -237,6 +255,9 @@ export const SaleReturnInventory = () => {
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {row.product}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.description}
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {row.quantity}
@@ -284,7 +305,7 @@ export const SaleReturnInventory = () => {
       </Popup>
       <Popup
         fullScreen={true}
-        title={"Create Rework Invoice"}
+        title={"Create Rework Entry"}
         openPopup={openModalReworkInvoice}
         setOpenPopup={setOpenModalReworkInvoice}
       >
