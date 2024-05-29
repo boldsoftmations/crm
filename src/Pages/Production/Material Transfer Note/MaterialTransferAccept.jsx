@@ -31,7 +31,7 @@ export const MaterialTransferAccept = memo(
           data.id,
           req
         );
-        handleSuccess(response.data || "Accepted successfully");
+        handleSuccess(response.data.message || "Accepted successfully");
         setTimeout(() => {
           setOpenAcceptPopup(false);
           getAllMaterialTransferNoteDetails();
