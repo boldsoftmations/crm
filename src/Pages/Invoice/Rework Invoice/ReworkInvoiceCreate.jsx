@@ -130,7 +130,7 @@ export const ReworkInvoiceCreate = ({
       setOpen(true);
       const response = await InventoryServices.createReworkinvoiceData(payload);
       handleSuccess(
-        response.data.message || "Supplier Invoice created successfully!"
+        response.data.message || "Rework Entry created successfully!"
       );
       setOpenPopup(false);
       getSalesReturnInventoryDetails();
