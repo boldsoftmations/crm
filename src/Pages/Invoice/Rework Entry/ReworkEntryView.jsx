@@ -211,7 +211,7 @@ export const ReworkEntryView = () => {
                       {row.seller_account}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.batch_no}
+                      {row.batch}
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {row.created_by}
