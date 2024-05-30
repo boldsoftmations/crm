@@ -34,12 +34,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export const ReworkInvoiceProduct = ({ selectedRow }) => {
+export const ReworkEntryConsumable = ({ selectedRow }) => {
   const [openPopSourceViewList, setOpenPopSourceViewList] = useState(false);
   const [materialData, setMaterialData] = useState(selectedRow);
 
   const handleOpenPopUp = (value) => {
-    console.log("Selected raw material:", value);
     setMaterialData(value);
     setOpenPopSourceViewList(true);
   };

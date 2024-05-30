@@ -7,7 +7,7 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
-import CustomAutocomplete from "./../../../Components/CustomAutocomplete";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import InventoryServices from "../../../services/InventoryService";
 import ProductService from "../../../services/ProductService";
 
@@ -19,7 +19,7 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export const ReworkInvoiceCreate = ({
+export const ReworkEntryCreate = ({
   getSalesReturnInventoryDetails,
   setOpenPopup,
   selectedRow,
@@ -37,7 +37,6 @@ export const ReworkInvoiceCreate = ({
     }))
   );
 
-  console.log("rawMaterials", rawMaterials);
   const [consumables, setConsumables] = useState([]);
   const [consumableOptions, setConsumableOptions] = useState([]);
   const getconsumables = async () => {
@@ -75,7 +74,7 @@ export const ReworkInvoiceCreate = ({
   const handleInputChange = (name, value) => {
     setInputValue({ ...inputValue, [name]: value });
   };
-  console.log("inputvalue", inputValue);
+
   const handleRawMaterialChange = (index, value) => {
     const updatedValue = Number(value); // Allow the quantity to be updated as entered by the user.
 

@@ -24,7 +24,7 @@ import { CustomLoader } from "../../Components/CustomLoader";
 import { Popup } from "../../Components/Popup";
 import SupplierInvoicesCreate from "./../Invoice/SupplierInvoices/SupplierInvoicesCreate";
 import ScrapInvoicesCreate from "./../Invoice/ScrapInvoices/ScrapInvoicesCreate";
-import { ReworkInvoiceCreate } from "./../Invoice/Rework Invoice/ReworkInvoiceCreate";
+import { ReworkEntryCreate } from "../Invoice/Rework Entry/ReworkEntryCreate";
 
 export const SaleReturnInventory = () => {
   const [open, setOpen] = useState(false);
@@ -309,7 +309,7 @@ export const SaleReturnInventory = () => {
         openPopup={openModalReworkInvoice}
         setOpenPopup={setOpenModalReworkInvoice}
       >
-        <ReworkInvoiceCreate
+        <ReworkEntryCreate
           getSalesReturnInventoryDetails={getSalesReturnInventoryDetails}
           setOpenPopup={setOpenModalReworkInvoice}
           selectedRow={selectedRow}

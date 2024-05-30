@@ -3,9 +3,6 @@ import {
   styled,
   TableCell,
   Paper,
-  IconButton,
-  Collapse,
-  Typography,
   Button,
   Grid,
   Box,
@@ -14,7 +11,6 @@ import {
   TableRow,
   TableBody,
   Table,
-  Switch,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -23,9 +19,9 @@ import { MessageAlert } from "../../../Components/MessageAlert";
 import SearchComponent from "../../../Components/SearchComponent ";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import InventoryServices from "../../../services/InventoryService";
-import { ReworkInvoiceProduct } from "./ReworkInvoiceProduct";
 import { Popup } from "../../../Components/Popup";
 import { ReworkEntryRawMaterial } from "./ReworkEntryRawMaterial";
+import { ReworkEntryConsumable } from "./ReworkEntryConsumable";
 
 export const ReworkEntryView = () => {
   const [open, setOpen] = useState(false);
@@ -275,7 +271,7 @@ export const ReworkEntryView = () => {
           openPopup={openConsumablePopUp}
           setOpenPopup={setOpenConsumablePopUp}
         >
-          <ReworkInvoiceProduct
+          <ReworkEntryConsumable
             selectedRow={selectedRowData}
             setOpenPopup={setOpenConsumablePopUp}
           />
