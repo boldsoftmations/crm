@@ -11,6 +11,7 @@ import {
   TableRow,
   TableBody,
   Table,
+  Switch,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -189,7 +190,6 @@ export const ReworkEntryView = () => {
                     SELLER ACOUNT
                   </StyledTableCell>
                   <StyledTableCell align="center">BATCH_NO</StyledTableCell>
-
                   <StyledTableCell align="center">CREATED BY</StyledTableCell>
                   <StyledTableCell align="center">
                     CREATION DATE
@@ -197,6 +197,7 @@ export const ReworkEntryView = () => {
                   <StyledTableCell align="center">QUANTITY</StyledTableCell>
                   <StyledTableCell align="center">RATE</StyledTableCell>
                   <StyledTableCell align="center">AMOUNT</StyledTableCell>
+                  <StyledTableCell align="center">ACCEPT</StyledTableCell>
                   <StyledTableCell align="center">ACTION</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -226,19 +227,13 @@ export const ReworkEntryView = () => {
                       {row.amount}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.is_accepted ? (
-                        <Button variant="text" color="success" disabled>
-                          Accepted
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="text"
-                          color="success"
-                          onClick={() => handleUpdateReworkInvoice(row)}
-                        >
-                          Accept
-                        </Button>
-                      )}
+                      <Switch
+                        checked={row.is_accepted}
+                        inputProps={{ "aria-label": "controlled" }}
+                        onClick={() => handleUpdateReworkInvoice(row)}
+                      />
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
                       <Button
                         color="info"
                         variant="text"
