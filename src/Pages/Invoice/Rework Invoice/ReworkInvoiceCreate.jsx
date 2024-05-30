@@ -24,18 +24,22 @@ export const ReworkInvoiceCreate = ({
   setOpenPopup,
   selectedRow,
 }) => {
+  console.log("selectedRow", selectedRow);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
   const [productOption, setProductOption] = useState([]);
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [products, setProducts] = useState(selectedRow.products);
-  const [consumables, setConsumables] = useState([]);
-  const [consumableOptions, setConsumableOptions] = useState([]);
-  const [quantityError, setQuantityError] = useState(
-    Array(products.length).fill(false)
+  const [rawMaterials, setRawMaterials] = useState(
+    selectedRow.products.map((product) => ({
+      ...product,
+      quantity: product.quantity || 0,
+    }))
   );
 
+  console.log("rawMaterials", rawMaterials);
+  const [consumables, setConsumables] = useState([]);
+  const [consumableOptions, setConsumableOptions] = useState([]);
   const getconsumables = async () => {
     try {
       setOpen(true);
@@ -71,32 +75,26 @@ export const ReworkInvoiceCreate = ({
   const handleInputChange = (name, value) => {
     setInputValue({ ...inputValue, [name]: value });
   };
+  console.log("inputvalue", inputValue);
+  const handleRawMaterialChange = (index, value) => {
+    const updatedValue = Number(value); // Allow the quantity to be updated as entered by the user.
 
-  const handleQuantityChange = (index, event) => {
-    const newQuantity = Number(event.target.value); // Convert the input value to a number
-    if (newQuantity >= 0 && newQuantity <= products[index].initialQuantity) {
-      // Update is valid
-      setProducts((currentProducts) =>
-        currentProducts.map((item, i) =>
-          i === index ? { ...item, quantity: newQuantity } : item
-        )
-      );
-      // Reset error state if previously set
-      const newErrors = [...quantityError];
-      newErrors[index] = false;
-      setQuantityError(newErrors);
-    } else {
-      // Set error for this index
-      const newErrors = [...quantityError];
-      newErrors[index] = true;
-      setQuantityError(newErrors);
-    }
+    setRawMaterials((current) =>
+      current.map((material, idx) =>
+        idx === index
+          ? {
+              ...material,
+              quantity: updatedValue, // Only updating the quantity, no conditions here.
+            }
+          : material
+      )
+    );
   };
 
   const removeFields = (index) => {
-    let data = [...products];
+    let data = [...rawMaterials];
     data.splice(index, 1);
-    setProducts(data);
+    setRawMaterials(data);
   };
 
   const addConsumable = () => {
@@ -116,14 +114,16 @@ export const ReworkInvoiceCreate = ({
     );
   };
 
-  const createSupplierInvoiceDetails = async (e) => {
+  const createReworkEntryDetails = async (e) => {
     e.preventDefault();
 
     const payload = {
       seller_account: selectedRow.unit,
-      batch_no: selectedRow.batch_no.join(", "),
-      products,
-      consumables,
+      source_key: selectedRow.batch_no.join(", "),
+      product: inputValue.product,
+      quantity: inputValue.quantity,
+      raw_materials: rawMaterials,
+      consumable: consumables,
     };
 
     try {
@@ -154,7 +154,7 @@ export const ReworkInvoiceCreate = ({
       <Box
         component="form"
         noValidate
-        onSubmit={(e) => createSupplierInvoiceDetails(e)}
+        onSubmit={(e) => createReworkEntryDetails(e)}
       >
         <Grid container spacing={2}>
           <Grid item xs={12} sm={4}>
@@ -162,7 +162,7 @@ export const ReworkInvoiceCreate = ({
               fullWidth
               multiline
               size="small"
-              label="Invoice No"
+              label="Batch No"
               variant="outlined"
               value={selectedRow.batch_no.join(", ")}
             />
@@ -205,45 +205,40 @@ export const ReworkInvoiceCreate = ({
           <Grid item xs={12}>
             <Root>
               <Divider>
-                <Chip label="PRODUCT" />
+                <Chip label="RAW MATERIALS" />
               </Divider>
             </Root>
           </Grid>
-          {products.map((product, index) => (
+          {rawMaterials.map((material, index) => (
             <React.Fragment key={index}>
               <Grid item xs={12} sm={5}>
                 <CustomTextField
                   fullWidth
-                  name="product"
                   size="small"
                   label="Product"
                   variant="outlined"
-                  value={product.product}
+                  value={material.product}
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
               </Grid>
-              <Grid item xs={12} sm={2}>
+              <Grid item xs={12} sm={4}>
                 <CustomTextField
                   fullWidth
                   name="quantity"
                   size="small"
                   label="Quantity"
                   variant="outlined"
-                  value={product.quantity.toString()}
-                  onChange={(event) => handleQuantityChange(index, event)}
-                  inputProps={{
-                    type: "number",
-                    min: "0",
-                    max: product.initialQuantity.toString(),
-                  }}
-                  error={quantityError[index]}
-                  helperText={
-                    quantityError[index]
-                      ? `Max available: ${product.initialQuantity}`
-                      : ""
+                  type="number"
+                  value={material.quantity.toString()}
+                  onChange={(e) =>
+                    handleRawMaterialChange(index, e.target.value)
                   }
+                  helperText="Please ensure the quantity entered is available in stock."
                 />
               </Grid>
-              <Grid item xs={12} sm={1}>
+              <Grid item xs={12} sm={2}>
                 <Button onClick={() => removeFields(index)} variant="contained">
                   Remove
                 </Button>
