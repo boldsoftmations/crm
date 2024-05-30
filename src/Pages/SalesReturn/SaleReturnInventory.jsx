@@ -24,7 +24,7 @@ import { CustomLoader } from "../../Components/CustomLoader";
 import { Popup } from "../../Components/Popup";
 import SupplierInvoicesCreate from "./../Invoice/SupplierInvoices/SupplierInvoicesCreate";
 import ScrapInvoicesCreate from "./../Invoice/ScrapInvoices/ScrapInvoicesCreate";
-import { ReworkInvoiceCreate } from "../Invoice/Rework Invoice/ReworkInvoiceCreate";
+import { ReworkInvoiceCreate } from "./../Invoice/Rework Invoice/ReworkInvoiceCreate";
 
 export const SaleReturnInventory = () => {
   const [open, setOpen] = useState(false);

@@ -700,6 +700,8 @@ export const AllProformaInvoiceView = (props) => {
                     </div>
                     <div className="col-md-4 d-flex align-items-end justify-content-center">
                       <div className="text-center">
+                        For Glutape India Pvt. Ltd.
+                        <br />
                         {invoiceData.approval
                           ? invoiceData.approval.approve_name
                           : ""}

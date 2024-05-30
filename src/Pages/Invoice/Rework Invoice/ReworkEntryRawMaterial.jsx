@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Grid,
   styled,
@@ -9,12 +9,8 @@ import {
   TableRow,
   TableCell,
   Paper,
-  Button,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import { Popup } from "../../../Components/Popup";
-import { ReworkSourceSourceViewList } from "./ReworkSourceViewList";
-
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
@@ -34,14 +30,10 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export const ReworkInvoiceProduct = ({ selectedRow }) => {
-  const [openPopSourceViewList, setOpenPopSourceViewList] = useState(false);
-  const [materialData, setMaterialData] = useState(selectedRow);
-
-  const handleOpenPopUp = (value) => {
-    console.log("Selected raw material:", value);
-    setMaterialData(value);
-    setOpenPopSourceViewList(true);
+export const ReworkEntryRawMaterial = ({ selectedRow }) => {
+  console.log("selectedRow", selectedRow);
+  const handlecheck = (value) => {
+    console.log("click value", value);
   };
 
   return (
@@ -71,13 +63,14 @@ export const ReworkInvoiceProduct = ({ selectedRow }) => {
                 <TableRow>
                   <StyledTableCell align="center">Product</StyledTableCell>
                   <StyledTableCell align="center">Unit</StyledTableCell>
+                  <StyledTableCell align="center">Rate</StyledTableCell>
                   <StyledTableCell align="center">Quantity</StyledTableCell>
-                  <StyledTableCell align="center">Action</StyledTableCell>
+                  <StyledTableCell align="center">Amount</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {selectedRow &&
-                  selectedRow.consumable.map((row, index) => (
+                  selectedRow.raw_materials.map((row, index) => (
                     <StyledTableRow key={index}>
                       <StyledTableCell align="center">
                         {row.product}
@@ -86,16 +79,13 @@ export const ReworkInvoiceProduct = ({ selectedRow }) => {
                         {row.unit}
                       </StyledTableCell>
                       <StyledTableCell align="center">
+                        {row.rate}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
                         {row.quantity}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        <Button
-                          color="primary"
-                          variant="outlined"
-                          onClick={() => handleOpenPopUp(row)}
-                        >
-                          View Source List
-                        </Button>
+                        {row.amount}
                       </StyledTableCell>
                     </StyledTableRow>
                   ))}
@@ -104,14 +94,6 @@ export const ReworkInvoiceProduct = ({ selectedRow }) => {
           </TableContainer>
         </Paper>
       </Grid>
-      <Popup
-        maxWidth="xl"
-        title={"Source View List"}
-        openPopup={openPopSourceViewList}
-        setOpenPopup={setOpenPopSourceViewList}
-      >
-        <ReworkSourceSourceViewList selectedRow={materialData} />
-      </Popup>
     </>
   );
 };
