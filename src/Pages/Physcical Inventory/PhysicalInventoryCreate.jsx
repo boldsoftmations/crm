@@ -143,7 +143,7 @@ export const PhysicalInventoryCreate = memo((props) => {
       try {
         const payload = {
           ...formData,
-          gnl: calculateGNL(formData.physical_quantity),
+          gnl: formData.gnl,
         };
         const response = await InventoryServices.createPhysical(payload);
         handleSuccess(
