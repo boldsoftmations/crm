@@ -99,7 +99,7 @@ export const Dispatched = () => {
                     fontWeight: 800,
                   }}
                 >
-                  Pending Dispatch
+                  Dispatched
                 </h3>
               </Grid>
             </Grid>
