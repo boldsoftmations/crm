@@ -11,11 +11,6 @@ import {
   TableCell,
   Switch,
   Button,
-  IconButton,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Paper,
   styled,
 } from "@mui/material";
@@ -25,7 +20,6 @@ import { pdf } from "@react-pdf/renderer";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { Popup } from "../../../Components/Popup";
 import InventoryServices from "../../../services/InventoryService";
-import ClearIcon from "@mui/icons-material/Clear";
 import { useSelector } from "react-redux";
 import { MaterialTransferNoteCreate } from "./MaterialTransferNoteCreate";
 import InvoiceServices from "../../../services/InvoiceService";
