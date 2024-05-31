@@ -9,6 +9,7 @@ import { CustomTable } from "../../Components/CustomTable";
 import { CustomPagination } from "../../Components/CustomPagination";
 import { Popup } from "../../Components/Popup";
 import { PhysicalInventoryCreate } from "./PhysicalInventoryCreate";
+import { batch } from "react-redux";
 
 export const PhysicalInventoryView = () => {
   const [open, setOpen] = useState(false);
@@ -55,12 +56,12 @@ export const PhysicalInventoryView = () => {
   };
 
   const Tableheaders = [
-    "ID",
     "DATE",
     "USER",
     "TYPE",
     "PRODUCT",
     "UNIT",
+    "BATCH NO",
     "SELLER UNIT",
     "PENDING QUANTITY",
     "PHYSICAL QUANTITY",
@@ -70,12 +71,12 @@ export const PhysicalInventoryView = () => {
   ];
 
   const Tabledata = data.map((row, i) => ({
-    id: row.id,
     creation_date: row.creation_date,
     created_by: row.created_by,
     type: row.type,
     product: row.product,
     unit: row.unit,
+    batch_no: row.batch_no,
     seller_unit: row.seller_unit,
     pending_quantity: row.pending_quantity,
     physical_quantity: row.physical_quantity,
