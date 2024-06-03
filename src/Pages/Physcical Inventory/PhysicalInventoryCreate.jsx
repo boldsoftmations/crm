@@ -88,7 +88,7 @@ export const PhysicalInventoryCreate = memo((props) => {
       setFormData((prevState) => ({
         ...prevState,
         product: value,
-        pending_quantity: selectedProduct ? selectedProduct.quantity : 0,
+        pending_quantity: selectedProduct ? selectedProduct.quantity : "0",
       }));
     },
     [inventoryData, formData.seller_unit]
