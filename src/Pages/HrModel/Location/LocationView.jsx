@@ -34,7 +34,7 @@ export const LocationView = () => {
 
   useEffect(() => {
     fetchLocation();
-  }, [currentPage, searchQuery]);
+  }, []);
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);

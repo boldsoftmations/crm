@@ -59,12 +59,12 @@ const updateSource = (id, data) => {
 
 // Location Api
 
-const getLocation = (searchQuery) => {
+const getLocation = (page, searchQuery) => {
   const params = new URLSearchParams();
 
-  // if (page) {
-  //   params.append("page", page);
-  // }
+  if (page) {
+    params.append("page", page);
+  }
 
   if (searchQuery) {
     params.append("search", searchQuery);
