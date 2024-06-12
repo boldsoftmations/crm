@@ -42,6 +42,10 @@ export const LocationView = () => {
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
+  const handleReset = () => {
+    setSearchQuery("");
+    fetchLocation();
+  };
 
   const handleEdit = (item) => {
     setRecordForEdit(item);
@@ -90,10 +94,7 @@ export const LocationView = () => {
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={() => {
-                    setSearchQuery("");
-                    fetchLocation("");
-                  }}
+                  onClick={handleReset}
                   fullWidth
                 >
                   Reset
