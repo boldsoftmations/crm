@@ -124,7 +124,6 @@ export const DebitCreditInvoiceNote = (props) => {
                           {invoiceNoteData.seller_details.state}, Code :{" "}
                           {invoiceNoteData.seller_details.state_code}, <br />
                           CIN : {invoiceNoteData.seller_details.cin_number},
-                          <br />
                           Email : contact@glutape.com
                         </p>
                       </div>
@@ -159,8 +158,21 @@ export const DebitCreditInvoiceNote = (props) => {
                         {invoiceNoteData.note_no} &{" "}
                         {invoiceNoteData.creation_date}
                       </div>
+                      <div>
+                        <strong style={{ ...typographyStyling }}>
+                          Reason :
+                        </strong>
+                        <span className="p-1">
+                          {invoiceNoteData.reason === "Rate"
+                            ? `${invoiceNoteData.reason} Difference`
+                            : `${invoiceNoteData.reason}`}
+                        </span>
+                      </div>
+                      <div>
+                        <strong>Note : </strong>
+                        <span>{invoiceNoteData.notes}</span>
+                      </div>
                     </div>
-
                     <div
                       className="col-md-6"
                       style={{
@@ -339,15 +351,6 @@ export const DebitCreditInvoiceNote = (props) => {
                     <strong>Company's PAN : </strong>
                     <span>{invoiceNoteData.seller_details.pan}</span>
                     <br />
-                    <strong>Reason : </strong>
-                    <span>
-                      {invoiceNoteData.reason === "Rate"
-                        ? `${invoiceNoteData.reason} Difference`
-                        : `${invoiceNoteData.reason}`}
-                    </span>
-                    <br />
-                    <strong>Note : </strong>
-                    <span>{invoiceNoteData.notes}</span>
                   </div>
                   <div className="col-md-4 text-right bg-red">
                     <ul style={{ listStyle: "none" }}>
@@ -417,11 +420,7 @@ export const DebitCreditInvoiceNote = (props) => {
               </div>
             </div>
           </div>
-
           {/* <!-- END INVOICE --> */}
-        </div>
-        <div style={{ textAlign: "center", fontSize: "14px" }}>
-          This is a computer Generated Document
         </div>
       </div>
     </>
