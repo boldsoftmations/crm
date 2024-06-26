@@ -46,7 +46,6 @@ export const CreateDebitCreditNote = (props) => {
       ]);
       setSellerUnitOptions(sellerResponse.data);
       setCustomer(customerResponse.data.data);
-      console.log("");
     } catch (error) {
       handleError(error);
     } finally {

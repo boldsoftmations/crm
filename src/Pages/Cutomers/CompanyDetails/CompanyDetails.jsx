@@ -29,6 +29,7 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import SearchComponent from "../../../Components/SearchComponent ";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
+import { CreateEDC } from "../Exclusive Distribution Customer/CreateEDC";
 
 export const CompanyDetails = () => {
   const [openPopupOfUpdateCustomer, setOpenPopupOfUpdateCustomer] =
@@ -38,6 +39,7 @@ export const CompanyDetails = () => {
   const [openPopupInvoice, setOpenPopupInvoice] = useState(false);
   const [openPopupActivity, setOpenPopupActivity] = useState(false);
   const [openPopupPotential, setOpenPopupPotential] = useState(false);
+  const [openEDC, setOpenEDC] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [open, setOpen] = useState(false);
@@ -54,6 +56,7 @@ export const CompanyDetails = () => {
   const assigned = userData.sales_users || [];
   const [isPrinting, setIsPrinting] = useState(false);
   const [statusFilter, setStatusFilter] = useState("Active");
+  const [editforEdc, setEditforEdc] = useState();
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
@@ -223,6 +226,10 @@ export const CompanyDetails = () => {
     setCurrentPage(value);
   };
 
+  const handleOpenEDC = (data) => {
+    setEditforEdc(data);
+    setOpenEDC(true);
+  };
   const Tableheaders = [
     "NAME",
     "Assigned To",
@@ -516,6 +523,15 @@ export const CompanyDetails = () => {
                           Potential
                         </Button>
                       )}
+                      {userData.groups.includes("Accounts") ||
+                        (userData.groups.includes("Director") && (
+                          <Button
+                            color="inherit"
+                            onClick={() => handleOpenEDC(row)}
+                          >
+                            Assign to EDC
+                          </Button>
+                        ))}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
@@ -606,6 +622,19 @@ export const CompanyDetails = () => {
           getCompanyDetailsByID={getAllCompanyDetails}
           recordForEdit={recordForEdit}
           setOpenModal={setOpenPopupPotential}
+        />
+      </Popup>
+
+      <Popup
+        maxWidth={"lg"}
+        title={"Assign to Exclusive Distrubution Customer"}
+        openPopup={openEDC}
+        setOpenPopup={setOpenEDC}
+      >
+        <CreateEDC
+          getCompanyDetailsByID={getAllCompanyDetails}
+          setOpenEDC={setOpenEDC}
+          editforEdc={editforEdc}
         />
       </Popup>
     </>
