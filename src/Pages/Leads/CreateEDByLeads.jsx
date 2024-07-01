@@ -81,7 +81,12 @@ export const CreateEDCByLeads = (props) => {
         message={alertInfo.message}
       />
       <CustomLoader open={open} />
-      <Box component="form" noValidate onSubmit={createEDC_Customer}>
+      <Box
+        component="form"
+        noValidate
+        onSubmit={createEDC_Customer}
+        style={{ minWidth: "550px" }}
+      >
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12}>
             <CustomAutocomplete

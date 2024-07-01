@@ -19,6 +19,9 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import SearchComponent from "../../../Components/SearchComponent ";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import CustomerServices from "../../../services/CustomerService";
+import { Popup } from "../../../Components/Popup";
+import { useSelector } from "react-redux";
+import { ViewAssignCustomers } from "./ViewAssignCustomer";
 
 export const ExclusiveDistributionCustomer = () => {
   const [open, setOpen] = useState(false);
@@ -26,30 +29,29 @@ export const ExclusiveDistributionCustomer = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [openEDC, setOpenEDC] = useState(false);
+  const [assignCustomerData, setAssignCustomerData] = useState([]);
+  const data = useSelector((state) => state.auth);
+  const userData = data.profile;
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
-  const getDebitCreditNotesData = useCallback(async () => {
+  const getAllEDC = async () => {
     try {
       setOpen(true);
-      const response =
-        await CustomerServices.getAllExclusiveDistributionCustomers(
-          currentPage,
-          searchQuery
-        );
-      setEdtData(response.data.results);
+      const response = await CustomerServices.getAllEdc();
+      setEdtData(response.data);
       setTotalPages(Math.ceil(response.data.count / 25));
     } catch (error) {
       handleError(error);
     } finally {
       setOpen(false);
     }
-  }, [currentPage, searchQuery]); // Ensure dependencies are correctly listed
+  };
 
   useEffect(() => {
-    getDebitCreditNotesData();
-  }, [currentPage, searchQuery]);
+    getAllEDC();
+  }, []);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -63,6 +65,11 @@ export const ExclusiveDistributionCustomer = () => {
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
+  };
+
+  const handleOpenEDC = (data) => {
+    setAssignCustomerData(data);
+    setOpenEDC(true);
   };
 
   return (
@@ -138,6 +145,7 @@ export const ExclusiveDistributionCustomer = () => {
                   <StyledTableCell align="center">GST</StyledTableCell>
                   <StyledTableCell align="center">STATE</StyledTableCell>
                   <StyledTableCell align="center">STATUS</StyledTableCell>
+                  <StyledTableCell align="center">ACTION</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -156,6 +164,18 @@ export const ExclusiveDistributionCustomer = () => {
                     <StyledTableCell align="center">
                       {row.status}
                     </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {userData.groups.includes("Accounts") ||
+                        (userData.groups.includes("Director") && (
+                          <Button
+                            color="success"
+                            variant="contained"
+                            onClick={() => handleOpenEDC(row)}
+                          >
+                            View Assign Customer
+                          </Button>
+                        ))}
+                    </StyledTableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>
@@ -168,6 +188,19 @@ export const ExclusiveDistributionCustomer = () => {
           />
         </Paper>
       </Grid>
+
+      <Popup
+        fullScreen={true}
+        openPopup={openEDC}
+        setOpenPopup={setOpenEDC}
+        title="View Assign Customer"
+      >
+        <ViewAssignCustomers
+          assignCustomerData={assignCustomerData}
+          getAllEDC={getAllEDC}
+          closeModal={setOpenEDC}
+        />
+      </Popup>
     </>
   );
 };

@@ -343,20 +343,20 @@ const getAutomatioData = (page = 1, isScheduledFilter = "") => {
 
 // Exclusive Distribution Customers Api
 
-const getAllExclusiveDistributionCustomers = (page, search) => {
-  const params = new URLSearchParams();
+// const getAllExclusiveDistributionCustomers = (page, search) => {
+//   const params = new URLSearchParams();
 
-  if (page) {
-    params.append("page", page);
-  }
-  if (search) {
-    params.append("search", search);
-  }
+//   if (page) {
+//     params.append("page", page);
+//   }
+//   if (search) {
+//     params.append("search", search);
+//   }
 
-  return CustomAxios.get(
-    `/api/customer/list-company/?type_of_customer=Exclusive Distribution Customer&${params.toString()}`
-  );
-};
+//   return CustomAxios.get(
+//     `/api/customer/list-company/?type_of_customer=Exclusive Distribution Customer&${params.toString()}`
+//   );
+// };
 
 const getAllEdc = () => {
   return CustomAxios.get("/api/customer/assign-to-edc/");
@@ -364,6 +364,9 @@ const getAllEdc = () => {
 
 const CreateEDC_Customer = (data) => {
   return CustomAxios.post("/api/customer/assign-to-edc/", data);
+};
+const EDC_List = () => {
+  return CustomAxios.get("/api/customer/edc/");
 };
 
 const CustomerServices = {
@@ -416,9 +419,9 @@ const CustomerServices = {
   resendWhatsappMessage,
   bulkResendMessage,
   getAutomatioData,
-  getAllExclusiveDistributionCustomers,
   getAllEdc,
   CreateEDC_Customer,
+  EDC_List,
 };
 
 export default CustomerServices;

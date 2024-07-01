@@ -15,15 +15,15 @@ const Root = styled("div")(({ theme }) => ({
 }));
 
 export const CreateEDC = (props) => {
-  const { getCompanyDetailsByID, setOpenEDC, editforEdc } = props;
-  console.log("editforEdc", editforEdc);
+  const { assignCustomerData, getAllEDC, closeModal } = props;
+  console.log(getAllEDC);
   const [open, setOpen] = useState(false);
-  const [edcData, setEdcData] = useState([]);
+  const [Edc_List, setEdc_List] = useState([]);
 
   const [inputValue, setInputValue] = useState({
     type: "Customer",
-    id: editforEdc.id,
-    edc_customer: "",
+    edc_customer: assignCustomerData.name,
+    id: "",
   });
 
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -32,8 +32,9 @@ export const CreateEDC = (props) => {
   const GetEdcData = useCallback(async () => {
     try {
       setOpen(true);
-      const res = await CustomerServices.getAllEdc();
-      setEdcData(res.data);
+      const res = await CustomerServices.EDC_List();
+      console.log(res.data);
+      setEdc_List(res.data.data);
     } catch (error) {
       handleError(error);
     } finally {
@@ -46,10 +47,12 @@ export const CreateEDC = (props) => {
   }, []);
 
   const handleInvoiceSelection = (event, value) => {
-    setInputValue((prev) => ({
-      ...prev,
-      edc_customer: value,
-    }));
+    if (value) {
+      setInputValue((prev) => ({
+        ...prev,
+        id: value.id,
+      }));
+    }
   };
 
   const createEDC_Customer = async (e) => {
@@ -61,10 +64,8 @@ export const CreateEDC = (props) => {
       const successMessage = response.data.message || "Assign EDC successfully";
       handleSuccess(successMessage);
 
-      setTimeout(() => {
-        setOpenEDC(false);
-        getCompanyDetailsByID();
-      }, 300);
+      getAllEDC();
+      closeModal(false);
     } catch (error) {
       handleError(error); // Handle errors from the API call
     } finally {
@@ -81,7 +82,12 @@ export const CreateEDC = (props) => {
         message={alertInfo.message}
       />
       <CustomLoader open={open} />
-      <Box component="form" noValidate onSubmit={createEDC_Customer}>
+      <Box
+        component="form"
+        noValidate
+        onSubmit={createEDC_Customer}
+        style={{ minWidth: "550px" }}
+      >
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12}>
             <CustomAutocomplete
@@ -89,8 +95,8 @@ export const CreateEDC = (props) => {
               size="small"
               disablePortal
               id="combo-box-demo"
-              options={edcData.map((option) => option.name)}
-              getOptionLabel={(option) => option}
+              options={Edc_List}
+              getOptionLabel={(option) => option.name}
               onChange={handleInvoiceSelection}
               fullWidth
               label="EDC"
