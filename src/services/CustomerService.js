@@ -341,23 +341,6 @@ const getAutomatioData = (page = 1, isScheduledFilter = "") => {
   );
 };
 
-// Exclusive Distribution Customers Api
-
-// const getAllExclusiveDistributionCustomers = (page, search) => {
-//   const params = new URLSearchParams();
-
-//   if (page) {
-//     params.append("page", page);
-//   }
-//   if (search) {
-//     params.append("search", search);
-//   }
-
-//   return CustomAxios.get(
-//     `/api/customer/list-company/?type_of_customer=Exclusive Distribution Customer&${params.toString()}`
-//   );
-// };
-
 const getAllEdc = () => {
   return CustomAxios.get("/api/customer/assign-to-edc/");
 };
