@@ -22,8 +22,7 @@ export const DebitCreditInvoiceNote = (props) => {
       const response = await InvoiceServices.getDebitCreditNoteById(
         invoiceNoteData.id
       );
-      console.log("data", response.data);
-      setInvoices(response.data.invoices);
+      setInvoices(response.data.sales_invoices);
       setOpen(false);
     } catch (err) {
       setOpen(false);
