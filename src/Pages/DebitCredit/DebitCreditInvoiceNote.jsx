@@ -276,7 +276,7 @@ export const DebitCreditInvoiceNote = (props) => {
                           </td>
                         </tr>
                         <tr>
-                          <td colspan="2.5" className="text-right ">
+                          <td colSpan="2.5" className="text-right ">
                             <div
                               style={{
                                 textAlign: "end",
@@ -292,7 +292,7 @@ export const DebitCreditInvoiceNote = (props) => {
                               </strong>
                             </div>
                           </td>
-                          <td colspan=".5" className="text-right">
+                          <td colSpan=".5" className="text-right">
                             <div
                               style={{
                                 textAlign: "center",
@@ -305,7 +305,7 @@ export const DebitCreditInvoiceNote = (props) => {
                           </td>
                         </tr>
                         <tr>
-                          <td colspan="2.5" className="text-right ">
+                          <td colSpan="2.5" className="text-right ">
                             <div
                               style={{
                                 textAlign: "end",
@@ -321,7 +321,7 @@ export const DebitCreditInvoiceNote = (props) => {
                               </strong>
                             </div>
                           </td>
-                          <td colspan=".5" className="text-right">
+                          <td colSpan=".5" className="text-right">
                             <div
                               style={{
                                 textAlign: "center",
