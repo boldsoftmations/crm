@@ -52,11 +52,11 @@ export const PriceList = () => {
     try {
       setOpen(true);
       const response = await ProductService.getAllPriceList(
-        currentPage,
+        "all",
         filterQuery,
         searchQuery
       );
-      const data = response.data.results.map((row) => {
+      const data = response.data.map((row) => {
         return {
           id: row.id,
           product: row.product,
