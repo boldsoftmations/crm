@@ -82,6 +82,7 @@ export const ViewAssignCustomers = (props) => {
                   <StyledTableCell align="center">GST</StyledTableCell>
                   <StyledTableCell align="center">STATE</StyledTableCell>
                   <StyledTableCell align="center">STATUS</StyledTableCell>
+                  <StyledTableCell align="center">ACTION</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -102,6 +103,14 @@ export const ViewAssignCustomers = (props) => {
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {row.status}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Button
+                          variant="contained"
+                          style={{ backgroundColor: "red" }}
+                        >
+                          Remove
+                        </Button>
                       </StyledTableCell>
                     </StyledTableRow>
                   ))}
