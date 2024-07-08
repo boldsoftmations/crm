@@ -15,12 +15,49 @@ import {
 import { tableCellClasses } from "@mui/material/TableCell";
 import { Popup } from "../../../Components/Popup";
 import { CreateEDC } from "./CreateEDC";
+import CustomerServices from "../../../services/CustomerService";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import { CustomLoader } from "../../../Components/CustomLoader";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 
 export const ViewAssignCustomers = (props) => {
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
   const [openEDC, setOpenEDC] = useState(false);
+  const [open, setOpen] = useState(false);
   const { assignCustomerData, getAllEDC, closeModal } = props;
+
+  const RemoveEdc = async (name) => {
+    if (!name) {
+      handleError("Name is required to remove EDC");
+      return;
+    }
+
+    try {
+      setOpen(true);
+      await CustomerServices.RemoveEdc({ company: name });
+      handleSuccess("Removed EDC successfully");
+      setTimeout(() => {
+        getAllEDC();
+        closeModal();
+      }, 500);
+    } catch (err) {
+      handleError(err);
+      console.error("An error occurred while removing EDC:", err);
+    } finally {
+      setOpen(false);
+    }
+  };
+
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
+      <CustomLoader open={open} />
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
           <Box
@@ -108,6 +145,7 @@ export const ViewAssignCustomers = (props) => {
                         <Button
                           variant="contained"
                           style={{ backgroundColor: "red" }}
+                          onClick={() => RemoveEdc(row.name)}
                         >
                           Remove
                         </Button>
