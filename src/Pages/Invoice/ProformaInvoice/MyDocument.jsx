@@ -10,6 +10,9 @@ import "../../../App.css";
 export const MyDocument = (props) => {
   const { productData, invoiceData, hsnData, AMOUNT_IN_WORDS, TOTAL_GST } =
     props;
+  console.log("TOTAL_GST", TOTAL_GST);
+  console.log(invoiceData);
+
   // Calculate the number of pages required to display all products
   const totalPages = Math.ceil(productData.length / 6);
 
@@ -763,14 +766,14 @@ export const MyDocument = (props) => {
                 </View>
                 <View style={{ ...cellStyle, ...borderRightStyle }}>
                   <Text style={{ ...outerTextStyle }}>
-                    {invoiceData.igst | "-"}
+                    {invoiceData.igst || "-"}
                   </Text>
                 </View>
                 <View style={{ ...cellStyle, ...borderRightStyle }}>
                   <Text style={{ ...outerTextStyle }}>-</Text>
                 </View>
                 <View style={cellStyle}>
-                  <Text style={{ ...outerTextStyle }}>{TOTAL_GST | "-"}</Text>
+                  <Text style={{ ...outerTextStyle }}>{TOTAL_GST || "-"}</Text>
                 </View>
               </View>
               <View>
