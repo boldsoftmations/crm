@@ -195,8 +195,8 @@ export const ExclusiveDistributionCustomer = () => {
                         (userData.groups.includes("Director") && (
                           <>
                             <Button
-                              color="success"
-                              variant="contained"
+                              color="info"
+                              variant="outlined"
                               className="mx-3"
                               onClick={() => handleViewAssignCustomer(row)}
                             >

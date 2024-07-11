@@ -67,7 +67,9 @@ export const CreateEDC = (props) => {
       getAllEDC();
       closeModal(false);
     } catch (error) {
-      handleError(error); // Handle errors from the API call
+      console.log(error.response.data.message || "Assign EDC successfully");
+      let errmesg = error.response.data.message || "Assign EDC failed";
+      handleError(errmesg); // Handle errors from the API call
     } finally {
       setOpen(false); // Always close the loader
     }
