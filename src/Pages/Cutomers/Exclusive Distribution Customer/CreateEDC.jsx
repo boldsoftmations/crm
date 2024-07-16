@@ -67,7 +67,7 @@ export const CreateEDC = (props) => {
       getAllEDC();
       closeModal(false);
     } catch (error) {
-      console.log(error.response.data.message || "Assign EDC successfully");
+      console.log(error.response.data.message);
       let errmesg = error.response.data.message || "Assign EDC failed";
       handleError(errmesg); // Handle errors from the API call
     } finally {

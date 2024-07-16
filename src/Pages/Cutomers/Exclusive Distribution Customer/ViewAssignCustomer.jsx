@@ -156,7 +156,7 @@ export const ViewAssignCustomers = (props) => {
                 {assignViewData.length == 0 && (
                   <StyledTableRow>
                     <StyledTableCell colSpan={6} align="center">
-                      No Exclusive Distrubution Customers assigned yet.
+                      No Customers assigned yet.
                     </StyledTableCell>
                   </StyledTableRow>
                 )}

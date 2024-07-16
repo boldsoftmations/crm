@@ -28,6 +28,7 @@ export const ProductBaseCustomerView = () => {
   const [productBaseCustomer, setProductBaseCustomer] = useState([]);
   const [exportData, setExportData] = useState([]);
   const [productOption, setProductOption] = useState([]);
+  const [filterValue, setFilterValue] = useState(null);
   const csvLinkRef = useRef(null);
   const userData = data.profile;
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -37,7 +38,7 @@ export const ProductBaseCustomerView = () => {
     try {
       setOpen(true);
       const response = await CustomerServices.getProductBaseCustomer(value);
-      console.log(response.data.data);
+      setFilterValue(value);
       setProductBaseCustomer(response.data.data);
       setOpen(false);
     } catch (err) {
@@ -226,30 +227,17 @@ export const ProductBaseCustomerView = () => {
                     <StyledTableCell align="center">
                       {row.sales_invoice__generation_date}
                     </StyledTableCell>
-                    {/* <StyledTableCell align="center">
-                      {userData.groups.includes("Accounts") ||
-                        (userData.groups.includes("Director") && (
-                          <>
-                            <Button
-                              color="info"
-                              variant="outlined"
-                              className="mx-3"
-                              onClick={() => handleViewAssignCustomer(row)}
-                            >
-                              View Assign Customer
-                            </Button>
-                            <Button
-                              color="secondary"
-                              variant="outlined"
-                              onClick={() => handleLeadCustomer(row)}
-                            >
-                              View lead
-                            </Button>
-                          </>
-                        ))}
-                    </StyledTableCell> */}
                   </StyledTableRow>
                 ))}
+                {filterValue && productBaseCustomer.length === 0 && (
+                  <>
+                    <TableRow>
+                      <StyledTableCell colSpan={6} align="center">
+                        No Data Available
+                      </StyledTableCell>
+                    </TableRow>
+                  </>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
