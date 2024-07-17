@@ -20,11 +20,9 @@ import { MessageAlert } from "../../../Components/MessageAlert";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { CSVLink } from "react-csv";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
-import { Description } from "@mui/icons-material";
 
 export const ProductBaseCustomerView = () => {
   const [open, setOpen] = useState(false);
-  const data = useSelector((state) => state.auth);
   const [productBaseCustomer, setProductBaseCustomer] = useState([]);
   const [exportData, setExportData] = useState([]);
   const [descriptionOption, setDescriptionOption] = useState([]);
