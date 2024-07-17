@@ -49,8 +49,10 @@ export const ProductBaseCustomerView = () => {
 
   const getProduct = useCallback(async () => {
     try {
+      setOpen(true);
       const res = await ProductService.getAllValidPriceList("all");
       setProductOption(res.data);
+      setOpen(false);
     } catch (err) {
       console.error("error potential", err);
     }
