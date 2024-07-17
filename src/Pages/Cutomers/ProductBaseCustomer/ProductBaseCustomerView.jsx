@@ -20,6 +20,7 @@ import { MessageAlert } from "../../../Components/MessageAlert";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { CSVLink } from "react-csv";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { Description } from "@mui/icons-material";
 
 export const ProductBaseCustomerView = () => {
   const [open, setOpen] = useState(false);
@@ -71,6 +72,7 @@ export const ProductBaseCustomerView = () => {
       setOpen(true);
       return {
         Name: row.sales_invoice__order_book__company__name,
+        Description: row.product__description__name,
         Brand: row.product__brand__name,
         Product: row.product__name,
         Unit: row.product__unit__name,
@@ -84,6 +86,7 @@ export const ProductBaseCustomerView = () => {
 
   const headers = [
     { label: "Customer Name", key: "Name" },
+    { label: "Description", key: "Description" },
     { label: "Brand", key: "Brand" },
     { label: "Product", key: "Product" },
     { label: "Unit", key: "Unit" },
