@@ -13,7 +13,6 @@ import {
   Button,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import { useSelector } from "react-redux";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import CustomerServices from "../../../services/CustomerService";
 import { MessageAlert } from "../../../Components/MessageAlert";
