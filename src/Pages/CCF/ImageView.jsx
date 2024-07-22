@@ -12,12 +12,20 @@ const ImageContainer = styled.div`
   flex-wrap: wrap;
 `;
 
+const ImageWrapper = styled.div`
+  margin: 10px;
+  text-align: center;
+`;
+
 const Image = styled.img`
   width: ${(props) => (props.isEnlarged ? "550px" : "200px")}; // Updated size
   height: auto;
-  margin: 10px;
   cursor: pointer;
-  transition: width 0.5s ease-in-out;
+  transition: width 0.5s ease-in-out, box-shadow 0.3s ease-in-out;
+  box-shadow: ${(props) =>
+    props.isEnlarged
+      ? "0px 4px 20px rgba(0, 0, 0, 0.5)"
+      : "0px 2px 10px rgba(0, 0, 0, 0.3)"};
 `;
 
 const Message = styled.div`
@@ -26,11 +34,9 @@ const Message = styled.div`
   color: #777;
 `;
 
-const Loader = styled.div`
-  margin: 20px;
-  font-size: 18px;
-  color: #777;
-  text-align: center;
+const Heading = styled.div`
+  margin-bottom: 5px;
+  font-weight: bold;
 `;
 
 const ImageView = ({ imagesData }) => {
@@ -59,14 +65,16 @@ const ImageView = ({ imagesData }) => {
       ) : (
         <ImageContainer>
           {imagesData.map((image, index) => (
-            <Image
-              key={index}
-              src={image.file}
-              alt={`Image ${index + 1}`}
-              isEnlarged={enlargedImage === image}
-              onClick={() => handleImageClick(image)}
-              onLoad={() => setLoading(false)} // Ensure loading state is updated
-            />
+            <ImageWrapper key={index}>
+              <Heading>Image {index + 1}</Heading>
+              <Image
+                src={image.file}
+                alt={`Image ${index + 1}`}
+                isEnlarged={enlargedImage === image}
+                onClick={() => handleImageClick(image)}
+                onLoad={() => setLoading(false)} // Ensure loading state is updated
+              />
+            </ImageWrapper>
           ))}
         </ImageContainer>
       )}
