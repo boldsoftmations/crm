@@ -30,6 +30,7 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import StorageIcon from "@mui/icons-material/Storage";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import AssessmentSharpIcon from "@mui/icons-material/AssessmentSharp";
+import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 export const ListItems = (props) => {
   const { setOpen } = props;
   const data = useSelector((state) => state.auth);
@@ -365,6 +366,21 @@ export const ListItems = (props) => {
               <AssessmentSharpIcon />
             </ListItemIcon>
             <ListItemText primary="Debit-Credit" />
+          </ListItem>
+
+          {/* CCF   */}
+          <ListItem
+            button
+            component={RouterLink}
+            to="/customer/complaints/ccp-capa"
+            style={{ width: 300 }}
+            onClick={() => setOpen(false)}
+            selected={isActive("/complaints/ccp-capa")}
+          >
+            <ListItemIcon>
+              <QuestionAnswerIcon />
+            </ListItemIcon>
+            <ListItemText primary="CCF-CAPA" />
           </ListItem>
 
           {/* Currency */}

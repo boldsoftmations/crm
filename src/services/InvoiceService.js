@@ -392,6 +392,19 @@ const getDebitCreditNoteById = (id) => {
   return CustomAxios.get(`/api/invoice/credit-debit-note/${id}/`);
 };
 
+const getInvoiceByCustomerAndSellerUnit = (customer, unit) => {
+  const params = new URLSearchParams();
+  if (customer) {
+    params.append("customer", customer);
+  }
+  if (unit) {
+    params.append("unit", unit);
+  }
+  return CustomAxios.get(
+    `/api/invoice/six-month-invoice/?${params.toString()}`
+  );
+};
+
 const InvoiceServices = {
   getAllSellerAccountData,
   getfilterSellerAccountData,
@@ -437,6 +450,7 @@ const InvoiceServices = {
   getDebitCreditnotes,
   CreateDebitCreditNote,
   getDebitCreditNoteById,
+  getInvoiceByCustomerAndSellerUnit,
 };
 
 export default InvoiceServices;
