@@ -38,6 +38,7 @@ import { AllDispatchTabView } from "../Pages/Dispatch/AllDispatchTabView";
 import { AllProfileTabView } from "../Pages/Users/AllProfileTabView";
 import { SalesReturnAllTabView } from "../Pages/SalesReturn/SalesReturnAllTabView";
 import { DebitCreditAllTabView } from "../Pages/DebitCredit/DebitCreditAllTabView";
+import { AllCCFtab } from "../Pages/CCF/AllCCFtab";
 
 const PrivateRoute = ({ children, redirectTo = "/" }) => {
   const tokenData = useSelector((state) => state.auth);
@@ -262,6 +263,14 @@ export const RouteScreen = () => {
             element={
               <PrivateRoute>
                 <DebitCreditAllTabView />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/customer/complaints/ccp-capa"
+            element={
+              <PrivateRoute>
+                <AllCCFtab />
               </PrivateRoute>
             }
           />
