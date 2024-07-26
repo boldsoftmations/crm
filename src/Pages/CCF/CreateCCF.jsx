@@ -74,26 +74,6 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
     }
   };
 
-  const getAllComplaintsList = useCallback(async () => {
-    try {
-      setOpen(true);
-      const response = await CustomerServices.getAllComplaintsList(
-        1,
-        inputValue.department
-      );
-      setDepartmentData(response.data.results);
-    } catch (e) {
-      handleError(e);
-      console.log(e);
-    } finally {
-      setOpen(false);
-    }
-  }, [inputValue.department]);
-
-  useEffect(() => {
-    getAllComplaintsList();
-  }, [inputValue.department]);
-
   const GetCustomerData = useCallback(async () => {
     try {
       setOpen(true);
@@ -153,6 +133,22 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
       setOpen(false);
     }
   };
+  const handleDepartmentChange = async (e, value) => {
+    setInputValue((prev) => ({ ...prev, department: value }));
+    try {
+      setOpen(true);
+      const response = await CustomerServices.getAllComplaintsList(
+        "list",
+        value
+      );
+      setDepartmentData(response.data);
+    } catch (e) {
+      handleError(e);
+      console.log(e);
+    } finally {
+      setOpen(false);
+    }
+  };
   const handleInvoiceSelection = (event, value) => {
     const invoiceNumbers = value.map((v) => v.invoice_no);
     const selectedProducts = value.flatMap((invoice) =>
@@ -179,7 +175,13 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
     e.preventDefault();
 
     try {
-      const payload = { ...inputValue };
+      let modifyproducts = products.map((product) => {
+        return {
+          product: product.product,
+          quantity: product.quantity,
+        };
+      });
+      const payload = { ...inputValue, products: modifyproducts };
       const response = await CustomerServices.createCCFComplaintForm(payload);
       handleSuccess(response.message || "Complaint submitted successfully");
       getAllCCFData();
@@ -220,8 +222,6 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
           ...prev,
           document: documentIds ? documentIds : [],
         }));
-
-        console.log("Document IDs:", documentIds);
         setFiles([]); // Clear files after successful upload
       } else {
         handleError("Failed to upload documents");
@@ -288,9 +288,7 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
                   disablePortal
                   id="combo-box-demo"
                   options={ComplaintsOptions}
-                  onChange={(event, value) => {
-                    setInputValue((prev) => ({ ...prev, department: value }));
-                  }}
+                  onChange={handleDepartmentChange}
                   getOptionLabel={(option) => option}
                   fullWidth
                   label="Complaint to"

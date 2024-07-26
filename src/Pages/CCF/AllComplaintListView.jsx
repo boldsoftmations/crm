@@ -174,7 +174,6 @@ export const AllComplaintListView = () => {
                   <StyledTableCell align="center">ID</StyledTableCell>
                   <StyledTableCell align="center">Department</StyledTableCell>
                   <StyledTableCell align="center">Name</StyledTableCell>
-                  <StyledTableCell align="center">Action</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -186,11 +185,6 @@ export const AllComplaintListView = () => {
                       {row.department}
                     </StyledTableCell>
                     <StyledTableCell align="center">{row.name}</StyledTableCell>
-                    <StyledTableCell align="center">
-                      <Button variant="contained" color="primary">
-                        View
-                      </Button>
-                    </StyledTableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>

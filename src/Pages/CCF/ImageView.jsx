@@ -18,13 +18,13 @@ const ImageWrapper = styled.div`
 `;
 
 const Image = styled.img`
-  width: ${(props) => (props.isEnlarged ? "550px" : "200px")}; // Updated size
+  width: ${(props) => (props.isEnlarged ? "500px" : "200px")}; // Updated size
   height: auto;
   cursor: pointer;
   transition: width 0.5s ease-in-out, box-shadow 0.3s ease-in-out;
   box-shadow: ${(props) =>
     props.isEnlarged
-      ? "0px 4px 20px rgba(0, 0, 0, 0.5)"
+      ? "0px 2px 10px rgba(0, 0, 0, 0.3)"
       : "0px 2px 10px rgba(0, 0, 0, 0.3)"};
 `;
 

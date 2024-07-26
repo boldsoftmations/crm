@@ -392,10 +392,10 @@ const getAllCCFData = (page, searchValue) => {
   return CustomAxios.get(`/api/customer/ccf/?${params.toString()}`);
 };
 
-const getAllComplaintsList = (page, department) => {
+const getAllComplaintsList = (type, department) => {
   const params = new URLSearchParams();
-  if (page) {
-    params.append("page", page);
+  if (type) {
+    params.append("type", type);
   }
   if (department) {
     params.append("department", department);
@@ -417,6 +417,22 @@ const getProductBaseCustomer = (product) => {
 
 const getAllDescription = () => {
   return CustomAxios.get("/api/customer/description-product/");
+};
+
+//capa api
+
+const CreateCapa = (data) => {
+  return CustomAxios.post("/api/customer/cpa/", data);
+};
+const getAllCapaData = (page, search) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (search) {
+    params.append("search", search);
+  }
+  return CustomAxios.get(`/api/customer/cpa/?${params.toString()}`);
 };
 const CustomerServices = {
   getAllCustomerData,
@@ -482,6 +498,8 @@ const CustomerServices = {
   getAllComplaintsList,
   getProductBaseCustomer,
   getAllDescription,
+  CreateCapa,
+  getAllCapaData,
 };
 
 export default CustomerServices;

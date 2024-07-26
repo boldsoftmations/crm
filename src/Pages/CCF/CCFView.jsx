@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import { useNotificationHandling } from "../../Components/useNotificationHandling ";
-import InvoiceServices from "../../services/InvoiceService";
 import { MessageAlert } from "../../Components/MessageAlert";
 import { CustomLoader } from "../../Components/CustomLoader";
 import { Popup } from "../../Components/Popup";
@@ -23,6 +22,8 @@ import CreateCCF from "./CreateCCF";
 import SearchComponent from "../../Components/SearchComponent ";
 import CustomerServices from "../../services/CustomerService";
 import ImageView from "./ImageView";
+import ComplainPdf from "./ComplaintPdf";
+import CreateCapa from "./CAFA/CreateCapa";
 
 export const CCFView = () => {
   const [open, setOpen] = useState(false);
@@ -32,6 +33,10 @@ export const CCFView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [openCCF, setOpenCCF] = useState(false);
   const [imageShow, setImageShow] = useState(false);
+  const [openPdf, setOpenPdf] = useState(false);
+  const [openCapa, setOpenCapa] = useState(false);
+  const [recordForEdit, setRecordForEdit] = useState(null);
+  const [pdfData, setPdfData] = useState(null);
   const [imagesData, setImagesData] = useState(null);
 
   const { handleError, handleCloseSnackbar, alertInfo } =
@@ -75,6 +80,15 @@ export const CCFView = () => {
   const handleImageShow = (data) => {
     setImageShow(true);
     setImagesData(data);
+  };
+  const handledownloadpdf = (data) => {
+    setPdfData(data);
+    setOpenPdf(true);
+  };
+
+  const handledOpenCapa = (data) => {
+    setRecordForEdit(data);
+    setOpenCapa(true);
   };
   return (
     <>
@@ -161,6 +175,9 @@ export const CCFView = () => {
             >
               <TableHead>
                 <TableRow>
+                  <StyledTableCell align="center">
+                    Complaint No.
+                  </StyledTableCell>
                   <StyledTableCell align="center">Department</StyledTableCell>
                   <StyledTableCell align="center">Customer</StyledTableCell>
                   <StyledTableCell align="center">
@@ -175,6 +192,7 @@ export const CCFView = () => {
               <TableBody>
                 {CCFData.map((row, i) => (
                   <StyledTableRow key={i}>
+                    <StyledTableCell align="center">{row.id}</StyledTableCell>
                     <StyledTableCell align="center">
                       {row.department}
                     </StyledTableCell>
@@ -205,7 +223,20 @@ export const CCFView = () => {
                         variant="text"
                         onClick={() => handleImageShow(row.document)}
                       >
-                        View
+                        Document View
+                      </Button>
+                      <Button
+                        color="secondary"
+                        variant="text"
+                        onClick={() => handledownloadpdf(row)}
+                      >
+                        DownLoad
+                      </Button>
+                      <Button
+                        color="success"
+                        onClick={() => handledOpenCapa(row)}
+                      >
+                        Create CAPA
                       </Button>
                     </StyledTableCell>
                   </StyledTableRow>
@@ -235,6 +266,23 @@ export const CCFView = () => {
           setOpenPopup={setImageShow}
         >
           <ImageView imagesData={imagesData} setImageShow={setImageShow} />
+        </Popup>
+
+        <Popup
+          fullScreen={true}
+          title="Download Pdf"
+          openPopup={openPdf}
+          setOpenPopup={setOpenPdf}
+        >
+          <ComplainPdf pdfData={pdfData} setOpenPdf={setOpenPdf} />
+        </Popup>
+        <Popup
+          fullScreen={true}
+          title="Corrective And Preventive Action Form"
+          openPopup={openCapa}
+          setOpenPopup={setOpenCapa}
+        >
+          <CreateCapa recordForEdit={recordForEdit} setOpenCapa={setOpenCapa} />
         </Popup>
       </Grid>
     </>

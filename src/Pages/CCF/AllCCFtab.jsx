@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { CustomTabs } from "../../Components/CustomTabs";
 import { AllComplaintListView } from "./AllComplaintListView";
 import { CCFView } from "./CCFView";
+import { CapaView } from "./CAFA/CapaView";
 export const AllCCFtab = () => {
   const userData = useSelector((state) => state.auth.profile);
 
@@ -19,6 +20,11 @@ export const AllCCFtab = () => {
       label: "Department",
       roles: ["Director", "Sales", "Customer"],
       component: <AllComplaintListView />,
+    },
+    {
+      label: "CAPA",
+      roles: ["Director", "Sales", "Customer"],
+      component: <CapaView />,
     },
   ];
 
