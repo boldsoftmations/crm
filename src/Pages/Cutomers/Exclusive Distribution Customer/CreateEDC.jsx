@@ -17,7 +17,6 @@ const Root = styled("div")(({ theme }) => ({
 
 export const CreateEDC = (props) => {
   const { assignCustomerData, getAllEDC, closeModal } = props;
-  console.log(getAllEDC);
   const [loader, setLoader] = useState(false);
   const [alertmsg, setAlertMsg] = useState({
     message: "",
