@@ -49,7 +49,6 @@ export const CCFView = () => {
         currentPage,
         searchQuery
       );
-      console.log("Debit/credit", response.data.results);
       setCCFData(response.data.results);
       setTotalPages(Math.ceil(response.data.count / 25));
     } catch (error) {
@@ -131,7 +130,7 @@ export const CCFView = () => {
                     fontWeight: 800,
                   }}
                 >
-                  All Complaint List{" "}
+                  Customer Complaint Form{" "}
                 </h3>
               </Grid>
               <Grid
@@ -232,12 +231,14 @@ export const CCFView = () => {
                       >
                         DownLoad
                       </Button>
-                      <Button
-                        color="success"
-                        onClick={() => handledOpenCapa(row)}
-                      >
-                        Create CAPA
-                      </Button>
+                      {row.is_closed === false && (
+                        <Button
+                          color="success"
+                          onClick={() => handledOpenCapa(row)}
+                        >
+                          Create CAPA
+                        </Button>
+                      )}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
@@ -288,6 +289,11 @@ export const CCFView = () => {
     </>
   );
 };
+
+const filterValues = [
+  { name: "Is closed", value: true },
+  { name: "Is open", value: false },
+];
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {

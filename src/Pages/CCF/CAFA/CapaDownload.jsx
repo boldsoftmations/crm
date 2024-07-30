@@ -106,12 +106,21 @@ const CapaDownload = ({ recordForEdit }) => {
                 </Typography>
                 <Divider sx={{ marginY: 1 }} />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} md={6}>
                 <Typography variant="body1" fontWeight="bold">
                   Complain Type :
                 </Typography>
                 <Typography variant="body2">
                   {recordForEdit.complain_type}
+                </Typography>
+                <Divider sx={{ marginY: 1 }} />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1" fontWeight="bold">
+                  Created by:
+                </Typography>
+                <Typography variant="body2">
+                  {recordForEdit.created_by}
                 </Typography>
                 <Divider sx={{ marginY: 1 }} />
               </Grid>
@@ -149,15 +158,9 @@ const CapaDownload = ({ recordForEdit }) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="body1" fontWeight="bold">
-                  Effectiveness Verified :
+                  Suggestion for claim settlement :
                 </Typography>
-                <Typography variant="body2">{recordForEdit.ev}</Typography>
-                <Divider sx={{ marginY: 1 }} />
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant="body1" fontWeight="bold">
-                  Signature of Director :
-                </Typography>
+                <Typography variant="body2">{recordForEdit.sfcs}</Typography>
                 <Divider sx={{ marginY: 1 }} />
               </Grid>
             </Grid>

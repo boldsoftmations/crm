@@ -13,43 +13,41 @@ import {
   Table,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import CustomerServices from "../../../services/CustomerService";
-import SearchComponent from "../../../Components/SearchComponent ";
-import { CustomPagination } from "../../../Components/CustomPagination";
-import { Popup } from "../../../Components/Popup";
-import CapaDownload from "./CapaDownload";
-import CapaImageView from "./CapaImagesView";
-import { CustomLoader } from "../../../Components/CustomLoader";
-
-export const CapaView = () => {
+import { useNotificationHandling } from "../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../Components/MessageAlert";
+import { CustomLoader } from "../../Components/CustomLoader";
+import { CustomPagination } from "../../Components/CustomPagination";
+import SearchComponent from "../../Components/SearchComponent ";
+import CustomerServices from "../../services/CustomerService";
+export const ClosedComplaint = () => {
   const [open, setOpen] = useState(false);
   const [CCFData, setCCFData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [openPdf, setOpenPdf] = useState(false);
-  const [recordForEdit, setRecordForEdit] = useState(null);
-  const [imageShow, setImageShow] = useState(false);
-  const [imagesData, setImagesData] = useState(null);
 
-  const getAllCAPAData = useCallback(async () => {
+  const { handleError, handleCloseSnackbar, alertInfo } =
+    useNotificationHandling();
+
+  const getAllClosedCCF = useCallback(async () => {
     try {
       setOpen(true);
-      const response = await CustomerServices.getAllCapaData(
+      const response = await CustomerServices.getAllClosedCCF(
         currentPage,
         searchQuery
       );
-      console.log("data", response.data.results);
       setCCFData(response.data.results);
       setTotalPages(Math.ceil(response.data.count / 25));
     } catch (error) {
+      handleError(error);
+      console.log(error);
     } finally {
       setOpen(false);
     }
   }, [currentPage, searchQuery]); // Ensure dependencies are correctly listed
 
   useEffect(() => {
-    getAllCAPAData();
+    getAllClosedCCF();
   }, [currentPage, searchQuery]);
 
   const handleSearch = (query) => {
@@ -66,16 +64,14 @@ export const CapaView = () => {
     setCurrentPage(value);
   };
 
-  const handleGetData = (data) => {
-    setRecordForEdit(data);
-    setOpenPdf(true);
-  };
-  const handleImageShow = (data) => {
-    setImageShow(true);
-    setImagesData(data);
-  };
   return (
     <>
+      <MessageAlert
+        open={alertInfo.open}
+        onClose={handleCloseSnackbar}
+        severity={alertInfo.severity}
+        message={alertInfo.message}
+      />
       <CustomLoader open={open} />
 
       <Grid item xs={12}>
@@ -98,7 +94,7 @@ export const CapaView = () => {
               <Grid
                 item
                 xs={12}
-                md={4}
+                md={6}
                 sx={{ textAlign: { xs: "center", md: "center" } }}
               >
                 <h3
@@ -109,7 +105,7 @@ export const CapaView = () => {
                     fontWeight: 800,
                   }}
                 >
-                  Corrective & Preventive Action List
+                  Closed Customers Complaints{" "}
                 </h3>
               </Grid>
             </Grid>
@@ -136,43 +132,45 @@ export const CapaView = () => {
             >
               <TableHead>
                 <TableRow>
-                  <StyledTableCell align="center">Created By</StyledTableCell>
-                  <StyledTableCell align="center">Date</StyledTableCell>
                   <StyledTableCell align="center">
-                    complain_type
+                    Complaint No.
                   </StyledTableCell>
-                  <StyledTableCell align="center">Action</StyledTableCell>
+                  <StyledTableCell align="center">Department</StyledTableCell>
+                  <StyledTableCell align="center">Customer</StyledTableCell>
+                  <StyledTableCell align="center">
+                    Complaint Type
+                  </StyledTableCell>
+                  <StyledTableCell align="center">Complaint</StyledTableCell>
+                  <StyledTableCell align="center">Unit</StyledTableCell>
+                  <StyledTableCell align="center">Invoices</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {CCFData.map((row, i) => (
                   <StyledTableRow key={i}>
+                    <StyledTableCell align="center">{row.id}</StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.created_by}
+                      {row.department}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.creation_date}
+                      {row.customer}
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {row.complain_type}
                     </StyledTableCell>
-
                     <StyledTableCell align="center">
-                      <Button
-                        variant="outlined"
-                        color="info"
-                        onClick={() => handleGetData(row)}
-                      >
-                        View
-                      </Button>
-                      <Button
-                        color="secondary"
-                        variant="outlined"
-                        className="mx-3"
-                        onClick={() => handleImageShow(row.document)}
-                      >
-                        Document View
-                      </Button>
+                      {row.complaint}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">{row.unit}</StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.invoices.map((invoice, index) => (
+                        <span key={index}>
+                          {invoice}
+                          {index < row.invoices.length - 1 && (
+                            <span style={{ margin: "0 5px" }}>|</span>
+                          )}
+                        </span>
+                      ))}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
@@ -186,23 +184,6 @@ export const CapaView = () => {
           />
         </Paper>
       </Grid>
-
-      <Popup
-        fullScreen={true}
-        title="Images Preview"
-        openPopup={imageShow}
-        setOpenPopup={setImageShow}
-      >
-        <CapaImageView imagesData={imagesData} setImageShow={setImageShow} />
-      </Popup>
-      <Popup
-        fullScreen={true}
-        title="Corrective And Preventive Action View"
-        openPopup={openPdf}
-        setOpenPopup={setOpenPdf}
-      >
-        <CapaDownload recordForEdit={recordForEdit} setOpenPdf={setOpenPdf} />
-      </Popup>
     </>
   );
 };

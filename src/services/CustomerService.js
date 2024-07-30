@@ -389,9 +389,14 @@ const getAllCCFData = (page, searchValue) => {
     params.append("search", searchValue);
   }
 
-  return CustomAxios.get(`/api/customer/ccf/?${params.toString()}`);
+  return CustomAxios.get(
+    `/api/customer/ccf/?is_closed=false&${params.toString()}`
+  );
 };
 
+const getAllClosedCCF = () => {
+  return CustomAxios.get(`/api/customer/ccf/?is_closed=true`);
+};
 const getAllComplaintsList = (type, department) => {
   const params = new URLSearchParams();
   if (type) {
@@ -494,6 +499,7 @@ const CustomerServices = {
   uploadCCFdocument,
   createCCFComplaintForm,
   getAllCCFData,
+  getAllClosedCCF,
   createComplaintpes,
   getAllComplaintsList,
   getProductBaseCustomer,

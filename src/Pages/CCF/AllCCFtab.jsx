@@ -4,6 +4,7 @@ import { CustomTabs } from "../../Components/CustomTabs";
 import { AllComplaintListView } from "./AllComplaintListView";
 import { CCFView } from "./CCFView";
 import { CapaView } from "./CAFA/CapaView";
+import { ClosedComplaint } from "./ClosedComplaint";
 export const AllCCFtab = () => {
   const userData = useSelector((state) => state.auth.profile);
 
@@ -12,19 +13,24 @@ export const AllCCFtab = () => {
 
   const tabs = [
     {
-      label: "All Complaint List ",
-      roles: ["Director", "Sales", "Customer"],
+      label: "Customer Complaint Form",
+      roles: ["Director", "Sales", "Customer Service"],
       component: <CCFView />,
     },
     {
-      label: "Department",
-      roles: ["Director", "Sales", "Customer"],
+      label: "Complaint List",
+      roles: ["Director", "Sales", "Customer Service"],
       component: <AllComplaintListView />,
     },
     {
       label: "CAPA",
-      roles: ["Director", "Sales", "Customer"],
+      roles: ["Director", "Acounts", "Customer Service", "Factory"],
       component: <CapaView />,
+    },
+    {
+      label: "Closed Complaints",
+      roles: ["Director", "Acounts", "Customer Service"],
+      component: <ClosedComplaint />,
     },
   ];
 

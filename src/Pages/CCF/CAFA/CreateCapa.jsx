@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -7,12 +7,18 @@ import {
   Card,
   CardContent,
   Grid,
+  List,
+  ListItem,
+  IconButton,
+  ListItemText,
+  Typography,
 } from "@mui/material";
 
 import CustomSnackbar from "../../../Components/CustomerSnackbar";
 import CustomerServices from "../../../services/CustomerService";
 import { CustomLoader } from "../../../Components/CustomLoader";
-
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import DeleteIcon from "@mui/icons-material/Delete";
 const CreateCapa = ({ recordForEdit, setOpenCapa }) => {
   const [formData, setFormData] = useState({
     ccf: recordForEdit && recordForEdit.id,
@@ -20,9 +26,11 @@ const CreateCapa = ({ recordForEdit, setOpenCapa }) => {
     root_cause: "",
     cap: "",
     pap: "",
-    ev: "",
+    sfcs: "",
+    document: documentId ? documentId : [],
   });
-
+  const [files, setFiles] = useState([]);
+  const [documentId, setDocumentId] = useState([]);
   const [errors, setErrors] = useState({});
   const [open, setOpen] = useState(false);
   const [loader, setLoader] = useState(false);
@@ -46,12 +54,75 @@ const CreateCapa = ({ recordForEdit, setOpenCapa }) => {
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
   };
+  const handleFileChange = (e) => {
+    const newFiles = Array.from(e.target.files);
+    const existingFiles = files.map((file) => file.name);
+    const uniqueFiles = newFiles.filter(
+      (file) => !existingFiles.includes(file.name)
+    );
+    setFiles([...files, ...uniqueFiles]);
+    e.target.value = null;
+  };
+  const removeFile = (index) => {
+    setFiles(files.filter((_, i) => i !== index));
+  };
+  const fileInputRef = useRef(null);
+  const handleClick = () => {
+    fileInputRef.current.click();
+  };
+  const handleUploadDocuments = async () => {
+    try {
+      if (files.length === 0) {
+        alert("No files selected for upload.");
+        return;
+      }
+      setOpen(true);
+      const formData = new FormData();
 
+      // Append each file to the FormData object with the same key
+      files.forEach((file) => {
+        formData.append("file", file);
+      });
+
+      // Add media type
+      formData.append("media_type", "Photo"); // You can change this value based on your requirements
+
+      const response = await CustomerServices.uploadCCFdocument(formData);
+
+      if (response.status === 200) {
+        setMessage(response.data.message || "Document submitted successfully");
+        setSeverity("error");
+        setOpen(true);
+
+        // Extract IDs from the response and update state
+        const documentIds = response.data.data.map((doc) => doc.id);
+        setDocumentId(documentIds);
+
+        // Update the inputValue state with the document IDs
+        setFormData((prev) => ({
+          ...prev,
+          document: documentIds ? documentIds : [],
+        }));
+        setFiles([]); // Clear files after successful upload
+      } else {
+        setMessage("Error creating CAPA upload");
+        setSeverity("error");
+        setOpen(true);
+      }
+    } catch (error) {
+      console.log(error);
+      setMessage(error.message || "An error occurred during the upload");
+      setSeverity("error");
+      setOpen(true);
+    } finally {
+      setOpen(false);
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) {
-      return;
-    }
+    // if (!validate()) {
+    //   return;
+    // }
     try {
       setLoader(true);
       const response = await CustomerServices.CreateCapa(formData);
@@ -73,7 +144,7 @@ const CreateCapa = ({ recordForEdit, setOpenCapa }) => {
   const handleClose = () => {
     setOpen(false);
   };
-
+  console.log(formData);
   return (
     <Container maxWidth="md">
       <CustomSnackbar
@@ -156,19 +227,129 @@ const CreateCapa = ({ recordForEdit, setOpenCapa }) => {
                   helperText={errors.pap}
                 />
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={4}
+              <Grid item xs={12} sm={12}>
+                <CustomAutocomplete
                   size="small"
-                  label="Effectiveness Verified"
-                  name="ev"
-                  value={formData.ev}
-                  onChange={handleChange}
-                  error={!!errors.ev}
-                  helperText={errors.ev}
+                  disablePortal
+                  id="product-selector"
+                  options={SFCS_options}
+                  getOptionLabel={(option) => option}
+                  onChange={(e, value) =>
+                    setFormData((prev) => ({ ...prev, sfcs: value }))
+                  }
+                  label="Suggestion for claim settlement"
                 />
+              </Grid>
+              <Grid item xs={12} sm={12}>
+                <div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    <input
+                      type="file"
+                      multiple
+                      onChange={handleFileChange}
+                      style={{ display: "none" }}
+                      accept="image/*,video/*"
+                      ref={fileInputRef}
+                    />
+                    <span
+                      style={{
+                        fontSize: "16px",
+                        opacity: "0.9",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Attach Document :{" "}
+                    </span>
+                    <Button
+                      variant="outlined"
+                      color="inherit"
+                      size="small"
+                      onClick={handleClick}
+                    >
+                      Select Document
+                    </Button>
+                  </div>
+                  <div>
+                    {files.length > 0 && (
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        style={{
+                          opacity: ".9",
+                          fontSize: "16px",
+                        }}
+                      >
+                        Selected Files:
+                      </Typography>
+                    )}
+                    {files.length > 0 && (
+                      <List style={{ display: "flex", flexWrap: "wrap" }}>
+                        {files.map((file, index) => (
+                          <ListItem
+                            key={index}
+                            divider
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              width: "150px",
+                              margin: "10px",
+                              backgroundColor: "#e4f1fe",
+                              borderRadius: "3px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                              }}
+                            >
+                              <ListItemText
+                                primary={file.name}
+                                primaryTypographyProps={{
+                                  style: { fontSize: "12px" },
+                                }}
+                              />
+                              <IconButton
+                                edge="end"
+                                onClick={() => removeFile(index)}
+                                style={{ marginTop: "10px" }}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </div>
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt={file.name}
+                              style={{
+                                width: "100px",
+                                height: "100px",
+                                objectFit: "cover",
+                                marginTop: "10px",
+                              }}
+                            />
+                          </ListItem>
+                        ))}
+                      </List>
+                    )}
+                  </div>
+                </div>
+                <Button
+                  variant="contained"
+                  size="small"
+                  color="secondary"
+                  onClick={handleUploadDocuments}
+                >
+                  Submit Document
+                </Button>
               </Grid>
             </Grid>
             <Grid sx={12} style={{ marginTop: "2rem" }}>
@@ -189,3 +370,4 @@ const CreateCapa = ({ recordForEdit, setOpenCapa }) => {
 };
 
 export default CreateCapa;
+const SFCS_options = ["Credit", "Material Return"];
