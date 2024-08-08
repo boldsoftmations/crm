@@ -409,10 +409,10 @@ const getAllComplaintsList = (type, department) => {
   return CustomAxios.get(`/api/customer/ccf-choice/?${params.toString()}`);
 };
 
-const getProductBaseCustomer = (product) => {
+const getProductBaseCustomer = (description) => {
   const params = new URLSearchParams();
-  if (product) {
-    params.append("product", product);
+  if (description) {
+    params.append("description", description);
   }
 
   return CustomAxios.get(
