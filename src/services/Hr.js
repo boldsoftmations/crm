@@ -155,16 +155,16 @@ const getInterviewStatus = () => {
   return CustomAxios.get(`/api/hr/applicant/?status=Shortlisted`);
 };
 
-const getInterviewDate = (page, applicant_stage, applicant_status) => {
+const getInterviewDate = (page, stage, status) => {
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
   }
-  if (applicant_stage) {
-    params.append("applicant__stage", applicant_stage);
+  if (stage) {
+    params.append("stage", stage);
   }
-  if (applicant_status) {
-    params.append("applicant__status", applicant_status);
+  if (status) {
+    params.append("status", status);
   }
   return CustomAxios.get(`/api/hr/interview-details/?${params.toString()}`);
 };
