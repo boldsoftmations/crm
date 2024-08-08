@@ -92,12 +92,13 @@ export const RejectedCandidateUpdate = ({
         </Grid>
         <Grid item xs={12}>
           <TextField
-            margin="dense"
+            size="small"
             label="Interview Date"
             type="date"
             fullWidth
             value={interviewDate}
             onChange={(e) => setInterviewDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
           />
         </Grid>
         <Grid item xs={12}>
