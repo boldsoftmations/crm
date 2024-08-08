@@ -38,34 +38,32 @@ const JobDescriptionDetail = ({ job }) => {
       ))}
     </List>
   );
-
   const downloadPDF = () => {
     const input = printRef.current; // Reference to the component you want to print
     setLoader(true);
     html2canvas(input, {
-      scale: 2, // Adjust the scale for higher resolution, lower it to reduce file size
+      scale: 4, // Adjust the scale for higher resolution, lower it to reduce file size
       useCORS: true, // Ensures that external resources like images are loaded in the canvas
     })
       .then((canvas) => {
         const imgData = canvas.toDataURL("image/jpeg", 0.8); // Convert to JPEG and set quality (0 to 1)
-        const pdf = new jsPDF("p", "mm", "a4"); // PDF size is A4
+        const pdf = new jsPDF("p", "pt", "a4", true); // Enable compression
+        const imgProps = pdf.getImageProperties(imgData);
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-        let heightLeft = imgHeight;
-        let position = 0;
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-        pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, imgHeight);
-        heightLeft -= pdfHeight;
-
-        while (heightLeft > 0) {
-          position = heightLeft - imgHeight + 20; // Add top margin of 20mm
-          pdf.addPage();
-          pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, imgHeight);
-          heightLeft -= pdfHeight;
-        }
-
-        pdf.save(`${job.job_title}_Job_Description.pdf`);
+        // Add image to PDF
+        pdf.addImage(
+          imgData,
+          "JPEG",
+          0,
+          0,
+          pdfWidth,
+          pdfHeight,
+          undefined,
+          "FAST"
+        );
+        pdf.save(`${job.job_title}_Job_Description.pdf`); // Specify the file name for the download
       })
       .catch((err) => {
         console.error("Error generating PDF", err);
@@ -74,7 +72,6 @@ const JobDescriptionDetail = ({ job }) => {
         setLoader(false);
       });
   };
-
   return (
     <Container>
       <CustomLoader open={loader} />
