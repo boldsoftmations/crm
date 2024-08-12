@@ -23,7 +23,6 @@ import { PhysicalInventoryView } from "../Pages/Physcical Inventory/PhysicalInve
 import { AllLeadsTabView } from "../Pages/Leads/AllLeadsTabView";
 import { AllProductsTabView } from "../Pages/Products/AllProductsTabView";
 import { PriceList } from "../Pages/PriceList/PriceList";
-import { AllSKUCodesTabView } from "../Pages/SKU Codes/AllSKUCodesTabView";
 import { AllCustomerTabView } from "../Pages/Cutomers/CompanyDetails/AllCustomerTabView";
 import { AllPerformaInvoiceTabView } from "../Pages/Invoice/ProformaInvoice/AllPerformaInvoiceTabView";
 import { PurchaseAllTabView } from "../Pages/Purchase/PurchaseAllTabView";
@@ -106,14 +105,7 @@ export const RouteScreen = () => {
               </PrivateRoute>
             }
           />
-          <Route
-            path="/products/all-sku-codes"
-            element={
-              <PrivateRoute>
-                <AllSKUCodesTabView />
-              </PrivateRoute>
-            }
-          />
+
           <Route
             path="/products/view-price-list"
             element={

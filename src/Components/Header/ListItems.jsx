@@ -1,36 +1,35 @@
-import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import {
+  Collapse,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
 import { Link as RouterLink, useLocation } from "react-router-dom";
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import CategoryIcon from "@mui/icons-material/Category";
-import ListAltIcon from "@mui/icons-material/ListAlt";
-import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import PersonIcon from "@mui/icons-material/Person";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import ReceiptIcon from "@mui/icons-material/Receipt";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import DescriptionIcon from "@mui/icons-material/Description";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import Inventory2Icon from "@mui/icons-material/Inventory2";
+import InventoryIcon from "@mui/icons-material/Inventory";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import FollowTheSignsIcon from "@mui/icons-material/FollowTheSigns";
-import BarChartIcon from "@mui/icons-material/BarChart";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import AnalyticsIcon from "@mui/icons-material/Analytics";
 import WorkIcon from "@mui/icons-material/Work";
-import AddToPhotosRoundedIcon from "@mui/icons-material/AddToPhotosRounded";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import FactoryIcon from "@mui/icons-material/Factory";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import BusinessIcon from "@mui/icons-material/Business";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import StorageIcon from "@mui/icons-material/Storage";
 import AssessmentIcon from "@mui/icons-material/Assessment";
-import AssessmentSharpIcon from "@mui/icons-material/AssessmentSharp";
-import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
+import PurchaseIcon from "@mui/icons-material/ShoppingCart";
+import ComplaintIcon from "@mui/icons-material/ReportProblem";
+import { ExpandLess, ExpandMore, Mail } from "@mui/icons-material";
+
 export const ListItems = (props) => {
   const { setOpen } = props;
   const data = useSelector((state) => state.auth);
@@ -46,6 +45,20 @@ export const ListItems = (props) => {
     // You can return a loader, empty fragment, or any placeholder
     return <div>Loading...</div>; // or <></> for an empty fragment
   }
+  const [submenuOpen, setSubmenuOpen] = useState({
+    master: false,
+    invoice: false,
+    accounts: false,
+    inventory: false,
+    production: false,
+    customer_complaint: false,
+    sales: false,
+    purchase: false,
+  });
+
+  const handleSubmenuClick = (menu) => {
+    setSubmenuOpen((prev) => ({ [menu]: !prev[menu] }));
+  };
 
   return (
     <div>
@@ -66,7 +79,6 @@ export const ListItems = (props) => {
             </ListItemIcon>
             <ListItemText primary="Report" />
           </ListItem>
-
           {/* Analytics  */}
           <ListItem
             button
@@ -82,155 +94,347 @@ export const ListItems = (props) => {
             <ListItemText primary="Analytics" />
           </ListItem>
 
-          {/* Products */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/products/all-product"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/products/all-product")}
-          >
+          {/* master menu */}
+          <ListItem button onClick={() => handleSubmenuClick("master")}>
             <ListItemIcon>
-              <CategoryIcon />
+              <BusinessIcon />
             </ListItemIcon>
-            <ListItemText primary="Products" />
+            <ListItemText primary="Master" />
+            {submenuOpen.master ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
+          <Collapse in={submenuOpen.master} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/products/all-product"
+                onClick={() => setOpen(false)}
+                selected={isActive("/products/all-product")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Inventory Master" />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/invoice/seller-account"
+                onClick={() => setOpen(false)}
+                selected={isActive("/invoice/seller-account")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Company Master" />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/inventory/view-currency"
+                onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-currency")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Currency Master" />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/profile-tab"
+                onClick={() => setOpen(false)}
+                selected={isActive("/user/profile-tab")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Employees Master" />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/hr-model/hr-master"
+                onClick={() => setOpen(false)}
+                selected={isActive("/hr-model/hr-master")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="HR Master" />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/customer/complaints/ccp-capa"
+                onClick={() => setOpen(false)}
+                selected={isActive("/customer/complaints/ccp-capa")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="CCF Complaint Master" />
+              </ListItem>
+            </List>
+          </Collapse>
 
-          {/* SKU CODES */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/products/all-sku-codes"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/products/all-sku-codes")}
-          >
-            <ListItemIcon>
-              <ConfirmationNumberIcon />
-            </ListItemIcon>
-            <ListItemText primary="SKU Code" />
-          </ListItem>
-
-          {/* Price List */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/products/view-price-list"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/products/view-price-list")}
-          >
-            <ListItemIcon>
-              <ListAltIcon />
-            </ListItemIcon>
-            <ListItemText primary="Price List" />
-          </ListItem>
-
-          {/* Leads */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/leads/all-lead"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/leads/all-lead")}
-          >
-            <ListItemIcon>
-              <AssignmentIndIcon />
-            </ListItemIcon>
-            <ListItemText primary="Leads" />
-          </ListItem>
-
-          {/* Customer */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/customers/all-customer"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/customers/all-customer")}
-          >
-            <ListItemIcon>
-              <PersonIcon />
-            </ListItemIcon>
-            <ListItemText primary="Customer" />
-          </ListItem>
-
-          {/* All Followup */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/followp/view-followup"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/followp/view-followup")}
-          >
-            <ListItemIcon>
-              <FollowTheSignsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Followup" />
-          </ListItem>
-
-          {/*Proforma Invoice  */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/invoice/performa-invoice-tab"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/invoice/performa-invoice-tab")}
-          >
+          {/* invoice menu */}
+          <ListItem button onClick={() => handleSubmenuClick("invoice")}>
             <ListItemIcon>
               <InsertDriveFileIcon />
             </ListItemIcon>
-            <ListItemText primary="Performa Invoice" />
+            <ListItemText primary="Invoice" />
+            {submenuOpen.invoice ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
+          <Collapse in={submenuOpen.invoice} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/invoice/performa-invoice-tab"
+                onClick={() => setOpen(false)}
+                selected={isActive("/invoice/performa-invoice-tab")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Performa Invoice" />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/invoice/sales-invoice"
+                onClick={() => setOpen(false)}
+                selected={isActive("/invoice/sales-invoice")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Sales Invoice" />
+              </ListItem>
+            </List>
+          </Collapse>
 
-          {/*Sales Invoice  */}
+          {/* accounts menu */}
+          <ListItem button onClick={() => handleSubmenuClick("accounts")}>
+            <ListItemIcon>
+              <AttachMoneyIcon />
+            </ListItemIcon>
+            <ListItemText primary="Accounts" />
+            {submenuOpen.accounts ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={submenuOpen.accounts} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/invoice/credit-debit-note"
+                onClick={() => setOpen(false)}
+                selected={isActive("/invoice/credit-debit-note")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Debit-Credit" />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/products/view-price-list"
+                onClick={() => setOpen(false)}
+                selected={isActive("/products/view-price-list")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Price List" />
+              </ListItem>
+            </List>
+          </Collapse>
+
+          {/* inventory menu */}
+          <ListItem button onClick={() => handleSubmenuClick("inventory")}>
+            <ListItemIcon>
+              <InventoryIcon />
+            </ListItemIcon>
+            <ListItemText primary="Inventory" />
+            {submenuOpen.inventory ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={submenuOpen.inventory} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/inventory/view-inventory"
+                onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-inventory")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Inventory" />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/inventory/physical"
+                onClick={() => setOpen(false)}
+                selected={isActive("/inventory/physical")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Physical Inventory" />
+              </ListItem>
+            </List>
+          </Collapse>
+
+          {/* production menu */}
+          <ListItem button onClick={() => handleSubmenuClick("production")}>
+            <ListItemIcon>
+              <FactoryIcon />
+            </ListItemIcon>
+            <ListItemText primary="Production" />
+            {submenuOpen.production ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={submenuOpen.production} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/inventory/view-production"
+                onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-production")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Production" />
+              </ListItem>
+            </List>
+          </Collapse>
+
+          {/* customer complaint menu */}
           <ListItem
             button
-            component={RouterLink}
-            to="/invoice/sales-invoice"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/invoice/sales-invoice")}
+            onClick={() => handleSubmenuClick("customer_complaint")}
           >
             <ListItemIcon>
-              <DescriptionIcon />
+              <ComplaintIcon />
             </ListItemIcon>
-            <ListItemText primary="Sales Invoice" />
+            <ListItemText primary="Customer Complaint" />
+            {submenuOpen.customer_complaint ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
-
-          {/* Forecast */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/forecast/view-product-forecast"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/forecast/view-product-forecast")}
+          <Collapse
+            in={submenuOpen.customer_complaint}
+            timeout="auto"
+            unmountOnExit
           >
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/customer/complaints/ccp-capa"
+                onClick={() => setOpen(false)}
+                selected={isActive("/customer/complaints/ccp-capa")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="CCF-CAPA" />
+              </ListItem>
+            </List>
+          </Collapse>
+
+          {/* sales menu */}
+          <ListItem button onClick={() => handleSubmenuClick("sales")}>
             <ListItemIcon>
               <TrendingUpIcon />
             </ListItemIcon>
-            <ListItemText primary="Forecast" />
+            <ListItemText primary="Sales" />
+            {submenuOpen.sales ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
+          <Collapse in={submenuOpen.sales} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/leads/all-lead"
+                onClick={() => setOpen(false)}
+                selected={isActive("/leads/all-lead")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Leads" />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/customers/all-customer"
+                onClick={() => setOpen(false)}
+                selected={isActive("/customers/all-customer")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Customer" />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/followp/view-followup"
+                onClick={() => setOpen(false)}
+                selected={isActive("/followp/view-followup")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Followup" />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/forecast/view-product-forecast"
+                onClick={() => setOpen(false)}
+                selected={isActive("/forecast/view-product-forecast")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Forecast" />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/market-analysis/competitor"
+                onClick={() => setOpen(false)}
+                selected={isActive("/market-analysis/competitor")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Market Analysis" />
+              </ListItem>
+            </List>
+          </Collapse>
 
-          {/* Seller Account */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/invoice/seller-account"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/invoice/seller-account")}
-          >
+          {/* purchase menu */}
+          <ListItem button onClick={() => handleSubmenuClick("purchase")}>
             <ListItemIcon>
-              <AccountCircleIcon />
+              <PurchaseIcon />
             </ListItemIcon>
-            <ListItemText primary="Seller Account" />
+            <ListItemText primary="Purchase" />
+            {submenuOpen.purchase ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
+          <Collapse in={submenuOpen.purchase} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/inventory/view-vendor"
+                onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-vendor")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Vendor" />
+              </ListItem>
+              <ListItem
+                button
+                component={RouterLink}
+                to="/inventory/view-purchase"
+                onClick={() => setOpen(false)}
+                selected={isActive("/inventory/view-purchase")}
+                activeClassName="Mui-selected"
+                sx={{ pl: 8 }}
+              >
+                <ListItemText primary="Purchase" />
+              </ListItem>
+            </List>
+          </Collapse>
 
           {/* Order book */}
           <ListItem
@@ -262,81 +466,6 @@ export const ListItems = (props) => {
             <ListItemText primary="Dispatch" />
           </ListItem>
 
-          {/* Vendor */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/inventory/view-vendor"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/inventory/view-vendor")}
-          >
-            <ListItemIcon>
-              <BusinessIcon />
-            </ListItemIcon>
-            <ListItemText primary="Vendor" />
-          </ListItem>
-
-          {/* Purchase */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/inventory/view-purchase"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/inventory/view-purchase")}
-          >
-            <ListItemIcon>
-              <ShoppingCartIcon />
-            </ListItemIcon>
-            <ListItemText primary="Purchase" />
-          </ListItem>
-
-          {/* Production */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/inventory/view-production"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/inventory/view-production")}
-          >
-            <ListItemIcon>
-              <FactoryIcon />
-            </ListItemIcon>
-            <ListItemText primary="Production" />
-          </ListItem>
-
-          {/* Inventory */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/inventory/view-inventory"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/inventory/view-inventory")}
-          >
-            <ListItemIcon>
-              <Inventory2Icon />
-            </ListItemIcon>
-            <ListItemText primary="Inventory" />
-          </ListItem>
-
-          {/* Physical Inventory */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/inventory/physical"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/inventory/physical")}
-          >
-            <ListItemIcon>
-              <StorageIcon />
-            </ListItemIcon>
-            <ListItemText primary="Physical Inventory" />
-          </ListItem>
-
           {/* sales return */}
           <ListItem
             button
@@ -350,52 +479,6 @@ export const ListItems = (props) => {
               <DescriptionIcon />
             </ListItemIcon>
             <ListItemText primary="Sales Return" />
-          </ListItem>
-
-          {/* Debit-Credit */}
-
-          <ListItem
-            button
-            component={RouterLink}
-            to="/invoice/credit-debit-note"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/invoice/credit-debit-note")}
-          >
-            <ListItemIcon>
-              <AssessmentSharpIcon />
-            </ListItemIcon>
-            <ListItemText primary="Debit-Credit" />
-          </ListItem>
-
-          {/* CCF   */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/customer/complaints/ccp-capa"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/complaints/ccp-capa")}
-          >
-            <ListItemIcon>
-              <QuestionAnswerIcon />
-            </ListItemIcon>
-            <ListItemText primary="CCF-CAPA" />
-          </ListItem>
-
-          {/* Currency */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/inventory/view-currency"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/inventory/view-currency")}
-          >
-            <ListItemIcon>
-              <AttachMoneyIcon />
-            </ListItemIcon>
-            <ListItemText primary="Currency" />
           </ListItem>
 
           {/* Tasks */}
@@ -413,36 +496,6 @@ export const ListItems = (props) => {
             <ListItemText primary="Task" />
           </ListItem>
 
-          {/* Market Analysis */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/market-analysis/competitor"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/market-analysis/competitor")}
-          >
-            <ListItemIcon>
-              <BarChartIcon />
-            </ListItemIcon>
-            <ListItemText primary="Market Analysis" />
-          </ListItem>
-
-          {/* Users */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/user/profile-tab"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/user/profile-tab")}
-          >
-            <ListItemIcon>
-              <PersonIcon />
-            </ListItemIcon>
-            <ListItemText primary="Profile" />
-          </ListItem>
-
           {/* Script */}
           <ListItem
             button
@@ -458,20 +511,6 @@ export const ListItems = (props) => {
             <ListItemText primary="Script" />
           </ListItem>
 
-          {/* Daily Sale Review */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/user/sale-review"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/user/sale-review")}
-          >
-            <ListItemIcon>
-              <AnalyticsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Sales Review" />
-          </ListItem>
           {/* Whatsapp Group */}
           <ListItem
             button
@@ -487,33 +526,7 @@ export const ListItems = (props) => {
             <ListItemText primary="Whatsapp" />
           </ListItem>
 
-          {/* <ListItem
-            button
-            component={RouterLink}
-            to="/user/sales-history"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-          >
-            <ListItemIcon>
-              <AnalyticsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Sales History" />
-          </ListItem> */}
-
-          {/* Hr Recruitment Model */}
-          <ListItem
-            button
-            component={RouterLink}
-            to="/hr-model/hr-master"
-            style={{ width: 300 }}
-            onClick={() => setOpen(false)}
-            selected={isActive("/hr-model/hr-master")}
-          >
-            <ListItemIcon>
-              <AddToPhotosRoundedIcon />
-            </ListItemIcon>
-            <ListItemText primary="Master Table" />
-          </ListItem>
+          {/* hr model */}
           <ListItem
             button
             component={RouterLink}
@@ -533,20 +546,39 @@ export const ListItems = (props) => {
           {/* Hr */}
           {userData.groups.includes("HR") && (
             <>
-              {/* Users */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/user/profile-tab"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/user/profile-tab")}
-              >
+              <ListItem button onClick={() => handleSubmenuClick("master")}>
                 <ListItemIcon>
-                  <PersonIcon />
+                  <BusinessIcon />
                 </ListItemIcon>
-                <ListItemText primary="Profile" />
+                <ListItemText primary="Master" />
+                {submenuOpen.master ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
+              <Collapse in={submenuOpen.master} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/user/profile-tab"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/user/profile-tab")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText primary="Employees Master" />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/hr-model/hr-master"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/hr-model/hr-master")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText primary="HR Master" />
+                  </ListItem>
+                </List>
+              </Collapse>
 
               {/* Tasks */}
               <ListItem
@@ -563,20 +595,6 @@ export const ListItems = (props) => {
                 <ListItemText primary="Task" />
               </ListItem>
 
-              {/* Hr Recruitment Model */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/hr-model/hr-master"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/hr-model/hr-master")}
-              >
-                <ListItemIcon>
-                  <AddToPhotosRoundedIcon />
-                </ListItemIcon>
-                <ListItemText primary="Master Table" />
-              </ListItem>
               <ListItem
                 button
                 component={RouterLink}
@@ -610,20 +628,6 @@ export const ListItems = (props) => {
                 </ListItemIcon>
                 <ListItemText primary="Order Book" />
               </ListItem>
-
-              {/* Tasks */}
-              {/* <ListItem
-                button
-                component={RouterLink}
-                to="/task/view-task"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-              >
-                <ListItemIcon>
-                  <AssignmentTurnedInIcon />
-                </ListItemIcon>
-                <ListItemText primary="Task" />
-              </ListItem> */}
             </>
           )}
 
@@ -645,117 +649,166 @@ export const ListItems = (props) => {
                 </ListItemIcon>
                 <ListItemText primary="Dispatch" />
               </ListItem>
-
-              {/* Tasks */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/task/view-task"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/task/view-task")}
-              >
-                <ListItemIcon>
-                  <AssignmentTurnedInIcon />
-                </ListItemIcon>
-                <ListItemText primary="Task" />
-              </ListItem>
             </>
           )}
 
           {/* customer services */}
           {userData.groups.includes("Customer Service") && (
             <>
-              {/* Customer */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/all-customer"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/customers/all-customer")}
-              >
+              <ListItem button onClick={() => handleSubmenuClick("master")}>
                 <ListItemIcon>
-                  <PersonIcon />
+                  <BusinessIcon />
                 </ListItemIcon>
-                <ListItemText primary="Customer" />
+                <ListItemText primary="Master" />
+                {submenuOpen.master ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Leads */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/leads/all-lead"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/leads/all-lead")}
-              >
-                <ListItemIcon>
-                  <AssignmentIndIcon />
-                </ListItemIcon>
-                <ListItemText primary="Leads" />
-              </ListItem>
-
-              {/* All Followup */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/followp/view-followup"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/followp/view-followup")}
-              >
-                <ListItemIcon>
-                  <FollowTheSignsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Followup" />
-              </ListItem>
-
-              {/*Proforma Invoice  */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/performa-invoice-tab"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/invoice/performa-invoice-tab")}
-              >
+              <Collapse in={submenuOpen.master} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customer/complaints/ccp-capa"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/customer/complaints/ccp-capa")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText primary="CCF Complaint Master" />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* invoice menu */}
+              <ListItem button onClick={() => handleSubmenuClick("invoice")}>
                 <ListItemIcon>
                   <InsertDriveFileIcon />
                 </ListItemIcon>
-                <ListItemText primary="Performa Invoice" />
+                <ListItemText primary="Invoice" />
+                {submenuOpen.invoice ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Forecast */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/forecast/view-product-forecast"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/forecast/view-product-forecast")}
-              >
+              <Collapse in={submenuOpen.invoice} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/performa-invoice-tab"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/invoice/performa-invoice-tab")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Performa Invoice
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* sales menu */}
+              <ListItem button onClick={() => handleSubmenuClick("sales")}>
                 <ListItemIcon>
                   <TrendingUpIcon />
                 </ListItemIcon>
-                <ListItemText primary="Forecast" />
+                <ListItemText
+                  primary="Sales
+"
+                />
+                {submenuOpen.sales ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
+              <Collapse in={submenuOpen.sales} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/all-lead"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/leads/all-lead")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Leads
+"
+                    />
+                  </ListItem>
 
-              {/* Seller Account */}
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customers/all-customer"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/customers/all-customer")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Customer
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/followp/view-followup"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/followp/view-followup")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Followup
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/forecast/view-product-forecast"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/forecast/view-product-forecast")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Forecast
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* customer complaint menu */}
               <ListItem
                 button
-                component={RouterLink}
-                to="/invoice/seller-account"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/invoice/seller-account")}
+                onClick={() => handleSubmenuClick("customer_complaint")}
               >
                 <ListItemIcon>
-                  <AccountCircleIcon />
+                  <ComplaintIcon />
                 </ListItemIcon>
-                <ListItemText primary="Seller Account" />
+                <ListItemText primary="Customer Complaint" />
+                {submenuOpen.customer_complaint ? (
+                  <ExpandLess />
+                ) : (
+                  <ExpandMore />
+                )}
               </ListItem>
-
+              <Collapse
+                in={submenuOpen.customer_complaint}
+                timeout="auto"
+                unmountOnExit
+              >
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customer/complaints/ccp-capa"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/customer/complaints/ccp-capa")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText primary="CCF-CAPA" />
+                  </ListItem>
+                </List>
+              </Collapse>
               {/* Order book */}
               <ListItem
                 button
@@ -836,65 +889,144 @@ export const ListItems = (props) => {
           {/* purchase */}
           {userData.groups.includes("Purchase") && (
             <>
-              {/* Vendor */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-vendor"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-vendor")}
-              >
+              {/* inventory menu */}
+              <ListItem button onClick={() => handleSubmenuClick("inventory")}>
                 <ListItemIcon>
-                  <BusinessIcon />
+                  <InventoryIcon />
                 </ListItemIcon>
-                <ListItemText primary="Vendor" />
+                <ListItemText primary="Inventory" />
+                {submenuOpen.inventory ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Purchase */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-purchase"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-purchase")}
-              >
-                <ListItemIcon>
-                  <ShoppingCartIcon />
-                </ListItemIcon>
-                <ListItemText primary="Purchase" />
-              </ListItem>
-
-              {/* Production */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-production"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-production")}
-              >
+              <Collapse in={submenuOpen.inventory} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-inventory"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-inventory")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Inventory
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/physical"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/physical")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Physical Inventory
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              <ListItem button onClick={() => handleSubmenuClick("production")}>
                 <ListItemIcon>
                   <FactoryIcon />
                 </ListItemIcon>
                 <ListItemText primary="Production" />
+                {submenuOpen.production ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Inventory */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-inventory"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-inventory")}
+              <Collapse
+                in={submenuOpen.production}
+                timeout="auto"
+                unmountOnExit
               >
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-production"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-production")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Production
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* sales menu */}
+              <ListItem button onClick={() => handleSubmenuClick("sales")}>
                 <ListItemIcon>
-                  <Inventory2Icon />
+                  <TrendingUpIcon />
                 </ListItemIcon>
-                <ListItemText primary="Inventory" />
+                <ListItemText
+                  primary="Sales
+"
+                />
+                {submenuOpen.sales ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
+              <Collapse in={submenuOpen.sales} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/forecast/view-product-forecast"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/forecast/view-product-forecast")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Forecast
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* purchase menu */}
+              <ListItem button onClick={() => handleSubmenuClick("purchase")}>
+                <ListItemIcon>
+                  <PurchaseIcon />
+                </ListItemIcon>
+                <ListItemText primary="Purchase" />
+                {submenuOpen.purchase ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={submenuOpen.purchase} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-vendor"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-vendor")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Vendor
+  "
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-purchase"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-purchase")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Purchase
+  "
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
 
               {/* Currency */}
               <ListItem
@@ -909,21 +1041,6 @@ export const ListItems = (props) => {
                   <AttachMoneyIcon />
                 </ListItemIcon>
                 <ListItemText primary="Currency" />
-              </ListItem>
-
-              {/* Forecast */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/forecast/view-product-forecast"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/forecast/view-product-forecast")}
-              >
-                <ListItemIcon>
-                  <TrendingUpIcon />
-                </ListItemIcon>
-                <ListItemText primary="Forecast" />
               </ListItem>
 
               {/* Tasks */}
@@ -946,35 +1063,61 @@ export const ListItems = (props) => {
           {/* stores */}
           {userData.groups.includes("Stores") && (
             <>
-              {/* Production */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-production"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-production")}
-              >
+              {/* inventory menu */}
+              <ListItem button onClick={() => handleSubmenuClick("inventory")}>
+                <ListItemIcon>
+                  <InventoryIcon />
+                </ListItemIcon>
+                <ListItemText primary="Inventory" />
+                {submenuOpen.inventory ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={submenuOpen.inventory} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-inventory"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-inventory")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Inventory
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              <ListItem button onClick={() => handleSubmenuClick("production")}>
                 <ListItemIcon>
                   <FactoryIcon />
                 </ListItemIcon>
                 <ListItemText primary="Production" />
+                {submenuOpen.production ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Inventory */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-inventory"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-inventory")}
+              <Collapse
+                in={submenuOpen.production}
+                timeout="auto"
+                unmountOnExit
               >
-                <ListItemIcon>
-                  <Inventory2Icon />
-                </ListItemIcon>
-                <ListItemText primary="Inventory" />
-              </ListItem>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-production"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-production")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Production
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
 
               {/* Tasks */}
               <ListItem
@@ -997,160 +1140,134 @@ export const ListItems = (props) => {
           {(userData.groups.includes("Stores Delhi") ||
             userData.groups.includes("Production Delhi")) && (
             <>
-              {/* Purchase */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-purchase"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-purchase")}
-              >
+              {/* inventory menu */}
+              <ListItem button onClick={() => handleSubmenuClick("inventory")}>
                 <ListItemIcon>
-                  <ShoppingCartIcon />
+                  <InventoryIcon />
                 </ListItemIcon>
-                <ListItemText primary="Purchase" />
+                <ListItemText primary="Inventory" />
+                {submenuOpen.inventory ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Production */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-production"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-production")}
-              >
+              <Collapse in={submenuOpen.inventory} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-inventory"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-inventory")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Inventory
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              <ListItem button onClick={() => handleSubmenuClick("production")}>
                 <ListItemIcon>
                   <FactoryIcon />
                 </ListItemIcon>
                 <ListItemText primary="Production" />
+                {submenuOpen.production ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Inventory */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-inventory"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-inventory")}
+              <Collapse
+                in={submenuOpen.production}
+                timeout="auto"
+                unmountOnExit
               >
-                <ListItemIcon>
-                  <Inventory2Icon />
-                </ListItemIcon>
-                <ListItemText primary="Inventory" />
-              </ListItem>
-
-              {/* Order book */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/orderbook-tab"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/invoice/orderbook-tab")}
-              >
-                <ListItemIcon>
-                  <ReceiptIcon />
-                </ListItemIcon>
-                <ListItemText primary="Order Book" />
-              </ListItem>
-
-              {/* Dispatch */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/dispatch/tab-view"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/dispatch/tab-view")}
-              >
-                <ListItemIcon>
-                  <LocalShippingIcon />
-                </ListItemIcon>
-                <ListItemText primary="Dispatch" />
-              </ListItem>
-
-              {/* Tasks */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/task/view-task"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/task/view-task")}
-              >
-                <ListItemIcon>
-                  <AssignmentTurnedInIcon />
-                </ListItemIcon>
-                <ListItemText primary="Task" />
-              </ListItem>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-production"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-production")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Production
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
             </>
           )}
 
           {/* production */}
           {userData.groups.includes("Production") && (
             <>
-              {/* Production */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-production"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-production")}
-              >
-                <ListItemIcon>
-                  <FactoryIcon />
-                </ListItemIcon>
-                <ListItemText primary="Production" />
-              </ListItem>
-
-              {/* Inventory */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-inventory"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-inventory")}
-              >
-                <ListItemIcon>
-                  <Inventory2Icon />
-                </ListItemIcon>
-                <ListItemText primary="Inventory" />
-              </ListItem>
-
-              {/* Physical Inventory */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/physical"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/physical")}
-              >
-                <ListItemIcon>
-                  <StorageIcon />
-                </ListItemIcon>
-                <ListItemText primary="Physical Inventory" />
-              </ListItem>
-
-              {/* Tasks */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/task/view-task"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/task/view-task")}
-              >
-                <ListItemIcon>
-                  <AssignmentTurnedInIcon />
-                </ListItemIcon>
-                <ListItemText primary="Task" />
-              </ListItem>
+              <>
+                {/* inventory menu */}
+                <ListItem
+                  button
+                  onClick={() => handleSubmenuClick("inventory")}
+                >
+                  <ListItemIcon>
+                    <InventoryIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Inventory" />
+                  {submenuOpen.inventory ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+                <Collapse
+                  in={submenuOpen.inventory}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  <List component="div" disablePadding>
+                    <ListItem
+                      button
+                      component={RouterLink}
+                      to="/inventory/view-inventory"
+                      onClick={() => setOpen(false)}
+                      selected={isActive("/inventory/view-inventory")}
+                      activeClassName="Mui-selected"
+                      sx={{ pl: 8 }}
+                    >
+                      <ListItemText
+                        primary="Inventory
+"
+                      />
+                    </ListItem>
+                  </List>
+                </Collapse>
+                <ListItem
+                  button
+                  onClick={() => handleSubmenuClick("production")}
+                >
+                  <ListItemIcon>
+                    <FactoryIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Production" />
+                  {submenuOpen.production ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+                <Collapse
+                  in={submenuOpen.production}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  <List component="div" disablePadding>
+                    <ListItem
+                      button
+                      component={RouterLink}
+                      to="/inventory/view-production"
+                      onClick={() => setOpen(false)}
+                      selected={isActive("/inventory/view-production")}
+                      activeClassName="Mui-selected"
+                      sx={{ pl: 8 }}
+                    >
+                      <ListItemText
+                        primary="Production
+"
+                      />
+                    </ListItem>
+                  </List>
+                </Collapse>
+              </>
             </>
           )}
 
@@ -1186,81 +1303,119 @@ export const ListItems = (props) => {
                 </ListItemIcon>
                 <ListItemText primary="Analytics" />
               </ListItem>
-
-              {/* Leads */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/leads/all-lead"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/leads/all-lead")}
-              >
+              {/* invoice menu */}
+              <ListItem button onClick={() => handleSubmenuClick("invoice")}>
                 <ListItemIcon>
-                  <AssignmentIndIcon />
+                  <Mail />
                 </ListItemIcon>
-                <ListItemText primary="Leads" />
+                <ListItemText primary="Invoice" />
+                {submenuOpen.invoice ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Customer */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/all-customer"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/customers/all-customer")}
-              >
-                <ListItemIcon>
-                  <PersonIcon />
-                </ListItemIcon>
-                <ListItemText primary="Customer" />
-              </ListItem>
-
-              {/* All Followup */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/followp/view-followup"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/followp/view-followup")}
-              >
-                <ListItemIcon>
-                  <FollowTheSignsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Followup" />
-              </ListItem>
-
-              {/*Proforma Invoice  */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/performa-invoice-tab"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/invoice/performa-invoice-tab")}
-              >
-                <ListItemIcon>
-                  <InsertDriveFileIcon />
-                </ListItemIcon>
-                <ListItemText primary="Performa Invoice" />
-              </ListItem>
-
-              {/* Forecast */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/forecast/view-product-forecast"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/forecast/view-product-forecast")}
-              >
+              <Collapse in={submenuOpen.invoice} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/performa-invoice-tab"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/invoice/performa-invoice-tab")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Performa Invoice
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* sales menu */}
+              <ListItem button onClick={() => handleSubmenuClick("sales")}>
                 <ListItemIcon>
                   <TrendingUpIcon />
                 </ListItemIcon>
-                <ListItemText primary="Forecast" />
+                <ListItemText
+                  primary="Sales
+"
+                />
+                {submenuOpen.sales ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
+              <Collapse in={submenuOpen.sales} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/all-lead"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/leads/all-lead")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Leads
+"
+                    />
+                  </ListItem>
+
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customers/all-customer"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/customers/all-customer")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Customer
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/followp/view-followup"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/followp/view-followup")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Followup
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/forecast/view-product-forecast"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/forecast/view-product-forecast")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Forecast
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/market-analysis/competitor"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/market-analysis/competitor")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Market Analysis
+
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
 
               {/* Order book */}
               <ListItem
@@ -1292,21 +1447,6 @@ export const ListItems = (props) => {
                 <ListItemText primary="Task" />
               </ListItem>
 
-              {/* Market Analysis */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/market-analysis/competitor"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/market-analysis/competitor")}
-              >
-                <ListItemIcon>
-                  <BarChartIcon />
-                </ListItemIcon>
-                <ListItemText primary="Market Analysis" />
-              </ListItem>
-
               {/* Script */}
               <ListItem
                 button
@@ -1320,21 +1460,6 @@ export const ListItems = (props) => {
                   <HelpOutlineIcon />
                 </ListItemIcon>
                 <ListItemText primary="Script" />
-              </ListItem>
-
-              {/* Daily Sale Review */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/user/sale-review"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/user/sale-review")}
-              >
-                <ListItemIcon>
-                  <AnalyticsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Sales Review" />
               </ListItem>
 
               {/* Hr Recruitment Model */}
@@ -1371,80 +1496,104 @@ export const ListItems = (props) => {
                 <ListItemText primary="Analytics" />
               </ListItem>
 
-              {/* Leads */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/leads/all-lead"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/leads/all-lead")}
-              >
-                <ListItemIcon>
-                  <AssignmentIndIcon />
-                </ListItemIcon>
-                <ListItemText primary="Leads" />
-              </ListItem>
-
-              {/* Customer */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/all-customer"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/customers/all-customer")}
-              >
-                <ListItemIcon>
-                  <PersonIcon />
-                </ListItemIcon>
-                <ListItemText primary="Customer" />
-              </ListItem>
-
-              {/* All Followup */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/followp/view-followup"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/followp/view-followup")}
-              >
-                <ListItemIcon>
-                  <FollowTheSignsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Followup" />
-              </ListItem>
-
-              {/*Proforma Invoice  */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/performa-invoice-tab"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/invoice/performa-invoice-tab")}
-              >
+              {/* invoice menu */}
+              <ListItem button onClick={() => handleSubmenuClick("invoice")}>
                 <ListItemIcon>
                   <InsertDriveFileIcon />
                 </ListItemIcon>
-                <ListItemText primary="Performa Invoice" />
+                <ListItemText primary="Invoice" />
+                {submenuOpen.invoice ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Forecast */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/forecast/view-product-forecast"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/forecast/view-product-forecast")}
-              >
+              <Collapse in={submenuOpen.invoice} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/performa-invoice-tab"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/invoice/performa-invoice-tab")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Performa Invoice
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* sales menu */}
+              <ListItem button onClick={() => handleSubmenuClick("sales")}>
                 <ListItemIcon>
                   <TrendingUpIcon />
                 </ListItemIcon>
-                <ListItemText primary="Forecast" />
+                <ListItemText
+                  primary="Sales
+"
+                />
+                {submenuOpen.sales ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
+              <Collapse in={submenuOpen.sales} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/all-lead"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/leads/all-lead")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Leads
+"
+                    />
+                  </ListItem>
+
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customers/all-customer"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/customers/all-customer")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Customer
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/followp/view-followup"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/followp/view-followup")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Followup
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/forecast/view-product-forecast"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/forecast/view-product-forecast")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Forecast
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
 
               {/* Order book */}
               <ListItem
@@ -1488,20 +1637,6 @@ export const ListItems = (props) => {
                   <HelpOutlineIcon />
                 </ListItemIcon>
                 <ListItemText primary="Script" />
-              </ListItem>
-              {/* Daily Sale Review */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/user/sale-review"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/user/sale-review")}
-              >
-                <ListItemIcon>
-                  <AnalyticsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Sales Review" />
               </ListItem>
             </>
           )}
@@ -1524,79 +1659,147 @@ export const ListItems = (props) => {
                 <ListItemText primary="Analytics" />
               </ListItem>
 
-              {/* Leads */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/leads/all-lead"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/leads/all-lead")}
-              >
+              {/* invoice menu */}
+              <ListItem button onClick={() => handleSubmenuClick("invoice")}>
                 <ListItemIcon>
-                  <AssignmentIndIcon />
+                  <Mail />
                 </ListItemIcon>
-                <ListItemText primary="Leads" />
+                <ListItemText primary="Invoice" />
+                {submenuOpen.invoice ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Customer */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/all-customer"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/customers/all-customer")}
-              >
-                <ListItemIcon>
-                  <PersonIcon />
-                </ListItemIcon>
-                <ListItemText primary="Customer" />
-              </ListItem>
-
-              {/* All Followup */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/followp/view-followup"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/followp/view-followup")}
-              >
-                <ListItemIcon>
-                  <FollowTheSignsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Followup" />
-              </ListItem>
-
-              {/*Proforma Invoice  */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/performa-invoice-tab"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/invoice/performa-invoice-tab")}
-              >
-                <ListItemIcon>
-                  <InsertDriveFileIcon />
-                </ListItemIcon>
-                <ListItemText primary="Performa Invoice" />
-              </ListItem>
-
-              {/* Forecast */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/forecast/view-product-forecast"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/forecast/view-product-forecast")}
-              >
+              <Collapse in={submenuOpen.invoice} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/performa-invoice-tab"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/invoice/performa-invoice-tab")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Performa Invoice
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* sales menu */}
+              <ListItem button onClick={() => handleSubmenuClick("sales")}>
                 <ListItemIcon>
                   <TrendingUpIcon />
                 </ListItemIcon>
-                <ListItemText primary="Forecast" />
+                <ListItemText
+                  primary="Sales
+"
+                />
+                {submenuOpen.sales ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={submenuOpen.sales} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/all-lead"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/leads/all-lead")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Leads
+"
+                    />
+                  </ListItem>
+
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customers/all-customer"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/customers/all-customer")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Customer
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/followp/view-followup"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/followp/view-followup")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Followup
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/forecast/view-product-forecast"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/forecast/view-product-forecast")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Forecast
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              {/* Order book */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/invoice/orderbook-tab"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+                selected={isActive("/invoice/orderbook-tab")}
+              >
+                <ListItemIcon>
+                  <ReceiptIcon />
+                </ListItemIcon>
+                <ListItemText primary="Order Book" />
+              </ListItem>
+
+              {/* Tasks */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/task/view-task"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
+              >
+                <ListItemIcon>
+                  <AssignmentTurnedInIcon />
+                </ListItemIcon>
+                <ListItemText primary="Task" />
+              </ListItem>
+              {/* Script */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/faq"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+                selected={isActive("/user/faq")}
+              >
+                <ListItemIcon>
+                  <HelpOutlineIcon />
+                </ListItemIcon>
+                <ListItemText primary="Script" />
               </ListItem>
 
               {/* Order book */}
@@ -1642,21 +1845,6 @@ export const ListItems = (props) => {
                   <HelpOutlineIcon />
                 </ListItemIcon>
                 <ListItemText primary="Script" />
-              </ListItem>
-
-              {/* Daily Sale Review */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/user/sale-review"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/user/sale-review")}
-              >
-                <ListItemIcon>
-                  <AnalyticsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Sales Review" />
               </ListItem>
             </>
           )}
@@ -1679,79 +1867,147 @@ export const ListItems = (props) => {
                 <ListItemText primary="Analytics" />
               </ListItem>
 
-              {/* Leads */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/leads/all-lead"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/leads/all-lead")}
-              >
-                <ListItemIcon>
-                  <AssignmentIndIcon />
-                </ListItemIcon>
-                <ListItemText primary="Leads" />
-              </ListItem>
-
-              {/* Customer */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/all-customer"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/customers/all-customer")}
-              >
-                <ListItemIcon>
-                  <PersonIcon />
-                </ListItemIcon>
-                <ListItemText primary="Customer" />
-              </ListItem>
-
-              {/* All Followup */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/followp/view-followup"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/followp/view-followup")}
-              >
-                <ListItemIcon>
-                  <FollowTheSignsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Followup" />
-              </ListItem>
-
-              {/*Proforma Invoice  */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/performa-invoice-tab"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/invoice/performa-invoice-tab")}
-              >
+              {/* invoice menu */}
+              <ListItem button onClick={() => handleSubmenuClick("invoice")}>
                 <ListItemIcon>
                   <InsertDriveFileIcon />
                 </ListItemIcon>
-                <ListItemText primary="Performa Invoice" />
+                <ListItemText primary="Invoice" />
+                {submenuOpen.invoice ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Forecast */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/forecast/view-product-forecast"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/forecast/view-product-forecast")}
-              >
+              <Collapse in={submenuOpen.invoice} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/performa-invoice-tab"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/invoice/performa-invoice-tab")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Performa Invoice
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* sales menu */}
+              <ListItem button onClick={() => handleSubmenuClick("sales")}>
                 <ListItemIcon>
                   <TrendingUpIcon />
                 </ListItemIcon>
-                <ListItemText primary="Forecast" />
+                <ListItemText
+                  primary="Sales
+"
+                />
+                {submenuOpen.sales ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={submenuOpen.sales} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/all-lead"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/leads/all-lead")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Leads
+"
+                    />
+                  </ListItem>
+
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customers/all-customer"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/customers/all-customer")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Customer
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/followp/view-followup"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/followp/view-followup")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Followup
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/forecast/view-product-forecast"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/forecast/view-product-forecast")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Forecast
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              {/* Order book */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/invoice/orderbook-tab"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+                selected={isActive("/invoice/orderbook-tab")}
+              >
+                <ListItemIcon>
+                  <ReceiptIcon />
+                </ListItemIcon>
+                <ListItemText primary="Order Book" />
+              </ListItem>
+
+              {/* Tasks */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/task/view-task"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
+              >
+                <ListItemIcon>
+                  <AssignmentTurnedInIcon />
+                </ListItemIcon>
+                <ListItemText primary="Task" />
+              </ListItem>
+              {/* Script */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/faq"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+                selected={isActive("/user/faq")}
+              >
+                <ListItemIcon>
+                  <HelpOutlineIcon />
+                </ListItemIcon>
+                <ListItemText primary="Script" />
               </ListItem>
 
               {/* Order book */}
@@ -1797,21 +2053,6 @@ export const ListItems = (props) => {
                   <HelpOutlineIcon />
                 </ListItemIcon>
                 <ListItemText primary="Script" />
-              </ListItem>
-
-              {/* Daily Sale Review */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/user/sale-review"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/user/sale-review")}
-              >
-                <ListItemIcon>
-                  <AnalyticsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Sales Review" />
               </ListItem>
             </>
           )}
@@ -1833,78 +2074,147 @@ export const ListItems = (props) => {
                 <ListItemText primary="Analytics" />
               </ListItem>
 
-              {/* Leads */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/leads/all-lead"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/leads/all-lead")}
-              >
-                <ListItemIcon>
-                  <AssignmentIndIcon />
-                </ListItemIcon>
-                <ListItemText primary="Leads" />
-              </ListItem>
-
-              {/* Customer */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/all-customer"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-              >
-                <ListItemIcon>
-                  <PersonIcon />
-                </ListItemIcon>
-                <ListItemText primary="Customer" />
-              </ListItem>
-
-              {/* All Followup */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/followp/view-followup"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/followp/view-followup")}
-              >
-                <ListItemIcon>
-                  <FollowTheSignsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Followup" />
-              </ListItem>
-
-              {/*Proforma Invoice  */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/performa-invoice-tab"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/invoice/performa-invoice-tab")}
-              >
+              {/* invoice menu */}
+              <ListItem button onClick={() => handleSubmenuClick("invoice")}>
                 <ListItemIcon>
                   <InsertDriveFileIcon />
                 </ListItemIcon>
-                <ListItemText primary="Performa Invoice" />
+                <ListItemText primary="Invoice" />
+                {submenuOpen.invoice ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Forecast */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/forecast/view-product-forecast"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/forecast/view-product-forecast")}
-              >
+              <Collapse in={submenuOpen.invoice} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/performa-invoice-tab"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/invoice/performa-invoice-tab")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Performa Invoice
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* sales menu */}
+              <ListItem button onClick={() => handleSubmenuClick("sales")}>
                 <ListItemIcon>
                   <TrendingUpIcon />
                 </ListItemIcon>
-                <ListItemText primary="Forecast" />
+                <ListItemText
+                  primary="Sales
+"
+                />
+                {submenuOpen.sales ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={submenuOpen.sales} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/leads/all-lead"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/leads/all-lead")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Leads
+"
+                    />
+                  </ListItem>
+
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customers/all-customer"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/customers/all-customer")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Customer
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/followp/view-followup"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/followp/view-followup")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Followup
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/forecast/view-product-forecast"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/forecast/view-product-forecast")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Forecast
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              {/* Order book */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/invoice/orderbook-tab"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+                selected={isActive("/invoice/orderbook-tab")}
+              >
+                <ListItemIcon>
+                  <ReceiptIcon />
+                </ListItemIcon>
+                <ListItemText primary="Order Book" />
+              </ListItem>
+
+              {/* Tasks */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/task/view-task"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+                selected={isActive("/task/view-task")}
+              >
+                <ListItemIcon>
+                  <AssignmentTurnedInIcon />
+                </ListItemIcon>
+                <ListItemText primary="Task" />
+              </ListItem>
+              {/* Script */}
+              <ListItem
+                button
+                component={RouterLink}
+                to="/user/faq"
+                style={{ width: 300 }}
+                onClick={() => setOpen(false)}
+                selected={isActive("/user/faq")}
+              >
+                <ListItemIcon>
+                  <HelpOutlineIcon />
+                </ListItemIcon>
+                <ListItemText primary="Script" />
               </ListItem>
 
               {/* Order book */}
@@ -1950,21 +2260,6 @@ export const ListItems = (props) => {
                   <HelpOutlineIcon />
                 </ListItemIcon>
                 <ListItemText primary="Script" />
-              </ListItem>
-
-              {/* Daily Sale Review */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/user/sale-review"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/user/sale-review")}
-              >
-                <ListItemIcon>
-                  <AnalyticsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Sales Review" />
               </ListItem>
             </>
           )}
@@ -2105,20 +2400,6 @@ export const ListItems = (props) => {
                 </ListItemIcon>
                 <ListItemText primary="Script" />
               </ListItem>
-
-              {/* Daily Sale Review */}
-              {/* <ListItem
-                button
-                component={RouterLink}
-                to="/user/sale-review"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-              >
-                <ListItemIcon>
-                  <AnalyticsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Sales Review" />
-              </ListItem> */}
             </>
           )}
           {/* accounts */}
@@ -2152,118 +2433,329 @@ export const ListItems = (props) => {
                 </ListItemIcon>
                 <ListItemText primary="Analytics" />
               </ListItem>
-              {/* Products */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/all-product"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/products/all-product")}
-              >
+              <ListItem button onClick={() => handleSubmenuClick("master")}>
                 <ListItemIcon>
-                  <CategoryIcon />
+                  <BusinessIcon />
                 </ListItemIcon>
-                <ListItemText primary="Products" />
+                <ListItemText primary="Master" />
+                {submenuOpen.master ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-              {/* SKU CODES */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/all-sku-codes"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/products/all-sku-codes")}
-              >
-                <ListItemIcon>
-                  <ConfirmationNumberIcon />
-                </ListItemIcon>
-                <ListItemText primary="SKU Code" />
-              </ListItem>
-              {/* Price List */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/view-price-list"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/products/view-price-list")}
-              >
-                <ListItemIcon>
-                  <ListAltIcon />
-                </ListItemIcon>
-                <ListItemText primary="Price List" />
-              </ListItem>
-              {/* Customer */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/all-customer"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/customers/all-customer")}
-              >
-                <ListItemIcon>
-                  <PersonIcon />
-                </ListItemIcon>
-                <ListItemText primary="Customer" />
-              </ListItem>
-              {/*Proforma Invoice  */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/performa-invoice-tab"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/invoice/performa-invoice-tab")}
-              >
+              <Collapse in={submenuOpen.master} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/products/all-product"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/products/all-product")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText primary="Inventory Master" />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/seller-account"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/invoice/seller-account")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText primary="Company Master" />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-currency"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-currency")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText primary="Currency Master" />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customer/complaints/ccp-capa"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/customer/complaints/ccp-capa")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText primary="CCF Complaint Master" />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* invoice menu */}
+              <ListItem button onClick={() => handleSubmenuClick("invoice")}>
                 <ListItemIcon>
                   <InsertDriveFileIcon />
                 </ListItemIcon>
-                <ListItemText primary="Performa Invoice" />
+                <ListItemText primary="Invoice" />
+                {submenuOpen.invoice ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-              {/*Sales Invoice  */}
+              <Collapse in={submenuOpen.invoice} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/performa-invoice-tab"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/invoice/performa-invoice-tab")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Performa Invoice
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/sales-invoice"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/invoice/sales-invoice")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Sales Invoice
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* accounts menu */}
+              <ListItem button onClick={() => handleSubmenuClick("accounts")}>
+                <ListItemIcon>
+                  <AttachMoneyIcon />
+                </ListItemIcon>
+                <ListItemText primary="Accounts" />
+                {submenuOpen.accounts ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={submenuOpen.accounts} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/credit-debit-note"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/invoice/credit-debit-note")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Debit-Credit
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/products/view-price-list"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/products/view-price-list")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Price List
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* inventory menu */}
+              <ListItem button onClick={() => handleSubmenuClick("inventory")}>
+                <ListItemIcon>
+                  <InventoryIcon />
+                </ListItemIcon>
+                <ListItemText primary="Inventory" />
+                {submenuOpen.inventory ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={submenuOpen.inventory} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-inventory"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-inventoryb")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Inventory
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/physical"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/physical")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Physical Inventory
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* customer complaint menu */}
               <ListItem
                 button
-                component={RouterLink}
-                to="/invoice/sales-invoice"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/invoice/sales-invoice")}
+                onClick={() => handleSubmenuClick("customer_complaint")}
               >
                 <ListItemIcon>
-                  <DescriptionIcon />
+                  <ComplaintIcon />
                 </ListItemIcon>
-                <ListItemText primary="Sales Invoice" />
+                <ListItemText primary="Customer Complaint" />
+                {submenuOpen.customer_complaint ? (
+                  <ExpandLess />
+                ) : (
+                  <ExpandMore />
+                )}
               </ListItem>
-              {/* Forecast */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/forecast/view-product-forecast"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/forecast/view-product-forecast")}
+              <Collapse
+                in={submenuOpen.customer_complaint}
+                timeout="auto"
+                unmountOnExit
               >
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customer/complaints/ccp-capa"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/customer/complaints/ccp-capa")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText primary="CCF-CAPA" />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* production menu */}
+              <ListItem button onClick={() => handleSubmenuClick("production")}>
+                <ListItemIcon>
+                  <FactoryIcon />
+                </ListItemIcon>
+                <ListItemText primary="Production" />
+                {submenuOpen.production ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse
+                in={submenuOpen.production}
+                timeout="auto"
+                unmountOnExit
+              >
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-production"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-production")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Production
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              <ListItem button onClick={() => handleSubmenuClick("sales")}>
                 <ListItemIcon>
                   <TrendingUpIcon />
                 </ListItemIcon>
-                <ListItemText primary="Forecast" />
+                <ListItemText
+                  primary="Sales
+"
+                />
+                {submenuOpen.sales ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-              {/* Seller Account */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/seller-account"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/invoice/seller-account")}
-              >
+              <Collapse in={submenuOpen.sales} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customers/all-customer"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/customers/all-customer")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Customer
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/forecast/view-product-forecast"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/forecast/view-product-forecast")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Forecast
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* purchase menu */}
+              <ListItem button onClick={() => handleSubmenuClick("purchase")}>
                 <ListItemIcon>
-                  <AccountCircleIcon />
+                  <PurchaseIcon />
                 </ListItemIcon>
-                <ListItemText primary="Seller Account" />
+                <ListItemText primary="Purchase" />
+                {submenuOpen.purchase ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
+              <Collapse in={submenuOpen.purchase} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-vendor"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-vendor")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Vendor
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-purchase"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-purchase")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Purchase
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+
               {/* Order book */}
               <ListItem
                 button
@@ -2292,76 +2784,6 @@ export const ListItems = (props) => {
                 </ListItemIcon>
                 <ListItemText primary="Dispatch" />
               </ListItem>
-              {/* Vendor */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-vendor"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-vendor")}
-              >
-                <ListItemIcon>
-                  <BusinessIcon />
-                </ListItemIcon>
-                <ListItemText primary="Vendor" />
-              </ListItem>
-              {/* Purchase */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-purchase"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-purchase")}
-              >
-                <ListItemIcon>
-                  <ShoppingCartIcon />
-                </ListItemIcon>
-                <ListItemText primary="Purchase" />
-              </ListItem>
-              {/* Production */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-production"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-production")}
-              >
-                <ListItemIcon>
-                  <FactoryIcon />
-                </ListItemIcon>
-                <ListItemText primary="Production" />
-              </ListItem>
-              {/* Inventory */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-inventory"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-inventory")}
-              >
-                <ListItemIcon>
-                  <Inventory2Icon />
-                </ListItemIcon>
-                <ListItemText primary="Inventory" />
-              </ListItem>
-              {/* Physical Inventory */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/physical"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/physical")}
-              >
-                <ListItemIcon>
-                  <StorageIcon />
-                </ListItemIcon>
-                <ListItemText primary="Physical Inventory" />
-              </ListItem>
 
               {/* sales return */}
               <ListItem
@@ -2376,22 +2798,6 @@ export const ListItems = (props) => {
                   <DescriptionIcon />
                 </ListItemIcon>
                 <ListItemText primary="Sales Return" />
-              </ListItem>
-
-              {/* Debit-Credit */}
-
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/credit-debit-note"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/invoice/credit-debit-note")}
-              >
-                <ListItemIcon>
-                  <AssessmentSharpIcon />
-                </ListItemIcon>
-                <ListItemText primary="Debit-Credit-Notes" />
               </ListItem>
 
               {/* Tasks */}
@@ -2414,96 +2820,97 @@ export const ListItems = (props) => {
           {/* Accounts Billing Department*/}
           {userData.groups.includes("Accounts Billing Department") && (
             <>
-              {/* Products */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/all-product"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/products/all-product")}
-              >
+              <ListItem button onClick={() => handleSubmenuClick("master")}>
                 <ListItemIcon>
-                  <CategoryIcon />
+                  <BusinessIcon />
                 </ListItemIcon>
-                <ListItemText primary="Products" />
+                <ListItemText primary="Master" />
+                {submenuOpen.master ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
+              <Collapse in={submenuOpen.master} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/products/all-product"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/products/all-product")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText primary="Inventory Master" />
+                  </ListItem>
+                </List>
+              </Collapse>
 
-              {/* SKU CODES */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/all-sku-codes"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/products/all-sku-codes")}
-              >
+              <ListItem button onClick={() => handleSubmenuClick("sales")}>
                 <ListItemIcon>
-                  <ConfirmationNumberIcon />
+                  <TrendingUpIcon />
                 </ListItemIcon>
-                <ListItemText primary="SKU Code" />
+                <ListItemText
+                  primary="Sales
+"
+                />
+                {submenuOpen.sales ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Price List */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/view-price-list"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/products/view-price-list")}
-              >
-                <ListItemIcon>
-                  <ListAltIcon />
-                </ListItemIcon>
-                <ListItemText primary="Price List" />
-              </ListItem>
-
-              {/* Customer */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/customers/all-customer"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/customers/all-customer")}
-              >
-                <ListItemIcon>
-                  <PersonIcon />
-                </ListItemIcon>
-                <ListItemText primary="Customer" />
-              </ListItem>
-
-              {/*Proforma Invoice  */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/performa-invoice-tab"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/invoice/performa-invoice-tab")}
-              >
+              <Collapse in={submenuOpen.sales} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customers/all-customer"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/customers/all-customer")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Customer
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* invoice menu */}
+              <ListItem button onClick={() => handleSubmenuClick("invoice")}>
                 <ListItemIcon>
                   <InsertDriveFileIcon />
                 </ListItemIcon>
-                <ListItemText primary="Performa Invoice" />
+                <ListItemText primary="Invoice" />
+                {submenuOpen.invoice ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/*Sales Invoice  */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/invoice/sales-invoice"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/invoice/sales-invoice")}
-              >
-                <ListItemIcon>
-                  <DescriptionIcon />
-                </ListItemIcon>
-                <ListItemText primary="Sales Invoice" />
-              </ListItem>
-
+              <Collapse in={submenuOpen.invoice} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/performa-invoice-tab"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/invoice/performa-invoice-tab")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Performa Invoice
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/sales-invoice"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/invoice/sales-invoice")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Sales Invoice
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
               {/* Order book */}
               <ListItem
                 button
@@ -2518,7 +2925,6 @@ export const ListItems = (props) => {
                 </ListItemIcon>
                 <ListItemText primary="Order Book" />
               </ListItem>
-
               {/* Tasks */}
               <ListItem
                 button
@@ -2539,111 +2945,206 @@ export const ListItems = (props) => {
           {/* accounts */}
           {userData.groups.includes("Accounts Executive") && (
             <>
-              {/* Products */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/all-product"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/products/all-product")}
-              >
-                <ListItemIcon>
-                  <CategoryIcon />
-                </ListItemIcon>
-                <ListItemText primary="Products" />
-              </ListItem>
-
-              {/* SKU CODES */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/all-sku-codes"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/products/all-sku-codes")}
-              >
-                <ListItemIcon>
-                  <ConfirmationNumberIcon />
-                </ListItemIcon>
-                <ListItemText primary="SKU Code" />
-              </ListItem>
-
-              {/* Price List */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/products/view-price-list"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/products/view-price-list")}
-              >
-                <ListItemIcon>
-                  <ListAltIcon />
-                </ListItemIcon>
-                <ListItemText primary="Price List" />
-              </ListItem>
-
-              {/* Vendor */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-vendor"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-vendor")}
-              >
+              <ListItem button onClick={() => handleSubmenuClick("master")}>
                 <ListItemIcon>
                   <BusinessIcon />
                 </ListItemIcon>
-                <ListItemText primary="Vendor" />
+                <ListItemText primary="Master" />
+                {submenuOpen.master ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Purchase */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-purchase"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-purchase")}
-              >
+              <Collapse in={submenuOpen.master} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/products/all-product"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/products/all-product")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText primary="Inventory Master" />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* inventory menu */}
+              <ListItem button onClick={() => handleSubmenuClick("inventory")}>
                 <ListItemIcon>
-                  <ShoppingCartIcon />
+                  <InventoryIcon />
                 </ListItemIcon>
-                <ListItemText primary="Purchase" />
+                <ListItemText primary="Inventory" />
+                {submenuOpen.inventory ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Production */}
-              <ListItem
-                button
-                component={RouterLink}
-                to="/inventory/view-production"
-                style={{ width: 300 }}
-                onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-production")}
-              >
+              <Collapse in={submenuOpen.inventory} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-inventory"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-inventory")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Inventory
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* production menu */}
+              <ListItem button onClick={() => handleSubmenuClick("production")}>
                 <ListItemIcon>
                   <FactoryIcon />
                 </ListItemIcon>
                 <ListItemText primary="Production" />
+                {submenuOpen.production ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
-              {/* Inventory */}
+              <Collapse
+                in={submenuOpen.production}
+                timeout="auto"
+                unmountOnExit
+              >
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-production"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-production")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Production
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              <ListItem button onClick={() => handleSubmenuClick("sales")}>
+                <ListItemIcon>
+                  <TrendingUpIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Sales
+"
+                />
+                {submenuOpen.sales ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={submenuOpen.sales} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/customers/all-customer"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/customers/all-customer")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Customer
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* invoice menu */}
+              <ListItem button onClick={() => handleSubmenuClick("invoice")}>
+                <ListItemIcon>
+                  <InsertDriveFileIcon />
+                </ListItemIcon>
+                <ListItemText primary="Invoice" />
+                {submenuOpen.invoice ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={submenuOpen.invoice} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/performa-invoice-tab"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/invoice/performa-invoice-tab")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Performa Invoice
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/invoice/sales-invoice"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/invoice/sales-invoice")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Sales Invoice
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* purchase menu */}
+              <ListItem button onClick={() => handleSubmenuClick("purchase")}>
+                <ListItemIcon>
+                  <PurchaseIcon />
+                </ListItemIcon>
+                <ListItemText primary="Purchase" />
+                {submenuOpen.purchase ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={submenuOpen.purchase} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-vendor"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-vendor")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Vendor
+"
+                    />
+                  </ListItem>
+                  <ListItem
+                    button
+                    component={RouterLink}
+                    to="/inventory/view-purchase"
+                    onClick={() => setOpen(false)}
+                    selected={isActive("/inventory/view-purchase")}
+                    activeClassName="Mui-selected"
+                    sx={{ pl: 8 }}
+                  >
+                    <ListItemText
+                      primary="Purchase
+"
+                    />
+                  </ListItem>
+                </List>
+              </Collapse>
+              {/* Order book */}
               <ListItem
                 button
                 component={RouterLink}
-                to="/inventory/view-inventory"
+                to="/invoice/orderbook-tab"
                 style={{ width: 300 }}
                 onClick={() => setOpen(false)}
-                selected={isActive("/inventory/view-inventory")}
+                selected={isActive("/invoice/orderbook-tab")}
               >
                 <ListItemIcon>
-                  <Inventory2Icon />
+                  <ReceiptIcon />
                 </ListItemIcon>
-                <ListItemText primary="Inventory" />
+                <ListItemText primary="Order Book" />
               </ListItem>
-
               {/* Tasks */}
               <ListItem
                 button
