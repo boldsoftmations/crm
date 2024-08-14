@@ -85,7 +85,7 @@ const getLocationList = () => {
 };
 
 //Job-Opening API
-const getJobOpening = (page, search) => {
+const getJobOpening = (page, search, stage) => {
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
@@ -93,7 +93,12 @@ const getJobOpening = (page, search) => {
   if (search) {
     params.append("search", search);
   }
-  return CustomAxios.get(`/api/hr/job-opening/?${params.toString()}`);
+  if (stage) {
+    params.append("stage", stage);
+  }
+  return CustomAxios.get(
+    `/api/hr/job-opening/?stage=Open&${params.toString()}`
+  );
 };
 
 const getJobOpeningById = (id) => {
@@ -314,6 +319,23 @@ const getJobDescription = (page, searchValue) => {
   return CustomAxios.get(`/api/hr/job-description/?${params.toString()}`);
 };
 
+const createMCQQuetion = (data) => {
+  return CustomAxios.post(`api/hr/mcq/`, data);
+};
+
+const getMCQQuetion = (page, filterValue) => {
+  const params = new URLSearchParams();
+
+  if (page) {
+    params.append("page", page);
+  }
+
+  if (filterValue) {
+    params.append("department__department", filterValue);
+  }
+  return CustomAxios.get(`/api/hr/mcq/?${params.toString()}`);
+};
+
 const Hr = {
   getDesignationsData,
   addDesignation,
@@ -355,6 +377,8 @@ const Hr = {
   getRoleClarity,
   createJobDescription,
   getJobDescription,
+  createMCQQuetion,
+  getMCQQuetion,
 };
 
 export default Hr;
