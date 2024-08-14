@@ -119,8 +119,8 @@ const getApplicants = (
   searchValue,
   job__designation__designation,
   job__department__department,
-  stage,
-  status
+  stage = "Screening", // Default stage
+  status = "Open" // Default status
 ) => {
   const params = new URLSearchParams();
 
@@ -131,25 +131,29 @@ const getApplicants = (
   if (searchValue) {
     params.append("search", searchValue);
   }
+
   if (job__designation__designation) {
     params.append(
       "job__designation__designation",
       job__designation__designation
     );
   }
+
   if (job__department__department) {
     params.append("job__department__department", job__department__department);
   }
-  if (stage) {
+
+  // Only append stage if it's not null or undefined
+  if (stage !== null && stage !== undefined) {
     params.append("stage", stage);
   }
-  if (status) {
+
+  // Only append status if it's not null or undefined
+  if (status !== null && status !== undefined) {
     params.append("status", status);
   }
 
-  return CustomAxios.get(
-    `api/hr/applicant/?stage=Screening&status=Open&${params.toString()}`
-  );
+  return CustomAxios.get(`api/hr/applicant/?${params.toString()}`);
 };
 
 const getCandidateProfile = (id) => {
