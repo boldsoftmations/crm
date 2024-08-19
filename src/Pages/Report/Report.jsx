@@ -129,7 +129,6 @@ export function Report() {
     { label: "Sales RM" }, // Current Month Sales (Raw Material)
     { label: "Sales P. Summary" }, // Previously Sales Person Summary
     { label: "Forecast T." }, // Forecast Turnover
-    { label: "Description T." }, // Description Wise Turnover
     ...(hasSpecialAccess ? [{ label: "Profit Report" }] : []), // Daily Profitability Report
   ];
 
@@ -271,35 +270,37 @@ export function Report() {
           activeTab={activeTab}
           onTabChange={handleTabChange}
         />
-        <Box
-          sx={{
-            backgroundColor: "white",
-            borderRadius: "8px",
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-            margin: "10px",
-            padding: "20px",
-          }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={5} sm={5} md={5} lg={5}>
-              <FormControl fullWidth size="small">
-                <InputLabel id="demo-select-small">Date</InputLabel>
-                <Select
-                  labelId="demo-select-small"
-                  id="demo-select-small"
-                  label="Date"
-                  onChange={(event) => handleChange(event)}
-                >
-                  {DateOptions.map((option, i) => (
-                    <MenuItem key={i} value={option.value}>
-                      {option.value}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+        {activeTab === 7 && (
+          <Box
+            sx={{
+              backgroundColor: "white",
+              borderRadius: "8px",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+              margin: "10px",
+              padding: "20px",
+            }}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={5} sm={5} md={5} lg={5}>
+                <FormControl fullWidth size="small">
+                  <InputLabel id="demo-select-small">Date</InputLabel>
+                  <Select
+                    labelId="demo-select-small"
+                    id="demo-select-small"
+                    label="Date"
+                    onChange={(event) => handleChange(event)}
+                  >
+                    {DateOptions.map((option, i) => (
+                      <MenuItem key={i} value={option.value}>
+                        {option.value}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
             </Grid>
-          </Grid>
-        </Box>
+          </Box>
+        )}
         <div>
           {activeTab === 0 && (
             <div>
@@ -341,17 +342,8 @@ export function Report() {
               <ProductWiseTurnover />
             </div>
           )}
+
           {activeTab === 7 && (
-            <div>
-              <DescriptionWiseTurnover
-                descriptionWiseTurnoverFilterData={
-                  descriptionWiseTurnoverFilterData
-                }
-                salesData={salesData}
-              />
-            </div>
-          )}
-          {activeTab === 8 && (
             <div>
               <DailyProfitableReports
                 dailyProfitableReportsFilterData={

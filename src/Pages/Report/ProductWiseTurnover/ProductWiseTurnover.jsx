@@ -31,14 +31,11 @@ export const ProductWiseTurnover = () => {
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
 
-  // Get the last 2 months
-  const lastMonth1 = (currentMonth - 2 + 12) % 12;
-  const lastMonth2 = (currentMonth - 1 + 12) % 12;
-
-  // Get the next 2 months
+  // Get the next 3 months
   const nextMonth1 = (currentMonth + 1) % 12;
   const nextMonth2 = (currentMonth + 2) % 12;
   const nextMonth3 = (currentMonth + 3) % 12;
+
   // Convert month number to month name
   const months = [
     "January",
@@ -82,7 +79,7 @@ export const ProductWiseTurnover = () => {
         await ProductForecastService.getProductWiseTurnoverForecast(
           filterSelectedQuery
         );
-      console.log("response", response);
+      console.log("response", response.data);
       setProductWiseTurnover(response.data);
     } catch (error) {
       handleError(error);
@@ -105,19 +102,21 @@ export const ProductWiseTurnover = () => {
       description: row.product__description__name,
       brand: row.product__brand__name,
     };
-    row.total_turnover_monthly.forEach((rowData, index) => {
-      tableRow[`total_turnover_monthly_${index}`] = numberFormat(
-        rowData.total_turnover_monthly
-      );
+
+    // Initialize the columns for the next months with zero or empty string
+    tableRow[`total_turnover_monthly_${currentMonth}`] = 0;
+    tableRow[`total_turnover_monthly_${nextMonth1}`] = 0;
+    tableRow[`total_turnover_monthly_${nextMonth2}`] = 0;
+    tableRow[`total_turnover_monthly_${nextMonth3}`] = 0;
+
+    row.total_turnover_monthly.forEach((rowData) => {
+      const month = parseInt(rowData.month, 10) - 1; // Adjust for 0-based index
+      const key = `total_turnover_monthly_${month}`;
+      tableRow[key] = numberFormat(rowData.total_turnover_monthly);
     });
 
     return tableRow;
   });
-
-  // Add the column totals row to the Tabledata
-  if (Tabledata.length > 0) {
-    Tabledata.push(columnTotals);
-  }
 
   // Calculate the total for each column
   const columnTotals = {
@@ -128,15 +127,20 @@ export const ProductWiseTurnover = () => {
 
   for (let i = 0; i < 4; i++) {
     const columnKey = `total_turnover_monthly_${i}`;
-    const total = Tabledata.reduce(
-      (sum, row) => sum + (row[columnKey] || 0),
-      0
-    );
+    const total = Tabledata.reduce((sum, row) => {
+      // Check if the columnKey exists and if its value can be parsed as a number
+      const value = parseFloat(row[columnKey]);
+      return sum + (isNaN(value) ? 0 : value);
+    }, 0);
+
     columnTotals[columnKey] = numberFormat(total);
   }
 
   // Add the column totals row to the Tabledata
-  Tabledata.push(columnTotals);
+  if (Tabledata.length > 0) {
+    Tabledata.push(columnTotals);
+  }
+
   const Tableheaders = [
     "Sales Person",
     "Description",
