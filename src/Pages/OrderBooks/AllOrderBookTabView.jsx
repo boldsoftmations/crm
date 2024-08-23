@@ -21,6 +21,7 @@ export const AllOrderBookTabView = () => {
     "Sales Deputy Manager",
     "Sales Assistant Deputy Manager",
     "Sales Executive",
+    "Customer Relationship Executive",
     "Sales Manager without Leads",
     "Sales Manager with Lead",
     "Accounts",
