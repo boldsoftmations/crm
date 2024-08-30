@@ -176,11 +176,6 @@ export const CompanyDetails = () => {
     setOpenPopupActivity(true);
   };
 
-  const openInPopupPotential = (item) => {
-    setRecordForEdit(item.id);
-    setOpenPopupPotential(true);
-  };
-
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
   };
@@ -508,14 +503,6 @@ export const CompanyDetails = () => {
                       >
                         Activity,
                       </Button>
-                      {row.is_potential_completed === false && (
-                        <Button
-                          sx={{ color: "#eb5042" }}
-                          onClick={() => openInPopupPotential(row)}
-                        >
-                          Potential
-                        </Button>
-                      )}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
