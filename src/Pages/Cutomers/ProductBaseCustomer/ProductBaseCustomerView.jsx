@@ -13,12 +13,12 @@ import {
   Button,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import CustomerServices from "../../../services/CustomerService";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { CSVLink } from "react-csv";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useNotificationHandling } from "./../../../Components/useNotificationHandling ";
 
 export const ProductBaseCustomerView = () => {
   const [open, setOpen] = useState(false);
@@ -37,6 +37,8 @@ export const ProductBaseCustomerView = () => {
 
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
+
+  // Function to get product base customer data
   const getProductBaseCustomer = async () => {
     try {
       setOpen(true);
@@ -45,47 +47,66 @@ export const ProductBaseCustomerView = () => {
         filters.customerFilterValue,
         filters.productFilterValue
       );
+      console.log("API Response:", response.data); // Debugging log
       setProductBaseCustomer(response.data);
       setOpen(false);
     } catch (err) {
-      console.error("error potential", err);
+      console.error("Error fetching product base customer data", err);
       handleError("Failed to get product base customer data" || err);
+      setOpen(false);
     }
   };
 
+  // Trigger API call when filters or filterValue changes
   useEffect(() => {
     getProductBaseCustomer();
   }, [filterValue, filters.customerFilterValue, filters.productFilterValue]);
 
+  // Function to get all product descriptions
   const getProduct = useCallback(async () => {
     try {
       setOpen(true);
       const res = await CustomerServices.getAllDescription();
       setDescriptionOption(res.data);
+      console.log("Product descriptions fetched:", res.data); // Debugging log
       setOpen(false);
     } catch (err) {
-      console.error("error potential", err);
+      console.error("Error fetching product descriptions", err);
+      handleError("Failed to get product descriptions");
+      setOpen(false);
     }
   }, []);
 
+  // Fetch product descriptions on component mount
   useEffect(() => {
     getProduct();
   }, [getProduct]);
 
+  // Handle description selection change
   const handleDescriptionChange = (event, value) => {
+    console.log("Description changed:", value); // Debugging log
     setFilterValue(value);
 
-    const selectedDescription = descriptionOption.find((list) => {
-      return list.description === value;
-    });
+    const selectedDescription = descriptionOption.find(
+      (list) => list.description === value
+    );
 
     if (selectedDescription) {
       setCustomerList(selectedDescription.customer_list || []);
       setProductList(selectedDescription.product_list || []);
     } else {
       setCustomerList([]);
+      setProductList([]);
     }
-    console.log(selectedDescription);
+  };
+
+  // Handle filter change for customer or product
+  const handleFilterChange = (event, value, name) => {
+    console.log("Filter changed:", name, value); // Debugging log
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value || "",
+    }));
   };
 
   const DownloadData = () => {
@@ -98,7 +119,6 @@ export const ProductBaseCustomerView = () => {
       quantity: row.quantity,
       Date: row.date,
     }));
-
     return CSVDATA;
   };
 
@@ -122,12 +142,6 @@ export const ProductBaseCustomerView = () => {
     } catch (error) {
       console.log("CSVLink Download error", error);
     }
-  };
-
-  const handleFilterChange = (event, value, name) => {
-    setFilters((prevFilters) => ({
-      [name]: value,
-    }));
   };
 
   return (
@@ -159,7 +173,7 @@ export const ProductBaseCustomerView = () => {
                     getOptionLabel={(option) => option}
                     label="Description"
                   />
-                  {filterValue && (
+                  {filterValue && productBaseCustomer.length > 0 && (
                     <CustomAutocomplete
                       fullWidth
                       name="choice"
@@ -314,7 +328,7 @@ export const ProductBaseCustomerView = () => {
                       </StyledTableCell>
                     </StyledTableRow>
                   ))}
-                {filterValue && productBaseCustomer.length === 0 && (
+                {productBaseCustomer.length === 0 && (
                   <TableRow>
                     <StyledTableCell colSpan={6} align="center">
                       No Data Available
