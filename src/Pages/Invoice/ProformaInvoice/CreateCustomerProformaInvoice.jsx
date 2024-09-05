@@ -49,7 +49,8 @@ const values = {
 };
 
 export const CreateCustomerProformaInvoice = (props) => {
-  const { recordForEdit } = props;
+  const { recordForEdit, rowData } = props;
+  console.log("rowData", rowData);
   const [productOption, setProductOption] = useState([]);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
@@ -89,6 +90,7 @@ export const CreateCustomerProformaInvoice = (props) => {
   const [checked, setChecked] = useState(true);
   const [priceApproval, setPriceApproval] = useState(false);
   const [sellerData, setSellerData] = useState([]);
+  const [edcData, setEdcData] = useState([]);
   const { profile: users } = useSelector((state) => state.auth);
 
   const handleInputChange = (event) => {
@@ -120,6 +122,21 @@ export const CreateCustomerProformaInvoice = (props) => {
       console.log("Error fetching seller account data:", error);
     }
   };
+  const getBillingAddressbyCustomer = async () => {
+    console.log("function called");
+    try {
+      const response = await InvoiceServices.getBillingAddressbyCustomer(
+        rowData.name
+      );
+      setEdcData(response.data);
+      console.log("Data from api", response.data);
+    } catch (error) {
+      console.log("Error fetching customer billing address data:", error);
+    }
+  };
+  useEffect(() => {
+    getBillingAddressbyCustomer();
+  }, [rowData]);
 
   useEffect(() => {
     getAllSellerAccountsDetails();
@@ -365,9 +382,9 @@ export const CreateCustomerProformaInvoice = (props) => {
               label="Alt. Contact"
               variant="outlined"
               value={
-                contactData
-                  ? contactData.alternate_contact
-                    ? contactData.alternate_contact
+                warehouseData
+                  ? warehouseData.contact_number
+                    ? warehouseData.contact_number
                     : ""
                   : ""
               }
@@ -429,19 +446,39 @@ export const CreateCustomerProformaInvoice = (props) => {
               <InputLabel id="demo-simple-select-label">
                 Shipping Address
               </InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="Shipping Address"
-                onChange={(e, value) => setWarehouseData(e.target.value)}
-              >
-                {warehouseOptions &&
-                  warehouseOptions.map((option, i) => (
-                    <MenuItem key={i} value={option}>
-                      {option ? option.address : "Please First Select Contact"}
-                    </MenuItem>
-                  ))}
-              </Select>
+              {rowData.type_of_customer == "Exclusive Distribution Customer" ? (
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  label="Shipping Address"
+                  onChange={(e, value) => setWarehouseData(e.target.value)}
+                >
+                  {warehouseOptions &&
+                    edcData.map((option, i) => (
+                      <MenuItem key={i} value={option}>
+                        {option
+                          ? option.customer_address
+                          : "Please First Select Contact"}
+                      </MenuItem>
+                    ))}
+                </Select>
+              ) : (
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  label="Shipping Address"
+                  onChange={(e, value) => setWarehouseData(e.target.value)}
+                >
+                  {warehouseOptions &&
+                    warehouseOptions.map((option, i) => (
+                      <MenuItem key={i} value={option}>
+                        {option
+                          ? option.address
+                          : "Please First Select Contact"}
+                      </MenuItem>
+                    ))}
+                </Select>
+              )}
               <HelperText>first select Contact</HelperText>
             </FormControl>
           </Grid>

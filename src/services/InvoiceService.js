@@ -404,7 +404,9 @@ const getInvoiceByCustomerAndSellerUnit = (customer, unit) => {
     `/api/invoice/six-month-invoice/?${params.toString()}`
   );
 };
-
+const getBillingAddressbyCustomer = (data) => {
+  return CustomAxios.get(`api/customer/warehouse/?customer=${data}`);
+};
 const InvoiceServices = {
   getAllSellerAccountData,
   getfilterSellerAccountData,
@@ -451,6 +453,7 @@ const InvoiceServices = {
   CreateDebitCreditNote,
   getDebitCreditNoteById,
   getInvoiceByCustomerAndSellerUnit,
+  getBillingAddressbyCustomer,
 };
 
 export default InvoiceServices;
