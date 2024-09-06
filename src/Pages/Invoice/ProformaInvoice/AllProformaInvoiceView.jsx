@@ -400,7 +400,10 @@ export const AllProformaInvoiceView = (props) => {
                           <strong style={{ ...typographyStyling }}>
                             Contact Person Name:{" "}
                           </strong>
-                          {invoiceData.contact_person_name}
+                          {invoiceData.type_of_customer ===
+                          "Exclusive Distribution Customer"
+                            ? invoiceData.warehouse_person_name
+                            : invoiceData.contact_person_name}
                         </div>
                       </address>
                     </div>
