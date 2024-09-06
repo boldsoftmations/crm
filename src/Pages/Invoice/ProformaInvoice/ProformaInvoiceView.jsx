@@ -578,7 +578,7 @@ export const ProformaInvoiceView = (props) => {
                           <strong style={{ ...typographyStyling }}>
                             Company :{" "}
                           </strong>
-                          {invoiceData.company_name},
+                          {invoiceData.name_of_party},
                         </div>
                         <div>
                           <strong style={{ ...typographyStyling }}>
