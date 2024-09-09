@@ -223,6 +223,10 @@ const updateLeadForecast = (id, data) => {
   return CustomAxios.patch(`/api/forecast/lead-forecast/${id}/`, data);
 };
 
+const createJustDialLeads = (data) => {
+  return CustomAxios.post("/api/lead/just-dial-lead/", data);
+};
+
 const LeadServices = {
   getAllLeads,
   getAllAssignedUser,
@@ -247,6 +251,7 @@ const LeadServices = {
   createLeadForecast,
   getLeadForecast,
   updateLeadForecast,
+  createJustDialLeads,
 };
 
 export default LeadServices;
