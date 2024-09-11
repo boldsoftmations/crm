@@ -7,10 +7,10 @@ import LeadServices from "../../services/LeadService";
 const CreateJustDialLead = () => {
   const [loader, setLoader] = useState(false);
   const [formData, setFormData] = useState({
-    references: "Just dial",
+    references: "Justdial",
     contact: "",
     name: "",
-    stage: "",
+    stage: "new",
     city: "",
     query_product_name: "",
   });
@@ -35,6 +35,14 @@ const CreateJustDialLead = () => {
   // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!formData.contact || !formData.name) {
+      setAlertMsg({
+        message: "Please fill in all required fields",
+        severity: "warning",
+        open: true,
+      });
+      return;
+    }
     try {
       const updatedFormData = { ...formData };
 
@@ -62,9 +70,15 @@ const CreateJustDialLead = () => {
         severity: "success",
         open: true,
       });
+
+      // Refresh the page after a short delay to allow the user to see the success message
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000); // Delay of 2 seconds
     } catch (error) {
       setAlertMsg({
-        message: "Failed to create Just Dial lead",
+        message:
+          error.response.data.message || "Failed to create Just Dial lead",
         severity: "error",
         open: true,
       });
@@ -99,7 +113,9 @@ const CreateJustDialLead = () => {
                   <TextField
                     fullWidth
                     label="Contact"
+                    type="number"
                     name="contact"
+                    required
                     variant="outlined"
                     size="small"
                     value={formData.contact}
@@ -111,20 +127,10 @@ const CreateJustDialLead = () => {
                     fullWidth
                     label="Name"
                     name="name"
+                    required
                     variant="outlined"
                     size="small"
                     value={formData.name}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Stage"
-                    name="stage"
-                    variant="outlined"
-                    size="small"
-                    value={formData.stage}
                     onChange={handleChange}
                   />
                 </Grid>
