@@ -267,7 +267,7 @@ export const CreateCustomerProformaInvoice = (props) => {
         (customerLastPiData && customerLastPiData.place_of_supply),
       transporter_name:
         inputValue.transporter_name ||
-        (customerLastPiData && customerLastPiData.place_of_supply),
+        (customerLastPiData && customerLastPiData.transporter_name),
       buyer_order_no: checked === true ? "verbal" : inputValue.buyer_order_no,
       buyer_order_date: inputValue.buyer_order_date,
       payment_terms:
