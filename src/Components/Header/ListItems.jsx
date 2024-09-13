@@ -189,6 +189,7 @@ export const ListItems = ({ setOpen }) => {
         renderSubmenu("production", <FactoryIcon />, "Production", [
           { to: "/inventory/view-production", text: "Production" },
         ]),
+        renderListItem("/invoice/orderbook-tab", <ReceiptIcon />, "Order Book"),
       ],
     },
     //Factory Menus
