@@ -18,11 +18,6 @@ export const AllCCFtab = () => {
       component: <CCFView />,
     },
     {
-      label: "Complaint List",
-      roles: ["Director", "Sales", "Customer Service"],
-      component: <AllComplaintListView />,
-    },
-    {
       label: "CAPA",
       roles: ["Director", "Acounts", "Customer Service", "Factory"],
       component: <CapaView />,
