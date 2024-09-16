@@ -397,10 +397,10 @@ const getAllCCFData = (page, searchValue) => {
 const getAllClosedCCF = () => {
   return CustomAxios.get(`/api/customer/ccf/?is_closed=true`);
 };
-const getAllComplaintsList = (type, department) => {
+const getAllComplaintsList = (page, department) => {
   const params = new URLSearchParams();
-  if (type) {
-    params.append("type", type);
+  if (page) {
+    params.append("page", page);
   }
   if (department) {
     params.append("department", department);
@@ -452,9 +452,15 @@ const getCustomerLastPi = (company, seller_account) => {
   );
 };
 
-const getProductLastPi = (company,unit,product)=>{
-  return CustomAxios.get(`/api/invoice/pi-products/?company=${company}&seller_account=${unit}&product=${product}`)
-}
+const getProductLastPi = (company, unit, product) => {
+  return CustomAxios.get(
+    `/api/invoice/pi-products/?company=${company}&seller_account=${unit}&product=${product}`
+  );
+};
+
+const getAllStatesList = () => {
+  return CustomAxios.get("/api/customer/state/");
+};
 
 const CustomerServices = {
   getAllCustomerData,
@@ -525,6 +531,7 @@ const CustomerServices = {
   getAllCapaData,
   getCustomerLastPi,
   getProductLastPi,
+  getAllStatesList,
 };
 
 export default CustomerServices;

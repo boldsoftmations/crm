@@ -197,7 +197,7 @@ export const CompanyDetails = () => {
 
   useEffect(() => {
     getAllCompanyDetails();
-  }, [currentPage, statusFilter, filterSelectedQuery, getAllCompanyDetails]);
+  }, [getAllCompanyDetails]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
