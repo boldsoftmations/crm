@@ -192,6 +192,7 @@ const CreateInterviewQuestion = ({ getMCQQuetion, setOpenQuestionPopUp }) => {
         </Grid>
 
         <Button
+          style={{ marginTop: 12 }}
           variant="contained"
           color="primary"
           onClick={handleSubmit}
