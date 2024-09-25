@@ -43,6 +43,8 @@ export const ProductOrderBookDetails = () => {
   const [filterRaisedByEmail, setFilterRaisedByEmail] = useState("");
   const [filterReadyDate, setFilterReadyDate] = useState("");
   const [recordForEdit, setRecordForEdit] = useState(null);
+  const [productList, setProductList] = useState([]);
+  const [filterProduct, setFilterProduct] = useState("");
   const csvLinkRef = useRef(null);
   const dataList = useSelector((state) => state.auth);
   const userData = dataList.profile;
@@ -153,6 +155,17 @@ export const ProductOrderBookDetails = () => {
       ) {
         setOpenModal3(true);
       }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const openInPopup2 = (item) => {
+    try {
+      const matchedODBData = orderBookData.find(
+        (ODBData) => ODBData.id === item.id
+      );
+      setRecordForEdit(matchedODBData);
       if (
         userData.groups.includes("Production") ||
         userData.groups.includes("Production Delhi") ||
@@ -274,7 +287,7 @@ export const ProductOrderBookDetails = () => {
                   label="Filter By Ready Date"
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={4}>
                 <CustomAutocomplete
                   size="small"
                   fullWidth
@@ -285,13 +298,7 @@ export const ProductOrderBookDetails = () => {
                   label="Filter By Sales Person"
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
-                <SearchComponent
-                  onSearch={handleSearch}
-                  onReset={handleReset}
-                />
-              </Grid>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={2} style={{ textAlign: "right" }}>
                 <Button
                   sx={{ marginLeft: "10px" }}
                   variant="contained"
@@ -319,21 +326,43 @@ export const ProductOrderBookDetails = () => {
                   />
                 )}
               </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <CustomAutocomplete
+                  size="small"
+                  fullWidth
+                  value={filterRaisedByEmail}
+                  onChange={(event, value) => setFilterProduct(value)}
+                  options={productList}
+                  getOptionLabel={(option) => option}
+                  label="Filter By Product"
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <Box display="flex" alignItems="center" justifyContent="center">
+                  <h3
+                    style={{
+                      textAlign: "center",
+                      marginBottom: "1em",
+                      fontSize: "24px",
+                      color: "rgb(34, 34, 34)",
+                      fontWeight: 800,
+                    }}
+                  >
+                    Product Order Book Details
+                  </h3>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
+                />
+              </Grid>
             </Grid>
           </Box>
-          <Box display="flex" alignItems="center" justifyContent="center">
-            <h3
-              style={{
-                textAlign: "left",
-                marginBottom: "1em",
-                fontSize: "24px",
-                color: "rgb(34, 34, 34)",
-                fontWeight: 800,
-              }}
-            >
-              Product Order Book Details
-            </h3>
-          </Box>
+
           <TableContainer
             sx={{
               maxHeight: 440,
@@ -379,14 +408,29 @@ export const ProductOrderBookDetails = () => {
                     <StyledTableCell>{row.special_instruction}</StyledTableCell>
                     <StyledTableCell>{row.revision}</StyledTableCell>
                     <StyledTableCell>
-                      <Button
-                        variant="outlined"
-                        color="info"
-                        size="small"
-                        onClick={() => openInPopup(row)}
-                      >
-                        View
-                      </Button>
+                      {(userData.groups.includes("Accounts") ||
+                        userData.groups.includes("Director")) && (
+                        <Button
+                          variant="text"
+                          color="info"
+                          size="small"
+                          onClick={() => openInPopup(row)}
+                        >
+                          Account View
+                        </Button>
+                      )}
+                      {(userData.groups.includes("Production") ||
+                        userData.groups.includes("Production Delhi") ||
+                        userData.groups.includes("Director")) && (
+                        <Button
+                          variant="text"
+                          color="secondary"
+                          size="small"
+                          onClick={() => openInPopup2(row)}
+                        >
+                          Production View
+                        </Button>
+                      )}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}

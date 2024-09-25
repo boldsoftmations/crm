@@ -173,9 +173,6 @@ export const Dispatched = () => {
                   {userData.groups.toString() === "Customer Service" && (
                     <StyledTableCell align="center">LR COPY</StyledTableCell>
                   )}
-                  {/* {userData.groups.toString() === "Customer Service" && (
-                  <StyledTableCell align="center">POD COPY</StyledTableCell>
-                )} */}
                   <StyledTableCell align="center">ACTION</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
@@ -218,10 +215,6 @@ function Row(props) {
     FileSaver.saveAs(url, "image");
   };
 
-  // const handleClickPODCOPY = async (data) => {
-  //   let url = data.pod_copy ? data.pod_copy : "";
-  //   FileSaver.saveAs(url, "image");
-  // };
   return (
     <>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
@@ -261,7 +254,8 @@ function Row(props) {
         {(userData.groups.includes("Factory-Delhi-Dispatch") ||
           userData.groups.includes("Factory-Mumbai-Dispatch") ||
           userData.groups.includes("Director") ||
-          userData.groups.includes("Account")) && (
+          userData.groups.includes("Customer Service") ||
+          userData.groups.includes("Accounts")) && (
           <TableCell align="center">
             <button
               type="button"
