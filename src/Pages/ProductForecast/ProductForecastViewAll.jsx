@@ -23,7 +23,9 @@ export const ProductForecastViewAll = () => {
     userData.groups.includes("Sales Assistant Deputy Manager") ||
     userData.groups.includes("Customer Service") ||
     userData.groups.includes("Customer Relationship Executive") ||
-    userData.groups.includes("Customer Relationship Manager");
+    userData.groups.includes("Customer Relationship Manager") ||
+    userData.groups.includes("Business Development Manager") ||
+    userData.groups.includes("Business Development Executive");
 
   const isPurchase =
     userData.groups.includes("Director") ||

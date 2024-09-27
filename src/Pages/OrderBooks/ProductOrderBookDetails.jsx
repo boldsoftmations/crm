@@ -43,8 +43,6 @@ export const ProductOrderBookDetails = () => {
   const [filterRaisedByEmail, setFilterRaisedByEmail] = useState("");
   const [filterReadyDate, setFilterReadyDate] = useState("");
   const [recordForEdit, setRecordForEdit] = useState(null);
-  const [productList, setProductList] = useState([]);
-  const [filterProduct, setFilterProduct] = useState("");
   const csvLinkRef = useRef(null);
   const dataList = useSelector((state) => state.auth);
   const userData = dataList.profile;
@@ -90,6 +88,7 @@ export const ProductOrderBookDetails = () => {
             shipping_city: item.shipping_city,
             seller_state: item.seller_state,
             estimated_date: item.estimated_date,
+            ready_date: item.ready_date,
             requested_date: item.requested_date,
             special_instructions: item.special_instructions,
           };
@@ -109,6 +108,7 @@ export const ProductOrderBookDetails = () => {
             shipping_pincode: item.shipping_pincode,
             seller_state: item.seller_state,
             estimated_date: item.estimated_date,
+            ready_date: item.ready_date,
             requested_date: item.requested_date,
             special_instructions: item.special_instructions,
           };
@@ -129,6 +129,7 @@ export const ProductOrderBookDetails = () => {
             shipping_pincode: item.shipping_pincode,
             seller_state: item.seller_state,
             estimated_date: item.estimated_date,
+            ready_date: item.ready_date,
             requested_date: item.requested_date,
             special_instructions: item.special_instructions,
           };
@@ -287,7 +288,7 @@ export const ProductOrderBookDetails = () => {
                   label="Filter By Ready Date"
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={3}>
                 <CustomAutocomplete
                   size="small"
                   fullWidth
@@ -298,7 +299,13 @@ export const ProductOrderBookDetails = () => {
                   label="Filter By Sales Person"
                 />
               </Grid>
-              <Grid item xs={12} sm={2} style={{ textAlign: "right" }}>
+              <Grid item xs={12} sm={3}>
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
+                />
+              </Grid>
+              <Grid item xs={12} sm={3}>
                 <Button
                   sx={{ marginLeft: "10px" }}
                   variant="contained"
@@ -326,43 +333,21 @@ export const ProductOrderBookDetails = () => {
                   />
                 )}
               </Grid>
-
-              <Grid item xs={12} sm={4}>
-                <CustomAutocomplete
-                  size="small"
-                  fullWidth
-                  value={filterRaisedByEmail}
-                  onChange={(event, value) => setFilterProduct(value)}
-                  options={productList}
-                  getOptionLabel={(option) => option}
-                  label="Filter By Product"
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={4}>
-                <Box display="flex" alignItems="center" justifyContent="center">
-                  <h3
-                    style={{
-                      textAlign: "center",
-                      marginBottom: "1em",
-                      fontSize: "24px",
-                      color: "rgb(34, 34, 34)",
-                      fontWeight: 800,
-                    }}
-                  >
-                    Product Order Book Details
-                  </h3>
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <SearchComponent
-                  onSearch={handleSearch}
-                  onReset={handleReset}
-                />
-              </Grid>
             </Grid>
           </Box>
-
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <h3
+              style={{
+                textAlign: "left",
+                marginBottom: "1em",
+                fontSize: "24px",
+                color: "rgb(34, 34, 34)",
+                fontWeight: 800,
+              }}
+            >
+              Product Order Book Details
+            </h3>
+          </Box>
           <TableContainer
             sx={{
               maxHeight: 440,
@@ -405,7 +390,9 @@ export const ProductOrderBookDetails = () => {
                     <StyledTableCell>{row.estimated_date}</StyledTableCell>
                     <StyledTableCell>{row.ready_date}</StyledTableCell>
                     <StyledTableCell>{row.requested_date}</StyledTableCell>
-                    <StyledTableCell>{row.special_instruction}</StyledTableCell>
+                    <StyledTableCell>
+                      {row.special_instructions}
+                    </StyledTableCell>
                     <StyledTableCell>{row.revision}</StyledTableCell>
                     <StyledTableCell>
                       {(userData.groups.includes("Accounts") ||
@@ -517,6 +504,7 @@ const headers = [
     label: "Estimated Date",
     key: "estimated_date",
   },
+  { label: "Ready Date", key: "ready_date" },
   {
     label: "Special Instruction",
     key: "special_instructions",

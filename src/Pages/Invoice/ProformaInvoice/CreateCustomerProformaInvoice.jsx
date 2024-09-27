@@ -47,7 +47,7 @@ const tfStyle = {
 const getNextFiveDates = () => {
   const today = new Date();
   const futureDate = new Date();
-  futureDate.setDate(today.getDate() + 5); // Add i days to today's date
+  futureDate.setDate(today.getDate() + 7); // Add i days to today's date
   return futureDate.toISOString().substring(0, 10);
 };
 
@@ -120,7 +120,7 @@ export const CreateCustomerProformaInvoice = (props) => {
       return { ...prev, [name]: value };
     });
   };
-
+  let buyer_date = new Date().toISOString().slice(0, 10);
   const openInPopup = () => {
     setOpenPopup3(true);
     setOpenPopup2(false);
@@ -655,7 +655,7 @@ export const CreateCustomerProformaInvoice = (props) => {
               value={
                 inputValue.buyer_order_date
                   ? inputValue.buyer_order_date
-                  : values.someDate
+                  : buyer_date
               }
               onChange={handleInputChange}
               InputLabelProps={{
@@ -850,7 +850,11 @@ export const CreateCustomerProformaInvoice = (props) => {
                       shrink: true, // Ensures the label stays visible
                     }}
                     inputProps={{
-                      min: new Date().toISOString().substring(0, 10), // Prevent selecting past dates
+                      min: new Date(
+                        new Date().setDate(new Date().getDate() + 1)
+                      )
+                        .toISOString()
+                        .substring(0, 10), // Prevent selecting past and current dates
                     }}
                   />
                 </Grid>

@@ -19,7 +19,9 @@ export const AllDispatchTabView = () => {
     "Customer Relationship Manager",
     "Customer Relationship Executive",
     "Sales Deputy Manager",
-    "Sales Assistant Deputy Manager"
+    "Sales Assistant Deputy Manager",
+    "Business Development Manager",
+    "Business Development Executive"
   );
 
   const twoTabs = isInGroups(
@@ -34,7 +36,7 @@ export const AllDispatchTabView = () => {
   const tabs = [
     {
       label: "Pending Dispatch",
-      visible: allTabs || twoTabs,
+      visible: allTabs || twoTabs || customerServiceTab,
       index: 0,
     },
 
