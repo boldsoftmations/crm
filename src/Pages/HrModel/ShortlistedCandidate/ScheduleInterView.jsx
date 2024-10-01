@@ -8,6 +8,7 @@ import { MessageAlert } from "../../../Components/MessageAlert";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 
 export const ScheduleInterview = ({ row, closeDialog, fetchCandidates }) => {
+  console.log("row", row);
   const [interviewDate, setInterviewDate] = useState("");
   const [interviewTime, setInterviewTime] = useState("");
   const [interviewerName, setInterviewerName] = useState("");
@@ -19,7 +20,7 @@ export const ScheduleInterview = ({ row, closeDialog, fetchCandidates }) => {
     e.preventDefault();
 
     const newInterviewDetails = {
-      applicant: row.contact,
+      applicant: row.applicant,
       date: interviewDate,
       time: interviewTime,
       interviewer: interviewerName,
