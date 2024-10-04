@@ -301,7 +301,12 @@ const updateMaterialRequisitionFormData = (id, data) => {
 
 // Bill of Materials List Api
 
-const getAllBillofMaterialsData = (page, approvedToFilter, searchValue) => {
+const getAllBillofMaterialsData = (
+  page,
+  approvedToFilter,
+  is_deactivated,
+  searchValue
+) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
 
@@ -311,6 +316,10 @@ const getAllBillofMaterialsData = (page, approvedToFilter, searchValue) => {
 
   if (approvedToFilter !== undefined) {
     params.append("approved", approvedToFilter);
+  }
+
+  if (is_deactivated !== undefined) {
+    params.append("is_deactivated", is_deactivated);
   }
 
   if (searchValue) {
@@ -360,7 +369,9 @@ const getAllMaterialTransferNoteData = (
   page,
   acceptedToFilter,
   searchValue,
-  date
+  date,
+  start_date,
+  end_date
 ) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
@@ -379,6 +390,12 @@ const getAllMaterialTransferNoteData = (
   if (date) {
     params.append("date", date);
   }
+  if (start_date) {
+    params.append("start_date", start_date);
+  }
+  if (end_date) {
+    params.append("end_date", end_date);
+  }
 
   // Sending a GET request with query parameters
   return CustomAxios.get(
@@ -386,10 +403,16 @@ const getAllMaterialTransferNoteData = (
   );
 };
 
-const getAllMrfProducts = (date) => {
+const getAllMrfProducts = (date, start_date, end_date) => {
   const params = new URLSearchParams();
   if (date) {
     params.append("date", date);
+  }
+  if (start_date) {
+    params.append("start_date", start_date);
+  }
+  if (end_date) {
+    params.append("end_date", end_date);
   }
   return CustomAxios.get(`api/inventory/mrf-product/?${params.toString()}`);
 };
