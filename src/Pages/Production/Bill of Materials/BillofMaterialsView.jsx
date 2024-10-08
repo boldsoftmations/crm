@@ -123,6 +123,7 @@ export const BillofMaterialsView = () => {
         const response = await InventoryServices.getAllBillofMaterialsData(
           page,
           filter,
+          null,
           search
         );
         setBillofMaterials(response.data.results);
@@ -345,7 +346,7 @@ export const BillofMaterialsView = () => {
                   <StyledTableCell align="center">APPROVED</StyledTableCell>
                   {(users.groups.includes("Accounts") ||
                     users.groups.includes("Director") ||
-                    users.groups.includes("Factory-Mumbai-OrderBook")) && (
+                    users.email === "amol@glutape.com") && (
                     <StyledTableCell align="center">
                       DEACTIVATED
                     </StyledTableCell>
