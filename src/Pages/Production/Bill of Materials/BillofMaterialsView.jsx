@@ -458,7 +458,7 @@ function Row(props) {
         </StyledTableCell>
         {(users.groups.includes("Accounts") ||
           users.groups.includes("Director") ||
-          users.groups.includes("Production")) && (
+          users.groups.includes("Factory-Mumbai-OrderBook")) && (
           <StyledTableCell align="center">
             <Switch
               checked={row.is_deactivated}
