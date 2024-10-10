@@ -74,12 +74,37 @@ export const ActiveUsers = () => {
   const getAllStatesList = async () => {
     try {
       setOpen(true);
+
+      // Fetch the new state and city data from the API
       const response = await CustomerServices.getAllStatesList();
-      setState((prevLocationData) => ({
-        ...prevLocationData, // Keep previous state data in the component's state
-        ...(activeUsersByIDData.state || {}), // Add previous data from activeUsersByIDData.state (if it exists)
-        ...response.data, // Append new state data from the API response
-      }));
+
+      // Prepare the merged state
+      setState((prev) => {
+        const prevStateCities = activeUsersByIDData.state || {}; // Previous state and city data
+        const newStateCities = response.data; // New state and city data from response
+
+        // Create a new object to hold the merged data
+        const mergedStateCities = { ...prevStateCities };
+
+        // Merge newStateCities into mergedStateCities
+        Object.entries(newStateCities).forEach(([state, cities]) => {
+          if (mergedStateCities[state]) {
+            // If the state already exists, merge cities and avoid duplicates
+            mergedStateCities[state] = [
+              ...new Set([...mergedStateCities[state], ...cities]),
+            ];
+          } else {
+            // If the state does not exist, directly add it
+            mergedStateCities[state] = cities;
+          }
+        });
+
+        // Return the final merged object
+        return {
+          ...prev, // Keep other previous state
+          ...mergedStateCities, // Add the merged states and cities
+        };
+      });
     } catch (error) {
       handleError(error);
     } finally {
@@ -92,51 +117,8 @@ export const ActiveUsers = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      activeUsersByIDData &&
-      activeUsersByIDData.groups &&
-      activeUsersByIDData.groups.includes("Customer Relationship Executive")
-    ) {
-      getAllStatesList();
-    }
-  }, [activeUsersByIDData.groups]);
-
-  const createUsersDetails = async (e) => {
-    try {
-      e.preventDefault();
-      setOpen(true);
-      const req = {
-        first_name: activeUsersByIDData.first_name,
-        last_name: activeUsersByIDData.last_name,
-        contact: activeUsersByIDData.contact,
-        email: activeUsersByIDData.email,
-        is_active: activeUsersByIDData.is_active,
-        group_names: activeUsersByIDData.groups,
-        ref_user: activeUsersByIDData.ref_user,
-        ...(Object.keys(selectedStateCities).length > 0 && {
-          state: selectedStateCities,
-        }), // Conditionally include the state only if it's not empty
-      };
-
-      const response = await TaskService.createUsers(
-        activeUsersByIDData.emp_id,
-        req
-      );
-
-      const successMessage =
-        response.data.message || "Active User Created successfully";
-      handleSuccess(successMessage);
-
-      setTimeout(() => {
-        setOpenPopup(false);
-        getAllUsersDetails();
-      }, 300);
-    } catch (error) {
-      handleError(error);
-    } finally {
-      setOpen(false);
-    }
-  };
+    getAllStatesList();
+  }, [activeUsersByIDData]);
 
   const getAllGroupsUser = async () => {
     try {
@@ -212,30 +194,50 @@ export const ActiveUsers = () => {
     setSelectedStateCities((prev) => {
       const newSelectedStateCities = { ...prev };
 
+      // If the state already exists in prev, keep it
+      const existingCities = newSelectedStateCities[state] || [];
+
       if (event.target.checked) {
-        // Select the state and all its cities
-        newSelectedStateCities[state] = cities;
+        // Add new cities to the existing cities array
+        const updatedCities = [...new Set([...existingCities, ...cities])]; // Avoid duplicates
+        newSelectedStateCities[state] = updatedCities;
       } else {
-        // Deselect the state and remove it from the object
-        delete newSelectedStateCities[state];
+        // Deselect the state or individual cities based on the event
+        if (cities.length === 0) {
+          // If no cities are passed, deselect the entire state
+          delete newSelectedStateCities[state];
+        } else {
+          // If cities are passed, remove only those cities
+          const remainingCities = existingCities.filter(
+            (city) => !cities.includes(city)
+          );
+          if (remainingCities.length > 0) {
+            newSelectedStateCities[state] = remainingCities;
+          } else {
+            delete newSelectedStateCities[state]; // Remove the state if no cities remain
+          }
+        }
       }
 
       return newSelectedStateCities;
     });
   };
 
+  console.log("selectedStateCities", selectedStateCities);
   const handleCityCheck = (event, state, city) => {
     setSelectedStateCities((prev) => {
       const newSelectedStateCities = { ...prev };
 
-      // If the state is already present in the object
+      // Check if the state is already present in the object
       if (newSelectedStateCities[state]) {
         if (event.target.checked) {
-          // Add the city to the array
-          newSelectedStateCities[state] = [
-            ...newSelectedStateCities[state],
-            city,
-          ];
+          // Add the city to the array, only if it doesn't already exist (avoid duplicates)
+          if (!newSelectedStateCities[state].includes(city)) {
+            newSelectedStateCities[state] = [
+              ...newSelectedStateCities[state],
+              city,
+            ];
+          }
         } else {
           // Remove the city from the array
           newSelectedStateCities[state] = newSelectedStateCities[state].filter(
@@ -256,13 +258,60 @@ export const ActiveUsers = () => {
     });
   };
 
-  const isStateHighlighted = (state) =>
-    selectedStateCities[state] && selectedStateCities[state].length > 0;
+  // Check if all cities are selected for the state
+  const isStateFullySelected = (stateName, cities) => {
+    return (
+      selectedStateCities[stateName] &&
+      selectedStateCities[stateName].length === cities.length
+    );
+  };
+
+  // Check if some but not all cities are selected for the state
+  const isStatePartiallySelected = (stateName, cities) => {
+    return (
+      selectedStateCities[stateName] &&
+      selectedStateCities[stateName].length > 0 &&
+      selectedStateCities[stateName].length < cities.length
+    );
+  };
 
   const isChecked = (state, city) =>
     (selectedStateCities[state] && selectedStateCities[state].includes(city)) ||
     false;
+  const createUsersDetails = async (e) => {
+    try {
+      e.preventDefault();
+      setOpen(true);
+      const req = {
+        first_name: activeUsersByIDData.first_name,
+        last_name: activeUsersByIDData.last_name,
+        contact: activeUsersByIDData.contact,
+        email: activeUsersByIDData.email,
+        is_active: activeUsersByIDData.is_active,
+        group_names: activeUsersByIDData.groups,
+        ref_user: activeUsersByIDData.ref_user,
+        state: selectedStateCities || [],
+      };
 
+      const response = await TaskService.createUsers(
+        activeUsersByIDData.emp_id,
+        req
+      );
+
+      const successMessage =
+        response.data.message || "Active User Created successfully";
+      handleSuccess(successMessage);
+
+      setTimeout(() => {
+        setOpenPopup(false);
+        getAllUsersDetails();
+      }, 300);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setOpen(false);
+    }
+  };
   return (
     <>
       <MessageAlert
@@ -392,13 +441,29 @@ export const ActiveUsers = () => {
                 )}
               />
             </Grid>
-
             {activeUsersByIDData &&
               activeUsersByIDData.groups &&
               activeUsersByIDData.groups.includes(
                 "Customer Relationship Executive"
               ) && (
                 <Grid item xs={12}>
+                  {state && Object.keys(state).length > 0 && (
+                    <p
+                      style={{
+                        marginLeft: "5px",
+                        padding: "6px",
+                        backgroundColor: "green",
+                        borderRadius: "16px",
+                        color: "white",
+                        fontSize: "14px",
+                        fontWeight: 400,
+                        cursor: "pointer",
+                        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
+                      }}
+                    >
+                      Assign states and cities to {activeUsersByIDData.name}
+                    </p>
+                  )}
                   <TreeView
                     aria-label="checkbox tree"
                     defaultCollapseIcon={<ExpandMoreIcon />}
@@ -410,63 +475,91 @@ export const ActiveUsers = () => {
                       mx: "10px",
                     }}
                   >
-                    {Object.entries(state).map(
-                      ([state, cities], stateIndex) => {
-                        const stateId = `state-${stateIndex}`;
-
-                        return (
-                          <TreeItem
-                            key={stateId}
-                            nodeId={stateId}
-                            label={
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    checked={isStateHighlighted(state)}
-                                    onChange={(event) =>
-                                      handleCheck(event, state, cities)
-                                    }
-                                  />
-                                }
-                                label={state}
-                                sx={{
-                                  color: isStateHighlighted(state)
-                                    ? "blue"
-                                    : "inherit",
-                                  fontWeight: isStateHighlighted(state)
-                                    ? "bold"
-                                    : "normal",
-                                }}
-                              />
-                            }
-                          >
-                            {cities.map((city, cityIndex) => {
-                              const cityId = `city-${stateIndex}-${cityIndex}`;
-
-                              return (
-                                <TreeItem
-                                  key={cityId}
-                                  nodeId={cityId}
-                                  label={
-                                    <FormControlLabel
-                                      control={
-                                        <Checkbox
-                                          checked={isChecked(state, city)}
-                                          onChange={(event) =>
-                                            handleCityCheck(event, state, city)
-                                          }
-                                        />
+                    {state &&
+                      Object.entries(state).map(
+                        ([stateName, cities], stateIndex) => {
+                          const stateId = `state-${stateIndex}`;
+                          return (
+                            <TreeItem
+                              key={stateId}
+                              nodeId={stateId}
+                              label={
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      checked={
+                                        !!isStateFullySelected(
+                                          stateName,
+                                          cities
+                                        )
+                                      } // Ensure controlled value (either true or false)
+                                      indeterminate={isStatePartiallySelected(
+                                        stateName,
+                                        cities
+                                      )}
+                                      onChange={(event) =>
+                                        handleCheck(event, stateName, cities)
                                       }
-                                      label={city}
+                                      sx={{
+                                        "&.Mui-checked": { color: "blue" },
+                                        "&.MuiCheckbox-indeterminate": {
+                                          color: "black",
+                                        },
+                                      }}
                                     />
                                   }
+                                  label={stateName}
+                                  sx={{
+                                    color: isStatePartiallySelected(
+                                      stateName,
+                                      cities
+                                    )
+                                      ? "blue"
+                                      : "inherit",
+                                    fontWeight: isStateFullySelected(
+                                      stateName,
+                                      cities
+                                    )
+                                      ? "bold"
+                                      : "normal",
+                                  }}
                                 />
-                              );
-                            })}
-                          </TreeItem>
-                        );
-                      }
-                    )}
+                              }
+                            >
+                              {Array.isArray(cities) &&
+                                cities.length > 0 &&
+                                cities.map((city, cityIndex) => {
+                                  const cityId = `city-${stateIndex}-${cityIndex}`;
+                                  return (
+                                    <TreeItem
+                                      key={cityId}
+                                      nodeId={cityId}
+                                      label={
+                                        <FormControlLabel
+                                          control={
+                                            <Checkbox
+                                              checked={
+                                                !!isChecked(stateName, city)
+                                              } // Ensure controlled value (either true or false)
+                                              onChange={(event) =>
+                                                handleCityCheck(
+                                                  event,
+                                                  stateName,
+                                                  city
+                                                )
+                                              }
+                                            />
+                                          }
+                                          label={city}
+                                        />
+                                      }
+                                    />
+                                  );
+                                })}
+                            </TreeItem>
+                          );
+                        }
+                      )}
                   </TreeView>
                 </Grid>
               )}
