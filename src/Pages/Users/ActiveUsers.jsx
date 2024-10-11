@@ -447,23 +447,6 @@ export const ActiveUsers = () => {
                 "Customer Relationship Executive"
               ) && (
                 <Grid item xs={12}>
-                  {state && Object.keys(state).length > 0 && (
-                    <p
-                      style={{
-                        marginLeft: "5px",
-                        padding: "6px",
-                        backgroundColor: "green",
-                        borderRadius: "16px",
-                        color: "white",
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        cursor: "pointer",
-                        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
-                      }}
-                    >
-                      Assign states and cities to {activeUsersByIDData.name}
-                    </p>
-                  )}
                   <TreeView
                     aria-label="checkbox tree"
                     defaultCollapseIcon={<ExpandMoreIcon />}
