@@ -29,7 +29,7 @@ export const ActiveUsers = () => {
   const [activeUsersByIDData, setActiveUsersByIDData] = useState([]);
   const [state, setState] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [openPopup, setOpenPopup] = useState(false);
+  const [openPopup, setOpenPopup] = useState(null);
   const [manageGroup, setManageGroup] = useState([]);
   const [selectedGrp, setSelectedGrp] = useState("");
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -311,6 +311,16 @@ export const ActiveUsers = () => {
       setOpen(false);
     }
   };
+  useEffect(() => {
+    if (
+      openPopup === false &&
+      activeUsersByIDData &&
+      activeUsersByIDData.groups &&
+      activeUsersByIDData.groups.includes("Customer Relationship Executive")
+    ) {
+      window.location.reload();
+    }
+  }, [openPopup]);
 
   return (
     <>
