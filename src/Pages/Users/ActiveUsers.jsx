@@ -188,7 +188,7 @@ export const ActiveUsers = () => {
         ...activeUsersByIDData.state, // Merge existing states with new activeUsersByIDData.state
       }));
     }
-  }, [activeUsersByIDData]);
+  }, [activeUsersByIDData.first_name]);
 
   const handleCheck = (event, state, cities = []) => {
     setSelectedStateCities((prev) => {
@@ -223,7 +223,6 @@ export const ActiveUsers = () => {
     });
   };
 
-  console.log("selectedStateCities", selectedStateCities);
   const handleCityCheck = (event, state, city) => {
     setSelectedStateCities((prev) => {
       const newSelectedStateCities = { ...prev };
@@ -312,6 +311,7 @@ export const ActiveUsers = () => {
       setOpen(false);
     }
   };
+
   return (
     <>
       <MessageAlert
