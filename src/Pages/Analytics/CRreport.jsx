@@ -34,11 +34,17 @@ export const CRReport = () => {
   const handleClose = () => {
     setAlertMsg({ open: false });
   };
+  const isCRDepartment = assigned_to_users.filter((user) => {
+    return (
+      user.groups__name === "Customer Relationship Executive" ||
+      user.groups__name === "Customer Relationship Manager"
+    );
+  });
 
   const getCRReportData = async () => {
     setIsLoading(true);
     try {
-      const response = await DashboardService.getCRReportData();
+      const response = await DashboardService.getCRReportData(filterValue);
       setCRReportDatas(response.data);
     } catch (error) {
       setAlertMsg({
@@ -53,7 +59,7 @@ export const CRReport = () => {
 
   useEffect(() => {
     getCRReportData();
-  }, []);
+  }, [filterValue]);
 
   return (
     <>
@@ -75,7 +81,7 @@ export const CRReport = () => {
                     size="small"
                     value={filterValue}
                     onChange={(e, value) => setFilterValue(value)}
-                    options={assigned_to_users.map((option) => option.email)}
+                    options={isCRDepartment.map((option) => option.email)}
                     getOptionLabel={(option) => `${option}`}
                     label={"Filter By Employee"}
                   />
