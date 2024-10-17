@@ -19,9 +19,10 @@ export const OrderBookUpdate = (props) => {
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
+  console.log(recordForEdit);
   const updatesCustomerOrderBook = async (e) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
       setOpen(true);
       const data = {
         orderbook: recordForEdit.orderbook,
@@ -164,6 +165,10 @@ export const OrderBookUpdate = (props) => {
             size="small"
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            disabled={
+              recordForEdit.estimateDate !== null &&
+              recordForEdit.readyDate !== ""
+            }
           >
             Update
           </Button>
