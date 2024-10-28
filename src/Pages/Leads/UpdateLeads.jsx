@@ -32,6 +32,9 @@ import { LeadPotentialView } from "./LeadPotential/LeadPotentialView";
 import CustomAutocomplete from "../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../Components/MessageAlert";
+import { useSelector } from "react-redux";
+import MasterService from "../../services/MasterService";
+import CustomSnackbar from "../../Components/CustomerSnackbar";
 
 export const UpdateLeads = memo((props) => {
   // Destructure props
@@ -53,18 +56,86 @@ export const UpdateLeads = memo((props) => {
   const [followup, setFollowup] = useState(null);
   const [potential, setPotential] = useState(null);
   const [allCompetitors, setAllCompetitors] = useState([]);
-  const [assigned, setAssigned] = useState([]);
   const [descriptionMenuData, setDescriptionMenuData] = useState([]);
+  const [assigned, setAssigned] = useState([]);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-
+  const [alertmsg, setAlertMsg] = useState({
+    message: "",
+    severity: "",
+    open: false,
+  });
+  const handleClose = () => {
+    setAlertMsg({ open: false });
+  };
   const getTargetDate = () => {
     const currentDate = new Date();
     const targetDate = new Date(currentDate.setDate(currentDate.getDate() + 3));
     return targetDate.toISOString().split("T")[0]; // Format targetDate as YYYY-MM-DD
   };
+  const data = useSelector((state) => state.auth);
+  const users = data.profile;
 
+  useEffect(() => {
+    if (users && users.groups) {
+      if (
+        users.groups.includes("Sales Executive") ||
+        users.groups.includes("Business Development Execution")
+      ) {
+        setAssigned(
+          Array({
+            email: users.email,
+          })
+        );
+      } else {
+        setAssigned(users.active_sales_user);
+      }
+    }
+  }, [users.email]);
   // Event handlers
+  const validatePinCode = async () => {
+    try {
+      setOpen(true);
+      const PINCODE = leads.pincode;
+      const response = await MasterService.getCountryDataByPincode(PINCODE);
+      if (response.data.length === 0) {
+        setAlertMsg({
+          message:
+            "This Pin Code does not exist ! First Create the Pin code in the master country",
+          severity: "error",
+          open: true,
+        });
+        setLeads({
+          ...leads,
+          state: "",
+          city: "",
+          country: "",
+        });
+      } else {
+        setAlertMsg({
+          message: "Pin code is valid",
+          severity: "success",
+          open: true,
+        });
+        setLeads({
+          ...leads,
+          state: response.data[0].state,
+          city: response.data[0].city_name,
+          country: response.data[0].country,
+        });
+      }
+    } catch (error) {
+      console.log("error", error);
+      setAlertMsg({
+        message: "Error fetching country data by pincode",
+        severity: "error",
+        open: true,
+      });
+    } finally {
+      setOpen(false);
+    }
+  };
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     let updatedValue = value;
@@ -110,22 +181,6 @@ export const UpdateLeads = memo((props) => {
     }
   };
 
-  const getAssignedData = async () => {
-    try {
-      setOpen(true);
-      const res = await LeadServices.getAllAssignedUser();
-      // Filter the data based on the ALLOWED_ROLES
-      const filteredData = res.data.filter((employee) =>
-        employee.groups.some((group) => Option.ALLOWED_ROLES.includes(group))
-      );
-      setAssigned(filteredData);
-      setOpen(false);
-    } catch (error) {
-      console.log("error", error);
-      setOpen(false);
-    }
-  };
-
   const getCompetitors = async () => {
     try {
       setOpen(true);
@@ -142,7 +197,6 @@ export const UpdateLeads = memo((props) => {
   useEffect(() => {
     getDescriptionNoData();
     getCompetitors();
-    getAssignedData();
   }, []);
 
   const getLeadsData = async (recordForEdit) => {
@@ -191,6 +245,7 @@ export const UpdateLeads = memo((props) => {
           gst_number: leads.gst_number || null,
           pan_number: leads.pan_number || null,
           address: leads.address,
+          origin_type: leads.origin_type || null,
           city: leads.city,
           state: leads.state,
           country: leads.country,
@@ -261,6 +316,12 @@ export const UpdateLeads = memo((props) => {
 
   return (
     <>
+      <CustomSnackbar
+        open={alertmsg.open}
+        message={alertmsg.message}
+        severity={alertmsg.severity}
+        onClose={handleClose}
+      />
       <MessageAlert
         open={alertInfo.open}
         onClose={handleCloseSnackbar}
@@ -379,7 +440,7 @@ export const UpdateLeads = memo((props) => {
           <Grid item xs={12} sm={3}>
             <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">
-                Busniess Type
+                Business Type
               </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -588,49 +649,57 @@ export const UpdateLeads = memo((props) => {
           <Grid item xs={12} sm={3}>
             <CustomTextField
               fullWidth
-              name="city"
-              size="small"
-              label="City"
-              variant="outlined"
-              value={leads.city || ""}
-              onChange={handleInputChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <CustomAutocomplete
-              sx={{
-                minWidth: 220,
-              }}
-              size="small"
-              onChange={(event, value) => handleSelectChange("state", value)}
-              name="state"
-              value={leads.state || ""}
-              options={Option.StateOption.map((option) => option.label)}
-              getOptionLabel={(option) => option}
-              label="State"
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <CustomTextField
-              fullWidth
               name="country"
               size="small"
               label="Country"
               variant="outlined"
-              value={leads.country || ""}
-              onChange={handleInputChange}
+              value={leads.country || null}
+              InputLabelProps={{ shrink: true }}
+              disabled
             />
           </Grid>
           <Grid item xs={12} sm={3}>
             <CustomTextField
               fullWidth
+              name="city"
+              size="small"
+              label="State"
+              variant="outlined"
+              value={leads.state || null}
+              InputLabelProps={{ shrink: true }}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <CustomTextField
+              fullWidth
+              name="city"
+              size="small"
+              label="City"
+              variant="outlined"
+              value={leads.city || null}
+              InputLabelProps={{ shrink: true }}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <CustomTextField
+              sx={{ minWidth: "170px" }}
               name="pincode"
               size="small"
               label="Pin Code"
               variant="outlined"
-              value={leads.pincode || ""}
+              value={leads.pincode}
               onChange={handleInputChange}
             />
+            <Button
+              size="small"
+              onClick={validatePinCode}
+              variant="contained"
+              sx={{ marginLeft: "1rem" }}
+            >
+              Validate
+            </Button>
           </Grid>
 
           {/* Craete Shipping Details */}
@@ -721,6 +790,35 @@ export const UpdateLeads = memo((props) => {
                 <Chip label="KYC Details" />
               </Divider>
             </Root>
+          </Grid>
+          <Grid item xs={12}>
+            <>
+              <FormControl>
+                <FormLabel id="demo-row-radio-buttons-group-label">
+                  Customer Type
+                </FormLabel>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
+                  value={leads.origin_type || ""}
+                  onChange={(event) =>
+                    handleSelectChange("origin_type", event.target.value)
+                  }
+                >
+                  <FormControlLabel
+                    value="Domestic"
+                    control={<Radio />}
+                    label="Domestic"
+                  />
+                  <FormControlLabel
+                    value="International"
+                    control={<Radio />}
+                    label="International"
+                  />
+                </RadioGroup>
+              </FormControl>
+            </>
           </Grid>
           <Grid item xs={12} sm={4}>
             <>
