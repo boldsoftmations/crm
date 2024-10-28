@@ -13,12 +13,12 @@ import CustomAutocomplete from "../../Components/CustomAutocomplete";
 export const UpdateExportInvoice = (props) => {
   const [open, setOpen] = useState(false);
   const [close, setClose] = useState(false);
-  const { idData, getAllDispatchDetails, setOpenPopup, userData } = props;
+  const { idData, getAllDispatchDetails, setOpenPopup } = props;
   const [selectedFile, setSelectedFile] = useState("");
   const [selectedFileImage, setSelectedFileImage] = useState("");
   const [hideImage, setHideImage] = useState(false);
   const [inputValue, setInputValue] = useState([]);
-  const [filterValue, setFilterValue] = useState("");
+  const [filterValue, setFilterValue] = useState(idData.dispatch_type);
   const data = useSelector((state) => state.auth);
   const users = data.profile;
   const handleImageLRCopy = (event) => {
@@ -42,15 +42,20 @@ export const UpdateExportInvoice = (props) => {
       data.append("lr_number", inputValue.lr_number || idData.lr_number);
       data.append("lr_date", inputValue.lr_date || idData.lr_date);
       data.append("dispatched", true);
-      data.append(
-        "shipping_date",
-        inputValue.shipping_date || idData.shipping_date
-      );
-      data.append(
-        "shipping_number",
-        inputValue.shipping_number || idData.shipping_number
-      );
       data.append("dispatch_type", filterValue || idData.dispatch_type);
+      if (selectedFile) {
+        data.append("lr_copy", selectedFile);
+      }
+      if (filterValue === "Airway Bill") {
+        data.append(
+          "shipping_date",
+          inputValue.shipping_date || idData.shipping_date
+        );
+        data.append(
+          "shipping_number",
+          inputValue.shipping_number || idData.shipping_number
+        );
+      }
 
       const LRDATE = inputValue.lr_date || idData.lr_date;
       const LRNUMBER = inputValue.lr_number || idData.lr_number;
