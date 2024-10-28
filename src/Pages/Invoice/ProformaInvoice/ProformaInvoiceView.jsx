@@ -747,180 +747,182 @@ export const ProformaInvoiceView = (props) => {
                       </address>
                     </div>
                   </div>
-                  <div
-                    className="row"
-                    style={{
-                      ...typographyStyling,
-                      borderBottom: "1px Solid #000000",
-                    }}
-                  >
-                    <div className="col-md-12">
-                      <table className="table">
-                        <thead>
-                          <tr className="line">
-                            <td className="text-start">
-                              <strong style={{ ...typographyStyling }}>
-                                SR.NO
-                              </strong>
-                            </td>
-                            <td className="text-center">
-                              <strong style={{ ...typographyStyling }}>
-                                DESCRIPTION OF GOODS
-                              </strong>
-                            </td>
-                            <td className="text-center">
-                              <strong style={{ ...typographyStyling }}>
-                                BRAND
-                              </strong>
-                            </td>
-                            <td className="text-center">
-                              <strong style={{ ...typographyStyling }}>
-                                HSN CODE
-                              </strong>
-                            </td>
-                            <td className="text-center">
-                              <strong style={{ ...typographyStyling }}>
-                                REQUESTED DATE
-                              </strong>
-                            </td>
-                            <td className="text-center">
-                              <strong style={{ ...typographyStyling }}>
-                                QTY
-                              </strong>
-                            </td>
-                            <td className="text-center">
-                              <strong style={{ ...typographyStyling }}>
-                                UNIT
-                              </strong>
-                            </td>
-                            <td className="text-center">
-                              <strong style={{ ...typographyStyling }}>
-                                RATE
-                              </strong>
-                            </td>
-                            <td className="text-center">
-                              <strong style={{ ...typographyStyling }}>
-                                AMOUNT
-                              </strong>
-                            </td>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {productData.map((row, i) => (
-                            <tr key={i}>
-                              <td className="text-start">{i + 1}</td>
-                              <td className="text-center">
-                                {row.description}
-                                <br />
-                                {row.product}
+                  {invoiceData.origin_type === "Domestic" && (
+                    <div
+                      className="row"
+                      style={{
+                        ...typographyStyling,
+                        borderBottom: "1px Solid #000000",
+                      }}
+                    >
+                      <div className="col-md-12">
+                        <table className="table">
+                          <thead>
+                            <tr className="line">
+                              <td className="text-start">
+                                <strong style={{ ...typographyStyling }}>
+                                  SR.NO
+                                </strong>
                               </td>
-                              <td className="text-center">{row.brand}</td>
-                              <td className="text-center">{row.hsn_code}</td>
                               <td className="text-center">
-                                {row.requested_date}
+                                <strong style={{ ...typographyStyling }}>
+                                  DESCRIPTION OF GOODS
+                                </strong>
                               </td>
-                              <td className="text-center">{row.quantity}</td>
-                              <td className="text-center">{row.unit}</td>
-                              <td className="text-center">{row.rate}</td>
-                              <td className="text-center">{row.amount}</td>
+                              <td className="text-center">
+                                <strong style={{ ...typographyStyling }}>
+                                  BRAND
+                                </strong>
+                              </td>
+                              <td className="text-center">
+                                <strong style={{ ...typographyStyling }}>
+                                  HSN CODE
+                                </strong>
+                              </td>
+                              <td className="text-center">
+                                <strong style={{ ...typographyStyling }}>
+                                  REQUESTED DATE
+                                </strong>
+                              </td>
+                              <td className="text-center">
+                                <strong style={{ ...typographyStyling }}>
+                                  QTY
+                                </strong>
+                              </td>
+                              <td className="text-center">
+                                <strong style={{ ...typographyStyling }}>
+                                  UNIT
+                                </strong>
+                              </td>
+                              <td className="text-center">
+                                <strong style={{ ...typographyStyling }}>
+                                  RATE
+                                </strong>
+                              </td>
+                              <td className="text-center">
+                                <strong style={{ ...typographyStyling }}>
+                                  AMOUNT
+                                </strong>
+                              </td>
                             </tr>
-                          ))}
-                          <tr>
-                            <td colspan="4.5" className="text-start">
-                              <strong style={{ ...typographyStyling }}>
-                                Company Bank Details :{" "}
-                              </strong>
-                              <div>
+                          </thead>
+                          <tbody>
+                            {productData.map((row, i) => (
+                              <tr key={i}>
+                                <td className="text-start">{i + 1}</td>
+                                <td className="text-center">
+                                  {row.description}
+                                  <br />
+                                  {row.product}
+                                </td>
+                                <td className="text-center">{row.brand}</td>
+                                <td className="text-center">{row.hsn_code}</td>
+                                <td className="text-center">
+                                  {row.requested_date}
+                                </td>
+                                <td className="text-center">{row.quantity}</td>
+                                <td className="text-center">{row.unit}</td>
+                                <td className="text-center">{row.rate}</td>
+                                <td className="text-center">{row.amount}</td>
+                              </tr>
+                            ))}
+                            <tr>
+                              <td colspan="4.5" className="text-start">
                                 <strong style={{ ...typographyStyling }}>
-                                  Company Name :{" "}
+                                  Company Bank Details :{" "}
                                 </strong>
-                                Glutape India Pvt Ltd
-                              </div>
-                              <div>
+                                <div>
+                                  <strong style={{ ...typographyStyling }}>
+                                    Company Name :{" "}
+                                  </strong>
+                                  Glutape India Pvt Ltd
+                                </div>
+                                <div>
+                                  <strong style={{ ...typographyStyling }}>
+                                    Bank :{" "}
+                                  </strong>
+                                  {invoiceData.seller_bank_name}{" "}
+                                </div>
+                                <div>
+                                  <strong style={{ ...typographyStyling }}>
+                                    Account No :{" "}
+                                  </strong>
+                                  {invoiceData.seller_account_no}{" "}
+                                </div>
+                                <div>
+                                  <strong style={{ ...typographyStyling }}>
+                                    Branch & IFSC Code :{" "}
+                                  </strong>
+                                  {invoiceData.seller_branch} &{" "}
+                                  {invoiceData.seller_ifsc_code}{" "}
+                                </div>
+                                <div>
+                                  <strong style={{ ...typographyStyling }}>
+                                    Gst Number :{" "}
+                                  </strong>
+                                  {invoiceData.seller_gst}
+                                </div>
+                                <div>
+                                  <strong style={{ ...typographyStyling }}>
+                                    Pan Number :{" "}
+                                  </strong>
+                                  {invoiceData.seller_pan}
+                                </div>
+                              </td>
+                              <td colspan="3">
                                 <strong style={{ ...typographyStyling }}>
-                                  Bank :{" "}
+                                  Taxable Amount
                                 </strong>
-                                {invoiceData.seller_bank_name}{" "}
-                              </div>
-                              <div>
+                                <br />
                                 <strong style={{ ...typographyStyling }}>
-                                  Account No :{" "}
-                                </strong>
-                                {invoiceData.seller_account_no}{" "}
-                              </div>
-                              <div>
+                                  CGST Amount
+                                </strong>{" "}
+                                <br />
                                 <strong style={{ ...typographyStyling }}>
-                                  Branch & IFSC Code :{" "}
-                                </strong>
-                                {invoiceData.seller_branch} &{" "}
-                                {invoiceData.seller_ifsc_code}{" "}
-                              </div>
-                              <div>
+                                  SGST Amount
+                                </strong>{" "}
+                                <br />
                                 <strong style={{ ...typographyStyling }}>
-                                  Gst Number :{" "}
+                                  IGST Amount
                                 </strong>
-                                {invoiceData.seller_gst}
-                              </div>
-                              <div>
+                                <br />
                                 <strong style={{ ...typographyStyling }}>
-                                  Pan Number :{" "}
+                                  Round Off
                                 </strong>
-                                {invoiceData.seller_pan}
-                              </div>
-                            </td>
-                            <td colspan="3">
-                              <strong style={{ ...typographyStyling }}>
-                                Taxable Amount
-                              </strong>
-                              <br />
-                              <strong style={{ ...typographyStyling }}>
-                                CGST Amount
-                              </strong>{" "}
-                              <br />
-                              <strong style={{ ...typographyStyling }}>
-                                SGST Amount
-                              </strong>{" "}
-                              <br />
-                              <strong style={{ ...typographyStyling }}>
-                                IGST Amount
-                              </strong>
-                              <br />
-                              <strong style={{ ...typographyStyling }}>
-                                Round Off
-                              </strong>
-                              <br />
-                              <strong style={{ ...typographyStyling }}>
-                                Total Amount
-                              </strong>
-                            </td>
-                            <td colspan="0.5" className="text-right">
-                              <span>{invoiceData.amount}</span>
-                              <br />
-                              <span>
-                                {invoiceData.cgst ? invoiceData.cgst : "-"}
-                              </span>
-                              <br />
-                              <span>
-                                {invoiceData.sgst ? invoiceData.sgst : "-"}
-                              </span>
-                              <br />
-                              <span>
-                                {invoiceData.igst ? invoiceData.igst : "-"}
-                              </span>
-                              <br />
-                              <strong style={{ ...typographyStyling }}>
-                                {invoiceData.round_off}
-                              </strong>
-                              <br />
-                              <strong style={{ ...typographyStyling }}>
-                                {invoiceData.round_off_total}
-                              </strong>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                                <br />
+                                <strong style={{ ...typographyStyling }}>
+                                  Total Amount
+                                </strong>
+                              </td>
+                              <td colspan="0.5" className="text-right">
+                                <span>{invoiceData.amount}</span>
+                                <br />
+                                <span>
+                                  {invoiceData.cgst ? invoiceData.cgst : "-"}
+                                </span>
+                                <br />
+                                <span>
+                                  {invoiceData.sgst ? invoiceData.sgst : "-"}
+                                </span>
+                                <br />
+                                <span>
+                                  {invoiceData.igst ? invoiceData.igst : "-"}
+                                </span>
+                                <br />
+                                <strong style={{ ...typographyStyling }}>
+                                  {invoiceData.round_off}
+                                </strong>
+                                <br />
+                                <strong style={{ ...typographyStyling }}>
+                                  {invoiceData.round_off_total}
+                                </strong>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <div
                     className="row mb-4"
                     style={{
