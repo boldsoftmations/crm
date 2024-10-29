@@ -109,7 +109,6 @@ export const CreateLeadsProformaInvoice = (props) => {
       console.log("Error fetching seller account data:", error);
     }
   };
-
   useEffect(() => {
     getAllSellerAccountsDetails();
     getProduct();
@@ -238,8 +237,7 @@ export const CreateLeadsProformaInvoice = (props) => {
   };
 
   function validateLeadData(lead) {
-    return (
-      lead.contact !== null &&
+    return lead.contact !== null &&
       lead.address !== null &&
       lead.state !== null &&
       lead.city !== null &&
@@ -248,9 +246,10 @@ export const CreateLeadsProformaInvoice = (props) => {
       lead.shipping_state !== null &&
       lead.shipping_city !== null &&
       lead.shipping_pincode !== null &&
-      (lead.pan_number !== null || lead.gst_number !== null) &&
-      lead.company != null
-    );
+      lead.type_of_customer !== null &&
+      lead.origin_type === "Domestic"
+      ? lead.pan_number !== null || lead.gst_number !== null
+      : true && lead.company != null;
   }
 
   return (

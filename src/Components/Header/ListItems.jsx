@@ -408,6 +408,9 @@ export const ListItems = ({ setOpen }) => {
         renderSubmenu("inventory", <InventoryIcon />, "Inventory", [
           { to: "/inventory/view-inventory", text: "Inventory" },
         ]),
+        renderSubmenu("production", <FactoryIcon />, "Production", [
+          { to: "/inventory/view-production", text: "Production" },
+        ]),
         renderSubmenu("sales", <TrendingUpIcon />, "Sales", [
           { to: "/customers/all-customer", text: "Customer" },
         ]),

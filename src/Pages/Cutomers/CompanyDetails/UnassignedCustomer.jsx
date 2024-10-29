@@ -24,7 +24,6 @@ export const UnassignedCustomer = () => {
   const [assign, setAssign] = useState([]);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-
   //asssign to user
   const data = useSelector((state) => state.auth);
   const users = data.profile;
@@ -91,6 +90,7 @@ export const UnassignedCustomer = () => {
         gst_number: recordForEdit.gst_number || null,
         pan_number: recordForEdit.pan_number || null,
         business_type: recordForEdit.business_type,
+        origin_type: recordForEdit.origin_type,
         assigned_to: assign ? assign : "",
       };
       const response = await CustomerServices.updateCompanyData(
