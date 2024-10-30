@@ -490,6 +490,21 @@ const getAllStatesList = () => {
   return CustomAxios.get("/api/customer/state/");
 };
 
+const getCustomerScheme = (page) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  return CustomAxios.get(`/api/customer/scheme/?${params.toString()}`);
+};
+
+const createCustomerScheme = (data) => {
+  return CustomAxios.post("/api/customer/scheme/", data);
+};
+
+const updateCustomerscheme = (id, data) => {
+  return CustomAxios.patch(`/api/customer/scheme/${id}/`, data);
+};
 const CustomerServices = {
   getAllCustomerData,
   getIncompleteKycCustomerData,
@@ -562,6 +577,9 @@ const CustomerServices = {
   getProductLastPi,
   getAllStatesList,
   deleteCustomerContact,
+  getCustomerScheme,
+  createCustomerScheme,
+  updateCustomerscheme,
 };
 
 export default CustomerServices;
