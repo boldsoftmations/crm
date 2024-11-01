@@ -87,7 +87,7 @@ const updateCompanyData = (id, data) => {
 };
 
 // Unassigned Company api endpoint
-const getUnassignedData = (page, searchValue) => {
+const getUnassignedData = (page, searchValue, filterValue) => {
   const params = new URLSearchParams();
 
   params.append("unassigned", true);
@@ -99,7 +99,9 @@ const getUnassignedData = (page, searchValue) => {
   if (searchValue) {
     params.append("search", searchValue);
   }
-
+  if (filterValue) {
+    params.append("type_of_customer", filterValue);
+  }
   // Sending a GET request with query parameters
   return CustomAxios.get(`api/customer/list-company/?${params.toString()}`);
 };

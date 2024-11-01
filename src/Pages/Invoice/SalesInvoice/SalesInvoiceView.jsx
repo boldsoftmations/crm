@@ -35,7 +35,6 @@ import { MessageAlert } from "../../../Components/MessageAlert";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { SourceViewList } from "./SourceViewList";
 import UploadSalesInvoice from "./uploadSaleInvoice";
-import CustomSnackbar from "../../../Components/CustomerSnackbar";
 
 export const SalesInvoiceView = () => {
   const [open, setOpen] = useState(false);
@@ -633,7 +632,8 @@ function Row(props) {
           <Button variant="text" onClick={() => openInPopup(row.invoice_no)}>
             View
           </Button>
-          {row.is_upload === false &&
+          {row.is_whatsapp_group === true &&
+            row.is_upload === false &&
             (userData.groups.includes("Director") ||
               userData.groups.includes("Accounts") ||
               userData.groups.includes("Accounts Billing Department")) && (
