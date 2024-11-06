@@ -186,14 +186,16 @@ export const ApplicantListCreate = ({
         setShowAts(true);
       }
     } catch (error) {
+      setAlertMsg({
+        open: true,
+        message: error.response.data.message || "Error getting data from CV",
+        severity: "error",
+      });
       console.error("Error getting data from CV", error);
     } finally {
       setLoader(false);
     }
   };
-
-  console.log("formData", formData);
-
   const spokenEnglishOptions = ["Bad", "Average", "Good"];
 
   const salaryRange = [
