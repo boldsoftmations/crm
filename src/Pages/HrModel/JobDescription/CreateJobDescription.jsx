@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { TextField, Button, Paper, Grid, Typography, Box } from "@mui/material";
+import { TextField, Button, Paper, Grid } from "@mui/material";
 import DynamiFileds from "./DynamicField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import CustomSnackbar from "../../../Components/CustomerSnackbar";
 import Hr from "../../../services/Hr";
 import { CustomLoader } from "../../../Components/CustomLoader";
 
-const JobDescriptionForm = ({ getJobDescription }) => {
+const JobDescriptionForm = ({ getJobDescription, setOpenPopup }) => {
   const [role, setRole] = useState([]);
   const [alertMsg, setAlertMsg] = useState({
     message: "",
@@ -55,33 +55,22 @@ const JobDescriptionForm = ({ getJobDescription }) => {
       [arrayName]: values,
     });
   };
-  const validateForm = () => {
-    if (!formData.job_title) return "Job title is required";
-    if (!formData.job_purpose) return "Job purpose is required";
-    if (!formData.report_line) return "Report line is required";
-    if (!formData.reports_to) return "Reports to is required";
-    if (formData.directs_report.length === 0)
-      return "Please add at least one direct report";
-    if (formData.kra.length === 0) return "Please add at least one KRA";
-    if (formData.mtr.length === 0) return "Please add at least one MTR";
-    if (!formData.min_education_level)
-      return "Minimum education level is required";
-    if (!formData.work_experience) return "Work experience is required";
-    if (formData.ssa.length === 0) return "Please add at least one SSA";
-    return null;
-  };
-
+  // const validateForm = () => {
+  //   if (!formData.designation) return "Designation is required";
+  //   if (!formData.job_purpose) return "Job purpose is required";
+  //   if (!formData.report_line) return "Report line is required";
+  //   if (!formData.reports_to) return "Reports to is required";
+  //   if (formData.directs_report.length === 0)
+  //     return "Please add at least one direct report";
+  //   if (formData.kra.length === 0) return "Please add at least one KRA";
+  //   if (formData.mtr.length === 0) return "Please add at least one MTR";
+  //   if (!formData.min_education_level)
+  //     return "Minimum education level is required";
+  //   if (formData.ssa.length === 0) return "Please add at least one SSA";
+  //   return null;
+  // };
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const error = validateForm();
-    if (error) {
-      setAlertMsg({
-        open: true,
-        message: error,
-        severity: "error",
-      });
-      return;
-    }
+    e.preentDefault();
     try {
       setLoading(true);
       const response = await Hr.createJobDescription(formData);
@@ -90,6 +79,10 @@ const JobDescriptionForm = ({ getJobDescription }) => {
         message: response.message || "Job description created successfully",
         severity: "success",
       });
+      setTimeout(() => {
+        getJobDescription();
+        setOpenPopup(false);
+      }, 500);
     } catch (error) {
       console.error("Error creating job description:", error);
       setAlertMsg({
@@ -132,7 +125,6 @@ const JobDescriptionForm = ({ getJobDescription }) => {
               value={formData.job_purpose}
               onChange={handleChange}
               fullWidth
-              required
               multiline
             />
           </Grid>
@@ -144,7 +136,6 @@ const JobDescriptionForm = ({ getJobDescription }) => {
               value={formData.report_line}
               onChange={handleChange}
               fullWidth
-              required
             />
           </Grid>
           <Grid item xs={12}>
@@ -155,7 +146,6 @@ const JobDescriptionForm = ({ getJobDescription }) => {
               value={formData.reports_to}
               onChange={handleChange}
               fullWidth
-              required
             />
           </Grid>
           <Grid item xs={12}>
@@ -199,7 +189,6 @@ const JobDescriptionForm = ({ getJobDescription }) => {
               value={formData.min_education_level}
               onChange={handleChange}
               fullWidth
-              required
             />
           </Grid>
           <Grid item xs={6}>
@@ -209,7 +198,6 @@ const JobDescriptionForm = ({ getJobDescription }) => {
               value={formData.work_experience}
               onChange={handleChange}
               fullWidth
-              required
               type="number"
               size="small"
             />
