@@ -17,15 +17,18 @@ const JobDescriptionForm = ({ getJobDescription, setOpenPopup }) => {
   const [formData, setFormData] = useState({
     designation: "",
     job_purpose: "",
-    report_line: "",
     reports_to: "",
     directs_report: [""],
     kra: [""],
     mtr: [""],
-    occasional_duties: "",
+    occasional_duties: [""],
     min_education_level: "",
     work_experience: "",
+    desc_work_exp: "",
     ssa: [""],
+    relevant_skill: [""],
+    preferred_background: [""],
+    keywords: [""],
   });
 
   useEffect(() => {
@@ -55,22 +58,9 @@ const JobDescriptionForm = ({ getJobDescription, setOpenPopup }) => {
       [arrayName]: values,
     });
   };
-  // const validateForm = () => {
-  //   if (!formData.designation) return "Designation is required";
-  //   if (!formData.job_purpose) return "Job purpose is required";
-  //   if (!formData.report_line) return "Report line is required";
-  //   if (!formData.reports_to) return "Reports to is required";
-  //   if (formData.directs_report.length === 0)
-  //     return "Please add at least one direct report";
-  //   if (formData.kra.length === 0) return "Please add at least one KRA";
-  //   if (formData.mtr.length === 0) return "Please add at least one MTR";
-  //   if (!formData.min_education_level)
-  //     return "Minimum education level is required";
-  //   if (formData.ssa.length === 0) return "Please add at least one SSA";
-  //   return null;
-  // };
+
   const handleSubmit = async (e) => {
-    e.preentDefault();
+    e.preventDefault();
     try {
       setLoading(true);
       const response = await Hr.createJobDescription(formData);
@@ -130,16 +120,6 @@ const JobDescriptionForm = ({ getJobDescription, setOpenPopup }) => {
           </Grid>
           <Grid item xs={12}>
             <TextField
-              label="Report Line"
-              name="report_line"
-              size="small"
-              value={formData.report_line}
-              onChange={handleChange}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
               label="Reports To"
               size="small"
               name="reports_to"
@@ -171,16 +151,17 @@ const JobDescriptionForm = ({ getJobDescription, setOpenPopup }) => {
               onChange={(values) => handleArrayChange("mtr", values)}
             />
           </Grid>
+
           <Grid item xs={12}>
-            <TextField
-              size="small"
+            <DynamiFileds
               label="Occasional Duties"
-              name="occasional_duties"
-              value={formData.occasional_duties}
-              onChange={handleChange}
-              fullWidth
+              values={formData.occasional_duties}
+              onChange={(values) =>
+                handleArrayChange("occasional_duties", values)
+              }
             />
           </Grid>
+
           <Grid item xs={6}>
             <TextField
               size="small"
@@ -200,8 +181,24 @@ const JobDescriptionForm = ({ getJobDescription, setOpenPopup }) => {
               fullWidth
               type="number"
               size="small"
+              inputProps={{
+                step: "0.5",
+                min: "0",
+              }}
             />
           </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              size="small"
+              label="Describe Work Experience"
+              name="desc_work_exp"
+              value={formData.desc_work_exp}
+              onChange={handleChange}
+              fullWidth
+            />
+          </Grid>
+
           <Grid item xs={12}>
             <DynamiFileds
               label="Special Skills and Abilities (SSA)"
@@ -210,6 +207,32 @@ const JobDescriptionForm = ({ getJobDescription, setOpenPopup }) => {
               onChange={(values) => handleArrayChange("ssa", values)}
             />
           </Grid>
+          <Grid item xs={12}>
+            <DynamiFileds
+              label="Relevant Skills"
+              values={formData.relevant_skill}
+              onChange={(values) => handleArrayChange("relevant_skill", values)}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <DynamiFileds
+              label="Preferred Background"
+              values={formData.preferred_background}
+              onChange={(values) =>
+                handleArrayChange("preferred_background", values)
+              }
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <DynamiFileds
+              label="Keywords"
+              values={formData.keywords}
+              onChange={(values) => handleArrayChange("keywords", values)}
+            />
+          </Grid>
+
           <Grid item xs={12}>
             <Button variant="contained" color="primary" type="submit" fullWidth>
               Submit
