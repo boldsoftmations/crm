@@ -440,7 +440,10 @@ export const ApplicantListView = () => {
             openPopup={openUpdatePopup}
             setOpenPopup={setOpenUpdatePopup}
           >
-            <CandidateProfile candidateData={recordForEdit} />
+            <CandidateProfile
+              fetchApplicants={fetchApplicants}
+              candidateData={recordForEdit}
+            />
           </Popup>
         </Paper>
       </Grid>
