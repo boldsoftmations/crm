@@ -46,7 +46,7 @@ const JobDescriptionDetail = ({ job }) => {
       margin: 10,
       filename: `${job.designation}_Job_Description.pdf`,
       image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 3, useCORS: true, backgroundColor: "#ffffff" }, // Set scale and background color
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" }, // Set scale and background color
       jsPDF: { unit: "pt", format: "a4", orientation: "portrait" },
     };
 
@@ -155,7 +155,7 @@ const JobDescriptionDetail = ({ job }) => {
               {renderListWithNumbers(job.mtr)}
             </Box>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <Box
               sx={{
                 backgroundColor: colors.section3,
@@ -168,16 +168,6 @@ const JobDescriptionDetail = ({ job }) => {
                 Occasional Duties:
               </Typography>
               {renderListWithNumbers(job.occasional_duties)}
-            </Box>
-          </Grid>
-          <Grid item xs={6}>
-            <Box
-              sx={{ backgroundColor: colors.section2, p: 1, borderRadius: 1 }}
-            >
-              <Typography variant="subtitle1" gutterBottom>
-                Relevant Skills:
-              </Typography>
-              {renderListWithNumbers(job.relevant_skill)}
             </Box>
           </Grid>
           <Grid item xs={12}>
@@ -262,7 +252,16 @@ const JobDescriptionDetail = ({ job }) => {
               {renderListWithNumbers(job.ssa)}
             </Box>
           </Grid>
-
+          <Grid item xs={12}>
+            <Box
+              sx={{ backgroundColor: colors.section1, p: 1, borderRadius: 1 }}
+            >
+              <Typography variant="subtitle1" gutterBottom>
+                Relevant Skills:
+              </Typography>
+              {renderListWithNumbers(job.relevant_skill)}
+            </Box>
+          </Grid>
           <Grid item xs={12}>
             <Box
               sx={{ backgroundColor: colors.section4, p: 1, borderRadius: 1 }}
