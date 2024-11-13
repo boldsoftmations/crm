@@ -178,7 +178,7 @@ export const ApplicantListView = () => {
         fetchApplicants();
       }
     } catch (error) {
-      alertmsg({
+      setAlertMsg({
         message:
           (error && error.response.data.message) ||
           "Error sending Whatsapp Message",
@@ -212,7 +212,7 @@ export const ApplicantListView = () => {
         fetchApplicants();
       }
     } catch (error) {
-      alertmsg({
+      setAlertMsg({
         message:
           (error && error.response.data.message) ||
           "Error sending Email Message",
