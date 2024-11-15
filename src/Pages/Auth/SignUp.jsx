@@ -5,7 +5,6 @@ import {
   Box,
   Grid,
   Button,
-  Paper,
   Avatar,
   Modal,
   Typography,

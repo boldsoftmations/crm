@@ -317,7 +317,7 @@ export const ApplicantListCreate = ({
                 id="expected_salary"
                 options={salaryRange}
                 renderInput={(params) => (
-                  <TextField {...params} label="Expected Salary" />
+                  <TextField {...params} label="Expected Annual Salary" />
                 )}
                 value={formData.expected_salary}
                 onChange={(event, newValue) => {
@@ -338,12 +338,6 @@ export const ApplicantListCreate = ({
                 value={formData.interested}
                 onChange={(event, newValue) => {
                   handleInputChange(event, newValue, "interested");
-                  if (newValue === "No") {
-                    setFormData({
-                      ...formData,
-                      noReason: "",
-                    });
-                  }
                 }}
                 label="Interested"
               />
