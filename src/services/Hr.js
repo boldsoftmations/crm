@@ -408,6 +408,21 @@ const handleGetDataFromCVAndCheckATS = (data) => {
 const sendAutomatedMessage = (data) => {
   return CustomAxios.post("/api/hr/whatsapp-email/", data);
 };
+
+const bulkATScandidates = (page, filterValue) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (filterValue) {
+    params.append("job__designation__designation", filterValue);
+  }
+  return CustomAxios.get(`/api/hr/bulk-ats/?${params.toString()}`);
+};
+
+const SendbulkEamilTocandidates = (data) => {
+  return CustomAxios.post(`/api/hr/send-bulk-email/`, data);
+};
 const Hr = {
   getDesignationsData,
   addDesignation,
@@ -463,6 +478,8 @@ const Hr = {
   UpdateInterviewQuestionandanswwer,
   handleGetDataFromCVAndCheckATS,
   sendAutomatedMessage,
+  bulkATScandidates,
+  SendbulkEamilTocandidates,
 };
 
 export default Hr;
