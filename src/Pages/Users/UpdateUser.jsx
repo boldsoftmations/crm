@@ -266,8 +266,6 @@ const UpdateUser = ({
       acc[key] = state[key];
       return acc;
     }, {});
-
-  console.log(sortedState);
   return (
     <>
       <MessageAlert
