@@ -61,6 +61,30 @@ export const ViewProductDetails = ({ rowData, startMonth, startYear }) => {
     getSalesQuatityAnalysisdetailsByproduct();
   }, [startMonth, startYear, rowData]);
 
+  // Create a number formatter to add commas to the total values
+  const numberFormatter = new Intl.NumberFormat("en-IN", {
+    maximumFractionDigits: 2,
+  });
+
+  const calculateTotals = () => {
+    let totalMaxQty = 0;
+    let totalCurrentMonthQty = 0;
+    let totalshortQty = 0;
+
+    salesQuantityAnalysis.forEach((row) => {
+      totalMaxQty += row.max_qty || 0;
+      totalCurrentMonthQty += row.current_month_qty || 0;
+      totalshortQty += row.short_qty || 0;
+    });
+
+    return {
+      totalMaxQty: numberFormatter.format(totalMaxQty),
+      totalCurrentMonthQty: numberFormatter.format(totalCurrentMonthQty),
+      totalshortQty: numberFormatter.format(totalshortQty),
+    };
+  };
+
+  const totals = calculateTotals();
   return (
     <>
       <CustomSnackbar
@@ -113,12 +137,11 @@ export const ViewProductDetails = ({ rowData, startMonth, startYear }) => {
                   </StyledTableCell>
                   <StyledTableCell align="center">Brand</StyledTableCell>
                   <StyledTableCell align="center">Unit</StyledTableCell>
-                  <StyledTableCell align="center">
-                    Last Month QTY
-                  </StyledTableCell>
+                  <StyledTableCell align="center">Max Qty</StyledTableCell>
                   <StyledTableCell align="center">
                     This Month QTY
                   </StyledTableCell>
+                  <StyledTableCell align="center">Short QTY</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -143,12 +166,34 @@ export const ViewProductDetails = ({ rowData, startMonth, startYear }) => {
                       <StyledTableCell align="center">
                         {row.current_month_qty || 0}
                       </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.short_qty}
+                      </StyledTableCell>
                     </StyledTableRow>
                   ))
                 ) : (
                   <StyledTableRow>
                     <StyledTableCell align="center" colSpan={14}>
                       No Data Available
+                    </StyledTableCell>
+                  </StyledTableRow>
+                )}
+                {salesQuantityAnalysis.length > 0 && (
+                  <StyledTableRow>
+                    <StyledTableCell align="center">
+                      <strong>Total</strong>
+                    </StyledTableCell>
+                    <StyledTableCell align="center"></StyledTableCell>
+                    <StyledTableCell align="center"></StyledTableCell>
+                    <StyledTableCell align="center"></StyledTableCell>
+                    <StyledTableCell align="center">
+                      {totals.totalMaxQty}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {totals.totalCurrentMonthQty}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {totals.totalshortQty}
                     </StyledTableCell>
                   </StyledTableRow>
                 )}
