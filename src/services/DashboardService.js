@@ -384,9 +384,9 @@ const getCRReportData = (email) => {
   return CustomAxios.get(`/api/dashboard/cr-report/?email=${email}`);
 };
 
-const getSalesQuatityAnalysis = (month, year) => {
+const getSalesQuatityAnalysis = (month, year, email) => {
   return CustomAxios.get(
-    `/api/dashboard/sales-qty/?start_month=${month}&start_year=${year}`
+    `/api/dashboard/sales-qty/?start_month=${month}&start_year=${year}&email=${email}`
   );
 };
 
@@ -395,7 +395,8 @@ const getSalesQuatityAnalysisdetailsByproduct = (
   brand,
   unit,
   start_month,
-  year
+  year,
+  email
 ) => {
   const params = new URLSearchParams({
     description,
@@ -403,6 +404,7 @@ const getSalesQuatityAnalysisdetailsByproduct = (
     unit,
     start_month,
     year,
+    email,
   });
   return CustomAxios.get(
     `/api/dashboard/customers-sale-qty/?${params.toString()}`
