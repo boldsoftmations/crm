@@ -178,10 +178,16 @@ export const ListItems = ({ setOpen }) => {
           { to: "/user/profile-tab", text: "Employees Master" },
           { to: "/hr-model/hr-master", text: "HR Master" },
         ]),
-        renderListItem("/task/view-task", <AssignmentTurnedInIcon />, "Task"),
         renderListItem("/hr-model", <WorkIcon />, "Recruitment"),
       ],
     },
+
+    //menus for Hr Recruitment
+    {
+      condition: userData.groups.includes("HR Recruiter"),
+      items: [renderListItem("/hr-model", <WorkIcon />, "Recruitment")],
+    },
+
     // Store and Production menus
     {
       condition:
