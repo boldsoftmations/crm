@@ -137,7 +137,11 @@ const UpdateUser = ({
   }, [selectedGrp]);
 
   useEffect(() => {
-    if (activeUsersByIDData && activeUsersByIDData.assigned_state_city) {
+    if (
+      activeUsersByIDData &&
+      activeUsersByIDData.assigned_state_city &&
+      activeUsersByIDData.assigned_state_city.data
+    ) {
       const result = {};
       let data = activeUsersByIDData.assigned_state_city.data;
       Object.entries(data).forEach(([stateName, stateData]) => {
