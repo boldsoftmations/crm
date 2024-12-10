@@ -423,6 +423,18 @@ const bulkATScandidates = (page, filterValue) => {
 const SendbulkEamilTocandidates = (data) => {
   return CustomAxios.post(`/api/hr/send-bulk-email/`, data);
 };
+
+const getAssessementDetails = (page) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  return CustomAxios.get(`/api/hr/interview/?${params.toString()}`);
+};
+
+const getAssessementResultDetails = (data) => {
+  return CustomAxios.post(`/api/hr/question-answer/applicant_result/`, data);
+};
 const Hr = {
   getDesignationsData,
   addDesignation,
@@ -480,6 +492,8 @@ const Hr = {
   sendAutomatedMessage,
   bulkATScandidates,
   SendbulkEamilTocandidates,
+  getAssessementDetails,
+  getAssessementResultDetails,
 };
 
 export default Hr;

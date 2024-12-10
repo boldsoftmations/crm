@@ -9,6 +9,7 @@ import { RejectedCandidate } from "./RejectedCandidate/RejectedCandidate.jsx";
 import { useSelector } from "react-redux";
 import { ViewCompetitorCandidates } from "./CompetitorCandidates/ViewCompetitorCandidates.jsx";
 import { ATSRejectedCandidatesView } from "./RejectedCandidatesByCV/ATSRejectedCandidatesView.jsx";
+import { ViewAssementDetails } from "./AsssementDetails/ViewAssementDetails.jsx";
 export const HrModelTabs = () => {
   const [activeTab, setActiveTab] = useState(0);
   const data = useSelector((state) => state.auth);
@@ -32,6 +33,7 @@ export const HrModelTabs = () => {
         // { label: "Dashboard" },
         { label: "Rejected Candidate" },
         { label: "Competitor" },
+        { label: "Assesment Details" },
         { label: "ATS  Candidates" },
       ];
 
@@ -93,7 +95,7 @@ export const HrModelTabs = () => {
               )}
               {activeTab === 7 && (
                 <div>
-                  <ATSRejectedCandidatesView />
+                  <ViewAssementDetails />
                 </div>
               )}
             </>
