@@ -10,8 +10,6 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import {
   Dashboard as DashboardIcon,
-  AssignmentInd as AssignmentIndIcon,
-  Person as PersonIcon,
   InsertDriveFile as InsertDriveFileIcon,
   Receipt as ReceiptIcon,
   Description as DescriptionIcon,
@@ -19,7 +17,6 @@ import {
   Inventory as InventoryIcon,
   TrendingUp as TrendingUpIcon,
   AssignmentTurnedIn as AssignmentTurnedInIcon,
-  FollowTheSigns as FollowTheSignsIcon,
   HelpOutline as HelpOutlineIcon,
   Work as WorkIcon,
   AttachMoney as AttachMoneyIcon,
@@ -185,7 +182,12 @@ export const ListItems = ({ setOpen }) => {
     //menus for Hr Recruitment
     {
       condition: userData.groups.includes("HR Recruiter"),
-      items: [renderListItem("/hr-model", <WorkIcon />, "Recruitment")],
+      items: [
+        renderSubmenu("master", <BusinessIcon />, "Master", [
+          { to: "/hr-model/hr-master", text: "HR Master" },
+        ]),
+        renderListItem("/hr-model", <WorkIcon />, "Recruitment"),
+      ],
     },
 
     // Store and Production menus
