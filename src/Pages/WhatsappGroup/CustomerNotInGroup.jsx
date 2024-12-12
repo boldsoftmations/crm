@@ -208,7 +208,6 @@ export const CustomerNotInGroup = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          {/* <CustomTable headers={Tableheaders} data={Tabledata} /> */}
           <CustomPagination
             currentPage={currentPage}
             totalPages={totalPages}
