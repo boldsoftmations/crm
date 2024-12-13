@@ -1,5 +1,19 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Paper,
+  Typography,
+  Button,
+  styled,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableBody,
+  Table,
+  tableCellClasses,
+} from "@mui/material";
 import InvoiceServices from "../../../services/InvoiceService";
 import { Popup } from "../../../Components/Popup";
 import { ProformaInvoiceView } from "./ProformaInvoiceView";
@@ -9,13 +23,10 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import { UpdateCustomerProformaInvoice } from "./UpdateCustomerProformaInvoice";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { UpdateLeadsProformaInvoice } from "./UpdateLeadsProformaInvoice";
-import { CustomTable } from "../../../Components/CustomTable";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import CustomSelect from "../../../Components/CustomSelect";
 import SearchComponent from "../../../Components/SearchComponent ";
-import TypoAnimation from "./../../HrModel/ApplicantList/TypoAnimation";
-
 export const ApprovePi = () => {
   const dispatch = useDispatch();
   const [openPopup, setOpenPopup] = useState(false);
@@ -74,28 +85,25 @@ export const ApprovePi = () => {
     getAllSellerAccountsDetails();
   }, []);
 
-  const getProformaInvoiceData = useCallback(
-    async (page) => {
-      try {
-        setOpen(true);
-        const response = await InvoiceServices.getAllPIData(
-          "unapproved",
-          currentPage,
-          filterType,
-          filterValue,
-          searchValue
-        );
-        setInvoiceData(response.data.results);
-        setTotalPages(Math.ceil(response.data.count / 25));
-        setTotalPiAmount(response.data.total_amount);
-      } catch (error) {
-        handleError(error);
-      } finally {
-        setOpen(false);
-      }
-    },
-    [currentPage, filterType, filterValue, searchValue]
-  ); // Ensure dependencies are correctly listed
+  const getProformaInvoiceData = useCallback(async () => {
+    try {
+      setOpen(true);
+      const response = await InvoiceServices.getAllPIData(
+        "unapproved",
+        currentPage,
+        filterType,
+        filterValue,
+        searchValue
+      );
+      setInvoiceData(response.data.results);
+      setTotalPages(Math.ceil(response.data.count / 25));
+      setTotalPiAmount(response.data.total_amount);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setOpen(false);
+    }
+  }, [currentPage, filterType, filterValue, searchValue]); // Ensure dependencies are correctly listed
 
   useEffect(() => {
     getProformaInvoiceData(currentPage);
@@ -211,34 +219,40 @@ export const ApprovePi = () => {
                   onReset={handleReset}
                 />
               </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <Box display="flex" justifyContent="center" alignItems="center">
-                  <Typography
-                    variant="body1"
-                    style={{
-                      fontWeight: 500,
-                      color: "#4CAF50", // Green color for a fresh and appealing look
-                      textTransform: "uppercase",
-                      letterSpacing: "1.2px",
-                    }}
+              {totalPiAmount && (
+                <Grid item xs={12} sm={6} md={4}>
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
                   >
-                    Total PI Amount:{" "}
-                    <strong
+                    <Typography
+                      variant="body1"
                       style={{
-                        fontSize: "20px",
-                        color: "#FF5722", // Highlighted in a contrasting color
-                        textShadow: "1px 1px 2px rgba(0, 0, 0, 0.2)", // Adds subtle depth
+                        fontWeight: 500,
+                        color: "#4CAF50", // Green color for a fresh and appealing look
+                        textTransform: "uppercase",
+                        letterSpacing: "1.2px",
                       }}
                     >
-                      {totalPiAmount
-                        ? `₹ ${new Intl.NumberFormat("en-IN").format(
-                            totalPiAmount
-                          )}`
-                        : "₹ 0"}
-                    </strong>
-                  </Typography>
-                </Box>
-              </Grid>
+                      Total PI Amount:{" "}
+                      <strong
+                        style={{
+                          fontSize: "20px",
+                          color: "#FF5722", // Highlighted in a contrasting color
+                          textShadow: "1px 1px 2px rgba(0, 0, 0, 0.2)", // Adds subtle depth
+                        }}
+                      >
+                        {totalPiAmount
+                          ? `₹ ${new Intl.NumberFormat("en-IN").format(
+                              totalPiAmount
+                            )}`
+                          : "₹ 0"}
+                      </strong>
+                    </Typography>
+                  </Box>
+                </Grid>
+              )}
             </Grid>
           </Box>
           <Box display="flex" alignItems="center" justifyContent="center">
@@ -253,15 +267,90 @@ export const ApprovePi = () => {
               Approve Pi
             </h3>
           </Box>
-          <CustomTable
-            headers={Tableheaders}
-            data={Tabledata}
-            openInPopup={openInPopup}
-            openInPopup2={null}
-            openInPopup3={null}
-            openInPopup4={null}
-            Styles={{ paddingLeft: "10px", paddingRight: "10px" }}
-          />
+          <TableContainer
+            sx={{
+              maxHeight: 450,
+              "&::-webkit-scrollbar": {
+                width: 15,
+              },
+              "&::-webkit-scrollbar-track": {
+                backgroundColor: "#f2f2f2",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "#aaa9ac",
+                borderRadius: 5,
+              },
+            }}
+          >
+            <Table
+              sx={{ minWidth: 1200 }}
+              stickyHeader
+              aria-label="sticky table"
+            >
+              <TableHead>
+                <TableRow>
+                  {Tableheaders.map((header) => {
+                    return (
+                      <StyledTableCell align="center">{header}</StyledTableCell>
+                    );
+                  })}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Tabledata.map((row, i) => (
+                  <StyledTableRow key={i}>
+                    <StyledTableCell align="center">{row.type}</StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.pi_number}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.generation_date}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.customer}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.billing_city}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.contact}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.status}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.round_off_total}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.balance_amount}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.payment_terms}
+                    </StyledTableCell>
+
+                    <StyledTableCell align="center">
+                      <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        gap={4}
+                      >
+                        <Button
+                          style={{ fontSize: "12px" }}
+                          variant="outlined"
+                          color="info"
+                          size="small"
+                          onClick={() => openInPopup(row)}
+                        >
+                          View
+                        </Button>
+                      </Box>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
           <CustomPagination
             currentPage={currentPage}
             totalPages={totalPages}
@@ -322,3 +411,25 @@ const TypeOptions = [
   { label: "Customer", value: "customer" },
   { label: "Lead", value: "lead" },
 ];
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    fontSize: 12,
+    backgroundColor: "#006BA1",
+    color: theme.palette.common.white,
+    fontWeight: "bold",
+    textTransform: "uppercase",
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 13,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));

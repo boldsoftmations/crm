@@ -13,7 +13,6 @@ import {
   Button,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import CustomerServices from "../../../services/CustomerService";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { CSVLink } from "react-csv";
@@ -420,11 +419,14 @@ const DateOptions = [
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
+    fontSize: 12,
+    backgroundColor: "#006BA1",
     color: theme.palette.common.white,
+    fontWeight: "bold",
+    textTransform: "uppercase",
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
+    fontSize: 13,
   },
 }));
 
@@ -432,7 +434,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
   },
-  // hide last border
   "&:last-child td, &:last-child th": {
     border: 0,
   },

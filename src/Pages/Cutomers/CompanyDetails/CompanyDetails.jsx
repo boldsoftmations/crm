@@ -599,12 +599,15 @@ export const CompanyDetails = () => {
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
-    padding: 0, // Remove padding from header cells
+    padding: 5,
+    fontSize: 12,
+    backgroundColor: "#006BA1", // Remove padding from header cells
+    fontWeight: "bold",
+    textTransform: "uppercase",
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
+    fontSize: 12,
     padding: 0, // Remove padding from body cells
   },
 }));
