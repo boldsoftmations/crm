@@ -35,8 +35,6 @@ export const AllProformaInvoiceView = (props) => {
     content: () => componentRef.current,
     documentTitle: `PI Number ${invoiceData.pi_number}`,
   });
-
-  console.log("invoiceData", invoiceData);
   const handleDownload = async (data) => {
     try {
       setOpen(true);
