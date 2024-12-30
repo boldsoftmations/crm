@@ -32,7 +32,7 @@ const SetupInterceptor = (store) => {
 
   // Response interceptor to handle 401 Unauthorized responses
   CustomAxios.interceptors.response.use(
-    (response) => response,
+    (response) => response, // Pass successful responses as-is
     async (error) => {
       const originalRequest = error.config;
 
@@ -55,6 +55,7 @@ const SetupInterceptor = (store) => {
         // No refresh token available, initiate logout
         if (!refreshTokenValue) {
           logoutProcess(dispatch);
+          window.location.href = "/crm"; // Redirect to login page
           return Promise.reject(new Error("No refresh token available"));
         }
 
@@ -70,8 +71,9 @@ const SetupInterceptor = (store) => {
           originalRequest.headers.Authorization = `Bearer ${data.access}`;
           return CustomAxios(originalRequest);
         } catch (refreshError) {
-          // Refresh token failed, logout
+          // Refresh token failed, logout and redirect to login
           logoutProcess(dispatch);
+          window.location.href = "/crm"; // Redirect to login page
           return Promise.reject(refreshError);
         }
       }
@@ -79,6 +81,7 @@ const SetupInterceptor = (store) => {
       // Handle failed retries or other errors after a retry
       if (originalRequest._retry) {
         logoutProcess(dispatch);
+        window.location.href = "/crm"; // Redirect to login page
         return Promise.reject(error);
       }
 
