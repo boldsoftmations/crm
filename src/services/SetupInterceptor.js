@@ -8,8 +8,11 @@ import {
 } from "./TokenService";
 
 // Helper to log out and redirect
-const logoutProcess = (dispatch) => {
-  console.log("Logging out...");
+const logoutProcess = (
+  dispatch,
+  message = "Session expired. Please log in again."
+) => {
+  alert(message); // Show popup message
   dispatch(logoutUser());
   removeUser();
   window.location.href = "/crm"; // Redirect to login page
@@ -65,7 +68,10 @@ const SetupInterceptor = (store) => {
         // No refresh token: Logout
         if (!refreshTokenValue) {
           console.error("No refresh token available. Logging out.");
-          logoutProcess(dispatch);
+          logoutProcess(
+            dispatch,
+            "Your session has expired. Please log in again."
+          );
           return Promise.reject(new Error("No refresh token available"));
         }
 
@@ -85,7 +91,10 @@ const SetupInterceptor = (store) => {
           return CustomAxios(originalRequest);
         } catch (refreshError) {
           console.error("Token refresh failed:", refreshError);
-          logoutProcess(dispatch);
+          logoutProcess(
+            dispatch,
+            "Failed to refresh session. Please log in again."
+          );
           return Promise.reject(refreshError);
         }
       }
@@ -93,7 +102,7 @@ const SetupInterceptor = (store) => {
       // Logout for other cases of 401 errors
       if (!originalRequest._retry) {
         console.error("Unauthorized access. Logging out.");
-        logoutProcess(dispatch);
+        logoutProcess(dispatch, "Unauthorized access. Please log in again.");
       }
 
       return Promise.reject(error);
