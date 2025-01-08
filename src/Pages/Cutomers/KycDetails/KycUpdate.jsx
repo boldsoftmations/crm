@@ -7,7 +7,6 @@ import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
-import { useFetcher } from "react-router-dom";
 
 const KycUpdate = ({ recordForEdit, setOpenPopup, onDataUpdated }) => {
   const [contactData, setContactData] = useState([]);
