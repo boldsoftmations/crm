@@ -149,8 +149,6 @@ const KycUpdate = ({ recordForEdit, setOpenPopup, onDataUpdated }) => {
     }
   }, [recordForEdit]);
 
-  console.log(inputValue.type_of_customer);
-
   // Handle input changes
   const handleInputChange = (name, value) => {
     setInputValue((prevState) => ({ ...prevState, [name]: value }));
@@ -210,9 +208,7 @@ const KycUpdate = ({ recordForEdit, setOpenPopup, onDataUpdated }) => {
         main_distribution: inputValue.main_distribution || [],
         whatsapp_group: inputValue.whatsapp_group || null,
         origin_type: inputValue.origin_type,
-        ref_customer: inputValue.ref_customer
-          ? inputValue.ref_customer.ref_customer
-          : null,
+        ref_customer: inputValue.ref_customer,
       };
       await CustomerServices.updateCompanyData(recordForEdit, req);
       UpdateContactDetails();

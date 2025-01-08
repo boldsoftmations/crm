@@ -155,7 +155,7 @@ export const SalesPersonAnalytics = (props) => {
   const descriptionOptionsForInvoice = dailyInvoiceQuantity.map(
     (entry) => Object.keys(entry)[0]
   );
-
+  console.log("descriptionOptionsForInvoice", descriptionOptionsForInvoice);
   // Map the dailyOrderBookQuantity to get description options
   const descriptionOptionsForOrderBook = dailyOrderBookQuantity.map(
     (entry) => Object.keys(entry)[0]
@@ -168,12 +168,10 @@ export const SalesPersonAnalytics = (props) => {
     const filteredData = dailyInvoiceQuantity.find((entry) =>
       entry.hasOwnProperty(value)
     );
-
     if (filteredData && filteredData[value]) {
       setDIQData(filteredData[value]);
     }
   };
-
   // Handler function to set data for order book
   const handleDataForOrderBook = (value) => {
     setSelectedDOBQData(value); // Update the selected option
@@ -939,7 +937,7 @@ export const SalesPersonAnalytics = (props) => {
                     sx={{ marginTop: "10px" }}
                     size="small"
                     value={selectedDIQData}
-                    onChange={handleDataForInvoice}
+                    onChange={(e, data) => handleDataForInvoice(data)}
                     options={descriptionOptionsForInvoice}
                     getOptionLabel={(option) => option}
                     label="Filter By Description"
