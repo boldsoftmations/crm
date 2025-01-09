@@ -202,6 +202,13 @@ export const Header = () => {
                 <MenuItem component={RouterLink} to={"/"} onClick={logout}>
                   Logout
                 </MenuItem>
+                <MenuItem
+                  component={RouterLink}
+                  to={"/reset-password"}
+                  onClick={handleClose}
+                >
+                  Reset password
+                </MenuItem>
               </Menu>
             </>
           </Toolbar>
