@@ -155,7 +155,6 @@ export const SalesPersonAnalytics = (props) => {
   const descriptionOptionsForInvoice = dailyInvoiceQuantity.map(
     (entry) => Object.keys(entry)[0]
   );
-  console.log("descriptionOptionsForInvoice", descriptionOptionsForInvoice);
   // Map the dailyOrderBookQuantity to get description options
   const descriptionOptionsForOrderBook = dailyOrderBookQuantity.map(
     (entry) => Object.keys(entry)[0]
