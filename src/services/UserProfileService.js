@@ -1,7 +1,7 @@
 import CustomAxios from "./api";
 
 const login = (data) => {
-  return CustomAxios.post("api/user/login/", data);
+  return CustomAxios.post("api/user/app-login/", data);
 };
 
 const register = (data) => {
