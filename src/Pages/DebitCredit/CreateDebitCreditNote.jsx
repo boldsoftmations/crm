@@ -45,7 +45,7 @@ export const CreateDebitCreditNote = (props) => {
         InvoiceServices.getCustomersList(),
       ]);
       setSellerUnitOptions(sellerResponse.data);
-      setCustomer(customerResponse.data.data);
+      setCustomer(customerResponse.data);
     } catch (error) {
       handleError(error);
     } finally {
@@ -73,6 +73,7 @@ export const CreateDebitCreditNote = (props) => {
   };
 
   const handleCustomerchange = async (event, value) => {
+    console.log(value);
     setInputValue((prev) => ({
       ...prev,
       customer: value,
@@ -116,7 +117,6 @@ export const CreateDebitCreditNote = (props) => {
       setOpen(false); // Always close the loader
     }
   };
-
   return (
     <>
       <MessageAlert
@@ -148,7 +148,7 @@ export const CreateDebitCreditNote = (props) => {
               disablePortal
               id="combo-box-demo"
               onChange={handleCustomerchange}
-              options={customer}
+              options={customer.map((option) => option.customer)}
               getOptionLabel={(option) => option}
               fullWidth
               label="Customer"
