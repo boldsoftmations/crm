@@ -221,7 +221,7 @@ export const UserProfileView = () => {
   const csvData = getCsvData();
 
   const data = filteredUserProfiles.map((user) => ({
-    employee_id: user.employee_id,
+    employee_id: user.id,
     first_name: user.personal.first_name || "-",
     last_name: user.personal.last_name || "-",
     phone_number: user.personal.contact || "-",

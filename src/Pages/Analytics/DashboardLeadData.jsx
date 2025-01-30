@@ -1,194 +1,158 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Card, CardContent, Typography, Paper } from "@mui/material";
+import { Chart } from "react-google-charts";
+import { Card, CardContent, CardHeader } from "@mui/material";
 import CustomAutocomplete from "../../Components/CustomAutocomplete";
 import DashboardService from "../../services/DashboardService";
-import CustomTextField from "../../Components/CustomTextField";
+import { CustomLoader } from "../../Components/CustomLoader";
 
 export const DashboardLeadData = () => {
   const [leadData, setLeadData] = useState({
     stage_based_leads: [],
     source_based_leads: [],
   });
-  const [filteredData, setFilteredData] = useState([]);
+  const [selectedSource, setSelectedSource] = useState("Accumetric");
   const [totalLeads, setTotalLeads] = useState(0);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     fetchLeadData();
   }, []);
 
   const fetchLeadData = async () => {
-    const leadStage = {
-      new: "New",
-      open: "Open",
-      close: "Closed",
-      opportunity: "Opportunity",
-      potential: "Potential",
-      interested: "Interested",
-      converted: "Converted",
-      "not interested": "Not Interested",
-    };
-
     try {
+      setOpen(true);
       const response = await DashboardService.getLeadRetailData();
-      const data = response.data;
-
-      // Map and update stage names
-      const stageLeads = data.stage_based_leads.map((item) => ({
-        ...item,
-        updated_stage_name: leadStage[item.stage] || "Unknown Stage",
-        type: "stage",
-      }));
-
-      // Source-based leads
-      const sourceLeads = data.source_based_leads.map((item) => ({
-        ...item,
-        type: "source",
-        references__source: item.references__source || "Unknown Source",
-      }));
-
-      // Combine both sets of leads
-      const combinedData = [...stageLeads, ...sourceLeads];
-
-      setLeadData(data);
-      setTotalLeads(data.total_leads);
-      setFilteredData(combinedData);
+      if (response.data) {
+        setLeadData(response.data);
+        setTotalLeads(response.data.total_leads || 0);
+      }
     } catch (error) {
       console.error("Error fetching lead data:", error);
+    } finally {
+      setOpen(false);
     }
   };
 
-  const handleFilterChange = (event, value, type) => {
-    if (type === "stage" && value) {
-      setFilteredData(
-        leadData.stage_based_leads
-          .filter((item) => item.stage === value.stage)
-          .map((item) => ({ ...item, type: "stage" }))
-      );
-    } else if (type === "source" && value) {
-      setFilteredData(
-        leadData.source_based_leads
-          .filter(
-            (item) => item.references__source === value.references__source
-          )
-          .map((item) => ({ ...item, type: "source" }))
-      );
-    } else {
-      // If no specific filter is selected, show all leads
-      const stageLeads = leadData.stage_based_leads.map((item) => ({
-        ...item,
-        type: "stage",
-      }));
-      const sourceLeads = leadData.source_based_leads.map((item) => ({
-        ...item,
-        type: "source",
-        references__source: item.references__source || "Unknown Source",
-      }));
-      setFilteredData([...stageLeads, ...sourceLeads]);
-    }
+  const calculateTotals = (key, filteredData) =>
+    filteredData.reduce((sum, item) => sum + (item[key] || 0), 0);
+
+  const filteredSources =
+    selectedSource && leadData.source_based_leads.length > 0
+      ? leadData.source_based_leads.filter(
+          (item) => item.references__source === selectedSource
+        )
+      : leadData.source_based_leads;
+
+  const stageChartData = [
+    ["Stage", "Total Leads"], // Header row
+    ...(leadData.stage_based_leads || []).map((item) => [
+      `${item.stage.charAt(0).toUpperCase() + item.stage.slice(1)} [${
+        item.total_leads || 0
+      }]`, // Stage name with total leads in brackets
+      item.total_leads || 0, // Numeric total leads
+    ]),
+  ];
+
+  const sourceChartData = [
+    [
+      "Source",
+      `New [${calculateTotals("new", filteredSources)}]`,
+      `Open [${calculateTotals("open", filteredSources)}]`,
+      `Opportunity [${calculateTotals("opportunity", filteredSources)}]`,
+      `Potential [${calculateTotals("potential", filteredSources)}]`,
+      `Interested [${calculateTotals("interested", filteredSources)}]`,
+      `Converted [${calculateTotals("converted", filteredSources)}]`,
+      `Not Interested [${calculateTotals("not_interested", filteredSources)}]`,
+      `Close [${calculateTotals("close", filteredSources)}]`,
+    ],
+    ...filteredSources.map((item) => [
+      item.references__source || "Unknown",
+      item.new || 0,
+      item.open || 0,
+      item.opportunity || 0,
+      item.potential || 0,
+      item.interested || 0,
+      item.converted || 0,
+      item.not_interested || 0,
+      item.close || 0,
+    ]),
+  ];
+
+  const chartOptions = {
+    stage: {
+      title: "Leads by Stage",
+      hAxis: { title: "Stages", textStyle: { fontSize: 12 } },
+      vAxis: { title: "Total Leads", minValue: 0, gridlines: { count: 8 } },
+      legend: { position: "none" },
+      bar: { groupWidth: "50%" },
+      animation: { duration: 500, easing: "out" },
+    },
+    source: {
+      title: "Leads by Source",
+      chartArea: { width: "60%" },
+      isStacked: true,
+      hAxis: {
+        title: "Total Leads",
+        minValue: 0,
+        gridlines: { count: 12 },
+      },
+      vAxis: { title: "Source" },
+      animation: { duration: 500, easing: "out" },
+    },
   };
 
   return (
-    <Paper elevation={3} style={{ padding: "20px", margin: "20px" }}>
-      <Grid container spacing={3} alignItems="center">
-        <Grid item xs={12} md={3}>
-          <CustomAutocomplete
-            options={leadData.stage_based_leads}
-            getOptionLabel={(option) => option.updated_stage_name}
-            onChange={(event, value) =>
-              handleFilterChange(event, value, "stage")
-            }
-            renderInput={(params) => (
-              <CustomTextField
-                {...params}
-                label="Filter by Stage"
-                variant="outlined"
-              />
-            )}
-            style={{ width: "100%" }}
-          />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <CustomAutocomplete
-            options={leadData.source_based_leads}
-            getOptionLabel={(option) =>
-              option.references__source || "Unknown Source"
-            }
-            onChange={(event, value) =>
-              handleFilterChange(event, value, "source")
-            }
-            renderInput={(params) => (
-              <CustomTextField
-                {...params}
-                label="Filter by Source"
-                variant="outlined"
-              />
-            )}
-            style={{ width: "100%" }}
-          />
-        </Grid>
-        <Grid item xs={12} md={6} style={{ textAlign: "center" }}>
-          <Typography
-            variant="h6"
-            style={{
-              fontWeight: "bold",
-              fontSize: "1.25rem",
-              fontFamily: "Arial, sans-serif",
-              color: "#333",
-              margin: "10px 0",
-            }}
-          >
-            Total Leads: {totalLeads}
-          </Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Grid container spacing={2}>
-            {filteredData.map((data, index) => (
-              <Grid item xs={12} sm={4} key={index}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="h5" component="div">
-                      {data.type === "stage"
-                        ? data.updated_stage_name
-                        : data.references__source || "Unknown Source"}
-                    </Typography>
-                    <Typography color="text.secondary">
-                      Total Leads: {data.total_leads}
-                    </Typography>
-                    {data.type === "source" && (
-                      <>
-                        <Typography color="text.secondary">
-                          New: {data.new}
-                        </Typography>
-                        <Typography color="text.secondary">
-                          Open : {data.open}
-                        </Typography>
-                        <Typography color="text.secondary">
-                          Opportunity : {data.opportunity}
-                        </Typography>
-                        <Typography color="text.secondary">
-                          Potential : {data.potential}
-                        </Typography>
-                        <Typography color="text.secondary">
-                          Interested : {data.interested}
-                        </Typography>
-                        <Typography color="text.secondary">
-                          Converted : {data.converted}
-                        </Typography>
-                        <Typography color="text.secondary">
-                          Not-Interested : {data.not_interested}
-                        </Typography>
-                        <Typography color="text.secondary">
-                          Closed : {data.close}
-                        </Typography>
-                      </>
-                    )}
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Grid>
-      </Grid>
-    </Paper>
+    <>
+      <CustomLoader open={open} />
+      <div className="p-4 grid gap-4 mx-auto w-[70%]">
+        <Card className="shadow-lg mb-2">
+          <CardContent>
+            <h2 className="text-md font-extrabold tracking-tight text-center">
+              Total Leads: <span className="mx-2">{totalLeads}</span>
+            </h2>
+          </CardContent>
+        </Card>
+        <Card className="shadow-lg mb-2">
+          <CardHeader>
+            <h2 className="text-xl font-bold">Leads by Stage</h2>
+          </CardHeader>
+          <CardContent>
+            <Chart
+              chartType="ColumnChart"
+              data={stageChartData}
+              options={chartOptions.stage}
+              width="100%"
+              height="400px"
+            />
+          </CardContent>
+        </Card>
+        <Card className="shadow-lg">
+          <CardHeader>
+            <h2 className="text-xl font-bold">Leads by Source</h2>
+          </CardHeader>
+          <CardContent>
+            <CustomAutocomplete
+              size="small"
+              value={selectedSource}
+              disablePortal
+              id="combo-box-stage"
+              onChange={(e, value) => setSelectedSource(value)}
+              options={leadData.source_based_leads.map(
+                (option) => option.references__source
+              )}
+              getOptionLabel={(option) => option}
+              label="Filter By Source"
+            />
+            <Chart
+              chartType="BarChart"
+              data={sourceChartData}
+              options={chartOptions.source}
+              width="100%"
+              height="400px"
+            />
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 };
