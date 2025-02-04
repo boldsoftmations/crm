@@ -60,9 +60,9 @@ export const CreateLeadsProformaInvoice = (props) => {
     [
       {
         product: "",
-        unit: "",
         quantity: "",
         rate: "",
+        unit: "",
         requested_date: values.someDate,
         special_instructions: "",
       },

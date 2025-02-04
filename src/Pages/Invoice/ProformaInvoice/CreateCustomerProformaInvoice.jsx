@@ -74,6 +74,7 @@ export const CreateCustomerProformaInvoice = (props) => {
         product: "",
         quantity: "",
         rate: "",
+        unit: "",
         requested_date: values.someDate,
         special_instructions: "",
       },
@@ -870,16 +871,8 @@ export const CreateCustomerProformaInvoice = (props) => {
                     fullWidth
                     size="small"
                     label="Unit"
-                    disabled
                     variant="outlined"
-                    value={
-                      productDetails &&
-                      productDetails[index] &&
-                      productDetails[index].unit
-                    }
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
+                    value={input.unit || ""}
                   />
                 </Grid>
                 <Grid item xs={12} sm={2}>
