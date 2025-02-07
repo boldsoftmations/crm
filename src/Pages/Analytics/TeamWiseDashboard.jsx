@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import DashboardService from "../../services/DashboardService";
 import { CustomLoader } from "../../Components/CustomLoader";
-import InvoiceServices from "../../services/InvoiceService";
 import { SalesTeamAnalytics } from "./SalesTeamAnalytics";
 
 export const TeamWiseDashboard = () => {
@@ -12,9 +11,8 @@ export const TeamWiseDashboard = () => {
   const [funnelData, setFunnelData] = useState([]);
   const [barChartData, setBarChartData] = useState([]);
   const [pieChartData, setPieChartData] = useState([]);
-  const [horizontalBarData, setHorizontalBarData] = useState([]);
   const [newCustomerData, setNewCustomerData] = useState([]);
-  const [pendingTask, setPendingTask] = useState([]);
+  // const [pendingTask, setPendingTask] = useState([]);
   const [pendingFollowup, setPendingFollowup] = useState([]);
   const [pendingDescription, setPendingDescription] = useState([]);
   const [descriptionQuantity, setDescriptionQuantity] = useState([]);
@@ -45,7 +43,7 @@ export const TeamWiseDashboard = () => {
     currentDate.getMonth() + 1,
     0
   );
-  const [selectedDate, setSelectedDate] = useState("This Month");
+  const [selectedDate, setSelectedDate] = useState("Today");
   const [endDate, setEndDate] = useState(initialEndDate);
   const [startDate, setStartDate] = useState(initialStartDate); // set default value as current date
   const minDate = new Date().toISOString().split("T")[0];
@@ -53,9 +51,8 @@ export const TeamWiseDashboard = () => {
   useEffect(() => {
     getConsAllTaskDetails();
     getConsCustomerDetails();
-    getConsAllDispatchData();
     getConsNewCustomerDetails();
-    getConsPendingTaskDetails();
+    // getConsPendingTaskDetails();
     getConsPendingFollowupDetails();
     getConsPIDetails();
     getConsPendingDescriptionDetails();
@@ -100,49 +97,9 @@ export const TeamWiseDashboard = () => {
     switch (selectedValue) {
       case "Today":
         startDate = new Date(today);
-        endDate = new Date(today.getTime() + 86400000); // Plus 1 day
+        endDate = new Date(today);
         break;
-      case "Yesterday":
-        startDate = new Date(today.setDate(today.getDate() - 1));
-        endDate = new Date();
-        break;
-      case "Last 3 Days":
-        startDate = new Date(today.setDate(today.getDate() - 2));
-        endDate = new Date();
-        break;
-      case "Last 7 Days":
-        startDate = new Date(today.setDate(today.getDate() - 6));
-        endDate = new Date();
-        break;
-      case "Last 14 Days":
-        startDate = new Date(today.setDate(today.getDate() - 13));
-        endDate = new Date();
-        break;
-      case "Last 30 Days":
-        startDate = new Date(today.setDate(today.getDate() - 29));
-        endDate = new Date();
-        break;
-      case "Last 90 Days":
-        startDate = new Date(today.setDate(today.getDate() - 89));
-        endDate = new Date();
-        break;
-      case "Last 180 Days":
-        startDate = new Date(today.setDate(today.getDate() - 179));
-        endDate = new Date();
-        break;
-      case "Last 365 Days":
-        startDate = new Date(today.setDate(today.getDate() - 364));
-        endDate = new Date();
-        break;
-      case "This Month":
-        startDate = new Date(today.getFullYear(), today.getMonth(), 1);
-        endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        break;
-      case "Last Month":
-        endDate = new Date(today.getFullYear(), today.getMonth(), 0);
-        startDate = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
-        endDate = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0);
-        break;
+
       case "Custom Date":
         startDate = new Date(); // Today
         endDate = new Date(); // Now
@@ -273,54 +230,15 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getConsAllDispatchData = async () => {
-    try {
-      setOpen(true);
-      const response = await InvoiceServices.getConsDispatchDashboardData();
-      const Data = [
-        { name: "LR-M1", value: response.data.LR_M1, unit: "M1", type: "LR" },
-        { name: "LR-M2", value: response.data.LR_M2, unit: "M2", type: "LR" },
-        { name: "LR-D1", value: response.data.LR_D1, unit: "D1", type: "LR" },
-        {
-          name: "POD-M1",
-          value: response.data.POD_M1,
-          unit: "M1",
-          type: "POD",
-        },
-        {
-          name: "POD-M2",
-          value: response.data.POD_M2,
-          unit: "M2",
-          type: "POD",
-        },
-        {
-          name: "POD-D1",
-          value: response.data.POD_D1,
-          unit: "D1",
-          type: "POD",
-        },
-      ];
-      setHorizontalBarData(Data);
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-      console.log("err", err);
-    }
-  };
-
   const getConsNewCustomerDetails = async () => {
     try {
       setOpen(true);
       const newcustomerResponse =
-        await DashboardService.getConsConsNewCustomerData();
-      const Data = Object.keys(newcustomerResponse.data).flatMap((key) => {
-        return newcustomerResponse.data[key].map((item) => {
-          return {
-            combination: `${shortMonths[item.month - 1]}-${item.year}`,
-            count: item.count,
-          };
-        });
-      });
+        await DashboardService.getConsNewCustomerData();
+      const Data = newcustomerResponse.data.map((item) => ({
+        combination: `${shortMonths[item.month - 1]}-${item.year}`,
+        count: item.count,
+      }));
 
       setNewCustomerData(Data);
       setOpen(false);
@@ -330,32 +248,32 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getConsPendingTaskDetails = async () => {
-    try {
-      setOpen(true);
-      const response = await DashboardService.getConsPendingTaskData();
+  // const getConsPendingTaskDetails = async () => {
+  //   try {
+  //     setOpen(true);
+  //     const response = await DashboardService.getConsPendingTaskData();
 
-      const Data = [
-        {
-          label: "Activity",
-          value: response.data.atleast_one_activity,
-        },
-        {
-          label: "No Activity",
-          value: response.data.no_activity,
-        },
-        {
-          label: "Overdue Tasks",
-          value: response.data.overdue_tasks,
-        },
-      ];
-      setPendingTask(Data);
-      setOpen(false);
-    } catch (err) {
-      setOpen(false);
-      console.log("err", err);
-    }
-  };
+  //     const Data = [
+  //       {
+  //         label: "Activity",
+  //         value: response.data.atleast_one_activity,
+  //       },
+  //       {
+  //         label: "No Activity",
+  //         value: response.data.no_activity,
+  //       },
+  //       {
+  //         label: "Overdue Tasks",
+  //         value: response.data.overdue_tasks,
+  //       },
+  //     ];
+  //     setPendingTask(Data);
+  //     setOpen(false);
+  //   } catch (err) {
+  //     setOpen(false);
+  //     console.log("err", err);
+  //   }
+  // };
 
   const getConsPendingFollowupDetails = async () => {
     try {
@@ -365,11 +283,11 @@ export const TeamWiseDashboard = () => {
       const Data = [
         {
           label: "Upcoming FollowUp",
-          value: response.data.upcoming_followups,
+          value: response.data.upcoming_follow_ups,
         },
         {
           label: "Today FollowUp",
-          value: response.data.todays_follow_ups,
+          value: response.data.todays_followups,
         },
         {
           label: "Overdue FollowUp",
@@ -439,15 +357,14 @@ export const TeamWiseDashboard = () => {
       setOpen(true);
 
       const response = await DashboardService.getConsMonthlyCallStatusData();
-      const Data = Object.keys(response.data).flatMap((key) => {
-        return response.data[key].map((item) => {
-          return {
-            combination: `${shortMonths[item.month - 1]}-${item.year}`,
-            existing_lead: item.existing_lead,
-            new_lead: item.new_lead,
-            customer: item.customer,
-          };
-        });
+      const data = response.data;
+      const Data = Object.keys(data).map((key) => {
+        return {
+          combination: key,
+          existing_lead: data[key].existing_lead,
+          new_lead: data[key].new_lead,
+          customer: data[key].customer,
+        };
       });
 
       setMonthlyStatus(Data);
@@ -463,14 +380,13 @@ export const TeamWiseDashboard = () => {
       setOpen(true);
 
       const response = await DashboardService.getConsWeeklyCallStatusData();
-      const Data = response.data.map((dayObject) => {
-        const week = Object.keys(dayObject)[0];
-        const weekData = dayObject[week][0];
+      const data = response.data;
+      const Data = Object.keys(data).map((key) => {
         return {
-          combination: week,
-          existing_lead: weekData.existing_lead,
-          new_lead: weekData.new_lead,
-          customer: weekData.customer,
+          combination: key,
+          existing_lead: data[key].existing_lead,
+          new_lead: data[key].new_lead,
+          customer: data[key].customer,
         };
       });
       setWeeklyStatus(Data);
@@ -486,18 +402,13 @@ export const TeamWiseDashboard = () => {
       setOpen(true);
 
       const response = await DashboardService.getConsDailyCallStatusData();
-      const Data = response.data.map((dayObject) => {
-        const day = Object.keys(dayObject)[0];
-        const dayData = dayObject[day][0];
-
-        // Convert full day name to abbreviated form
-        const abbreviatedDay = getAbbreviatedDay(day);
-
+      const data = response.data;
+      const Data = Object.keys(data).map((key) => {
         return {
-          combination: abbreviatedDay,
-          existing_lead: dayData.existing_lead,
-          new_lead: dayData.new_lead,
-          customer: dayData.customer,
+          combination: key,
+          existing_lead: data[key].existing_lead,
+          new_lead: data[key].new_lead,
+          customer: data[key].customer,
         };
       });
 
@@ -508,36 +419,6 @@ export const TeamWiseDashboard = () => {
       console.log("Error:", err);
     }
   };
-
-  const getAbbreviatedDay = (fullDay) => {
-    const fullDayNames = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-    const abbreviatedDayNames = [
-      "Sun",
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri",
-      "Sat",
-    ];
-
-    const index = fullDayNames.indexOf(fullDay);
-    if (index !== -1) {
-      return abbreviatedDayNames[index];
-    }
-
-    // If the full day name is not found, return the original value
-    return fullDay;
-  };
-
   const getConsDescriptionQuantityDetails = async () => {
     try {
       setOpen(true);
@@ -659,7 +540,7 @@ export const TeamWiseDashboard = () => {
       setAssign(value.email);
       getConsDataByFilter(value.email);
       getConsNewCustomerByFilter(value.email);
-      getConsPendingTaskByFilter(value.email);
+      // getConsPendingTaskByFilter(value.email);
       getConsPendingFollowupByFilter(value.email);
       getConsPIByFilter(value.email);
       getConsCustomerByFilter(value.email);
@@ -676,7 +557,7 @@ export const TeamWiseDashboard = () => {
       // Handle the case when value is null (i.e., when the Autocomplete is reset)
       getConsForecastDetails();
       getConsNewCustomerDetails();
-      getConsPendingTaskDetails();
+      // getConsPendingTaskDetails();
       getConsPendingFollowupDetails();
       getConsCustomerDetails();
       getConsPIDetails();
@@ -752,36 +633,36 @@ export const TeamWiseDashboard = () => {
     }
   };
 
-  const getConsPendingTaskByFilter = async (value) => {
-    try {
-      const FilterData = value;
-      setOpen(true);
-      const response = await DashboardService.getConsPendingTaskDataByFilter(
-        FilterData
-      );
-      const Data = [
-        {
-          label: "Activity",
-          value: response.data.atleast_one_activity,
-        },
-        {
-          label: "No Activity",
-          value: response.data.no_activity,
-        },
-        {
-          label: "Overdue Tasks",
-          value: response.data.overdue_tasks,
-        },
-      ];
+  // const getConsPendingTaskByFilter = async (value) => {
+  //   try {
+  //     const FilterData = value;
+  //     setOpen(true);
+  //     const response = await DashboardService.getConsPendingTaskDataByFilter(
+  //       FilterData
+  //     );
+  //     const Data = [
+  //       {
+  //         label: "Activity",
+  //         value: response.data.atleast_one_activity,
+  //       },
+  //       {
+  //         label: "No Activity",
+  //         value: response.data.no_activity,
+  //       },
+  //       {
+  //         label: "Overdue Tasks",
+  //         value: response.data.overdue_tasks,
+  //       },
+  //     ];
 
-      setPendingTask(Data);
+  //     setPendingTask(Data);
 
-      setOpen(false);
-    } catch (error) {
-      console.log("error", error);
-      setOpen(false);
-    }
-  };
+  //     setOpen(false);
+  //   } catch (error) {
+  //     console.log("error", error);
+  //     setOpen(false);
+  //   }
+  // };
 
   const getConsPendingFollowupByFilter = async (value) => {
     try {
@@ -952,15 +833,14 @@ export const TeamWiseDashboard = () => {
       setOpen(true);
       const response =
         await DashboardService.getConsMonthlyCallStatusDataByFilter(FilterData);
-      const Data = Object.keys(response.data).flatMap((key) => {
-        return response.data[key].map((item) => {
-          return {
-            combination: `${shortMonths[item.month - 1]}-${item.year}`,
-            existing_lead: item.existing_lead,
-            new_lead: item.new_lead,
-            customer: item.customer,
-          };
-        });
+      const data = response.data;
+      const Data = Object.keys(data).map((key) => {
+        return {
+          combination: key,
+          existing_lead: data[key].existing_lead,
+          new_lead: data[key].new_lead,
+          customer: data[key].customer,
+        };
       });
 
       setMonthlyStatus(Data);
@@ -978,15 +858,13 @@ export const TeamWiseDashboard = () => {
       setOpen(true);
       const response =
         await DashboardService.getConsWeeklyCallStatusDataByFilter(FilterData);
-      const Data = response.data.map((dayObject) => {
-        const week = Object.keys(dayObject)[0];
-        const weekData = dayObject[week][0];
-
+      const data = response.data;
+      const Data = Object.keys(data).map((key) => {
         return {
-          combination: week,
-          existing_lead: weekData.existing_lead,
-          new_lead: weekData.new_lead,
-          customer: weekData.customer,
+          combination: key,
+          existing_lead: data[key].existing_lead,
+          new_lead: data[key].new_lead,
+          customer: data[key].customer,
         };
       });
 
@@ -1005,18 +883,13 @@ export const TeamWiseDashboard = () => {
       setOpen(true);
       const response =
         await DashboardService.getConsDailyCallStatusDataByFilter(FilterData);
-      const Data = response.data.map((dayObject) => {
-        const day = Object.keys(dayObject)[0];
-        const dayData = dayObject[day][0];
-
-        // Convert full day name to abbreviated form
-        const abbreviatedDay = getAbbreviatedDay(day);
-
+      const data = response.data;
+      const Data = Object.keys(data).map((key) => {
         return {
-          combination: abbreviatedDay,
-          existing_lead: dayData.existing_lead,
-          new_lead: dayData.new_lead,
-          customer: dayData.customer,
+          combination: key,
+          existing_lead: data[key].existing_lead,
+          new_lead: data[key].new_lead,
+          customer: data[key].customer,
         };
       });
 
@@ -1171,9 +1044,8 @@ export const TeamWiseDashboard = () => {
       <SalesTeamAnalytics
         barChartData={barChartData}
         pieChartData={pieChartData}
-        horizontalBarData={horizontalBarData}
         newCustomerData={newCustomerData}
-        pendingTask={pendingTask}
+        // pendingTask={pendingTask}
         pendingFollowup={pendingFollowup}
         pendingDescription={pendingDescription}
         piData={piData}

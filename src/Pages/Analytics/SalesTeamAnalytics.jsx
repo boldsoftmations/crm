@@ -25,7 +25,7 @@ export const SalesTeamAnalytics = (props) => {
     barChartData,
     pieChartData,
     newCustomerData,
-    pendingTask,
+    // pendingTask,
     pendingFollowup,
     pendingDescription,
     monthlyStatus,
@@ -188,16 +188,6 @@ export const SalesTeamAnalytics = (props) => {
     "#008080",
   ];
 
-  // const chartContainerStyle = {
-  //   margin: "20px",
-  //   borderRadius: "10px",
-  //   boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-  //   backgroundColor: "#fff",
-  //   paddingTop: "20px",
-  //   width: "100%",
-  //   minHeight: "300px",
-  // };
-
   const textStyle = {
     color: "#fff",
     fontWeight: "bold",
@@ -300,7 +290,7 @@ export const SalesTeamAnalytics = (props) => {
           )}
         </Grid>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <Card>
               <CardContent>
                 <Typography variant="h6" color="primary">
@@ -328,7 +318,7 @@ export const SalesTeamAnalytics = (props) => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <Card>
               <CardContent>
                 <Typography variant="h6" color="primary">
@@ -355,34 +345,7 @@ export const SalesTeamAnalytics = (props) => {
               </CardContent>
             </Card>
           </Grid>
-        </Grid>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" color="primary">
-                  Pending Task Data
-                </Typography>
-                <Divider />
-                <CustomChart
-                  chartType="PieChart"
-                  data={[
-                    ["Label", "Value"],
-                    ...pendingTask.map((item) => [item.label, item.value]),
-                  ]}
-                  options={{
-                    // title: "Pending Task Data",
-                    width: "100%",
-                    height: "300px",
-                    pieHole: 0.4,
-                  }}
-                  widthStyle={"100%"}
-                  heightStyle={"300px"}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
+          <Grid item xs={12} sm={4}>
             <Card>
               <CardContent>
                 <Typography variant="h6" color="primary">
@@ -408,30 +371,36 @@ export const SalesTeamAnalytics = (props) => {
             </Card>
           </Grid>
         </Grid>
+
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
+          <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" color="primary">
-                  PI Data
+                  Description
                 </Typography>
                 <Divider />
                 <CustomChart
-                  chartType={"PieChart"}
+                  chartType="PieChart"
                   data={[
-                    ["Label", "Value"],
-                    ...piData.map((item) => [item.label, item.value]),
+                    ["Product Description", "Quantity"],
+                    ...descriptionQuantity.map((item) => [
+                      item.name,
+                      item.value,
+                    ]),
                   ]}
                   options={{
+                    // title: "Description Wise Sales Quantity",
                     width: "100%",
-                    height: "300px",
-                    pieHole: 0.4,
+                    height: "400px",
                   }}
+                  widthStyle={"100%"}
+                  heightStyle={"300px"}
                 />
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
+          <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" color="primary">
@@ -459,7 +428,30 @@ export const SalesTeamAnalytics = (props) => {
               </CardContent>
             </Card>
           </Grid>
+          <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" color="primary">
+                  PI Data
+                </Typography>
+                <Divider />
+                <CustomChart
+                  chartType={"PieChart"}
+                  data={[
+                    ["Label", "Value"],
+                    ...piData.map((item) => [item.label, item.value]),
+                  ]}
+                  options={{
+                    width: "100%",
+                    height: "300px",
+                    pieHole: 0.4,
+                  }}
+                />
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
+
         <Grid item xs={12} sm={12} sx={{ marginTop: "20px" }}>
           <Button
             variant={activeButton === "monthly" ? "contained" : "outlined"} // Set variant to 'contained' for the active button
@@ -555,7 +547,7 @@ export const SalesTeamAnalytics = (props) => {
           )}
         </Grid>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
+          <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" color="primary">
@@ -583,24 +575,74 @@ export const SalesTeamAnalytics = (props) => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
+          <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" color="primary">
-                  Description
+                  Daily Sales Invoice Quantity
                 </Typography>
                 <Divider />
+
+                <CustomAutocomplete
+                  sx={{ marginTop: "10px" }}
+                  size="small"
+                  value={selectedDIQData}
+                  onChange={handleDataForInvoice}
+                  options={descriptionOptionsForInvoice}
+                  getOptionLabel={(option) => option}
+                  label="Filter By Description"
+                />
                 <CustomChart
-                  chartType="PieChart"
+                  chartType="LineChart"
                   data={[
-                    ["Product Description", "Quantity"],
-                    ...descriptionQuantity.map((item) => [
-                      item.name,
-                      item.value,
+                    ["Date", "Total"],
+                    ...dIQdata.map((entry) => [
+                      entry.sales_invoice__generation_date,
+                      entry.total,
                     ]),
                   ]}
                   options={{
-                    // title: "Description Wise Sales Quantity",
+                    // title: "Daily Sales Invoice Quantity",
+                    width: "100%",
+                    height: "400px",
+                  }}
+                  widthStyle={"100%"}
+                  heightStyle={"300px"}
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={4} sx={{ marginTop: "20px" }}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" color="primary">
+                  Daily Sales OrderBook Quantity
+                </Typography>
+                <Divider />
+
+                <CustomAutocomplete
+                  sx={{ marginTop: "10px" }}
+                  size="small"
+                  value={selectedDOBQData}
+                  onChange={handleDataForOrderBook}
+                  options={descriptionOptionsForOrderBook}
+                  getOptionLabel={(option) => option}
+                  label="Filter By Description"
+                />
+                <CustomChart
+                  chartType="LineChart"
+                  data={[
+                    ["Date", "Total"],
+                    ...((dOBQdata &&
+                      dOBQdata.map((entry) => [
+                        entry.orderbook__proforma_invoice__generation_date,
+                        entry.total,
+                      ])) ||
+                      []),
+                  ]}
+                  options={{
+                    // title: "Daily Sales OrderBook Quantity",
                     width: "100%",
                     height: "400px",
                   }}
@@ -705,86 +747,7 @@ export const SalesTeamAnalytics = (props) => {
                   options={{
                     // title: "Call Performance",
                     width: "100%",
-                    height: "400px",
-                  }}
-                  widthStyle={"100%"}
-                  heightStyle={"300px"}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" color="primary">
-                  Daily Sales Invoice Quantity
-                </Typography>
-                <Divider />
-
-                <CustomAutocomplete
-                  sx={{ marginTop: "10px" }}
-                  size="small"
-                  value={selectedDIQData}
-                  onChange={handleDataForInvoice}
-                  options={descriptionOptionsForInvoice}
-                  getOptionLabel={(option) => option}
-                  label="Filter By Description"
-                />
-                <CustomChart
-                  chartType="LineChart"
-                  data={[
-                    ["Date", "Total"],
-                    ...dIQdata.map((entry) => [
-                      entry.sales_invoice__generation_date,
-                      entry.total,
-                    ]),
-                  ]}
-                  options={{
-                    // title: "Daily Sales Invoice Quantity",
-                    width: "100%",
-                    height: "400px",
-                  }}
-                  widthStyle={"100%"}
-                  heightStyle={"300px"}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={6} sx={{ marginTop: "20px" }}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" color="primary">
-                  Daily Sales OrderBook Quantity
-                </Typography>
-                <Divider />
-
-                <CustomAutocomplete
-                  sx={{ marginTop: "10px" }}
-                  size="small"
-                  value={selectedDOBQData}
-                  onChange={handleDataForOrderBook}
-                  options={descriptionOptionsForOrderBook}
-                  getOptionLabel={(option) => option}
-                  label="Filter By Description"
-                />
-                <CustomChart
-                  chartType="LineChart"
-                  data={[
-                    ["Date", "Total"],
-                    ...((dOBQdata &&
-                      dOBQdata.map((entry) => [
-                        entry.orderbook__proforma_invoice__generation_date,
-                        entry.total,
-                      ])) ||
-                      []),
-                  ]}
-                  options={{
-                    // title: "Daily Sales OrderBook Quantity",
-                    width: "100%",
-                    height: "400px",
+                    height: "300px",
                   }}
                   widthStyle={"100%"}
                   heightStyle={"300px"}
@@ -831,17 +794,4 @@ CircularProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-const DateOptions = [
-  { value: "Today" },
-  { value: "Yesterday" },
-  { value: "Last 3 Days" },
-  { value: "Last 7 Days" },
-  { value: "Last 14 Days" },
-  { value: "Last 30 Days" },
-  { value: "Last 90 Days" },
-  { value: "Last 180 Days" },
-  { value: "Last 365 Days" },
-  { value: "This Month" },
-  { value: "Last Month" },
-  { value: "Custom Date" },
-];
+const DateOptions = [{ value: "Today" }, { value: "Custom Date" }];
