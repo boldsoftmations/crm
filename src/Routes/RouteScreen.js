@@ -360,14 +360,14 @@ export const RouteScreen = () => {
             }
           />
 
-          {/* <Route
+          <Route
             path="/master/activity-list"
             element={
               <PrivateRoute>
                 <ViewMasterActivitiesList />
               </PrivateRoute>
             }
-          /> */}
+          />
         </>
       ) : (
         <>
