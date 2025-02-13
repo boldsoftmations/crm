@@ -30,7 +30,6 @@ export const SalesPersonAnalytics = (props) => {
     pieChartData,
     newCustomerData,
     CallDashboardData,
-    // pendingTask,
     pendingFollowup,
     pendingDescription,
     monthlyStatus,
@@ -103,6 +102,7 @@ export const SalesPersonAnalytics = (props) => {
     return {
       email: option.email,
       primaryGroup: team ? option.groups__name : null,
+      name: option.name,
     };
   });
 
@@ -450,7 +450,9 @@ export const SalesPersonAnalytics = (props) => {
                       }
                       options={displayOptions}
                       groupBy={(option) => option.primaryGroup || ""}
-                      getOptionLabel={(option) => option.email}
+                      getOptionLabel={(option) =>
+                        `${option.name} - ${option.email}`
+                      }
                       label="Filter By Sales Person"
                     />
                   </Grid>
@@ -745,12 +747,7 @@ export const SalesPersonAnalytics = (props) => {
               )}
             </Grid>
           </Grid>
-          {!(
-            userData.groups.includes("Sales Executive") ||
-            userData.groups.includes("Sales Assistant Deputy Manager") ||
-            userData.groups.includes("Customer Relationship Manager") ||
-            userData.groups.includes("Customer Relationship Executive")
-          ) && (
+          {userData.groups.includes("Director") && (
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} sx={{ marginTop: "20px" }}>
                 <Card>
