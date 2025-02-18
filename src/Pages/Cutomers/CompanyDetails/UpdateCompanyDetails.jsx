@@ -28,7 +28,6 @@ import { ViewCustomerFollowUp } from "../../FollowUp/ViewCustomerFollowUp";
 import Option from "../../../Options/Options";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
-import UserProfileService from "../../../services/UserProfileService";
 import MasterService from "../../../services/MasterService";
 import CustomSnackbar from "../../../Components/CustomerSnackbar";
 

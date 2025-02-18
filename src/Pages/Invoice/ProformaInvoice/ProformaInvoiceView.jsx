@@ -269,8 +269,10 @@ export const ProformaInvoiceView = (props) => {
   };
   const SendForDropPI = async (e) => {
     e.preventDefault();
+    setOpen(true); // Show loading indicator
+
     try {
-      setOpen(true);
+      // Build the request object
       const req = {
         status: "Dropped",
         type: invoiceData.type,
@@ -287,24 +289,33 @@ export const ProformaInvoiceView = (props) => {
         contact: invoiceData.contact,
         payment_terms: invoiceData.payment_terms,
         delivery_terms: invoiceData.delivery_terms,
+        lead: invoiceData.lead ? invoiceData.lead : null,
       };
-      const response = await InvoiceServices.sendForApprovalCompanyData(
-        invoiceData.pi_number,
-        req
-      );
-      const successMessage = response.data.message || "Pi Dropped successfully";
-      handleSuccess(successMessage);
 
+      // Choose the API method dynamically based on type
+      const apiCall =
+        invoiceData.type === "Lead"
+          ? InvoiceServices.sendForApprovalLeadsData
+          : InvoiceServices.sendForApprovalCompanyData;
+
+      // Make the API call
+      const response = await apiCall(invoiceData.pi_number, req);
+
+      const successMessage = response.data.message || "PI Dropped successfully";
+      handleSuccess(successMessage); // Handle success message
+
+      // Close the popup and refresh data after a small delay
       setTimeout(() => {
         setOpenPopup(false);
         getProformaInvoiceData();
       }, 300);
     } catch (error) {
-      handleError(error);
+      handleError(error); // Handle error
     } finally {
-      setOpen(false);
+      setOpen(false); // Reset loading indicator
     }
   };
+
   const TOTAL_GST_DATA = invoiceData.total - invoiceData.amount;
   const TOTAL_GST = TOTAL_GST_DATA.toFixed(2);
   return (
