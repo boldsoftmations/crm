@@ -308,13 +308,6 @@ export const UnassignedLead = () => {
                         <Button variant="text" onClick={() => openInPopup(row)}>
                           View
                         </Button>
-                        <Button
-                          color="success"
-                          variant="text"
-                          onClick={() => openInPopup2(row)}
-                        >
-                          Assign
-                        </Button>
                       </StyledTableCell>
                     </StyledTableRow>
                   );
