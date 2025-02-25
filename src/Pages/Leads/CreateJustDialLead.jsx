@@ -55,21 +55,22 @@ const CreateJustDialLead = () => {
       const response = await LeadServices.createJustDialLeads(updatedFormData);
 
       if (response.status === 201) {
-        // Clear form after successful submission
-        setFormData({
-          references: "",
-          contact: "",
-          name: "",
-          stage: "",
-          city: "",
-          query_product_name: "",
-        });
-
         setAlertMsg({
           message:
             response.message || "Just Dial lead has been created successfully",
           severity: "success",
           open: true,
+        });
+
+        // Clear form after successful submission
+        setFormData((prev) => {
+          return {
+            ...prev,
+            contact: "",
+            name: "",
+            city: "",
+            query_product_name: "",
+          };
         });
       }
     } catch (error) {
@@ -109,6 +110,18 @@ const CreateJustDialLead = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
+                    label="Name"
+                    name="name"
+                    required
+                    variant="outlined"
+                    size="small"
+                    value={formData.name}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
                     label="Contact"
                     type="number"
                     name="contact"
@@ -116,18 +129,6 @@ const CreateJustDialLead = () => {
                     variant="outlined"
                     size="small"
                     value={formData.contact}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Name"
-                    name="name"
-                    required
-                    variant="outlined"
-                    size="small"
-                    value={formData.name}
                     onChange={handleChange}
                   />
                 </Grid>
