@@ -97,14 +97,14 @@ export const LeadFollowup = () => {
   const Tabledata = Array.isArray(pendingFollowUp)
     ? pendingFollowUp.map((row, i) => ({
         lead: row.leads,
-        company: row.company,
-        created_by_email: row.created_by_email,
-        activity_name: row.activity_name,
+        company: row.company_name,
+        created_by_email: row.email,
+        activity_name: row.activity,
         status: row.status,
         duration: row.duration,
-        current_date: moment(
-          row.creation_date ? row.creation_date : "-"
-        ).format("DD/MM/YYYY h:mm:ss"),
+        current_date: moment(row.current_date ? row.current_date : "-").format(
+          "DD/MM/YYYY h:mm:ss"
+        ),
         next_followup_date: moment(
           row.next_followup_date ? row.next_followup_date : "-"
         ).format("DD/MM/YYYY h:mm:ss"),

@@ -200,7 +200,6 @@ export const OpenLead = () => {
       const response = await LeadServices.getAllLeads(
         currentPage,
         "others",
-        "-lead_id",
         filterQuery,
         filterSelectedQuery,
         searchQuery
@@ -640,8 +639,6 @@ const StageOptions = [
   // { label: "Not Interested", value: "not_interested" },
   // { label: "Close", value: "close" },
 ];
-
-
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
