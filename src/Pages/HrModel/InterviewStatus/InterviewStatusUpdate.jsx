@@ -133,7 +133,17 @@ export const InterviewStatusCreate = ({
           />
         </Grid>
       </Grid>
-      <Box display="flex" justifyContent="flex-end" mt={2}>
+      <Box display="flex" justifyContent="flex-end" mt={2} gap={3}>
+        {typeof setOpenApplicantListPopup === "function" && (
+          <Button
+            fullwidth
+            variant="contained"
+            color="error"
+            onClick={() => setOpenApplicantListPopup(false)}
+          >
+            Cancel
+          </Button>
+        )}
         <Button fullwidth type="submit" variant="contained" color="primary">
           Schedule Interview
         </Button>
