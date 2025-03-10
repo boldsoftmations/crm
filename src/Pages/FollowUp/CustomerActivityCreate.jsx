@@ -1,34 +1,44 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CustomLoader } from "../../Components/CustomLoader";
 import CustomerServices from "../../services/CustomerService";
-import {
-  Box,
-  Button,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
+import { Box, Button, Grid, TextField } from "@mui/material";
 import CustomTextField from "../../Components/CustomTextField";
+import CustomAutocomplete from "../../Components/CustomAutocomplete";
+import { duration } from "moment";
 
 export const CustomerActivityCreate = (props) => {
-  const { recordForEdit, setOpenModal, getFollowUp } = props;
+  const { setOpenModal, getFollowUp, selectedCustomers } = props;
   const [open, setOpen] = useState(false);
-  const [followUp, setFollowUp] = useState([]);
+  const [followUp, setFollowUp] = useState({});
+  const [customerStatus, setCustomerStatus] = useState([]);
   const [activityRequiresFollowup, setActivityRequiresFollowup] =
     useState(false);
 
+  useEffect(() => {
+    const getCustomerStatus = async () => {
+      try {
+        setOpen(true);
+        const res = await CustomerServices.getCustomerStatus();
+        setCustomerStatus(res.data);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setOpen(false);
+      }
+    };
+    getCustomerStatus();
+  }, []);
   const createFollowUpLeadsData = async (e) => {
     try {
       e.preventDefault();
       setOpen(true);
 
       const data = {
-        company: recordForEdit,
-        activity: followUp.activity,
+        company: selectedCustomers.name,
         notes: followUp.notes,
         next_followup_date: followUp.next_followup_date,
+        status: followUp.status,
+        activity: followUp.activity,
       };
 
       await CustomerServices.createFollowUpCustomer(data);
@@ -44,7 +54,13 @@ export const CustomerActivityCreate = (props) => {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFollowUp({ ...followUp, [name]: value });
+  };
 
+  const handleFollowChange = (e, newValue, name) => {
+    setFollowUp((prevData) => ({
+      ...prevData,
+      [name]: newValue,
+    }));
     // Check if the selected activity requires a followup date
     const requiresFollowup = [
       "Not answering/busy/disconnecting",
@@ -56,7 +72,7 @@ export const CustomerActivityCreate = (props) => {
       "Send sample",
       "Require exclusive distributorship/dealership",
       "Require credit",
-    ].includes(value);
+    ].includes(newValue);
 
     setActivityRequiresFollowup(requiresFollowup);
   };
@@ -72,30 +88,38 @@ export const CustomerActivityCreate = (props) => {
       >
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <FormControl fullWidth size="small">
-              <InputLabel id="demo-simple-select-label">Activity</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                name="activity"
-                label="Activity"
-                // value={filterQuery}
-                onChange={handleInputChange}
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: "200px", // Adjust the maximum height as per your requirement
-                    },
-                  },
-                }}
-              >
-                {ActivityOption.map((option) => (
-                  <MenuItem key={option.id} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <CustomAutocomplete
+              size="small"
+              id="call_status"
+              name="status"
+              options={["Connected", "Disconnected"]}
+              renderInput={(params) => (
+                <TextField {...params} label="Call Status" />
+              )}
+              value={followUp.status}
+              onChange={(e, value) => handleFollowChange(e, value, "status")}
+              label="Call Status"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <CustomAutocomplete
+              size="small"
+              id="activity"
+              options={customerStatus}
+              getOptionLabel={(option) => option.name} // Show name in the dropdown
+              renderInput={(params) => (
+                <TextField {...params} label="Activity" />
+              )}
+              value={
+                customerStatus.find(
+                  (option) => option.id === followUp.activity
+                ) || null
+              } // Ensure selected value is an object
+              onChange={
+                (e, value) =>
+                  handleFollowChange(e, value ? value.id : null, "activity") // Store the ID
+              }
+            />
           </Grid>
           <Grid item xs={12}>
             <CustomTextField
