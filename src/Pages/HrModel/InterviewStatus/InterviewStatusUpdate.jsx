@@ -15,7 +15,6 @@ export const InterviewStatusCreate = ({
   getInterviewData,
   setOpenApplicantListPopup,
 }) => {
-  console.log("contact", contact);
   const [interviewDate, setInterviewDate] = useState("");
   const [interviewTime, setInterviewTime] = useState("");
   const [interviewerName, setInterviewerName] = useState("");

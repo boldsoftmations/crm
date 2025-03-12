@@ -5,7 +5,6 @@ import {
   Paper,
   styled,
   TableCell,
-  Button,
   TableContainer,
   TableHead,
   TableRow,
@@ -13,28 +12,22 @@ import {
   Table,
   tableCellClasses,
 } from "@mui/material";
-import { CustomPagination } from "../../../Components/CustomPagination";
-import Hr from "./../../../services/Hr";
-import { CustomLoader } from "../../../Components/CustomLoader";
-import CustomSnackbar from "../../../Components/CustomerSnackbar";
-import { Popup } from "../../../Components/Popup";
-import ViewDetailsCandidates from "./ViewDetailsCanditates";
-import { InterviewAssessmentResultView } from "./InterviewAssementResultView";
-import SearchComponent from "../../../Components/SearchComponent ";
-import CustomAutocomplete from "../../../Components/CustomAutocomplete";
-import CustomAxios from "../../../services/api";
+import CustomSnackbar from "../../Components/CustomerSnackbar";
+import { CustomLoader } from "../../Components/CustomLoader";
+import { CustomPagination } from "../../Components/CustomPagination";
+import SearchComponent from "../../Components/SearchComponent ";
+import LeadServices from "../../services/LeadService";
+import CustomAutocomplete from "../../Components/CustomAutocomplete";
 
-export const ViewAssementDetails = () => {
+export const LeadsTracking = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [openCandidatesPopup, setOpenCandidatesPopup] = useState(false);
-  const [openResultPopup, setOpenResultPopup] = useState(false);
-  const [recordForEdit, setRecordForEdit] = useState({});
-  const [assesementData, setAssesementData] = useState([]);
+  const [leadsData, setLeadsData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [designations, setDesignations] = useState([]);
-  const [filterValue, setFilterValue] = useState("");
+  const [filterStageValue, setFilterStageValue] = useState("");
+  const [filterReferenceValue, setFilterReferenceValue] = useState("");
+  const [referenceData, setReferenceData] = useState([]);
   const [alertmsg, setAlertMsg] = useState({
     message: "",
     severity: "",
@@ -48,50 +41,43 @@ export const ViewAssementDetails = () => {
     setCurrentPage(value);
   };
 
-  const getAssessementDetails = async () => {
+  const getCandidateFollowup = async () => {
     try {
       setIsLoading(true);
-      const response = await Hr.getAssessementDetails(
+      const response = await LeadServices.LeadsRecordDatas(
         currentPage,
         searchQuery,
-        filterValue
+        filterStageValue,
+        filterReferenceValue
       );
-      setAssesementData(response.data.results);
+      setLeadsData(response.data.results);
       const total = response.data.count;
       setTotalPages(Math.ceil(total / 25));
       setIsLoading(false);
     } catch (error) {
-      console.error("Error fetching assesementData:", error);
+      console.error("Error fetching leadsData:", error);
+    }
+  };
+  const FetchData = async (value) => {
+    try {
+      setIsLoading(true);
+      const res = await LeadServices.getAllRefernces();
+      setReferenceData(res.data);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    getAssessementDetails();
-  }, [currentPage, searchQuery, filterValue]);
+    FetchData();
+  }, []);
 
   useEffect(() => {
-    const fetchDesignations = async () => {
-      try {
-        const response = await CustomAxios.get(
-          "/api/hr/designation/?type=list"
-        );
-        setDesignations(response.data);
-      } catch (error) {
-        console.error("Error fetching designations:", error);
-      }
-    };
-    fetchDesignations();
-  }, []);
-  const handleOpenPopup = (row) => {
-    setOpenCandidatesPopup(true);
-    setRecordForEdit(row);
-  };
+    getCandidateFollowup();
+  }, [currentPage, searchQuery, filterStageValue, filterReferenceValue]);
 
-  const handleResultOpenPopup = (row) => {
-    setOpenCandidatesPopup(false);
-    setRecordForEdit(row);
-    setOpenResultPopup(true);
-  };
   const handleSearch = (query) => {
     setSearchQuery(query);
     setCurrentPage(1); // Reset to first page with new search
@@ -100,6 +86,15 @@ export const ViewAssementDetails = () => {
   const handleReset = () => {
     setSearchQuery("");
     setCurrentPage(1); // Reset to first page with no search query
+  };
+
+  const handleFilterChange = (search) => {
+    setFilterStageValue(search);
+    setCurrentPage(1);
+  };
+  const handleFilterReferenceType = (filterValue) => {
+    setFilterReferenceValue(filterValue);
+    setCurrentPage(1);
   };
 
   return (
@@ -127,21 +122,35 @@ export const ViewAssementDetails = () => {
                     textAlign: "center",
                   }}
                 >
-                  Assesement Details
+                  Leads Record
                 </h3>
               </Box>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={2}>
               <CustomAutocomplete
                 fullWidth
                 name="stage"
                 size="small"
                 disablePortal
                 id="combo-box-stage"
-                onChange={(e, value) => setFilterValue(value)}
-                options={designations.map((option) => option.designation)}
+                value={filterStageValue}
+                onChange={(e, value) => handleFilterChange(value)}
+                options={Stage}
                 getOptionLabel={(option) => option}
-                label="Filter By Designation"
+                label="Filter By Stage"
+              />
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              <CustomAutocomplete
+                fullWidth
+                size="small"
+                disablePortal
+                id="combo-box-stage"
+                value={filterReferenceValue}
+                onChange={(e, value) => handleFilterReferenceType(value)}
+                options={referenceData.map((option) => option.source)}
+                getOptionLabel={(option) => option}
+                label="Filter By References"
               />
             </Grid>
           </Grid>
@@ -167,50 +176,38 @@ export const ViewAssementDetails = () => {
             >
               <TableHead>
                 <TableRow>
-                  <StyledTableCell align="center">Name</StyledTableCell>
-                  <StyledTableCell align="center">Designation</StyledTableCell>
-                  <StyledTableCell align="center">Phone</StyledTableCell>
-                  <StyledTableCell align="center">Email</StyledTableCell>
-                  <StyledTableCell align="center">Action</StyledTableCell>
+                  <StyledTableCell align="center">Date</StyledTableCell>
+                  <StyledTableCell align="center">Company Name</StyledTableCell>
+                  <StyledTableCell align="center">Assigned By</StyledTableCell>
+                  <StyledTableCell align="center">Assigned To</StyledTableCell>
+                  <StyledTableCell align="center">
+                    Contact Person
+                  </StyledTableCell>
+                  <StyledTableCell align="center">Stage</StyledTableCell>
+                  <StyledTableCell align="center">Source</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {assesementData.map((row, i) => (
+                {leadsData.map((row, i) => (
                   <StyledTableRow key={i}>
+                    <StyledTableCell align="center">
+                      {row.date_time}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.company}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.assigned_by}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.assigned_to}
+                    </StyledTableCell>
                     <StyledTableCell align="center">{row.name}</StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.designation}
+                      {row.stage}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.contact}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {row.email}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      <Box
-                        display="flex"
-                        gap={2}
-                        alignItems="center"
-                        justifyContent="center"
-                      >
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          color="primary"
-                          onClick={() => handleOpenPopup(row)}
-                        >
-                          View
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          color="secondary"
-                          onClick={() => handleResultOpenPopup(row)}
-                        >
-                          Assesement Result
-                        </Button>
-                      </Box>
+                      {row.source}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
@@ -223,21 +220,6 @@ export const ViewAssementDetails = () => {
             handlePageChange={handlePageChange}
           />
         </Paper>
-        <Popup
-          fullScreen={true}
-          title="Assessment Details"
-          openPopup={openCandidatesPopup}
-          setOpenPopup={setOpenCandidatesPopup}
-        >
-          <ViewDetailsCandidates data={recordForEdit} />
-        </Popup>
-        <Popup
-          fullScreen={true}
-          openPopup={openResultPopup}
-          setOpenPopup={setOpenResultPopup}
-        >
-          <InterviewAssessmentResultView result={recordForEdit} />
-        </Popup>
       </Grid>
     </>
   );
@@ -264,3 +246,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: 0,
   },
 }));
+
+const Stage = [
+  "new",
+  "open",
+  "opportunity",
+  "potential",
+  "interested",
+  "converted",
+  "not_interested",
+  "close",
+  "duplicate",
+];
