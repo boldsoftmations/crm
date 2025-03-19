@@ -26,6 +26,7 @@ import SearchComponent from "../../Components/SearchComponent ";
 import { MessageAlert } from "../../Components/MessageAlert";
 import { useSelector } from "react-redux";
 import { CSVLink } from "react-csv";
+import moment from "moment";
 
 export const UnassignedLead = () => {
   const [leads, setLeads] = useState([]);
@@ -175,54 +176,32 @@ export const UnassignedLead = () => {
     setCurrentPage(value);
   };
 
-  const updateAssigned = useCallback(
-    async (e) => {
-      try {
-        e.preventDefault();
-        setOpen(true);
-        const data = {
-          contact: recordForEdit.contact ? recordForEdit.contact : null,
-          business_mismatch: recordForEdit.business_mismatch
-            ? recordForEdit.business_mismatch
-            : "No",
-          description: recordForEdit.description || [],
-          interested: recordForEdit.interested
-            ? recordForEdit.interested
-            : "Yes",
-          assigned_to: assign ? assign : recordForEdit.assigned_to,
-          references: recordForEdit.references
-            ? recordForEdit.references
-            : "Indiamart",
-        };
-        const req = {
-          lead_id: selectedRows,
-          assign_to: assign,
-        };
-        let response; // Declare response variable here
-        if (selectedRows.length > 0) {
-          response = await LeadServices.AssignMultipleLeads(req);
-        } else {
-          response = await LeadServices.updateLeads(
-            recordForEdit.lead_id,
-            data
-          );
-        }
-        const successMessage =
-          response.data.message || "UnAssigned Leads Created successfully";
-        handleSuccess(successMessage);
+  const updateAssigned = async (e) => {
+    e.preventDefault();
+    try {
+      setOpen(true);
 
-        setTimeout(() => {
-          setModalOpen(false);
-          getUnassigned(currentPage, filterQuery, filterSelectedQuery);
-        }, 300);
-      } catch (error) {
-        handleError(error);
-      } finally {
-        setOpen(false);
-      }
-    },
-    [recordForEdit, assign, currentPage, filterQuery, filterSelectedQuery]
-  );
+      const req = {
+        lead_id: selectedRows,
+        assign_to: assign,
+      };
+
+      const response = await LeadServices.AssignMultipleLeads(req);
+
+      const successMessage = response.data.message;
+      handleSuccess(successMessage);
+
+      setTimeout(() => {
+        setModalOpen(false);
+        getUnassigned();
+        setSelectedRows([]);
+      }, 300);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setOpen(false);
+    }
+  };
 
   return (
     <>
@@ -345,7 +324,7 @@ export const UnassignedLead = () => {
                   <StyledTableCell align="center">NAME</StyledTableCell>
                   <StyledTableCell align="center">CONTACT</StyledTableCell>
                   <StyledTableCell align="center">PRODUCT</StyledTableCell>
-                  <StyledTableCell align="center">ASSIGNED TO</StyledTableCell>
+                  <StyledTableCell align="center">DATE</StyledTableCell>
                   <StyledTableCell align="center">COMPANY</StyledTableCell>
                   <StyledTableCell align="center">REFERENCE</StyledTableCell>
                   <StyledTableCell align="center">CITY</StyledTableCell>
@@ -375,7 +354,7 @@ export const UnassignedLead = () => {
                         {row.query_product_name}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {row.assigned_to}
+                        {moment(row.date_time).format("YYYY-MM-DD H:mm:ss")}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {row.company}
