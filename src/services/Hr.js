@@ -492,6 +492,10 @@ const getCandidates = () => {
     "/api/master/model-option/?page=all&model_master__name=Applicant Followup Status"
   );
 };
+
+const getRevisedDataHrFollowup = () => {
+  return CustomAxios.get("/api/hr/applicant-followup/revised_followup_date/");
+};
 const Hr = {
   getDesignationsData,
   addDesignation,
@@ -558,6 +562,7 @@ const Hr = {
   getCandidateFollowup,
   CandidateDoneFollowup,
   getCandidates,
+  getRevisedDataHrFollowup,
 };
 
 export default Hr;

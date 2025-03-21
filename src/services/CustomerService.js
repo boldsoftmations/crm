@@ -25,6 +25,20 @@ const getAllCustomerData = (statusValue, page, assignToFilter, searchValue) => {
   return CustomAxios.get(`/api/customer/list-company/?${params.toString()}`);
 };
 
+const getAllCustomerMasterList = (page) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
+
+  if (page) {
+    params.append("page", page);
+  }
+
+  // Sending a GET request with query parameters
+  return CustomAxios.get(
+    `/api/customer/list-company/?status=Active&${params.toString()}`
+  );
+};
+
 const getIncompleteKycCustomerData = (page, assignToFilter, searchValue) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
@@ -590,6 +604,7 @@ const CustomerServices = {
   createCustomerScheme,
   updateCustomerscheme,
   getCustomerStatus,
+  getAllCustomerMasterList,
 };
 
 export default CustomerServices;
