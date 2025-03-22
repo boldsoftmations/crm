@@ -528,6 +528,21 @@ const getCustomerStatus = () => {
     "/api/master/model-option/?page=all&model_master__name=Customer Followup"
   );
 };
+
+//Api for fields sales person and customer
+
+const getFieldsSalesPersonVisitPlan = (page, search) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+
+  if (search) {
+    params.append("search", search);
+  }
+  return CustomAxios.get(`/api/field-sales/visit/?${params.toString()}`);
+};
+
 const CustomerServices = {
   getAllCustomerData,
   getIncompleteKycCustomerData,
@@ -605,6 +620,7 @@ const CustomerServices = {
   updateCustomerscheme,
   getCustomerStatus,
   getAllCustomerMasterList,
+  getFieldsSalesPersonVisitPlan,
 };
 
 export default CustomerServices;

@@ -103,6 +103,11 @@ export const ListItems = ({ setOpen }) => {
       items: [
         renderListItem("/user/report", <AssessmentIcon />, "Report"),
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
+        renderListItem(
+          "/master/customer-visit",
+          <DashboardIcon />,
+          "Master Customer"
+        ),
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/products/all-product", text: "Inventory Master" },
           { to: "/invoice/seller-account", text: "Company Master" },
