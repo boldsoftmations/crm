@@ -648,14 +648,14 @@ function Row(props) {
             )}
           {(userData.groups.includes("Accounts") ||
             userData.groups.includes("Accounts Billing Department")) && (
-            <Button
-              variant="text"
-              color="error"
-              onClick={() => openInPopup2(row)}
-            >
-              Cancel
-            </Button>
-          )}
+              <Button
+                variant="text"
+                color="error"
+                onClick={() => openInPopup2(row)}
+              >
+                Cancel
+              </Button>
+            )}
         </StyledTableCell>
       </StyledTableRow>
       <TableRow>
@@ -717,14 +717,6 @@ function Row(props) {
     </>
   );
 }
-
-const filterOption = [
-  {
-    label: "Search By State",
-    value: "order_book__proforma_invoice__seller_account__unit",
-  },
-  { label: "Search", value: "search" },
-];
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {

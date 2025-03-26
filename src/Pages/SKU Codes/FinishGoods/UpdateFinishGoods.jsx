@@ -24,8 +24,8 @@ export const UpdateFinishGoods = memo((props) => {
     currentPage,
     searchQuery,
   } = props;
-
   const [formData, setFormData] = useState(recordForEdit);
+  const GST = JSON.stringify(formData.gst / 2);
   const [open, setOpen] = useState(false);
   const {
     brandAllData,
@@ -131,7 +131,7 @@ export const UpdateFinishGoods = memo((props) => {
     [formData, productName, GST, currentPage, searchQuery]
   );
 
-  const GST = JSON.stringify(formData.gst / 2);
+
 
   return (
     <>

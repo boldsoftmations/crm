@@ -313,10 +313,13 @@ const UpdateCompetancyAttribute = (id, data) => {
   return CustomAxios.patch(`/api/hr/competency-attribute/${id}/`, data);
 };
 
-const getCompentancyAttribute = (page) => {
+const getCompentancyAttribute = (page, search) => {
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
+  }
+  if (search) {
+    params.append("search", search);
   }
   return CustomAxios.get(`/api/hr/competency-attribute/?${params.toString()}`);
 };

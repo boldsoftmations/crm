@@ -34,7 +34,7 @@ export const DebitCreditView = () => {
   const [openInvoiceNote, setOpenInvoiceNote] = useState(false);
   const [invoiceNoteData, setInvoiceNoteData] = useState();
 
-  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
+  const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
   const getDebitCreditNotesData = useCallback(async () => {

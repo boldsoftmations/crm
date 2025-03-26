@@ -119,7 +119,6 @@ export const TallyInvoice = () => {
       quantity: row.quantity,
       rate: row.rate,
       amount: row.amount,
-      sgst: row.sgst || "",
       cgst: row.cgst || "",
       igst: row.igst || "",
       total: row.total,

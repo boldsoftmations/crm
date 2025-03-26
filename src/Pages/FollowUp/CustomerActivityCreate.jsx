@@ -4,7 +4,6 @@ import CustomerServices from "../../services/CustomerService";
 import { Box, Button, Grid, TextField } from "@mui/material";
 import CustomTextField from "../../Components/CustomTextField";
 import CustomAutocomplete from "../../Components/CustomAutocomplete";
-import { duration } from "moment";
 
 export const CustomerActivityCreate = (props) => {
   const { setOpenModal, getFollowUp, selectedCustomers } = props;
@@ -184,71 +183,4 @@ export const CustomerActivityCreate = (props) => {
   );
 };
 
-const ActivityOption = [
-  {
-    id: 1,
-    value: "Not answering/busy/disconnecting",
-    label: "Not answering/busy/disconnecting",
-  },
 
-  {
-    id: 2,
-    value: "Having stock",
-    label: "Having stock",
-  },
-  {
-    id: 3,
-    value: "Rate issue",
-    label: "Rate issue",
-  },
-  {
-    id: 4,
-    value: "Buying a different product from other company",
-    label: "Buying a different product from other company",
-  },
-  {
-    id: 5,
-    value: "Size or quantity is unavailabe with us",
-    label: "Size or quantity is unavailabe with us",
-  },
-  {
-    id: 6,
-    value: "Transportation cost issue",
-    label: "Transportation cost issue",
-  },
-  {
-    id: 7,
-    value: "Call me back",
-    label: "Call me back",
-  },
-  {
-    id: 8,
-    value: "Send sample",
-    label: "Send sample",
-  },
-  {
-    id: 9,
-    value: "Require own branding",
-    label: "Require own branding",
-  },
-  {
-    id: 10,
-    value: "Require exclusive distributorship/dealership",
-    label: "Require exclusive distributorship/dealership",
-  },
-  {
-    id: 11,
-    value: "Quality issue",
-    label: "Quality issue",
-  },
-  {
-    id: 12,
-    value: "Company shut down",
-    label: "Company shut down",
-  },
-  {
-    id: 13,
-    value: "Require credit",
-    label: "Require credit",
-  },
-];

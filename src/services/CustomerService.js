@@ -543,6 +543,25 @@ const getFieldsSalesPersonVisitPlan = (page, search) => {
   return CustomAxios.get(`/api/field-sales/visit/?${params.toString()}`);
 };
 
+const createCustomerSRF = (data) => {
+  return CustomAxios.post("/api/srf/srf/", data);
+};
+
+const updateCustomerSRfStatus = (id,data)=>{
+  return CustomAxios.patch(`/api/srf/srf/${id}/`,data)
+}
+const getCustomerSRF = (page,search) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+
+  if (search) {
+    params.append("search", search);
+  }
+  return CustomAxios.get(`/api/srf/srf/?${params.toString()}/`);
+};
+
 const CustomerServices = {
   getAllCustomerData,
   getIncompleteKycCustomerData,
@@ -621,6 +640,9 @@ const CustomerServices = {
   getCustomerStatus,
   getAllCustomerMasterList,
   getFieldsSalesPersonVisitPlan,
+  createCustomerSRF,
+  updateCustomerSRfStatus,
+  getCustomerSRF
 };
 
 export default CustomerServices;

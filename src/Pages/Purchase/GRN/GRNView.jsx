@@ -236,7 +236,7 @@ export const GRNView = () => {
 };
 
 function Row(props) {
-  const { row, openInPopup, userData, handlePurchaseInvoice } = props;
+  const { row, userData, handlePurchaseInvoice } = props;
   const [open, setOpen] = useState(false);
 
   return (
@@ -263,10 +263,10 @@ function Row(props) {
           {(userData.groups.includes("Accounts Executive") ||
             userData.groups.includes("Director") ||
             userData.groups.includes("Accounts")) && (
-            <Button onClick={() => handlePurchaseInvoice(row)}>
-              Create PI
-            </Button>
-          )}
+              <Button onClick={() => handlePurchaseInvoice(row)}>
+                Create PI
+              </Button>
+            )}
         </StyledTableCell>
       </StyledTableRow>
       <TableRow>

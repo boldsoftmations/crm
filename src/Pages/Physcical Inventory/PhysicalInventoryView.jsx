@@ -9,7 +9,6 @@ import { CustomTable } from "../../Components/CustomTable";
 import { CustomPagination } from "../../Components/CustomPagination";
 import { Popup } from "../../Components/Popup";
 import { PhysicalInventoryCreate } from "./PhysicalInventoryCreate";
-import { batch } from "react-redux";
 import { CSVLink } from "react-csv";
 
 export const PhysicalInventoryView = () => {

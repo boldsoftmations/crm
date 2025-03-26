@@ -29,7 +29,8 @@ import {
   ExpandLess,
   ExpandMore,
 } from "@mui/icons-material";
-
+import StickyNote2Icon from "@mui/icons-material/StickyNote2";
+import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 export const ListItems = ({ setOpen }) => {
   const { profile: userData } = useSelector((state) => state.auth);
   const location = useLocation();
@@ -103,10 +104,11 @@ export const ListItems = ({ setOpen }) => {
       items: [
         renderListItem("/user/report", <AssessmentIcon />, "Report"),
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
+        renderListItem("/customer/srf", <StickyNote2Icon />, "SRF"),
         renderListItem(
           "/master/customer-visit",
-          <DashboardIcon />,
-          "Master Customer"
+          <DirectionsRunIcon />,
+          "Field Sales"
         ),
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/products/all-product", text: "Inventory Master" },
@@ -207,6 +209,12 @@ export const ListItems = ({ setOpen }) => {
         userData.groups.includes("Stores Delhi") ||
         userData.groups.includes("Production Delhi"),
       items: [
+        renderSubmenu("master", <BusinessIcon />, "Master", [
+          {
+            to: "/customer/complaints/ccp-capa/master",
+            text: "CCF Complaint Master",
+          },
+        ]),
         renderSubmenu("inventory", <InventoryIcon />, "Inventory", [
           { to: "/inventory/view-inventory", text: "Inventory" },
         ]),
@@ -218,6 +226,12 @@ export const ListItems = ({ setOpen }) => {
           "/inventory/sales-return",
           <DescriptionIcon />,
           "Sales Return"
+        ),
+        renderSubmenu(
+          "customer_complaint",
+          <ComplaintIcon />,
+          "Customer Complaint",
+          [{ to: "/customer/complaints/ccp-capa", text: "CCF-CAPA" }]
         ),
       ],
     },
@@ -370,7 +384,6 @@ export const ListItems = ({ setOpen }) => {
     {
       condition: userData.groups.includes("Accounts Executive"),
       items: [
-        renderListItem("/user/report", <AssessmentIcon />, "Report"),
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/products/all-product", text: "Inventory Master" },
@@ -417,7 +430,6 @@ export const ListItems = ({ setOpen }) => {
     {
       condition: userData.groups.includes("Accounts Billing Department"),
       items: [
-        renderListItem("/user/report", <AssessmentIcon />, "Report"),
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },
@@ -446,7 +458,6 @@ export const ListItems = ({ setOpen }) => {
     {
       condition: userData.groups.includes("Sales Manager"),
       items: [
-        renderListItem("/user/report", <AssessmentIcon />, "Report"),
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },
@@ -458,6 +469,12 @@ export const ListItems = ({ setOpen }) => {
           { to: "/forecast/view-product-forecast", text: "Forecast" },
           // { to: "/market-analysis/competitor", text: "Market Analysis" },
         ]),
+        renderSubmenu(
+          "customer_complaint",
+          <ComplaintIcon />,
+          "Customer Complaint",
+          [{ to: "/customer/complaints/ccp-capa", text: "CCF-CAPA" }]
+        ),
         renderListItem("/invoice/orderbook-tab", <ReceiptIcon />, "Order Book"),
         renderListItem("/dispatch/tab-view", <LocalShippingIcon />, "Dispatch"),
         renderListItem("/task/view-task", <AssignmentTurnedInIcon />, "Task"),
@@ -531,7 +548,6 @@ export const ListItems = ({ setOpen }) => {
     {
       condition: userData.groups.includes("Sales Deputy Manager"),
       items: [
-        renderListItem("/user/report", <AssessmentIcon />, "Report"),
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },
@@ -600,7 +616,6 @@ export const ListItems = ({ setOpen }) => {
     {
       condition: userData.groups.includes("Sales Executive"),
       items: [
-        renderListItem("/user/report", <AssessmentIcon />, "Report"),
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },
