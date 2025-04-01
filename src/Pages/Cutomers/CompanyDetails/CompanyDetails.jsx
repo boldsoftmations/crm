@@ -210,7 +210,7 @@ export const CompanyDetails = () => {
 
   //open popup for SRF(Sample Requist Form)
   const handleOpenSRF = (data) => {
-    setRecordForEdit(data.id);
+    setRecordForEdit(data);
     setOpenSRF(true);
   };
 

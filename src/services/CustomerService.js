@@ -481,6 +481,11 @@ const getAllDescription = () => {
 const CreateCapa = (data) => {
   return CustomAxios.post("/api/customer/cpa/", data);
 };
+
+const UpdateCapa = (id,data) => {
+  return CustomAxios.patch(`/api/customer/cpa/${id}/`, data);
+};
+
 const getAllCapaData = (page, search) => {
   const params = new URLSearchParams();
   if (page) {
@@ -629,6 +634,7 @@ const CustomerServices = {
   getProductBaseCustomer,
   getAllDescription,
   CreateCapa,
+  UpdateCapa,
   getAllCapaData,
   getCustomerLastPi,
   getProductLastPi,

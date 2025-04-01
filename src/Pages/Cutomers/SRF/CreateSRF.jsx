@@ -95,7 +95,7 @@ export const CreateSRF = (props) => {
     const payload = {
       unit: filterSellerAcount,
       type: "customer",
-      customer_id: recordForEdit,
+      customer_id: recordForEdit.id,
       srf_products: ModiFyProduct,
     };
 
@@ -158,6 +158,67 @@ export const CreateSRF = (props) => {
               sx={{ minWidth: 300 }}
               label="Seller Account"
               style={tfStyle}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Customer"
+              variant="outlined"
+              value={recordForEdit.name || ""}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="State"
+              variant="outlined"
+              value={recordForEdit.state || ""}
+              disabled
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="City"
+              variant="outlined"
+              value={recordForEdit.city || ""}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Country"
+              variant="outlined"
+              value={recordForEdit.country || ""}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Pincode"
+              variant="outlined"
+              value={recordForEdit.pincode || ""}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} sm={12}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              label="Address"
+              variant="outlined"
+              value={recordForEdit.address || ""}
+              disabled
             />
           </Grid>
           <Grid item xs={12}>

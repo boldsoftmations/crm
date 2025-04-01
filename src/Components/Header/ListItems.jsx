@@ -255,6 +255,36 @@ export const ListItems = ({ setOpen }) => {
       ],
     },
 
+    //QA menus
+    {
+      condition: userData.groups.includes("QA"),
+      items: [
+        renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
+        renderSubmenu("master", <BusinessIcon />, "Master", [
+          {
+            to: "/customer/complaints/ccp-capa/master",
+            text: "CCF Complaint Master",
+          },
+        ]),
+        renderSubmenu(
+          "customer_complaint",
+          <ComplaintIcon />,
+          "Customer Complaint",
+          [{ to: "/customer/complaints/ccp-capa", text: "CCF-CAPA" }]
+        ),
+      ],
+    },
+    //Factory Menus
+
+    {
+      condition:
+        userData.groups.includes("Factory-Mumbai-Dispatch") ||
+        userData.groups.includes("Factory-Delhi-Dispatch"),
+      items: [
+        renderListItem("/dispatch/tab-view", <LocalShippingIcon />, "Dispatch"),
+        renderListItem("/invoice/orderbook-tab", <ReceiptIcon />, "Order Book"),
+      ],
+    },
     // Service Menus
 
     {
