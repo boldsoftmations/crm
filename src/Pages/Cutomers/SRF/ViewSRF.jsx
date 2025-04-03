@@ -33,7 +33,7 @@ export const ViewSRF = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const { handleError, handleSuccess, handleCloseSnackbar, alertInfo } =
+  const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
   const getCustomerSRF = useCallback(async () => {
@@ -68,26 +68,6 @@ export const ViewSRF = () => {
   const handleReset = () => {
     setSearchQuery("");
     setCurrentPage(1); // Reset to first page with no search query
-  };
-
-  //update SRf customer status
-  const handleCompleteSRF = async (data) => {
-    try {
-      const res = await CustomerServices.updateCustomerSRfStatus(data.id, {
-        status: "Completed",
-      });
-
-      if (res.status === 200) {
-        handleSuccess("SRF status updated successfully");
-        setTimeout(() => {
-          getCustomerSRF();
-        }, 500);
-      }
-    } catch (error) {
-      console.error("Error updating SRF status:", error);
-    } finally {
-      setOpen(false);
-    }
   };
 
   return (
@@ -172,12 +152,7 @@ export const ViewSRF = () => {
               </TableHead>
               <TableBody>
                 {srfData.map((row) => (
-                  <Row
-                    key={row.id}
-                    row={row}
-                    getCustomerSRF={getCustomerSRF}
-                    handleCompleteSRF={handleCompleteSRF}
-                  />
+                  <Row key={row.id} row={row} getCustomerSRF={getCustomerSRF} />
                 ))}
               </TableBody>
             </Table>
@@ -193,7 +168,7 @@ export const ViewSRF = () => {
   );
 };
 
-function Row({ row, getCustomerSRF, handleCompleteSRF }) {
+function Row({ row, getCustomerSRF }) {
   const [tableExpand, setTableExpand] = useState(false);
   const [recordData, setRecordData] = useState(null);
   const [openUpdateStatusPopup, setOpenUpdateStatusPopup] = useState(false);
@@ -234,25 +209,16 @@ function Row({ row, getCustomerSRF, handleCompleteSRF }) {
         <StyledTableCell align="center">
           {" "}
           {(userData.groups.includes("Production") ||
-            userData.groups.includes("Director")) && (
-            <Button
-              variant="text"
-              size="small"
-              color="success"
-              onClick={() => handleOpenPop(row)}
-            >
-              Update Status
-            </Button>
-          )}
-          {(userData.groups.includes("Customer Service") ||
-            userData.groups.includes("Director")) && (
+            userData.groups.includes("Director") ||
+            userData.groups.includes("QA") ||
+            userData.groups.includes("Customer Service")) && (
             <Button
               variant="text"
               size="small"
               color="primary"
-              onClick={() => handleCompleteSRF(row)}
+              onClick={() => handleOpenPop(row)}
             >
-              Mark Complete
+              View
             </Button>
           )}
         </StyledTableCell>

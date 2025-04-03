@@ -482,13 +482,17 @@ export const CompanyDetails = () => {
                           PI
                         </Button>
                       )}
-                      <Button
-                        size="small"
-                        color="secondary"
-                        onClick={() => handleOpenSRF(row)}
-                      >
-                        SRF
-                      </Button>
+                      {!userData.groups.includes(
+                        "Accounts Billing Department"
+                      ) && (
+                        <Button
+                          size="small"
+                          color="secondary"
+                          onClick={() => handleOpenSRF(row)}
+                        >
+                          SRF
+                        </Button>
+                      )}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
@@ -578,7 +582,7 @@ export const CompanyDetails = () => {
         setOpenPopup={setOpenSRF}
       >
         <CreateSRF
-          getCompanyDetailsByID={getAllCompanyDetails}
+          type="customer"
           recordForEdit={recordForEdit}
           setOpenModal={setOpenSRF}
         />

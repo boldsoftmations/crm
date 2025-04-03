@@ -25,7 +25,7 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 export const CreateSRF = (props) => {
-  const { recordForEdit, setOpenModal } = props;
+  const { recordForEdit, setOpenModal, type } = props;
   const [productOption, setProductOption] = useState([]);
   const [filterSellerAcount, setFilterSellerAcount] = useState("");
   const [sellerData, setSellerData] = useState([]);
@@ -82,47 +82,87 @@ export const CreateSRF = (props) => {
     getAllSellerAccountsDetails();
     getProduct();
   }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const ModiFyProduct = products.map((pro) => ({
+    // Validate required fields for "lead" type
+    if (
+      type === "lead" &&
+      (!recordForEdit ||
+        !recordForEdit.company ||
+        !recordForEdit.state ||
+        !recordForEdit.city ||
+        !recordForEdit.country ||
+        !recordForEdit.pincode ||
+        !recordForEdit.address)
+    ) {
+      setAlertMsg({
+        open: true,
+        message: "Please fill the customer address!",
+        severity: "warning",
+      });
+      return;
+    }
+
+    // Prepare products data
+    const modiFyProduct = products.map((pro) => ({
       product: pro.product,
       quantity: pro.quantity,
       special_instructions: pro.special_instructions,
     }));
 
+    // Ensure recordForEdit exists before accessing its properties
+    const customerId =
+      type === "customer"
+        ? recordForEdit
+          ? recordForEdit.id
+          : null
+        : recordForEdit
+        ? recordForEdit.lead_id
+        : null;
+
     const payload = {
       unit: filterSellerAcount,
-      type: "customer",
-      customer_id: recordForEdit.id,
-      srf_products: ModiFyProduct,
+      type: type,
+      customer_id: customerId,
+      srf_products: modiFyProduct,
     };
-
-    console.log("Payload:", payload); // Debug payload
 
     setOpen(true);
 
     try {
       const res = await CustomerServices.createCustomerSRF(payload);
-
-      if (res.status === 200 || res.status === 201) {
-        setAlertMsg({
+      // Handle unexpected response data
+      if (res.status !== 200 && res.status !== 201) {
+        return setAlertMsg({
           open: true,
-          message: res.data.message || "SRF created successfully!",
-          severity: "success",
+          message: `Unexpected status: ${res.status}`,
+          severity: "error",
         });
-        setOpenModal(false);
-        navigate("/customer/srf");
-      } else {
-        throw new Error(`Unexpected status code: ${res.status}`);
       }
+
+      if (res.data.error) {
+        return setAlertMsg({
+          open: true,
+          message: res.data.error,
+          severity: "error",
+        });
+      }
+
+      setAlertMsg({
+        open: true,
+        message: res.data.message || "SRF created successfully!",
+        severity: "success",
+      });
+
+      setOpenModal(false);
+      navigate("/customer/srf");
     } catch (e) {
-      console.error("API Error:", e);
+      console.error("API Error:", e); // Debugging
 
       const errorMessage =
-        e.response.data.message ||
-        e.response.data.error ||
+        (e.response && e.response.data && e.response.data.message) ||
+        (e.response && e.response.data && e.response.data.error) ||
         "Error while creating SRF";
 
       setAlertMsg({
@@ -166,7 +206,11 @@ export const CreateSRF = (props) => {
               size="small"
               label="Customer"
               variant="outlined"
-              value={recordForEdit.name || ""}
+              value={
+                type === "lead"
+                  ? recordForEdit.company
+                  : recordForEdit.name || ""
+              }
               disabled
             />
           </Grid>
