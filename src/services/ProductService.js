@@ -171,6 +171,20 @@ const getAllFinishGoods = (page, searchQuery) => {
   return CustomAxios.get(`api/product/finished-goods/?${params.toString()}`);
 };
 
+const createSampleProduct = (data) => {
+  return CustomAxios.post("/api/product/sample/", data);
+};
+const getAllSampleProduct =(page,searchQuery)=>{
+ 
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (searchQuery) {
+    params.append("search", searchQuery);
+  }
+  return CustomAxios.get(`api/product/sample/?${params.toString()}`);
+}
 const createFinishGoods = (data) => {
   return CustomAxios.post("/api/product/finished-goods/", data);
 };
@@ -268,6 +282,8 @@ const ProductService = {
   createConsumable,
   updateConsumable,
   getAllFinishGoods,
+  getAllSampleProduct,
+  createSampleProduct,
   createFinishGoods,
   updateFinishGoods,
   getAllFinishGoodsProducts,
