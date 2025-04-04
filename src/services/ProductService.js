@@ -254,6 +254,11 @@ const uploadCSVFile = (file) => {
   return CustomAxios.post("/api/product/upload-csv/", file);
 };
 
+
+const getSampleProduct = ()=>{
+  return CustomAxios.get("/api/product/sample/product_list/")
+}
+
 const ProductService = {
   getAllColour,
   createColour,
@@ -297,6 +302,7 @@ const ProductService = {
   updatePriceList,
   getAllProduct,
   uploadCSVFile,
+  getSampleProduct
 };
 
 export default ProductService;
