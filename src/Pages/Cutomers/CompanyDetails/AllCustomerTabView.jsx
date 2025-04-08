@@ -27,9 +27,12 @@ export const AllCustomerTabView = () => {
     "Director",
     "Sales Manager",
     "Sales Executive",
+    "Accounts",
     "Sales Deputy Manager",
     "Business Development Manager",
-    "Business Development Executive"
+    "Business Development Executive",
+    "Customer Relationship Manager",
+    "Customer Relationship Executive"
   );
 
   const isDirectorandSalesManager = isInGroups(
