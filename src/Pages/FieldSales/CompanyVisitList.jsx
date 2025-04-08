@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Box,
   Grid,
@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material/styles";
-import { useSelector } from "react-redux";
 import { MessageAlert } from "../../Components/MessageAlert";
 import { CustomLoader } from "../../Components/CustomLoader";
 import { useNotificationHandling } from "../../Components/useNotificationHandling ";
@@ -23,11 +22,6 @@ export const CompanyDetails = () => {
   const [companyData, setCompanyData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCustomer, setSelectedCustomer] = useState([]);
-  const data = useSelector((state) => state.auth);
-  const userData = data.profile;
-  const assigned = userData.sales_users || [];
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
@@ -56,15 +50,16 @@ export const CompanyDetails = () => {
     setCurrentPage(value);
   };
 
-  const Tableheaders = [
-    "Company",
-    "Created By",
-    "Visited Person",
-    "Status",
-    "Planned Date",
-    "Creation Date",
-    "Action",
-  ];
+  const Tableheaders = useMemo(
+    () => [
+      "Company",
+      "Created By",
+      "Visited Person",
+      "Planned Date",
+      "Creation Date",
+    ],
+    []
+  );
 
   return (
     <>
@@ -145,9 +140,6 @@ export const CompanyDetails = () => {
                       {row.visited_by}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.status}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
                       {row.planned_date}
                     </StyledTableCell>
                     <StyledTableCell align="center">
@@ -183,7 +175,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     color: theme.palette.common.white,
     padding: 10,
     fontSize: 12,
-    backgroundColor: "#006BA1", // Remove padding from header cells
+    backgroundColor: "#006BA1",
     fontWeight: "bold",
     textTransform: "uppercase",
   },
