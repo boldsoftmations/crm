@@ -54,7 +54,7 @@ export const CompanyDetails = () => {
     () => [
       "Company",
       "Created By",
-      "Visited Person",
+      "Visit Person",
       "Planned Date",
       "Creation Date",
     ],

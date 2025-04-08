@@ -85,7 +85,7 @@ export const MasterCustomerVisitList = () => {
     try {
       setOpen(true);
       const req = {
-        company_list: selectedCustomer,
+        customer_list: selectedCustomer,
         visited_by: assign,
         planned_date: plannedDate,
       };
@@ -146,7 +146,7 @@ export const MasterCustomerVisitList = () => {
                     fontWeight: 800,
                   }}
                 >
-                  Company Master List
+                  Company List
                 </h3>
               </Grid>
             </Grid>
