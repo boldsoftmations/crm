@@ -68,7 +68,7 @@ export const NewCustomerListView = () => {
         return {
           name: row.name,
           status: row.status,
-          assigned_to: row.assigned_to.join(" , "),
+          created_by: row.created_by,
           creation_date: row.creation_date,
         };
       });
@@ -84,7 +84,7 @@ export const NewCustomerListView = () => {
   const headers = [
     { label: "Name", key: "name" },
     { label: "Status", key: "status" },
-    { label: "Assigned To", key: "assigned_to" },
+    { label: "Converted By", key: "created_by" },
     { label: "Creation Date", key: "creation_date" },
   ];
   //handle export function
@@ -141,6 +141,8 @@ export const NewCustomerListView = () => {
   const handleFilterDays = (event, value) => {
     if (value === "Custom Date") {
       setOpenCustomDate(true);
+      setStartDate(new Date());
+      setEndDate(new Date());
       setFilterByDays("");
       setCurrentPage(1);
     } else {
@@ -281,7 +283,7 @@ export const NewCustomerListView = () => {
             >
               <TableHead>
                 <TableRow>
-                  {["Company", "Status", "Assigned", "Creation Date"].map(
+                  {["Company", "Status", "Converted By", "Creation Date"].map(
                     (header) => (
                       <StyledTableCell align="center">{header}</StyledTableCell>
                     )
@@ -300,7 +302,7 @@ export const NewCustomerListView = () => {
                         {row.status}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {row.assigned_to.join(" , ")}
+                        {row.created_by}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {row.creation_date}
