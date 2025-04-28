@@ -113,13 +113,9 @@ export const ViewBeatCustomer = () => {
   };
 
   const openCustomerDataToAddInBeat = (data) => {
-    if (customerType === "Customer") {
-      setModalOpen2(true);
-      setRecordId(data.id);
-    } else {
-      setLeadModalOpen(true);
-      setRecordId(data.id);
-    }
+    const propsId = data.id;
+    setRecordId(propsId);
+    setModalOpen2(true);
     setBeatName(data.beat);
   };
 
@@ -304,7 +300,7 @@ export const ViewBeatCustomer = () => {
             ) : (
               <MasterLeadsData
                 getbeatCustomers={getbeatCustomers}
-                setOpenPopup={setLeadModalOpen}
+                setOpenPopup={setModalOpen2}
                 recordId={recordId}
                 setRecordId={setRecordId}
               />
