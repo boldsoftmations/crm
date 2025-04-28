@@ -21,6 +21,8 @@ import { Popup } from "../../Components/Popup";
 import { CustomerVisitView } from "./CustomerVIsitView";
 import CustomAutocomplete from "../../Components/CustomAutocomplete";
 import SearchComponent from "../../Components/SearchComponent ";
+import MasterService from "../../services/MasterService";
+import { useSelector } from "react-redux";
 
 export const CompanyDetails = () => {
   const [open, setOpen] = useState(false);
@@ -30,12 +32,20 @@ export const CompanyDetails = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const [totalPages, setTotalPages] = useState(0);
+  const [beatList, setBeatList] = useState([]);
+  const [inputValue, setInputvalue] = useState({
+    email: "",
+    beatid: "",
+  });
+  const [modalOpen, setModalOpen] = useState(false);
+  const data = useSelector((state) => state.auth);
+  const userData = data.profile;
+  const assigned = userData.active_sales_user || [];
   const [query, setQuery] = useState({
-    filterValue: "",
     VisitedPerson: "",
     isCompleted: false,
   });
-  const { handleError, handleCloseSnackbar, alertInfo } =
+  const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
   const getAllCompanyDetails = useCallback(async () => {
@@ -44,7 +54,6 @@ export const CompanyDetails = () => {
       const response = await CustomerServices.getFieldsSalesPersonVisitPlan(
         currentPage,
         search,
-        query.filterValue,
         query.VisitedPerson,
         query.isCompleted
       );
@@ -57,13 +66,7 @@ export const CompanyDetails = () => {
     } finally {
       setOpen(false);
     }
-  }, [
-    currentPage,
-    search,
-    query.filterValue,
-    query.VisitedPerson,
-    query.isCompleted,
-  ]);
+  }, [currentPage, search, query.VisitedPerson, query.isCompleted]);
 
   useEffect(() => {
     getAllCompanyDetails();
@@ -83,14 +86,7 @@ export const CompanyDetails = () => {
     setCurrentPage(1);
   };
   const Tableheaders = useMemo(
-    () => [
-      "Company",
-      "Created By",
-      "Visit Person",
-      "Planned Date",
-      "Creation Date",
-      "Action",
-    ],
+    () => ["Company", "Created By", "Visit Person", "Creation Date", "Action"],
     []
   );
 
@@ -108,6 +104,46 @@ export const CompanyDetails = () => {
     setCurrentPage(1);
   };
 
+  const getBeatList = useCallback(async () => {
+    try {
+      const res = await MasterService.getBeatlist();
+      setBeatList(res.data);
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (modalOpen === true) {
+      getBeatList();
+    }
+  }, [modalOpen]);
+
+  //assign beat to sales person
+  const handleAssigned = async (e) => {
+    try {
+      setOpen(true);
+      if (!inputValue.beatid || !inputValue.email) {
+        return alert("Please select both option");
+      }
+      const payload = {
+        beat: inputValue.beatid,
+        visited_by: inputValue.email,
+      };
+      const response = await CustomerServices.AssignBeatToSalesPerson(payload);
+      const successMessage = response.data.message;
+      handleSuccess(successMessage);
+
+      setTimeout(() => {
+        setModalOpen(false);
+        getAllCompanyDetails();
+      }, 300);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setOpen(false);
+    }
+  };
   return (
     <>
       <MessageAlert
@@ -138,16 +174,13 @@ export const CompanyDetails = () => {
                 />
               </Grid>
               <Grid item xs={12} md={2}>
-                <CustomAutocomplete
+                <Button
                   size="small"
-                  fullWidth
-                  onChange={(event, value) =>
-                    handleChange(value, "filterValue")
-                  }
-                  options={["Today", "Upcoming", "Missed"]}
-                  getOptionLabel={(option) => option}
-                  label="Filter By Visit Plan"
-                />
+                  variant="contained"
+                  onClick={() => setModalOpen(true)}
+                >
+                  Assign Sales Person
+                </Button>
               </Grid>
               <Grid item xs={12} md={3}>
                 <h3
@@ -166,10 +199,10 @@ export const CompanyDetails = () => {
                   size="small"
                   fullWidth
                   onChange={(event, value) =>
-                    handleChange(value, "VisitedPerson")
+                    handleChange(value && value, "VisitedPerson")
                   }
-                  options={["Aditya"]}
-                  getOptionLabel={(option) => option}
+                  options={assigned.map((option) => option.name)}
+                  getOptionLabel={(option) => `${option}`}
                   label="Filter Sales Person"
                 />
               </Grid>
@@ -228,9 +261,7 @@ export const CompanyDetails = () => {
                     <StyledTableCell align="center">
                       {row.visited_by}
                     </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {row.planned_date}
-                    </StyledTableCell>
+
                     <StyledTableCell align="center">
                       {row.creation_date}
                     </StyledTableCell>
@@ -275,6 +306,60 @@ export const CompanyDetails = () => {
               visitLogId={visitLogId}
               setOpenVisitLog={setOpenVisitLog}
             />
+          </Popup>
+          <Popup
+            maxWidth={"xl"}
+            title={"Assign to sales person"}
+            openPopup={modalOpen}
+            setOpenPopup={setModalOpen}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <CustomAutocomplete
+                  sx={{
+                    minWidth: 260,
+                  }}
+                  size="small"
+                  onChange={(e, value) =>
+                    setInputvalue((prev) => ({
+                      ...prev,
+                      beatid: value && value.id,
+                    }))
+                  }
+                  options={beatList}
+                  getOptionLabel={(option) => `${option.beat__name}`}
+                  label={"Select beat Name"}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <CustomAutocomplete
+                  sx={{
+                    minWidth: 260,
+                  }}
+                  size="small"
+                  onChange={(e, value) =>
+                    setInputvalue((prev) => ({
+                      ...prev,
+                      email: value && value.email,
+                    }))
+                  }
+                  options={assigned}
+                  getOptionLabel={(option) => `${option.name}`}
+                  label={"Select sales person name"}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="success"
+                  onClick={handleAssigned}
+                >
+                  Submit
+                </Button>
+              </Grid>
+            </Grid>
           </Popup>
         </div>
       </div>

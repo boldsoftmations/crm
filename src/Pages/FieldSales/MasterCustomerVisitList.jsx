@@ -13,64 +13,92 @@ import {
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material/styles";
-import { useSelector } from "react-redux";
 import { MessageAlert } from "../../Components/MessageAlert";
 import { CustomLoader } from "../../Components/CustomLoader";
 import { useNotificationHandling } from "../../Components/useNotificationHandling ";
-import { CustomPagination } from "../../Components/CustomPagination";
 import CustomerServices from "../../services/CustomerService";
 import { Popup } from "../../Components/Popup";
 import CustomAutocomplete from "../../Components/CustomAutocomplete";
-import CustomTextField from "../../Components/CustomTextField";
+import MasterService from "../../services/MasterService";
+import SearchComponent from "../../Components/SearchComponent ";
 
-export const MasterCustomerVisitList = () => {
+export const MasterCustomerVisitList = ({
+  recordId,
+  getbeatCustomers,
+  setOpenPopup,
+  setRecordId,
+}) => {
   const [open, setOpen] = useState(false);
   const [companyData, setCompanyData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
-  const [assign, setAssign] = useState("");
-  const [plannedDate, setPlannedDate] = useState("");
+  const [beat, setBeat] = useState("");
+  const [pincode, setPincode] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState([]);
-  const data = useSelector((state) => state.auth);
-  const userData = data.profile;
-  const assigned = userData.active_sales_user || [];
+  const [beatData, setBeatData] = useState([]);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
 
   const getAllCompanyDetails = useCallback(async () => {
     try {
       setOpen(true);
-      const response = await CustomerServices.getAllCustomerMasterList(
-        currentPage
-      );
-      setCompanyData(response.data.results);
-      setTotalPages(Math.ceil(response.data.count / 25));
-      setOpen(false);
+      const response = await CustomerServices.getAllCustomerMasterList(pincode);
+      setCompanyData(response.data);
     } catch (error) {
       handleError(error);
       console.log("while getting company details", error);
     } finally {
       setOpen(false);
     }
-  }, [currentPage]);
+  }, [pincode]);
 
   useEffect(() => {
     getAllCompanyDetails();
   }, [getAllCompanyDetails]);
 
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
-  };
+  useEffect(() => {
+    const getAllMasterBeat = async () => {
+      try {
+        setOpen(true);
+        const response = await MasterService.getMasterBeat("all");
+        setBeatData(response.data || []);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setOpen(false);
+      }
+    };
+    if (!recordId) {
+      getAllMasterBeat();
+    }
+  }, []);
 
-  // handle selected company id
+  const allCustomerIds = useMemo(
+    () => companyData.map((comp) => comp.id),
+    [companyData]
+  );
+
+  const isAllSelected =
+    selectedCustomer.length === allCustomerIds.length &&
+    allCustomerIds.length > 0;
+  const isIndeterminate =
+    selectedCustomer.length > 0 &&
+    selectedCustomer.length < allCustomerIds.length;
+
   const handleCheckboxChange = (id) => {
     setSelectedCustomer((prev) =>
       prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
     );
   };
 
-  const Tableheaders = useMemo(() => ["CHECKBOX", "NAME", "CITY", "STATE"], []);
+  const handleSelectAll = () => {
+    if (isAllSelected || isIndeterminate) {
+      setSelectedCustomer([]);
+    } else {
+      setSelectedCustomer(allCustomerIds);
+    }
+  };
+
+  const Tableheaders = useMemo(() => ["NAME", "CITY", "STATE", "PINCODE"], []);
 
   //open modal
   const HandleOpenModal = (item) => {
@@ -78,29 +106,43 @@ export const MasterCustomerVisitList = () => {
     setModalOpen(true);
   };
 
-  //assign to sales person
+  //beat to sales person
   const updateAssigned = async (e) => {
     try {
       setOpen(true);
-      const req = {
-        customer_list: selectedCustomer,
-        visited_by: assign,
-        planned_date: plannedDate,
-      };
-      console.log(req);
-      const response = await CustomerServices.createCustomerVisitPlan(req);
-      const successMessage = response.data.message;
-      handleSuccess(successMessage);
+
+      const basePayload = { company: selectedCustomer };
+      const payload = recordId ? basePayload : { ...basePayload, beat };
+
+      const response = recordId
+        ? await CustomerServices.updateCustomerBeatPlan(recordId, payload)
+        : await CustomerServices.createCustomerBeatPlan(payload);
+
+      handleSuccess(response.data.message);
 
       setTimeout(() => {
         setModalOpen(false);
+        if (typeof setRecordId === "function") {
+          setRecordId(null);
+        }
         setSelectedCustomer([]);
-      }, 300);
+        getbeatCustomers();
+        setOpenPopup();
+      }, 500);
     } catch (error) {
-      console.log(error);
+      console.error("Error in updateAssigned:", error);
     } finally {
       setOpen(false);
     }
+  };
+
+  console.log("recordId", recordId);
+  const handleSearch = (query) => {
+    setPincode(query);
+  };
+
+  const handleReset = () => {
+    setPincode("");
   };
   return (
     <>
@@ -125,15 +167,11 @@ export const MasterCustomerVisitList = () => {
         >
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={4}>
-                {selectedCustomer.length > 0 && (
-                  <Button
-                    variant="contained"
-                    onClick={() => HandleOpenModal(selectedCustomer)}
-                  >
-                    Assign
-                  </Button>
-                )}
+              <Grid item xs={12} sm={4}>
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
+                />
               </Grid>
               <Grid item xs={12} sm={12} md={4}>
                 <h3
@@ -146,6 +184,25 @@ export const MasterCustomerVisitList = () => {
                 >
                   Company List
                 </h3>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                {!recordId && selectedCustomer.length > 0 && (
+                  <Button
+                    variant="contained"
+                    onClick={() => HandleOpenModal(selectedCustomer)}
+                  >
+                    Assign to beat
+                  </Button>
+                )}
+                {recordId && selectedCustomer.length > 0 && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={updateAssigned}
+                  >
+                    Submit
+                  </Button>
+                )}
               </Grid>
             </Grid>
           </Box>
@@ -171,6 +228,19 @@ export const MasterCustomerVisitList = () => {
             >
               <TableHead>
                 <StyledTableRow>
+                  <StyledTableCell align="center">
+                    <Checkbox
+                      checked={isAllSelected}
+                      indeterminate={isIndeterminate}
+                      onChange={handleSelectAll}
+                      sx={{
+                        color: "white",
+                        "&.Mui-checked": {
+                          color: "white",
+                        },
+                      }}
+                    />
+                  </StyledTableCell>
                   {Tableheaders.map((header, i) => (
                     <StyledTableCell key={i} align="center">
                       {header}
@@ -194,6 +264,9 @@ export const MasterCustomerVisitList = () => {
                     <StyledTableCell align="center">
                       {row.state}
                     </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.pincode}
+                    </StyledTableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>
@@ -206,52 +279,29 @@ export const MasterCustomerVisitList = () => {
               justifyContent: "center",
               // marginTop: "2em",
             }}
-          >
-            <CustomPagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              handlePageChange={handlePageChange}
-            />
-          </div>
+          ></div>
 
           <Popup
             maxWidth={"xl"}
-            title={"Assigned To"}
+            title={"Assign to Beat "}
             openPopup={modalOpen}
             setOpenPopup={setModalOpen}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <CustomAutocomplete
-                  sx={{
-                    minWidth: 260,
-                  }}
-                  size="small"
-                  onChange={(e, value) => setAssign(value.email)}
-                  options={assigned}
-                  getOptionLabel={(option) => `${option.name}`}
-                  label={"Assign To"}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <CustomTextField
-                  fullWidth
-                  type="date"
-                  size="small"
-                  label="Select plan Date"
-                  variant="outlined"
-                  value={plannedDate}
-                  onChange={(e) => setPlannedDate(e.target.value)}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  inputProps={{
-                    min: new Date().toISOString().split("T")[0], // Set minimum date to today
-                  }}
-                />
-              </Grid>
-
+              {!recordId && (
+                <Grid item xs={12}>
+                  <CustomAutocomplete
+                    sx={{
+                      minWidth: 260,
+                    }}
+                    size="small"
+                    onChange={(e, value) => setBeat(value)}
+                    options={beatData.map((option) => option.name)}
+                    getOptionLabel={(option) => `${option}`}
+                    label={"Select beat Name"}
+                  />
+                </Grid>
+              )}
               <Grid item xs={12}>
                 <Button
                   variant="contained"

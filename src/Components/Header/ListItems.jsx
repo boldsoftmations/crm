@@ -128,6 +128,10 @@ export const ListItems = ({ setOpen }) => {
             to: "/master/activity-list",
             text: "Master Activity",
           },
+          {
+            to: "/master/beat",
+            text: "Beat Master",
+          },
         ]),
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },
