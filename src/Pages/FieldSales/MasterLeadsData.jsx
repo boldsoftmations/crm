@@ -22,7 +22,12 @@ import CustomAutocomplete from "../../Components/CustomAutocomplete";
 import MasterService from "../../services/MasterService";
 import SearchComponent from "../../Components/SearchComponent ";
 
-export const MasterLeadsData = ({ getbeatCustomers, setOpenPopup }) => {
+export const MasterLeadsData = ({
+  getbeatCustomers,
+  setOpenPopup,
+  recordId,
+}) => {
+  console.log("recordId", recordId);
   const [open, setOpen] = useState(false);
   const [leadsData, setLeadsData] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -107,11 +112,13 @@ export const MasterLeadsData = ({ getbeatCustomers, setOpenPopup }) => {
   const updateAssigned = async (e) => {
     try {
       setOpen(true);
-      const req = {
-        leads: selectedLeads,
-        beat: beat,
-      };
-      const response = await CustomerServices.addLeadsintoBeatName(req);
+
+      const basePayload = { lead: selectedLeads };
+      const payload = recordId ? basePayload : { ...basePayload, beat };
+
+      const response = recordId
+        ? await CustomerServices.updateLeadsBeatPlan(recordId, payload)
+        : await CustomerServices.addLeadsintoBeatName(payload);
       const successMessage = response.data.message;
       handleSuccess(successMessage);
 
@@ -177,7 +184,7 @@ export const MasterLeadsData = ({ getbeatCustomers, setOpenPopup }) => {
                 </h3>
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
-                {selectedLeads.length > 0 && (
+                {!recordId && selectedLeads.length > 0 && (
                   <Button
                     variant="contained"
                     onClick={() => HandleOpenModal(selectedLeads)}
@@ -185,7 +192,18 @@ export const MasterLeadsData = ({ getbeatCustomers, setOpenPopup }) => {
                     Assign to beat
                   </Button>
                 )}
+
+                {recordId && selectedLeads.length > 0 && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={updateAssigned}
+                  >
+                    Submit
+                  </Button>
+                )}
               </Grid>
+              <Grid item xs={12} sm={6} md={4}></Grid>
             </Grid>
           </Box>
 

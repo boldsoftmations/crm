@@ -115,11 +115,12 @@ export const ViewBeatCustomer = () => {
   const openCustomerDataToAddInBeat = (data) => {
     if (customerType === "Customer") {
       setModalOpen2(true);
+      setRecordId(data.id);
     } else {
       setLeadModalOpen(true);
+      setRecordId(data.id);
     }
     setBeatName(data.beat);
-    setRecordId(data.id);
   };
 
   useEffect(() => {
@@ -293,12 +294,21 @@ export const ViewBeatCustomer = () => {
             openPopup={modalOpen2}
             setOpenPopup={setModalOpen2}
           >
-            <MasterCustomerVisitList
-              getbeatCustomers={getbeatCustomers}
-              setOpenPopup={setModalOpen2}
-              recordId={recordId}
-              setRecordId={setRecordId}
-            />
+            {customerType === "Customer" ? (
+              <MasterCustomerVisitList
+                getbeatCustomers={getbeatCustomers}
+                setOpenPopup={setModalOpen2}
+                recordId={recordId}
+                setRecordId={setRecordId}
+              />
+            ) : (
+              <MasterLeadsData
+                getbeatCustomers={getbeatCustomers}
+                setOpenPopup={setLeadModalOpen}
+                recordId={recordId}
+                setRecordId={setRecordId}
+              />
+            )}
           </Popup>
 
           <Popup

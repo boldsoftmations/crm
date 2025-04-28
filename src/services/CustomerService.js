@@ -61,6 +61,10 @@ const addLeadsintoBeatName = (data)=>{
 const updateCustomerBeatPlan = (id,data) => {
   return CustomAxios.post(`/api/customer/customer-beat/${id}/add_customer/`, data);
 }
+
+const updateLeadsBeatPlan = (id,data)=>{
+  return CustomAxios.post(`/api/lead/lead-beat/${id}/add_lead/`,data)
+}
 const AssignBeatToSalesPerson = (data) => {
   return CustomAxios.post("/api/field-sales/visit-plan/", data);
 };
@@ -690,6 +694,7 @@ const CustomerServices = {
   createCustomerBeatPlan,
   addLeadsintoBeatName,
   updateCustomerBeatPlan,
+  updateLeadsBeatPlan,
   AssignBeatToSalesPerson,
   getFieldsSalesPersonVisitPlan,
   getCustomerVisitDataById,

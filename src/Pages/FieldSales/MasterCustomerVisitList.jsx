@@ -136,7 +136,6 @@ export const MasterCustomerVisitList = ({
     }
   };
 
-  console.log("recordId", recordId);
   const handleSearch = (query) => {
     setPincode(query);
   };
