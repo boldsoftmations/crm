@@ -34,7 +34,8 @@ export const CustomerActivityCreate = (props) => {
       const data = {
         company:
           (selectedCustomers && selectedCustomers.name) ||
-          selectedCustomers.company,
+          selectedCustomers.company ||
+          selectedCustomers.company_name,
         notes: followUp.notes,
         next_followup_date: followUp.next_followup_date,
         status: followUp.status,

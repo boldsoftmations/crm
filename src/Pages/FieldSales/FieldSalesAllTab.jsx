@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { CustomTabs } from "../../Components/CustomTabs";
 import { CompanyDetails } from "./CompanyVisitList";
 import { ViewBeatCustomer } from "./BeatMaster/ViewBeatCustomer";
+import { LeadVisitPlan } from "./LeadVisitList";
 export const FieldSalesAllTabView = () => {
   const userData = useSelector((state) => state.auth.profile);
 
@@ -20,6 +21,11 @@ export const FieldSalesAllTabView = () => {
       label: "Customer Visit List",
       roles: ["Director", "Sales Manager"],
       component: <CompanyDetails />,
+    },
+    {
+      label: "Lead Visit List",
+      roles: ["Director", "Sales Manager"],
+      component: <LeadVisitPlan />,
     },
   ];
 

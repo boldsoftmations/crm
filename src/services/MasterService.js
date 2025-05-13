@@ -129,23 +129,23 @@ const getMasterBeat = (page,search) => {
   return CustomAxios.get(`/api/master/beat/?${params.toString()}`);
 };
 
-const getBeatCustomers = (page,filter)=>{
+const getBeatCustomers = (page,search)=>{
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
   }
-  if (filter) {
-    params.append("filter", filter);
+  if (search) {
+    params.append("search", search);
   }
   return CustomAxios.get(`/api/customer/customer-beat/?${params.toString()}`);
 }
-const getBeatLeads = (page,filter)=>{
+const getBeatLeads = (page,search)=>{
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
   }
-  if (filter) {
-    params.append("filter", filter);
+  if (search) {
+    params.append("filter", search);
   }
   return CustomAxios.get(`/api/lead/lead-beat/?${params.toString()}`);
 }
@@ -160,6 +160,10 @@ const removeLeadsBeatList = (id,data)=>{
 
 const getBeatlist= ()=>{
   return CustomAxios.get("/api/customer/customer-beat/beat_list/")
+}
+
+const getLeadBeatlist= ()=>{
+  return CustomAxios.get("/api/lead/lead-beat/beat_list/")
 }
 
 const EmployeesAttendance = (page,search)=>{
@@ -193,6 +197,7 @@ const MasterService = {
   removeCustomterBeatList,
   removeLeadsBeatList,
   getBeatlist,
+  getLeadBeatlist,
   EmployeesAttendance
 };
 export default MasterService;

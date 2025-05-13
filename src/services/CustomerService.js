@@ -69,6 +69,10 @@ const AssignBeatToSalesPerson = (data) => {
   return CustomAxios.post("/api/field-sales/visit-plan/", data);
 };
 
+const AssignBeatLeadToSalesPerson = (data) => {
+  return CustomAxios.post("/api/field-sales/lead-visit-plan/", data);
+};
+
 const getIncompleteKycCustomerData = (page, assignToFilter, searchValue) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
@@ -577,18 +581,31 @@ const getCustomerStatus = () => {
 
 //Api for fields sales person and customer
 
-const getFieldsSalesPersonVisitPlan = (page, search,visited_by__name,is_completed) => {
+const getFieldsSalesPersonVisitPlan = (page, search,visited_by__name,is_completed=true) => {
   const params = new URLSearchParams();
   if(page) params.append("page", page);
   if (search)  params.append("search", search);
     if(visited_by__name) params.append("visited_by__name",visited_by__name)
-  if(is_completed) params.append("is_completed",is_completed)
-  return CustomAxios.get(`/api/field-sales/visit-plan/?${params.toString()}`);
+  return CustomAxios.get(`/api/field-sales/visit-plan/?is_completed=${is_completed}&${params.toString()}`);
+};
+
+
+const getFieldsSalesPersonLeadVisitPlan = (page, search,visited_by__name,is_completed=true) => {
+  const params = new URLSearchParams();
+  if(page) params.append("page", page);
+  if (search)  params.append("search", search);
+  if(visited_by__name) params.append("visited_by__name",visited_by__name)
+  return CustomAxios.get(`/api/field-sales/lead-visit-plan/?is_completed=${is_completed}&${params.toString()}`);
 };
 
 const getCustomerVisitDataById = (id) => {
   return CustomAxios.get(`/api/field-sales/visit-logs/${id}/`);
 };
+
+const getLeadVisitDataById = (id) => {
+  return CustomAxios.get(`/api/field-sales/lead-visit-logs/${id}/`);
+};
+
 
 const createCustomerSRF = (data) => {
   return CustomAxios.post("/api/srf/srf/", data);
@@ -707,8 +724,11 @@ const CustomerServices = {
   updateCustomerBeatPlan,
   updateLeadsBeatPlan,
   AssignBeatToSalesPerson,
+  AssignBeatLeadToSalesPerson,
   getFieldsSalesPersonVisitPlan,
+  getFieldsSalesPersonLeadVisitPlan,
   getCustomerVisitDataById,
+  getLeadVisitDataById,
   createCustomerSRF,
   updateCustomerSRfStatus,
   updateSRFProduct,

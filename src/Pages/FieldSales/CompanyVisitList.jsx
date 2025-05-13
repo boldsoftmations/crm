@@ -41,9 +41,18 @@ export const CompanyDetails = () => {
   const data = useSelector((state) => state.auth);
   const userData = data.profile;
   const assigned = userData.active_sales_user || [];
+
+  const visitedPersonOptions = useMemo(
+    () =>
+      assigned
+        .filter((option) => option.groups__name === "Field Sales Executive")
+        .map((option) => option.name),
+    [assigned]
+  );
+
   const [query, setQuery] = useState({
     VisitedPerson: "",
-    isCompleted: false,
+    isCompleted: null,
   });
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
@@ -201,7 +210,7 @@ export const CompanyDetails = () => {
                   onChange={(event, value) =>
                     handleChange(value && value, "VisitedPerson")
                   }
-                  options={assigned.map((option) => option.name)}
+                  options={visitedPersonOptions}
                   getOptionLabel={(option) => `${option}`}
                   label="Filter Sales Person"
                 />
