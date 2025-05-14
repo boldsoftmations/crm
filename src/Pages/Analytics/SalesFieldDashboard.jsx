@@ -9,6 +9,7 @@ import {
   InputLabel,
   MenuItem,
   Button,
+  Divider,
 } from "@mui/material";
 import CustomAutocomplete from "../../Components/CustomAutocomplete";
 import DashboardService from "../../services/DashboardService";
@@ -16,6 +17,7 @@ import { useSelector } from "react-redux";
 import CustomerMap from "./DistanceCoveredMap";
 import CustomTextField from "../../Components/CustomTextField";
 import { CustomLoader } from "../../Components/CustomLoader";
+import EmployeesCurrentLocation from "./EmployeesCurrentLocation";
 
 const DashboardCard = ({ title, value, color }) => (
   <Paper
@@ -39,6 +41,7 @@ export const SalesFieldDashboard = () => {
   const [dashboardData, setDashboardData] = useState({});
   const [tab, setTab] = useState("customer");
   const [customerVisitMapData, setCustomerVisitMapData] = useState([]);
+  const [employeesCurrentLocation, setEmployeesCurrentLocation] = useState([]);
   const [open, setOpen] = useState(false);
   const [filterPerson, setFilterPerson] = useState("");
   const data = useSelector((state) => state.auth);
@@ -58,7 +61,6 @@ export const SalesFieldDashboard = () => {
       ),
     [assigned]
   );
-
   const fetchDashboardData = async () => {
     try {
       setOpen(true);
@@ -106,6 +108,18 @@ export const SalesFieldDashboard = () => {
     }
   };
 
+  const getEmployeesCurrentLocation = async () => {
+    try {
+      setOpen(true);
+      const res = await DashboardService.getEmployeesCurrentLocation();
+      setEmployeesCurrentLocation(res.data);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setOpen(false);
+    }
+  };
+
   useEffect(() => {
     if (filterPerson) {
       fetchDashboardData();
@@ -118,10 +132,12 @@ export const SalesFieldDashboard = () => {
     }
   }, [filterPerson, visitDate, tab]);
 
+  useEffect(() => {
+    getEmployeesCurrentLocation();
+  }, []);
   const handleStartDateChange = (event) => {
     const date = new Date(event.target.value);
     setStartDate(date);
-    setVisitDate(date);
     setEndDate(new Date());
   };
 
@@ -313,7 +329,7 @@ export const SalesFieldDashboard = () => {
               color="#D91656"
             />
           </Grid>
-
+          <Divider sx={{ my: 2 }} />
           <Grid item xs={12} sm={12} md={12}>
             <FormControl style={{ marginBottom: "1rem" }}>
               <CustomTextField
@@ -330,6 +346,23 @@ export const SalesFieldDashboard = () => {
             <CustomerMap
               customerVisitMapData={customerVisitMapData}
             ></CustomerMap>
+          </Grid>
+          <Divider sx={{ my: 2 }} />
+          <Grid item xs={12} sm={12} md={12}>
+            <Box marginBottom={2}>
+              <Typography
+                style={{
+                  color: "#833AB4",
+                  fontSize: "1.2rem",
+                  fontWeight: "bold",
+                }}
+              >
+                Employees Current Location
+              </Typography>
+            </Box>
+            <EmployeesCurrentLocation
+              employeesCurrentLocation={employeesCurrentLocation}
+            />
           </Grid>
         </Grid>
       </Box>
