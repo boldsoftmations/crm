@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   styled,
   TableCell,
@@ -18,12 +18,16 @@ import { useNotificationHandling } from "./../../../Components/useNotificationHa
 import { CustomPagination } from "../../../Components/CustomPagination";
 import { useSelector } from "react-redux";
 import MasterService from "../../../services/MasterService";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import CustomAxios from "../../../services/api";
 
 export const ViewEmployeesAttendance = () => {
   const [open, setOpen] = useState(false);
   const [employeesAttendanceList, setEmployeesAttendanceList] = useState([]);
-  //   const [filterValue, setFilterValue] = useState("");
-  //   const [filterByDays, setFilterByDays] = useState("last 30 days");
+  const [designations, setDesignations] = useState([]);
+  const [filterEmployee, setFilterEmployee] = useState("");
+  const [filterByDesignation, setFilterByDesignation] = useState("");
+  // const [filterByDays, setFilterByDays] = useState("last 30 days");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   //   const [startDate, setStartDate] = useState(null);
@@ -31,18 +35,11 @@ export const ViewEmployeesAttendance = () => {
   //   const minDate = new Date().toISOString().split("T")[0];
   //   const maxDate = new Date("2030-12-31").toISOString().split("T")[0];
   const userData = useSelector((state) => state.auth.profile);
-  const assigned = userData.active_sales_user || [];
+  const employeeList = useMemo(() => {
+    return userData.active_sales_user || [];
+  }, []);
   //   const csvLinkRef = useRef(null);
   //   const [exportData, setExportData] = useState([]);
-  //   const roles = [
-  //     "Business Development Executive",
-  //     "Business Development Manager",
-  //     "Sales Executive",
-  //   ];
-
-  //   const filterBDEPerson = assigned.filter((group) =>
-  //     roles.includes(group.groups__name)
-  //   );
 
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
@@ -105,7 +102,11 @@ export const ViewEmployeesAttendance = () => {
       setOpen(true);
       //   const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
       //   const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
-      const response = await MasterService.EmployeesAttendance(currentPage);
+      const response = await MasterService.EmployeesAttendance(
+        currentPage,
+        filterEmployee,
+        filterByDesignation
+      );
       setEmployeesAttendanceList(response.data.results);
       const total = response.data.count;
       setTotalPages(Math.ceil(total / 25));
@@ -116,19 +117,37 @@ export const ViewEmployeesAttendance = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchDesignations = async () => {
+      try {
+        const response = await CustomAxios.get("/api/user/groups/");
+        setDesignations(response.data);
+      } catch (error) {
+        console.error("Error fetching designations:", error);
+      }
+    };
+
+    fetchDesignations();
+  }, []);
+
   // Trigger API call when filters or filterValue changes
   useEffect(() => {
     getEmployeesAttendance();
-  }, [currentPage]);
+  }, [currentPage, filterEmployee, filterByDesignation]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
-
-  //   const handleFilterPerson = (event, value) => {
-  //     setFilterValue(value);
-  //     setCurrentPage(1);
-  //   };
+  const handleFilterPerson = (value, type) => {
+    const FilterValue = value;
+    if (type === "employee") {
+      setFilterEmployee(FilterValue);
+      setCurrentPage(1);
+    } else if (type === "designation") {
+      setFilterByDesignation(FilterValue);
+      setCurrentPage(1);
+    }
+  };
 
   //   const handleFilterDays = (event, value) => {
   //     if (value === "Custom Date") {
@@ -174,85 +193,54 @@ export const ViewEmployeesAttendance = () => {
         <Paper sx={{ p: 2, m: 3, display: "flex", flexDirection: "column" }}>
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid container spacing={2} alignItems="center">
-              {/* <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={4}>
                 <Box display="flex" gap="2rem">
                   <CustomAutocomplete
                     fullWidth
                     size="small"
                     disablePortal
                     id="combo-box-description"
-                    onChange={handleFilterPerson}
-                    value={filterValue}
-                    options={filterBDEPerson.map((option) => option.name)}
+                    onChange={(e, value) =>
+                      handleFilterPerson(value, "employee")
+                    }
+                    options={employeeList.map((option) => option.name)}
                     getOptionLabel={(option) => option}
-                    label="Filter By Sales Person"
+                    label="Filter By Employee"
                   />
                 </Box>
-              </Grid> */}
-              {/* <Grid item xs={12} sm={4}>
-                <Box display="flex" gap="2rem">
-                  <CustomAutocomplete
-                    fullWidth
-                    size="small"
-                    disablePortal
-                    id="combo-box-description"
-                    value={filterByDays}
-                    onChange={handleFilterDays}
-                    options={[
-                      "last 30 days",
-                      "last 60 days",
-                      "last 90 days",
-                      "Custom Date",
-                    ]}
-                    getOptionLabel={(option) => option}
-                    label="Filter by days"
-                  />
-                </Box>
-              </Grid> */}
-              {/* <Grid item xs={12} sm={4}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  className="mx-3"
-                  onClick={handleDownload}
-                >
-                  DownLoad CSV
-                </Button>
-
-                {exportData.length > 0 && (
-                  <CSVLink
-                    data={exportData}
-                    headers={headers}
-                    ref={csvLinkRef}
-                    filename="New Customer.csv"
-                    target="_blank"
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Box display="flex" justifyContent="center" marginBottom="10px">
+                  <h3
                     style={{
-                      textDecoration: "none",
-                      outline: "none",
-                      visibility: "hidden",
+                      fontSize: "24px",
+                      color: "rgb(34, 34, 34)",
+                      fontWeight: 800,
+                      textAlign: "center",
                     }}
+                  >
+                    Employees Attendance
+                  </h3>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Box display="flex" gap="2rem">
+                  <CustomAutocomplete
+                    fullWidth
+                    size="small"
+                    disablePortal
+                    id="combo-box-description"
+                    onChange={(e, value) =>
+                      handleFilterPerson(value, "designation")
+                    }
+                    options={designations.map((option) => option.name)}
+                    getOptionLabel={(option) => option}
+                    label="Filter By Designation"
                   />
-                )}
-              </Grid> */}
+                </Box>
+              </Grid>
             </Grid>
           </Box>
-          <Grid container spacing={2} alignItems="center" mb={3}>
-            <Grid item xs={12} sm={4}></Grid>
-            <Grid item xs={12} sm={4}>
-              <Box display="flex" justifyContent="center" marginBottom="10px">
-                <h3
-                  style={{
-                    fontSize: "24px",
-                    color: "rgb(34, 34, 34)",
-                    fontWeight: 800,
-                    textAlign: "center",
-                  }}
-                >
-                  Employees Attendance
-                </h3>
-              </Box>
-            </Grid>
-          </Grid>
 
           <TableContainer
             sx={{

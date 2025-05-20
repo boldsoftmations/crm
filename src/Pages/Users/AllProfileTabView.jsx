@@ -13,6 +13,7 @@ export const AllProfileTabView = () => {
     groups.some((group) => userData.groups.includes(group));
 
   const allTabs = isInGroups("Director", "HR");
+  const managerTabs = isInGroups("Sales Manager");
 
   const [activeTab, setActiveTab] = useState(allTabs ? 0 : 4);
 
@@ -35,7 +36,7 @@ export const AllProfileTabView = () => {
     },
     {
       label: "Employees Attendance",
-      visible: allTabs,
+      visible: allTabs || managerTabs,
       index: 3,
     },
   ];
