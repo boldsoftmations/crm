@@ -611,6 +611,10 @@ const createCustomerSRF = (data) => {
   return CustomAxios.post("/api/srf/srf/", data);
 };
 
+const getCustomerAddressType=(customer_name)=>{
+  return CustomAxios.get(`/api/srf/customer-address/?customer=${customer_name}`)
+}
+
 const updateCustomerSRfStatus = (id,data)=>{
   return CustomAxios.patch(`/api/srf/srf/${id}/`,data)
 }
@@ -618,7 +622,7 @@ const updateCustomerSRfStatus = (id,data)=>{
 const updateSRFProduct=(id,data)=>{
   return CustomAxios.patch(`/api/srf/product/${id}/`,data)
 }
-const getCustomerSRF = (page,search) => {
+const getCustomerSRF = (page,search,status,start_date,end_date) => {
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
@@ -626,6 +630,16 @@ const getCustomerSRF = (page,search) => {
 
   if (search) {
     params.append("search", search);
+  }
+
+  if (status) {
+    params.append("status", status);
+  }
+  if(start_date){
+    params.append("start_date",start_date)
+  }
+  if(end_date){
+    params.append("end_date",end_date)
   }
   return CustomAxios.get(`/api/srf/srf/?${params.toString()}`);
 };
@@ -734,7 +748,8 @@ const CustomerServices = {
   updateSRFProduct,
   getCustomerSRF,
   getNewCustomers,
-  getLeadsMasterListByPincode
+  getLeadsMasterListByPincode,
+  getCustomerAddressType
 };
 
 export default CustomerServices;

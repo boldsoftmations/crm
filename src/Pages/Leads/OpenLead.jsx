@@ -580,7 +580,7 @@ export const OpenLead = () => {
       <Popup
         maxWidth={"lg"}
         title={"Create Potential"}
-        openPopup={openModalPotential} 
+        openPopup={openModalPotential}
         setOpenPopup={setOpenModalPotential}
       >
         <LeadPotentialCreate
@@ -648,7 +648,7 @@ export const OpenLead = () => {
         setOpenPopup={setOpenSRF}
       >
         <CreateSRF
-          recordForEdit={leadsByID}
+          customerData={leadsByID}
           type="lead"
           setOpenModal={setOpenSRF}
         />

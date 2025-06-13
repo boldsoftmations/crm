@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Box,
   Grid,
@@ -31,21 +31,36 @@ import CustomTextField from "../../../Components/CustomTextField";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import FileSaver from "file-saver";
+import CustomDate from "../../../Components/CustomDate";
+import { CSVLink } from "react-csv";
 export const ViewSRF = () => {
   const [open, setOpen] = useState(false);
   const [srfData, setSrfData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [openCustomDate, setOpenCustomDate] = useState(false);
+  const [filterByDays, setFilterByDays] = useState("Today");
+  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState(null);
+  const minDate = new Date().toISOString().split("T")[0];
+  const maxDate = new Date("2030-12-31").toISOString().split("T")[0];
+  const [exportData, setExportData] = useState([]);
+  const [filterByStatus, setFilterByStatus] = useState("");
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-
+  const csvLinkRef = useRef(null);
   const getCustomerSRF = useCallback(async () => {
     try {
       setOpen(true);
+      const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
+      const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
       const response = await CustomerServices.getCustomerSRF(
         currentPage,
-        searchQuery
+        searchQuery,
+        filterByStatus,
+        StartDate,
+        EndDate
       );
       setSrfData(response.data.results);
       setTotalPages(Math.ceil(response.data.count / 25));
@@ -54,7 +69,74 @@ export const ViewSRF = () => {
     } finally {
       setOpen(false);
     }
-  }, [currentPage, searchQuery]); // Ensure dependencies are correctly listed
+  }, [
+    currentPage,
+    searchQuery,
+    startDate,
+    endDate,
+    filterByDays,
+    filterByStatus,
+  ]); // Ensure dependencies are correctly listed
+
+  const handleExport = async () => {
+    try {
+      setOpen(true);
+      const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
+      const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
+      const response = await CustomerServices.getCustomerSRF(
+        "all",
+        searchQuery,
+        filterByStatus,
+        StartDate,
+        EndDate
+      );
+
+      const data = [];
+
+      response.data.forEach((row) => {
+        row.srf_products.forEach((product, index) => {
+          data.push({
+            date: index === 0 ? row.creation_date : "",
+            srf_no: index === 0 ? row.srf_no : "",
+            status: index === 0 ? row.status : "",
+            unit: index === 0 ? row.unit : "",
+            customer: index === 0 ? row.customer : "",
+            product: product.product,
+            qty: product.quantity,
+          });
+        });
+      });
+
+      return data;
+    } catch (error) {
+      handleError(error);
+      console.log("while downloading Price list", error);
+    } finally {
+      setOpen(false);
+    }
+  };
+
+  const handleDownload = async () => {
+    try {
+      const data = await handleExport();
+      setExportData(data);
+      setTimeout(() => {
+        csvLinkRef.current.link.click();
+      });
+    } catch (error) {
+      console.log("CSVLink Download error", error);
+    }
+  };
+
+  const headers = [
+    { label: "Date", key: "date" },
+    { label: "SRF No", key: "srf_no" },
+    { label: "Status", key: "status" },
+    { label: "Unit", key: "unit" },
+    { label: "Customer Name", key: "customer" },
+    { label: "Product", key: "product" },
+    { label: "Quantity", key: "qty" },
+  ];
 
   useEffect(() => {
     getCustomerSRF();
@@ -74,6 +156,39 @@ export const ViewSRF = () => {
     setCurrentPage(1); // Reset to first page with no search query
   };
 
+  // date filter
+  const handleFilterDays = (event, value) => {
+    if (value === "Custom Date") {
+      setOpenCustomDate(true);
+      setStartDate(new Date());
+      setEndDate(new Date());
+      setFilterByDays("");
+      setCurrentPage(1);
+    } else {
+      setFilterByDays(value);
+      setCurrentPage(1);
+      setStartDate(null);
+      setEndDate(null);
+    }
+  };
+  const handleEndDateChange = (event) => {
+    const date = new Date(event.target.value);
+    setEndDate(date);
+  };
+  const getResetDate = () => {
+    setStartDate(new Date());
+    setEndDate(new Date());
+  };
+  const handleStartDateChange = (event) => {
+    const date = new Date(event.target.value);
+    setStartDate(date);
+    setEndDate(new Date());
+  };
+  //filter by status
+  const handleFilterByStatus = (event, value) => {
+    setFilterByStatus(value);
+    setCurrentPage(1);
+  };
   return (
     <>
       <MessageAlert
@@ -92,29 +207,76 @@ export const ViewSRF = () => {
             }}
           >
             <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={5} display="flex" gap={2}>
                 <SearchComponent
                   onSearch={handleSearch}
                   onReset={handleReset}
                 />
+                <CustomAutocomplete
+                  size="small"
+                  sx={{ width: "100%" }}
+                  disablePortal
+                  id="combo-box-description"
+                  value={filterByStatus}
+                  onChange={handleFilterByStatus}
+                  options={["Pending", "Dispatched"]}
+                  getOptionLabel={(option) => option}
+                  label="Filter By Date"
+                />
               </Grid>
               {/* Title Text centered */}
-              <Grid
-                item
-                xs={12}
-                md={4}
-                sx={{ textAlign: { xs: "center", md: "end" } }}
-              >
+              <Grid item xs={12} md={3} sx={{ textAlign: "center" }}>
                 <h3
                   style={{
                     margin: 0,
-                    fontSize: "24px",
+                    fontSize: "20px",
                     color: "rgb(34, 34, 34)",
-                    fontWeight: 800,
+                    fontWeight: 700,
                   }}
                 >
                   Customer Sample Request
                 </h3>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Box display="flex" gap="1rem">
+                  <CustomAutocomplete
+                    size="small"
+                    sx={{ width: "100%" }}
+                    disablePortal
+                    id="combo-box-description"
+                    value={filterByDays}
+                    onChange={handleFilterDays}
+                    options={["Today", "Custom Date"]}
+                    getOptionLabel={(option) => option}
+                    label="Filter By Date"
+                  />
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    size="small"
+                    onClick={handleDownload}
+                    style={{
+                      textAlign: "end",
+                    }}
+                  >
+                    DownLoad
+                  </Button>
+
+                  {exportData.length > 0 && (
+                    <CSVLink
+                      data={exportData}
+                      headers={headers}
+                      ref={csvLinkRef}
+                      filename="SRF_Product.csv"
+                      target="_blank"
+                      style={{
+                        textDecoration: "none",
+                        outline: "none",
+                        visibility: "hidden",
+                      }}
+                    />
+                  )}
+                </Box>
               </Grid>
             </Grid>
           </Box>
@@ -174,6 +336,21 @@ export const ViewSRF = () => {
             handlePageChange={handlePageChange}
           />
         </Paper>
+        <Popup
+          maxWidth="md"
+          setOpenPopup={setOpenCustomDate}
+          openPopup={openCustomDate}
+        >
+          <CustomDate
+            startDate={startDate}
+            endDate={endDate}
+            minDate={minDate}
+            maxDate={maxDate}
+            handleStartDateChange={handleStartDateChange}
+            handleEndDateChange={handleEndDateChange}
+            resetDate={getResetDate}
+          />
+        </Popup>
       </Grid>
     </>
   );
@@ -228,7 +405,7 @@ function Row({ row, getCustomerSRF, handleError, handleSuccess }) {
       align: "center",
     });
 
-    const { customer, customer_details, contact_details } = data;
+    const { customer, address, contact_details } = data;
     const startY = 40;
     const leftX = 14;
     const rightX = 150; // Push contact details further right
@@ -241,17 +418,17 @@ function Row({ row, getCustomerSRF, handleError, handleSuccess }) {
     doc.setFont("helvetica", "normal");
 
     const wrapAddress = doc.splitTextToSize(
-      `Address: ${customer_details.address}`,
+      `Address: ${address.address}`,
       120 // Wider wrap area
     );
 
     const customerLines = [
       `Name: ${customer}`,
       ...wrapAddress,
-      `City: ${customer_details.city}`,
-      `State: ${customer_details.state}`,
-      `Country: ${customer_details.country}`,
-      `Pincode: ${customer_details.pincode}`,
+      `City: ${address.city}`,
+      `State: ${address.state}`,
+      `Country: ${address.country}`,
+      `Pincode: ${address.pincode}`,
     ];
 
     customerLines.forEach((line, i) => {
