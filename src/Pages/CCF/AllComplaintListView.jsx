@@ -13,7 +13,6 @@ import {
   Button,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import SearchComponent from "../../Components/SearchComponent ";
 import { MessageAlert } from "../../Components/MessageAlert";
 import { CustomLoader } from "../../Components/CustomLoader";
 import { useNotificationHandling } from "../../Components/useNotificationHandling ";
