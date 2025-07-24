@@ -33,6 +33,11 @@ import StickyNote2Icon from "@mui/icons-material/StickyNote2";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 export const ListItems = ({ setOpen }) => {
   const { profile: userData } = useSelector((state) => state.auth);
+
+  // Function to check if the user is in a specific group
+  const isInGroups = (...groups) =>
+    groups.some((g) => userData.groups.includes(g));
+
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
@@ -100,7 +105,7 @@ export const ListItems = ({ setOpen }) => {
   const menuItems = [
     // Director menus
     {
-      condition: userData.groups.includes("Director"),
+      condition: isInGroups("Director"),
       items: [
         renderListItem("/user/report", <AssessmentIcon />, "Report"),
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
@@ -184,7 +189,7 @@ export const ListItems = ({ setOpen }) => {
     },
     // Hr menus
     {
-      condition: userData.groups.includes("HR"),
+      condition: isInGroups("HR"),
       items: [
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
@@ -196,7 +201,7 @@ export const ListItems = ({ setOpen }) => {
 
     //menus for Hr Recruitment
     {
-      condition: userData.groups.includes("HR Recruiter"),
+      condition: isInGroups("HR Recruiter"),
       items: [
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/hr-model/hr-master", text: "HR Master" },
@@ -208,11 +213,12 @@ export const ListItems = ({ setOpen }) => {
 
     // Store and Production menus
     {
-      condition:
-        userData.groups.includes("Stores") ||
-        userData.groups.includes("Production") ||
-        userData.groups.includes("Stores Delhi") ||
-        userData.groups.includes("Production Delhi"),
+      condition: isInGroups(
+        "Stores",
+        "Production",
+        "Stores Delhi",
+        "Production Delhi"
+      ),
       items: [
         renderSubmenu("master", <BusinessIcon />, "Master", [
           {
@@ -245,9 +251,10 @@ export const ListItems = ({ setOpen }) => {
 
     //Factory Menus
     {
-      condition:
-        userData.groups.includes("Factory-Delhi-OrderBook") ||
-        userData.groups.includes("Factory-Mumbai-OrderBook"),
+      condition: isInGroups(
+        "Factory-Delhi-Dispatch",
+        "Factory-Mumbai-Dispatch"
+      ),
       items: [
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
@@ -259,7 +266,7 @@ export const ListItems = ({ setOpen }) => {
 
     //QA menus
     {
-      condition: userData.groups.includes("QA"),
+      condition: isInGroups("QA"),
       items: [
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderListItem("/customer/srf", <StickyNote2Icon />, "SRF"),
@@ -281,9 +288,10 @@ export const ListItems = ({ setOpen }) => {
     //Factory Menus
 
     {
-      condition:
-        userData.groups.includes("Factory-Mumbai-Dispatch") ||
-        userData.groups.includes("Factory-Delhi-Dispatch"),
+      condition: isInGroups(
+        "Factory-Delhi-Dispatch",
+        "Factory-Mumbai-Dispatch"
+      ),
       items: [
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
@@ -293,10 +301,10 @@ export const ListItems = ({ setOpen }) => {
         renderListItem("/invoice/orderbook-tab", <ReceiptIcon />, "Order Book"),
       ],
     },
-    // Service Menus
+    // customer Service Menus
 
     {
-      condition: userData.groups.includes("Customer Service"),
+      condition: isInGroups("Customer Service"),
       items: [
         renderSubmenu("master", <BusinessIcon />, "Master", [
           {
@@ -336,7 +344,7 @@ export const ListItems = ({ setOpen }) => {
     // Purchase Menus
 
     {
-      condition: userData.groups.includes("Purchase"),
+      condition: isInGroups("Purchase"),
       items: [
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
@@ -365,7 +373,7 @@ export const ListItems = ({ setOpen }) => {
     },
     // Accounts Menus
     {
-      condition: userData.groups.includes("Accounts"),
+      condition: isInGroups("Accounts"),
       items: [
         renderListItem("/user/report", <AssessmentIcon />, "Report"),
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
@@ -426,7 +434,7 @@ export const ListItems = ({ setOpen }) => {
     // Accounts Executive Menus
 
     {
-      condition: userData.groups.includes("Accounts Executive"),
+      condition: isInGroups("Accounts Executive"),
       items: [
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("master", <BusinessIcon />, "Master", [
@@ -473,7 +481,7 @@ export const ListItems = ({ setOpen }) => {
     },
     // Accounts Billing Department Menus
     {
-      condition: userData.groups.includes("Accounts Billing Department"),
+      condition: isInGroups("Accounts Billing Department"),
       items: [
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
@@ -554,9 +562,10 @@ export const ListItems = ({ setOpen }) => {
 
     //Business Development Manager Menus and Excutive Menus
     {
-      condition:
-        userData.groups.includes("Business Development Manager") ||
-        userData.groups.includes("Business Development Executive"),
+      condition: isInGroups(
+        "Business Development Manager",
+        "Business Development Executive"
+      ),
       items: [
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("master", <BusinessIcon />, "Master", [
@@ -581,7 +590,7 @@ export const ListItems = ({ setOpen }) => {
     },
     //Customer Relationship Manager
     {
-      condition: userData.groups.includes("Customer Relationship Manager"),
+      condition: isInGroups("Customer Relationship Manager"),
       items: [
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("master", <BusinessIcon />, "Master", [
@@ -604,7 +613,7 @@ export const ListItems = ({ setOpen }) => {
     },
     //Customer Relationship Executive
     {
-      condition: userData.groups.includes("Customer Relationship Executive"),
+      condition: isInGroups("Customer Relationship Executive"),
       items: [
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("master", <BusinessIcon />, "Master", [
@@ -627,7 +636,7 @@ export const ListItems = ({ setOpen }) => {
     },
     //Sales Deputy Manager"
     {
-      condition: userData.groups.includes("Sales Deputy Manager"),
+      condition: isInGroups("Sales Deputy Manager"),
       items: [
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
@@ -649,7 +658,7 @@ export const ListItems = ({ setOpen }) => {
     },
     //Sales Manager withouth Leads
     {
-      condition: userData.groups.includes("Sales Manager withouth Leads"),
+      condition: isInGroups("Sales Manager withouth Leads"),
       items: [
         renderListItem("/user/report", <AssessmentIcon />, "Report"),
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
@@ -697,7 +706,7 @@ export const ListItems = ({ setOpen }) => {
     },
     //Sales Executive
     {
-      condition: userData.groups.includes("Sales Executive"),
+      condition: isInGroups("Sales Executive"),
       items: [
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("master", <BusinessIcon />, "Master", [
@@ -721,7 +730,7 @@ export const ListItems = ({ setOpen }) => {
     },
     //Digital marketing menus
     {
-      condition: userData.groups.includes("Digital Marketing"),
+      condition: isInGroups("Digital Marketing"),
       items: [
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
