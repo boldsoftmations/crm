@@ -13,10 +13,12 @@ export const CreateWareHouseDetails = (props) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState([]);
   const [selectedcontact, setSelectedContact] = useState("");
+  const [validCheck, setValidCheck] = useState(false);
   const data = useSelector((state) => state.auth);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    setValidCheck(false);
     setInputValue({ ...inputValue, [name]: value });
   };
   const [alertmsg, setAlertMsg] = useState({
@@ -31,6 +33,20 @@ export const CreateWareHouseDetails = (props) => {
     try {
       setOpen(true);
       const PINCODE = inputValue.pincode;
+      if (!PINCODE.trim()) {
+        setValidCheck(true);
+        setInputValue({
+          ...inputValue,
+          state: "",
+          city: "",
+        });
+        setAlertMsg({
+          message: "Pin code is empty",
+          severity: "warning",
+          open: true,
+        });
+        return;
+      }
       const response = await MasterService.getCountryDataByPincode(
         "India",
         PINCODE
@@ -53,6 +69,7 @@ export const CreateWareHouseDetails = (props) => {
           severity: "success",
           open: true,
         });
+
         setInputValue({
           ...inputValue,
           state: response.data[0].state,
@@ -146,6 +163,7 @@ export const CreateWareHouseDetails = (props) => {
               onClick={validatePinCode}
               variant="contained"
               sx={{ marginLeft: "1rem" }}
+              disabled={validCheck}
             >
               Validate
             </Button>
