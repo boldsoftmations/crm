@@ -27,7 +27,7 @@ export const CustomerPotentialCreate = ({
     const fetchProduct = async () => {
       try {
         setOpen(true);
-        const res = await ProductService.getAllProduct();
+        const res = await ProductService.getSampleProduct();
         setProduct(res.data);
       } catch (err) {
         console.error("error potential", err);
