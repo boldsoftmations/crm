@@ -114,6 +114,32 @@ const createMasterActivityOption = (data) => {
   return CustomAxios.post(`/api/master/model-option/`, data);
 };
 
+const getMasterActivityOptions = (model_master__name) => {
+  return CustomAxios.get(
+    `/api/master/model-option/?page=all&model_master__name=${model_master__name}`
+  );
+};
+
+const getLeadSummaryDetails = (page,search) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (search) {
+    params.append("search", search);
+  }
+  return CustomAxios.get(
+    `/api/lead/list-references`
+  );
+};
+
+const createLeadSummary = (data) => {
+ 
+  return CustomAxios.post(
+    `/api/lead/list-references/`,data
+  );
+};
+
 const createMasterBeat = (data) => {
   return CustomAxios.post(`/api/master/beat/`, data);
 };
@@ -128,6 +154,7 @@ const getMasterBeat = (page,search) => {
   }
   return CustomAxios.get(`/api/master/beat/?${params.toString()}`);
 };
+
 
 const getBeatCustomers = (page,search)=>{
   const params = new URLSearchParams();
@@ -174,7 +201,27 @@ const EmployeesAttendance = (page,user__name,user__groups__name)=>{
   return CustomAxios.get(`/api/user/attendance/?${params.toString()}`);
   
 }
+
+const getEmployeesLeaveForm = (page,status)=>{
+   const params = new URLSearchParams();
+  if (page)  params.append("page", page);
+  if(status) params.append("status", status);
+  return CustomAxios.get(`/api/user/leave/?${params.toString()}`);
+}
+
+
+const createLeaveApplication= (data)=>{
+  return CustomAxios.post(`/api/user/leave/`,data)
+}
+
+const leaveApproval = (data)=>{
+  return CustomAxios.post(`/api/user/leave-approval/`,data)
+}
+
+
 const MasterService = {
+  createLeadSummary,
+  getLeadSummaryDetails,
   createMasterCountry,
   updateMasterCountry,
   getAllMasterCountries,
@@ -191,6 +238,7 @@ const MasterService = {
   getMasterActivity,
   createMasterActivityMainHeading,
   createMasterActivityOption,
+  getMasterActivityOptions,
   createMasterBeat,
   getMasterBeat,
   getBeatCustomers,
@@ -199,6 +247,9 @@ const MasterService = {
   removeLeadsBeatList,
   getBeatlist,
   getLeadBeatlist,
-  EmployeesAttendance
+  EmployeesAttendance,
+  getEmployeesLeaveForm,
+  createLeaveApplication,
+  leaveApproval
 };
 export default MasterService;
