@@ -50,8 +50,8 @@ const LeadSummary = () => {
   const [beatData, setBeatData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
   const [openPopup, setOpenPopup] = useState(false);
+  const [sourceData, setSourceData] = useState([]);
 
   const [alertMsg, setAlertMsg] = useState({
     message: "",
@@ -62,13 +62,12 @@ const LeadSummary = () => {
   const handleCloseSnackbar = () =>
     setAlertMsg((prev) => ({ ...prev, open: false }));
 
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    setCurrentPage(1);
-  };
+  // const handleSearch = (query) => {
+  //   setSearchQuery(query);
+  //   setCurrentPage(1);
+  // };
 
   const handleReset = () => {
-    setSearchQuery("");
     setCurrentPage(1);
   };
 
@@ -79,11 +78,9 @@ const LeadSummary = () => {
   const getAllMasterBeat = async () => {
     try {
       setIsLoading(true);
-      const response = await MasterService.getLeadSummaryDetails(
-        currentPage,
-        searchQuery
-      );
+      const response = await MasterService.getLeadSummaryDetails();
       setBeatData(response.data || []);
+      setSourceData(response.data || []);
       setTotalPages(Math.ceil(response.data.count / 25));
       console.log(response.data);
     } catch (e) {
@@ -96,10 +93,23 @@ const LeadSummary = () => {
       setIsLoading(false);
     }
   };
+  const handleSearch = (query) => {
+    if (query.trim() === "") {
+      setBeatData(sourceData);
+    } else {
+      setBeatData(
+        sourceData.filter(
+          (item) =>
+            item.source &&
+            item.source.toLowerCase().includes(query.toLowerCase())
+        )
+      );
+    }
+  };
 
   useEffect(() => {
     getAllMasterBeat();
-  }, [currentPage, searchQuery]);
+  }, [currentPage]);
 
   return (
     <>
@@ -158,7 +168,7 @@ const LeadSummary = () => {
             <Table stickyHeader>
               <TableHead>
                 <TableRow>
-                  <StyledTableCell align="center">Beat Name</StyledTableCell>
+                  <StyledTableCell align="center">Source Name</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
