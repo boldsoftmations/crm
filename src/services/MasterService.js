@@ -120,14 +120,8 @@ const getMasterActivityOptions = (model_master__name) => {
   );
 };
 
-const getLeadSummaryDetails = (page,search) => {
-  const params = new URLSearchParams();
-  if (page) {
-    params.append("page", page);
-  }
-  if (search) {
-    params.append("search", search);
-  }
+const getLeadSummaryDetails = () => {
+
   return CustomAxios.get(
     `/api/lead/list-references`
   );
@@ -139,6 +133,7 @@ const createLeadSummary = (data) => {
     `/api/lead/list-references/`,data
   );
 };
+
 
 const createMasterBeat = (data) => {
   return CustomAxios.post(`/api/master/beat/`, data);
