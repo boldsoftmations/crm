@@ -134,6 +134,16 @@ const createLeadSummary = (data) => {
   );
 };
 
+const getFactoryModelName=()=>{
+
+  return CustomAxios.get(
+    `/api/master/machine-model/`
+  );
+}
+const CreateFactoryModel = (data) => {
+  return CustomAxios.post(`/api/master/machine-model/`, data);
+};
+
 
 const createMasterBeat = (data) => {
   return CustomAxios.post(`/api/master/beat/`, data);
@@ -215,6 +225,8 @@ const leaveApproval = (data)=>{
 
 
 const MasterService = {
+  CreateFactoryModel,
+  getFactoryModelName,
   createLeadSummary,
   getLeadSummaryDetails,
   createMasterCountry,
