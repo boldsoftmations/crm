@@ -52,7 +52,7 @@ const FactoryMaster = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [openPopup, setOpenPopup] = useState(false);
-
+  const [MachineData, setMachineData] = useState([]);
   const [alertMsg, setAlertMsg] = useState({
     message: "",
     severity: "",
@@ -61,11 +61,6 @@ const FactoryMaster = () => {
 
   const handleCloseSnackbar = () =>
     setAlertMsg((prev) => ({ ...prev, open: false }));
-
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    setCurrentPage(1);
-  };
 
   const handleReset = () => {
     setSearchQuery("");
@@ -84,6 +79,7 @@ const FactoryMaster = () => {
         searchQuery
       );
       setBeatData(response.data.results || []);
+      setMachineData(response.data.results);
       setTotalPages(Math.ceil(response.data.results.count / 25));
       console.log(response.data.results);
     } catch (e) {
@@ -100,6 +96,19 @@ const FactoryMaster = () => {
   useEffect(() => {
     getAllMasterBeat();
   }, [currentPage, searchQuery]);
+
+  const handleSearch = (query) => {
+    if (query.trim() === "") {
+      setBeatData(MachineData);
+    } else {
+      setBeatData(
+        MachineData.filter(
+          (item) =>
+            item.model && item.model.toLowerCase().includes(query.toLowerCase())
+        )
+      );
+    }
+  };
 
   return (
     <>
