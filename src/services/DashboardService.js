@@ -194,13 +194,16 @@ const getSalesQuatityAnalysis = (start_month, start_year, email) => {
 };
 
 
-const getSalesAnalysis = (start_month, start_year) => {
+const getSalesAnalysis = (start_month, start_year,product_type) => {
   const params = new URLSearchParams();
   if (start_month) {
     params.append("start_month", start_month);
   }
   if (start_year) {
     params.append("start_year", start_year);
+  }
+  if(product_type){
+    params.append("product_type", product_type);
   }
 
 

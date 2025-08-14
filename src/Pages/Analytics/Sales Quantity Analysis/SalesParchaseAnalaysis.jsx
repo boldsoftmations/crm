@@ -101,7 +101,11 @@ const SalesParchaseAnalaysis = () => {
     try {
       const response =
         filtersalesPurchase === "sales"
-          ? await DashboardService.getSalesAnalysis(startMonth + 1, startYear)
+          ? await DashboardService.getSalesAnalysis(
+              startMonth + 1,
+              startYear,
+              productType
+            )
           : await DashboardService.getPurchaseAnalysis(
               startMonth + 1,
               startYear,
@@ -154,20 +158,26 @@ const SalesParchaseAnalaysis = () => {
     }
 
     setFilterSalesAnalysis(filtered);
+    setExportData(filtered);
     if (filterValue.unit === "") setFilterSalesAnalysis(salesAnalysis);
-  }, [filterValue, salesAnalysis, filtersalesPurchase]);
+  }, [filterValue, salesAnalysis, filtersalesPurchase, exportData]);
   const csvLinkRef = useRef(null);
 
   const handelDownload = async () => {
     const data =
       filtersalesPurchase === "sales"
-        ? await DashboardService.getSalesAnalysis(startMonth + 1, startYear)
+        ? await DashboardService.getSalesAnalysis(
+            startMonth + 1,
+            startYear,
+            productType
+          )
         : await DashboardService.getPurchaseAnalysis(
             startMonth + 1,
             startYear,
             productType
           );
     setExportData(data.data);
+
     setTimeout(() => {
       csvLinkRef.current.link.click();
     });
@@ -223,10 +233,10 @@ const SalesParchaseAnalaysis = () => {
               />
 
               <CustomAutocomplete
-                fullWidth
                 size="small"
                 disablePortal
                 id="combo-box-start-year"
+                sx={{ minWidth: 300 }}
                 value={{ label: startYear }}
                 onChange={(e, value) => setStartYear(value.label)}
                 options={[...Array(3).keys()].map((i) => ({
@@ -238,17 +248,14 @@ const SalesParchaseAnalaysis = () => {
             </Box>
           </Grid>
           <Grid
+            item
             md={12}
             sx={{ display: "flex", justifyContent: "space-between" }}
           >
-            <Grid md={6}>
+            <Grid md={4}>
               <CustomAutocomplete
-                fullWidth
+                sx={{ minWidth: 300 }}
                 size="small"
-                sx={{
-                  display:
-                    filtersalesPurchase === "purchase" ? "block" : "none",
-                }}
                 value={productType}
                 onChange={(e, value) => setProductType(value)}
                 options={productOptions.map((option) => option)}
@@ -256,7 +263,7 @@ const SalesParchaseAnalaysis = () => {
                 label={"Filter By Employee"}
               />
             </Grid>
-            <Grid item md={4}>
+            <Grid md={4}>
               <Box>
                 <h3
                   style={{
@@ -271,13 +278,14 @@ const SalesParchaseAnalaysis = () => {
                 </h3>
               </Box>
             </Grid>
-            <Grid item md={4}>
+
+            <Grid md={4}>
               <Button variant="contained" onClick={handelDownload}>
                 Download
               </Button>
-              {exportData.length > 0 && (
+              {filtersalesAnalysis.length > 0 && (
                 <CSVLink
-                  data={exportData}
+                  data={filtersalesAnalysis}
                   filename={`Sales&PurchaseAnalysis.csv`}
                   style={{ display: "none" }}
                   ref={csvLinkRef}
