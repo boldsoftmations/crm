@@ -194,10 +194,16 @@ const getSalesQuatityAnalysis = (start_month, start_year, email) => {
 };
 
 
-const getSalesAnalysis = (start_month, start_year,product_type) => {
+const getSalesAnalysis = (start_month, start_year,product_type,unit,description) => {
   const params = new URLSearchParams();
   if (start_month) {
     params.append("start_month", start_month);
+  }
+  if(description){
+    params.append("description", description);
+  }
+  if(unit){
+    params.append("unit", unit);
   }
   if (start_year) {
     params.append("start_year", start_year);
@@ -209,6 +215,15 @@ const getSalesAnalysis = (start_month, start_year,product_type) => {
 
   return CustomAxios.get(`/api/dashboard/sales-data/?${params.toString()}`);
 };
+const getAllDescription = (page) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+
+  return CustomAxios.get(`api/product/description/?${params.toString()}`);
+};
+
 const getPurchaseAnalysis = (start_month, start_year,product_type) => {
   const params = new URLSearchParams();
   if (start_month) {
@@ -310,6 +325,7 @@ const getEmployeesCurrentLocation = ()=>{
 
 
 const DashboardService = {
+  getAllDescription,
   getPurchaseAnalysis,
   getSalesAnalysis,
   getSalesAnalyticDashboard,
