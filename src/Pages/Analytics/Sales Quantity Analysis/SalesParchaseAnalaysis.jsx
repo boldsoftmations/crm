@@ -216,7 +216,7 @@ const SalesParchaseAnalaysis = () => {
             </Box>
           </Grid>
           <Grid item xs={12} md={7}>
-            <Box display="flex" gap="1rem" marginBottom="1rem">
+            <Box display="flex" gap="1rem" marginBottom="1.5rem">
               <CustomAutocomplete
                 fullWidth
                 name="seller_unit"
@@ -253,24 +253,29 @@ const SalesParchaseAnalaysis = () => {
           <Grid
             item
             md={12}
-            sx={{ display: "flex", justifyContent: "space-between" }}
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "0.5rem",
+            }}
           >
             <Grid md={4} width={"60%"}>
               <Box
                 sx={{ width: "100%" }}
                 display="flex"
                 justifyContent="right"
-                alignItems={"center"}
+                alignItems="center"
+                textAlign="center"
                 // border={"2px solid black"}
               >
                 <h3
                   style={{
                     // width: "100%",
-                    marginBottom: "1em",
+                    // marginBottom: "1em",
                     fontSize: "24px",
                     color: "rgb(34, 34, 34)",
                     fontWeight: 800,
-                    textAlign: "right",
                   }}
                 >
                   Sales & Purchase Analysis
