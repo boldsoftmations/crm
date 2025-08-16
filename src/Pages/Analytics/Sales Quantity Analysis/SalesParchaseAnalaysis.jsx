@@ -330,6 +330,9 @@ const SalesParchaseAnalaysis = () => {
                   <StyledTableCell align="center">Description</StyledTableCell>
                   <StyledTableCell align="center">Brand</StyledTableCell>
                   <StyledTableCell align="center">Unit</StyledTableCell>
+                  <StyledTableCell align="center">
+                    Current Stock
+                  </StyledTableCell>
                   {data.dynamicHeaders.map((month, index) => (
                     <StyledTableCell align="center" key={index}>
                       {month}
@@ -356,17 +359,14 @@ const SalesParchaseAnalaysis = () => {
                       <StyledTableCell align="center">
                         {row.product__unit__name || "N/A"}
                       </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.current_stock}
+                      </StyledTableCell>
                       {data.dynamicMonths.map((month, index) => (
                         <StyledTableCell align="center" key={index}>
                           {row[month] || 0}
                         </StyledTableCell>
                       ))}
-                      <StyledTableCell align="center">
-                        {row.max_qty}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {row.short_qty || "-"}
-                      </StyledTableCell>
                     </StyledTableRow>
                   ))
                 ) : (
