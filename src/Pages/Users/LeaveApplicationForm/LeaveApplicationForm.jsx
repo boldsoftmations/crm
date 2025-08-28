@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   styled,
   TableCell,
@@ -54,7 +54,7 @@ export const LeaveApplicationForm = () => {
     profile && profile.groups.some((group) => giveAccess.includes(group));
 
   // Function to get product base customer data
-  const getEmployeesLeaveForm = async () => {
+  const getEmployeesLeaveForm = useCallback(async () => {
     try {
       setOpen(true);
       const response = await MasterService.getEmployeesLeaveForm(
@@ -65,17 +65,18 @@ export const LeaveApplicationForm = () => {
       const total = response.data.count;
       setTotalPages(Math.ceil(total / 25));
       setleaveFormData(response.data.results);
+
       setOpen(false);
     } catch (err) {
       handleError("Failed to get product base customer data" || err);
       setOpen(false);
     }
-  };
+  }, [currentPage, filterValue, searchValue]);
 
   // Trigger API call when filters or filterValue changes
   useEffect(() => {
     getEmployeesLeaveForm();
-  }, [currentPage, filterValue, searchValue]);
+  }, [getEmployeesLeaveForm, selectedData]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);

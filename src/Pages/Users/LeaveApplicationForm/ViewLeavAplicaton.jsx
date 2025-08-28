@@ -277,9 +277,9 @@ const ViewLeavAplicaton = ({
               {ApprovalData &&
                 ApprovalData.slice()
                   .reverse()
-                  .map((Approvdata) => (
+                  .map((Approvdata, key) => (
                     <>
-                      <div key={selectedRow.id}>
+                      <div key={key}>
                         <Timeline
                           sx={{
                             [`& .${timelineOppositeContentClasses.root}`]: {
