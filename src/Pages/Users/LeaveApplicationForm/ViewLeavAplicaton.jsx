@@ -41,7 +41,6 @@ const ViewLeavAplicaton = ({
   });
   const userData = useSelector((state) => state.auth.profile);
 
-  console.log(selectedRow && selectedRow);
   const [formData, setFormData] = useState({
     decision: "",
     remarks: "",
@@ -63,12 +62,8 @@ const ViewLeavAplicaton = ({
         (item) => item.leave === selectedRow.id
       );
 
-      console.log(filterId);
-
       setApprovalData(filterId);
-      console.log("isView", response.data.results);
       setOpen(false);
-      console.log(response.data.results);
     } catch (err) {
       setAlertMsg({
         open: true,
@@ -94,7 +89,6 @@ const ViewLeavAplicaton = ({
       });
       return;
     }
-    console.log(selectedRow.length);
 
     if (formData.decision === "Rejected" && !formData.remarks) {
       setAlertMsg({
@@ -112,7 +106,6 @@ const ViewLeavAplicaton = ({
       return;
     }
     const formDataWithRecordId = { ...formData };
-    console.log("formDataWithRecordId", formDataWithRecordId);
 
     try {
       setOpen(true);
@@ -160,7 +153,6 @@ const ViewLeavAplicaton = ({
       setDisable(false);
     }
   }, [ApprovalData]);
-  console.log(isdisable);
 
   const canCreateActivity =
     // 1. If flow is at this designation and is_view true

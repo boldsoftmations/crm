@@ -65,7 +65,6 @@ export const LeaveApplicationForm = () => {
       const total = response.data.count;
       setTotalPages(Math.ceil(total / 25));
       setleaveFormData(response.data.results);
-      console.log("isView", response.data.results);
       setOpen(false);
     } catch (err) {
       handleError("Failed to get product base customer data" || err);
