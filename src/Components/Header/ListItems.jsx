@@ -665,9 +665,7 @@ export const ListItems = ({ setOpen }) => {
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
         ]),
-        renderSubmenu("master", <BusinessIcon />, "Master", [
-          { to: "/user/profile-tab", text: "Employees Master" },
-        ]),
+
         renderSubmenu("sales", <TrendingUpIcon />, "Sales", [
           { to: "/leads/all-lead", text: "Leads" },
           { to: "/customers/all-customer", text: "Customer" },
