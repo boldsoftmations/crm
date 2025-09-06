@@ -60,14 +60,14 @@ export const AllPerformaInvoiceTabView = () => {
           roles.isSalesManagerWithLeads ||
           roles.allTabs ||
           roles.isCustomerService,
-        index: 0,
+        index: 1,
         component: <ActivePI />,
       },
       {
         label: "Price Approval PI",
         visible:
           roles.allTabs || roles.isSalesManager || roles.isSalesExecutive,
-        index: 1,
+        index: 2,
         component: <PriceApprovalPI />,
       },
       {
@@ -81,14 +81,18 @@ export const AllPerformaInvoiceTabView = () => {
           roles.isSalesManagerWithLeads ||
           roles.allTabs ||
           roles.isAccountBillingDepartment,
-        index: 2,
+        index: 3,
         component: <AllProformaInvoice />,
       },
     ],
     [roles]
   );
 
-  const visibleTabs = useMemo(() => tabs.filter((tab) => tab.visible), [tabs]);
+  const visibleTabs = useMemo(() => {
+    return tabs
+      .filter((tab) => tab.visible)
+      .map((tab, i) => ({ ...tab, index: i }));
+  }, [tabs]);
   const visibleTabIndexes = useMemo(
     () => visibleTabs.map((tab) => tab.index),
     [visibleTabs]
