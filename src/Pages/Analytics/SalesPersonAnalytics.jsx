@@ -76,6 +76,7 @@ export const SalesPersonAnalytics = (props) => {
   const [privacy] = useState(
     !userData.groups.includes("Director") &&
       !userData.groups.includes("Sales Manager") &&
+      !userData.groups.includes("Sales Manager(Retailer)") &&
       !userData.groups.includes("Sales Deputy Manager") &&
       !userData.groups.includes("Sales Assistant Deputy Manager") &&
       !userData.groups.includes("Sales Executive") &&
