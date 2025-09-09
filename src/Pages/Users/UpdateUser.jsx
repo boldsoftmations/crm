@@ -322,6 +322,7 @@ const UpdateUser = ({
   const groups = [
     "Sales Assistant Deputy Manager",
     "Sales Deputy Manager",
+    "Sales Manager(Retailer)",
     "Sales Manager",
     "Customer Relationship Manager",
     "Business Development Manager",
