@@ -90,6 +90,7 @@ export const PIOrderBookDetails = () => {
 
             requested_date: item.requested_date,
             special_instructions: item.special_instructions,
+            remarks: item.remark,
           };
         } else {
           return {
@@ -112,6 +113,7 @@ export const PIOrderBookDetails = () => {
             ready_date: item.ready_date,
             requested_date: item.requested_date,
             special_instructions: item.special_instructions,
+            remark: item.remark,
           };
         }
       });
@@ -524,6 +526,10 @@ const headers = [
   {
     label: "Special Instruction",
     key: "special_instructions",
+  },
+  {
+    label: "Remarks",
+    key: "remark",
   },
 ];
 
