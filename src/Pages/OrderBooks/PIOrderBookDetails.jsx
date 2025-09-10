@@ -297,7 +297,7 @@ export const PIOrderBookDetails = () => {
                   fullWidth
                   value={
                     EstimatedDateOption.find(
-                      (option) => option.value === EstimatedDateOption
+                      (option) => option.value === filterEstimateData
                     ) || null
                   }
                   onChange={(event, value) =>
