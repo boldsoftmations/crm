@@ -359,7 +359,10 @@ function Row({
               </Button>
             )
           }
-          <Button disabled={row.grn_rejected} onClick={handleConfromReject}>
+          <Button
+            disabled={row.grn_rejected || row.accepted}
+            onClick={handleConfromReject}
+          >
             Reject
           </Button>
           {/* <Button onClick={() => handleReject}>Reject</Button> */}
