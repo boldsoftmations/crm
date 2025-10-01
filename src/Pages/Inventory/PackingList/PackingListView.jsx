@@ -417,8 +417,19 @@ function Row({
         openPopup={openPopupCreateGrn}
         setOpenPopup={setOpenPopupCreateGrn}
       >
-        <Button onClick={() => setOpenPopupCreateGrn(false)}>NO</Button>
-        <Button onClick={handleReject}>YES</Button>
+        <Box
+          sx={{
+            display: "flex",
+            width: "100%",
+            gap: 6,
+            padding: "10px 20px",
+          }}
+        >
+          <Button onClick={() => setOpenPopupCreateGrn(false)}>NO</Button>
+          <Button onClick={handleReject} variant="contained">
+            YES
+          </Button>
+        </Box>
       </Popup>
     </>
   );
