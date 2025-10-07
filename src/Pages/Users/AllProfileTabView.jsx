@@ -77,7 +77,11 @@ export const AllProfileTabView = () => {
 
     return {
       isDirectorOrHR: isInGroups("Director", "HR"),
-      isManager: isInGroups("Sales Manager", "Sales Manager(Retailer)"),
+      isManager: isInGroups(
+        "Sales Manager",
+        "Sales Manager(Retailer)",
+        "Operations & Supply Chain Manager"
+      ),
       allTabs,
       commonTabs,
     };
@@ -101,7 +105,7 @@ export const AllProfileTabView = () => {
     },
     {
       label: "Employees Attendance",
-      visible: permissions.allTabs,
+      visible: permissions.allTabs || permissions.isManager,
       component: <ViewEmployeesAttendance />,
     },
     {
