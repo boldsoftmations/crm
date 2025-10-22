@@ -72,6 +72,7 @@ export const SalesRegisterView = () => {
           date: moment(item.date).format("DD-MM-YYYY"),
           sales_invoice: item.sales_invoice,
           customer: item.customer,
+          transporter: item.transporter,
           dispatch_location: item.dispatch_location,
           lr_copy: item.lr_copy,
           pod_copy: item.pod_copy,
@@ -198,6 +199,7 @@ export const SalesRegisterView = () => {
                           .split("T")[0]
                       : maxDate
                   }
+                  disabled={!startDate}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -467,6 +469,7 @@ const headers = [
   },
   { label: "Sales Invoice", key: "sales_invoice" },
   { label: "Customer", key: "customer" },
+  { label: "Transporter Name", key: "transporter" },
   { label: "Dispatch Location", key: "dispatch_location" },
   { label: "LR Copy", key: "lr_copy" },
   { label: "POD Copy", key: "pod_copy" },
