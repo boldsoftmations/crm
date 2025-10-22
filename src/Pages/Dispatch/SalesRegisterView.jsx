@@ -198,7 +198,6 @@ export const SalesRegisterView = () => {
                           .split("T")[0]
                       : maxDate
                   }
-                  disabled={!startDate}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -291,6 +290,10 @@ export const SalesRegisterView = () => {
                   <StyledTableCell align="center">User</StyledTableCell>
                   <StyledTableCell align="center">PI No</StyledTableCell>
                   <StyledTableCell align="center">
+                    transport Name
+                  </StyledTableCell>
+
+                  <StyledTableCell align="center">
                     Sales Invoice
                   </StyledTableCell>
                   <StyledTableCell align="center">Customer</StyledTableCell>
@@ -365,6 +368,7 @@ function Row(props) {
             ? row.pi_list.join(", ")
             : "NA"}
         </TableCell>
+        <TableCell align="center">{row.transporter}</TableCell>
         <TableCell align="center">{row.sales_invoice}</TableCell>
         <TableCell align="center">{row.customer}</TableCell>
 
