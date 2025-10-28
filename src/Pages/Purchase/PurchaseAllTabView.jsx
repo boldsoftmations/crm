@@ -25,6 +25,7 @@ export const PurchaseAllTabView = () => {
       roles: [
         "Director",
         "Accounts",
+        "Purchase",
         "Accounts Executive",
         "Operations & Supply Chain Manager",
       ],
@@ -45,6 +46,7 @@ export const PurchaseAllTabView = () => {
       roles: [
         "Director",
         "Accounts",
+
         "Stores Delhi",
         "Production Delhi",
         "Accounts Executive",
