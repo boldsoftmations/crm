@@ -85,6 +85,9 @@ export const UpdateDispatch = (props) => {
         if (lrCopy !== "") {
           data.append("lr_copy", lrCopy ? lrCopy : "");
         }
+        if (podCopy !== "") {
+          data.append("pod_copy", podCopy ? podCopy : "");
+        }
         data.append("dispatched", true);
       }
       const LRDATE = inputValue.lr_date ? inputValue.lr_date : idData.lr_date;
