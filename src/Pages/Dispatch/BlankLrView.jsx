@@ -165,7 +165,7 @@ export const BlankLrView = () => {
               <Grid item xs={12} sm={3}>
                 <CustomAutocomplete
                   sx={{ width: "300px" }}
-                  label="Start Date"
+                  label="Pending Status"
                   variant="outlined"
                   size="small"
                   id="Pending Status"
