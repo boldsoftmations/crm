@@ -70,7 +70,8 @@ export const SalesRegisterView = () => {
         EndDate,
         "all",
         searchQuery,
-        unitFilter
+        unitFilter,
+        
       );
       const data = response.data.map((item) => {
         return {
