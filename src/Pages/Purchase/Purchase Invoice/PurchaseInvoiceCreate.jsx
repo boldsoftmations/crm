@@ -87,13 +87,20 @@ export const PurchaseInvoiceCreate = memo(
           const max = maxRate[i];
           const price = lastPurchase[i];
 
+          if (
+            [min, max, price].some(
+              (v) => isNaN(v) || v === null || v === undefined
+            )
+          ) {
+            continue;
+          }
+
           // --- Defensive checks ---
           if ([price, min, max].find((v) => v != null)) {
             if ([productRate, min, max].some((v) => isNaN(v))) {
               handleError(`Invalid rate value for ${productName}`);
               return;
             }
-
             // --- Validation check ---
             if (productRate < min || productRate > max) {
               handleError(
