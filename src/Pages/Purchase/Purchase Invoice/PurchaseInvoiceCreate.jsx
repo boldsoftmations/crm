@@ -7,8 +7,9 @@ import { styled } from "@mui/material/styles";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { Popup } from "../../../Components/Popup";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import WarningIcon from "@mui/icons-material/Warning";
-
+import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -23,6 +24,7 @@ export const PurchaseInvoiceCreate = memo(
     const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
       useNotificationHandling();
     const [productvalidate, setProductvalidate] = useState("");
+    const [icons, setIcons] = useState(null);
     const [openPopup, setOpenPopup1] = useState(false);
     const [productname, setProductname] = useState("");
     const title = (
@@ -113,19 +115,27 @@ export const PurchaseInvoiceCreate = memo(
             }
             // --- Validation check ---
             if (productRate < min) {
-              setProductvalidate(`${productName} rate should be less than 10%`);
-              useEffect(() => {
-                setOpenPopup1(true);
-              }, [openPopup]);
-
+              setProductvalidate("rate should be less than ");
+              setOpenPopup1(true);
+              setProductname(productName);
+              setIcons(
+                <span>
+                  <TrendingDownIcon sx={{ fontSize: "3rem" }} color="error" />
+                </span>
+              );
               console.log("Below minimum");
               return;
             }
 
             if (productRate > max) {
-              setProductvalidate(` rate should be more than`);
+              setProductvalidate(`rate should be more than`);
               setOpenPopup1(true);
               setProductname(productName);
+              setIcons(
+                <span>
+                  <TrendingUpIcon sx={{ fontSize: "3rem" }} color="success" />
+                </span>
+              );
               console.log(openPopup);
               console.log("Above maximum");
               return;
@@ -345,7 +355,7 @@ export const PurchaseInvoiceCreate = memo(
           >
             <span style={{ fontSize: "1.5rem" }}>{productname}</span>
             <span>{productvalidate}</span>
-            <span style={{ fontSize: "2rem" }}>10%</span>
+            <span style={{ fontSize: "2rem" }}>10% {icons}</span>
             <span style={{ opacity: 0.5, fontSize: "0.8rem" }}>
               Please verify the entered rate before Proceeding
             </span>
