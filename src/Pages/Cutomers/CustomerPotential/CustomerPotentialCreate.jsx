@@ -19,8 +19,7 @@ export const CustomerPotentialCreate = ({
   });
 
   const [productList, setProductList] = useState([]); // All products from API
-  const [filteredProducts, setFilteredProducts] = useState([]); // Filtered based on description
-  const [selectedProduct, setSelectedProduct] = useState(null); // For selected product
+  const [filteredProducts, setFilteredProducts] = useState([]); // Filtered based on description // For selected product
   const [selectDis, setSelectDis] = useState(true); // Disable product until description selected
 
   const [alertMsg, setAlertMsg] = useState({
@@ -98,7 +97,6 @@ export const CustomerPotentialCreate = ({
     );
 
     if (foundProduct) {
-      setSelectedProduct(foundProduct);
       console.log("Selected product:", foundProduct);
     }
   };
@@ -134,7 +132,6 @@ export const CustomerPotentialCreate = ({
       });
       setFilteredProducts([]);
       setSelectDis(true);
-      setSelectedProduct(null);
 
       setOpenModal(false);
       await getCompanyDetailsByID();

@@ -1,11 +1,13 @@
 import { Box, Button, Chip, Divider, Grid } from "@mui/material";
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import CustomTextField from "../../../Components/CustomTextField";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { styled } from "@mui/material/styles";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
+import { Popup } from "../../../Components/Popup";
+import WarningIcon from "@mui/icons-material/Warning";
 
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
@@ -20,7 +22,15 @@ export const PurchaseInvoiceCreate = memo(
     const [open, setOpen] = useState(false);
     const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
       useNotificationHandling();
-
+    const [productvalidate, setProductvalidate] = useState("");
+    const [openPopup, setOpenPopup1] = useState(false);
+    const [productname, setProductname] = useState("");
+    const title = (
+      <span>
+        <WarningIcon color="warning" />
+        {" Rate Check Required"}
+      </span>
+    );
     const [products, setProducts] = useState(
       recordForEdit.products.map((product) => {
         // Log the rate of each product
@@ -102,10 +112,22 @@ export const PurchaseInvoiceCreate = memo(
               return;
             }
             // --- Validation check ---
-            if (productRate < min || productRate > max) {
-              handleError(
-                `${productName} rate should be between ${min} and ${max}`
-              );
+            if (productRate < min) {
+              setProductvalidate(`${productName} rate should be less than 10%`);
+              useEffect(() => {
+                setOpenPopup1(true);
+              }, [openPopup]);
+
+              console.log("Below minimum");
+              return;
+            }
+
+            if (productRate > max) {
+              setProductvalidate(` rate should be more than`);
+              setOpenPopup1(true);
+              setProductname(productName);
+              console.log(openPopup);
+              console.log("Above maximum");
               return;
             }
           }
@@ -132,6 +154,37 @@ export const PurchaseInvoiceCreate = memo(
         setOpen(false);
       }
     };
+
+    const handleSure = async (e) => {
+      e.preventDefault();
+      setOpenPopup1(false);
+      try {
+        setOpen(true);
+
+        const req = {
+          grn: recordForEdit.grn_no,
+          products_data: products,
+          invoice_type: "Purchase",
+        };
+
+        await InventoryServices.createPurchaseInvoiceData(req);
+
+        getAllGRNDetails();
+        handleSuccess("Purchase Invoice created successfully");
+
+        setTimeout(() => setOpenPopup(false), 300);
+        setOpen(false);
+      } catch (error) {
+        handleError(error);
+        console.log("Creating Packing list error", error);
+        setOpen(false);
+      }
+    };
+    useEffect(() => {
+      if (openPopup) {
+        console.log("openPopup", openPopup);
+      }
+    }, [openPopup]);
 
     return (
       <>
@@ -279,6 +332,37 @@ export const PurchaseInvoiceCreate = memo(
             Submit
           </Button>
         </Box>
+        <Popup openPopup={openPopup} setOpenPopup={setOpenPopup1} title={title}>
+          <Box
+            sx={{
+              display: "flex",
+
+              p: 0,
+              flexDirection: "column",
+              gap: 0,
+              padding: ["0px", "10px"],
+            }}
+          >
+            <span style={{ fontSize: "1.5rem" }}>{productname}</span>
+            <span>{productvalidate}</span>
+            <span style={{ fontSize: "2rem" }}>10%</span>
+            <span style={{ opacity: 0.5, fontSize: "0.8rem" }}>
+              Please verify the entered rate before Proceeding
+            </span>
+          </Box>
+          <Box sx={{ display: "flex", mt: 2, justifyContent: "space-around " }}>
+            <Button variant="contained" color="success" onClick={handleSure}>
+              Proceed Anyway
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => setOpenPopup1(false)}
+            >
+              Edit Rate
+            </Button>
+          </Box>
+        </Popup>
       </>
     );
   }
