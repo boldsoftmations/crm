@@ -30,7 +30,7 @@ export const PurchaseInvoiceCreate = memo(
     const title = (
       <span>
         <WarningIcon color="warning" />
-        {" Rate Check Required"}
+        {" Rate Check Alert"}
       </span>
     );
     const [products, setProducts] = useState(
