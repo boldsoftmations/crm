@@ -75,12 +75,12 @@ export const AllDispatchTabView = () => {
     },
     {
       label: "Pending LR Copy",
-      visible: "admin" || "operations & supply chain manager",
+      visible: "admin" || "Operations & Supply Chain Manager",
       index: 4,
     },
     {
       label: "Uploaded POD",
-      visible: "admin" || "operations & supply chain manager",
+      visible: "admin" || "Operations & Supply Chain Manager",
       index: 5,
     },
   ];
