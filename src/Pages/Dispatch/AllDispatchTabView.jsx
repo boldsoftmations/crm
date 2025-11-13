@@ -6,8 +6,7 @@ import { Dispatched } from "./Dispatched";
 import { SalesRegisterView } from "./SalesRegisterView";
 import { ExportView } from "./ExportView";
 import BlankLrView from "./BlankLrView";
-import { UploadedPODs } from "./UploadedPOD";
-
+import UploadedPODs from "./UploadedPOD";
 export const AllDispatchTabView = () => {
   const userData = useSelector((state) => state.auth.profile);
 
@@ -40,6 +39,7 @@ export const AllDispatchTabView = () => {
     "Factory-Mumbai-Dispatch",
     "Factory-Delhi-Dispatch"
   );
+  const adminTab = isInGroups("Director", "Operations & Supply Chain Manager");
   const customerServiceTab = isInGroups("Customer Service");
   const salesRegisterTab = isInGroups("Accounts Billing Department");
 
@@ -75,12 +75,12 @@ export const AllDispatchTabView = () => {
     },
     {
       label: "Pending LR Copy",
-      visible: "admin" || "Operations & Supply Chain Manager",
+      visible: adminTab || dispatchPODPending,
       index: 4,
     },
     {
       label: "Uploaded POD",
-      visible: "admin" || "Operations & Supply Chain Manager",
+      visible: adminTab,
       index: 5,
     },
   ];
