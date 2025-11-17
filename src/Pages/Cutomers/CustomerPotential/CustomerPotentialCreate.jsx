@@ -13,14 +13,14 @@ export const CustomerPotentialCreate = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [potential, setPotential] = useState({
-    description: "",
-    product: "",
+    product: null,
     current_buying_quantity: "",
   });
 
-  const [productList, setProductList] = useState([]); // All products from API
-  const [filteredProducts, setFilteredProducts] = useState([]); // Filtered based on description // For selected product
-  const [selectDis, setSelectDis] = useState(true); // Disable product until description selected
+  const [productList, setProductList] = useState([]);
+  const [productData, setProductData] = useState([]);
+  const [selectDis, setSelectDis] = useState(true);
+  const [mypotential, setMyPotential] = useState({ description: null });
 
   const [alertMsg, setAlertMsg] = useState({
     message: "",
@@ -28,17 +28,15 @@ export const CustomerPotentialCreate = ({
     open: false,
   });
 
-  // Close snackbar
   const handleClose = () => setAlertMsg({ open: false });
 
-  // Fetch all product data once
+  // Fetch product descriptions ONCE
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setOpen(true);
-        const res = await CustomerServices.getAllDescription();
-        setProductList(res.data || []);
-        console.log("Fetched products:", res.data);
+        const res = await CustomerServices.getAllProductDescription();
+        setProductList(res.data.results || []);
       } catch (err) {
         console.error("Error fetching product list:", err);
       } finally {
@@ -49,59 +47,35 @@ export const CustomerPotentialCreate = ({
   }, []);
 
   // Handle description selection
-  const handleDescriptionChange = (event, value) => {
-    setPotential((prev) => ({ ...prev, description: value, product: "" }));
-
-    if (!value) {
-      setFilteredProducts([]);
+  const handleDescriptionChange = (event, selectedOption) => {
+    if (!selectedOption) {
+      setMyPotential({ description: null });
+      setProductData([]);
       setSelectDis(true);
       return;
     }
 
-    // Filter products by matching description
-    const matchedProducts = productList.filter(
-      (item) => item.description && item.description.trim() === value.trim()
-    );
+    setMyPotential({ description: selectedOption });
 
-    // Split comma-separated product_list values if any
-    const separatedProducts = matchedProducts.flatMap((item) => {
-      if (item.product_list && Array.isArray(item.product_list)) {
-        return item.product_list.map((prod) => ({
-          ...item,
-          product_list: prod.trim(),
-        }));
-      }
-      if (
-        item.product_list &&
-        typeof item.product_list === "string" &&
-        item.product_list.includes(",")
-      ) {
-        return item.product_list.split(",").map((prod) => ({
-          ...item,
-          product_list: prod.trim(),
-        }));
-      }
-      return [item];
-    });
+    CustomerServices.getproductToDescription(selectedOption.id)
+      .then((res) => {
+        setProductData(res.data || []);
+      })
+      .catch((err) => console.error(err));
 
-    setFilteredProducts(separatedProducts);
     setSelectDis(false);
+    setPotential((prev) => ({ ...prev, product: null }));
   };
 
   // Handle product selection
   const handleProductChange = (event, value) => {
-    setPotential((prev) => ({ ...prev, product: value }));
-
-    const foundProduct = filteredProducts.find((item) =>
-      item.product_list.includes(value)
-    );
-
-    if (foundProduct) {
-      console.log("Selected product:", foundProduct);
-    }
+    setPotential((prev) => ({
+      ...prev,
+      product: value ? value.name : null,
+    }));
   };
 
-  // Handle text field input
+  // Handle input fields
   const handleTextChange = (e) => {
     const { name, value } = e.target;
     setPotential((prev) => ({ ...prev, [name]: value }));
@@ -110,13 +84,18 @@ export const CustomerPotentialCreate = ({
   // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       setOpen(true);
-      const data = {
+
+      const payload = {
         company: recordForEdit,
-        ...potential,
+        product: potential.product, // ID only
+        current_buying_quantity: potential.current_buying_quantity,
       };
-      await CustomerServices.createPotentialCustomer(data);
+      console.log(payload);
+
+      await CustomerServices.createPotentialCustomer(payload);
 
       setAlertMsg({
         message: "Potential customer created successfully!",
@@ -124,13 +103,12 @@ export const CustomerPotentialCreate = ({
         open: true,
       });
 
-      // Reset form
       setPotential({
-        description: "",
-        product: "",
+        product: null,
         current_buying_quantity: "",
       });
-      setFilteredProducts([]);
+
+      setMyPotential({ description: null });
       setSelectDis(true);
 
       setOpenModal(false);
@@ -138,12 +116,11 @@ export const CustomerPotentialCreate = ({
     } catch (error) {
       setAlertMsg({
         message:
-          (error.response.data.message && error.response.data.message) ||
+          (error.response && error.response.data.message) ||
           "Error creating potential customer",
         severity: "error",
         open: true,
       });
-      console.error("Error:", error);
     } finally {
       setOpen(false);
     }
@@ -166,14 +143,11 @@ export const CustomerPotentialCreate = ({
             <CustomAutocomplete
               sx={{ minWidth: 180 }}
               size="small"
+              name="description"
+              value={mypotential.description}
               onChange={handleDescriptionChange}
-              value={potential.description}
-              options={[
-                ...new Set(
-                  (productList || []).map((option) => option.description)
-                ),
-              ]}
-              getOptionLabel={(option) => option || "No Options"}
+              options={productList}
+              getOptionLabel={(option) => (option && option.name) || ""}
               label="Description"
             />
           </Grid>
@@ -183,12 +157,12 @@ export const CustomerPotentialCreate = ({
             <CustomAutocomplete
               sx={{ minWidth: 180 }}
               size="small"
-              onChange={handleProductChange}
               value={potential.product}
-              options={(filteredProducts || []).flatMap(
-                (item) => item.product_list || []
-              )}
-              getOptionLabel={(option) => option || "No Options"}
+              onChange={handleProductChange}
+              options={productData}
+              getOptionLabel={(option) =>
+                (option && option.name) || "No Options"
+              }
               label="Product"
               disabled={selectDis}
             />
@@ -201,7 +175,6 @@ export const CustomerPotentialCreate = ({
               name="current_buying_quantity"
               size="small"
               label="Current Buying Quantity Monthly"
-              variant="outlined"
               value={potential.current_buying_quantity}
               onChange={handleTextChange}
             />
@@ -209,7 +182,7 @@ export const CustomerPotentialCreate = ({
         </Grid>
 
         {/* Submit */}
-        <Grid container spacing={2}>
+        <Grid container>
           <Grid item xs={12}>
             <Button
               sx={{ marginTop: "20px" }}
