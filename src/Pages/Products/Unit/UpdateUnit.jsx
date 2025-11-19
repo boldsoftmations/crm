@@ -52,7 +52,7 @@ export const UpdateUnit = memo((props) => {
           name: unit.name,
           short_name: unit.short_name,
           type_of_unit: unit.type_of_unit,
-          max_decimal_digit: unit.type,
+          max_decimal_digit: unit.max_decimal_digit,
         };
         if (recordForEdit) {
           const response = await ProductService.updateUnit(unit.id, data);
