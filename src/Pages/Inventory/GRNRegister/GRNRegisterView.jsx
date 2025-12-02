@@ -351,7 +351,9 @@ export const GRNRegisterView = () => {
                     {row.invoice_quantity}
                   </StyledTableCell>
                   <StyledTableCell align="center">
-                    {row.qa_rejected}
+                    {row.type_of_unit === "decimal"
+                      ? row.qa_rejected
+                      : Math.floor(row.qa_rejected)}
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     {row.qa_recieved}

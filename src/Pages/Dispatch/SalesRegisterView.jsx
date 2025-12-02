@@ -70,8 +70,7 @@ export const SalesRegisterView = () => {
         EndDate,
         "all",
         searchQuery,
-        unitFilter,
-        
+        unitFilter
       );
       const data = response.data.map((item) => {
         return {
@@ -446,7 +445,9 @@ function Row(props) {
                       </TableCell>
                       <TableCell align="center">{historyRow.product}</TableCell>
                       <TableCell align="center">
-                        {historyRow.quantity}
+                        {historyRow.type_of_unit === "decimal"
+                          ? historyRow.quantity
+                          : Math.round(historyRow.quantity)}
                       </TableCell>
                       <TableCell align="center">{historyRow.rate}</TableCell>
                       <TableCell align="center">{historyRow.amount}</TableCell>

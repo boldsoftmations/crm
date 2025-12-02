@@ -43,6 +43,7 @@ export const PurchaseInvoiceCreate = memo(
           quantity: product.qa_accepted,
           unit: product.unit,
           order_date: product.order_date,
+          type_of_unit: product.type_of_unit,
           po_no: product.po_no,
           amount: "",
           rate: "",
@@ -299,7 +300,11 @@ export const PurchaseInvoiceCreate = memo(
                       size="small"
                       label="Quantity"
                       variant="outlined"
-                      value={input.quantity || ""}
+                      value={
+                        input.type_of_unit === "decimal"
+                          ? input.quantity
+                          : Math.floor(input.quantity) || ""
+                      }
                       disabled
                     />
                   </Grid>

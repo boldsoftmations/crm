@@ -16,7 +16,7 @@ import Chip from "@mui/material/Chip";
 import InvoiceServices from "../../../services/InvoiceService";
 import { CustomLoader } from "./../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
-
+import { DecimalValidation } from "../../../Components/Header/DecimalValidation";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -26,7 +26,7 @@ const Root = styled("div")(({ theme }) => ({
 }));
 
 export const SalesInvoiceCreate = (props) => {
-  const { setOpenPopup, getSalesInvoiceDetails } = props;
+  const { setOpenPopup, getSalesInvoiceDetails, handleError } = props;
   const [open, setOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
   const [errMsg, setErrMsg] = useState("");
@@ -40,6 +40,7 @@ export const SalesInvoiceCreate = (props) => {
       pending_quantity: "",
       quantity: "",
       rate: "",
+
       proforma_invoice: "",
       id: "",
       user: "",
@@ -66,7 +67,7 @@ export const SalesInvoiceCreate = (props) => {
   const [totalAmount, setTotalAmount] = useState(0);
   const handleFormChange = (index, event) => {
     let data = [...products];
-    data[index][event.target.name] = parseFloat(event.target.value) || 0;
+    data[index][event.target.name] = event.target.value || 0;
 
     setProducts(data);
 
@@ -184,6 +185,7 @@ export const SalesInvoiceCreate = (props) => {
   const createSalesInvoiceDetails = async (e) => {
     try {
       e.preventDefault();
+
       const PRODUCTS = products
         .filter(
           (product) =>
@@ -192,8 +194,27 @@ export const SalesInvoiceCreate = (props) => {
         .map(
           ({ pending_quantity, rate, requested_date, ready_date, ...rest }) =>
             rest
-        ); // Exclude specified fields
+        );
+      console.log(PRODUCTS);
 
+      const decimalCounts = customerorderBookData.products.map(
+        (item) => item.max_decimal_digit
+      );
+      const unit = customerorderBookData.products.map((item) => item.unit);
+      const numTypes = customerorderBookData.products.map(
+        (item) => item.type_of_unit
+      );
+
+      const isvalid = DecimalValidation({
+        numTypes,
+        quantities: PRODUCTS.map((item) => item.quantity),
+        decimalCounts,
+        unit,
+        handleError,
+      });
+      if (!isvalid) {
+        return;
+      }
       const req = {
         invoice_type: "customer",
         order_book: customerorderBookData.id,
@@ -216,6 +237,7 @@ export const SalesInvoiceCreate = (props) => {
             : "",
         exchange_rate: inputValue.exchange_rate || null,
       };
+
       setOpen(true);
       if (inputValue.length !== 0) {
         await InvoiceServices.createSalesinvoiceData(req);

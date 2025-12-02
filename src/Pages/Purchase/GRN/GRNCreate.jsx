@@ -6,6 +6,7 @@ import CustomTextField from "../../../Components/CustomTextField";
 import { styled } from "@mui/material/styles";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
+import { DecimalValidation } from "../../../Components/Header/DecimalValidation";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -25,13 +26,17 @@ export const GRNCreate = memo(
   }) => {
     const [open, setOpen] = useState(false);
     const [products, setProducts] = useState(
-      idForEdit.products.map(({ product, unit, quantity }) => ({
-        products: product,
-        unit,
-        order_quantity: quantity,
-        qa_rejected: "",
-        qa_accepted: "",
-      }))
+      idForEdit.products.map(
+        ({ product, unit, quantity, max_decimal_digit, type_of_unit }) => ({
+          products: product,
+          unit,
+          order_quantity: quantity,
+          qa_rejected: "",
+          qa_accepted: "",
+          max_decimal_digit,
+          type_of_unit,
+        })
+      )
     );
     console.log(products.map((data) => data.order_quantity));
 
@@ -63,7 +68,9 @@ export const GRNCreate = memo(
           : item
       );
       console.log("updatedProducts", updatedProducts);
+
       setProducts(updatedProducts);
+      console.log("products", products);
     };
     console.log("products", products);
     const createGrnDetails = useCallback(
@@ -101,9 +108,28 @@ export const GRNCreate = memo(
             return;
           }
         }
-
-        // Continue processing
+        console.log(products);
         setOpen(true);
+        const quantities = products.map((item) => item.qa_rejected);
+
+        const numTypes = products.map((item) => item.type_of_unit);
+        const unit = products.map((item) => item.unit);
+        const decimalCounts = products.map((item) =>
+          String(item.max_decimal_digit)
+        );
+
+        console.log(numTypes);
+        const isvalid = DecimalValidation({
+          numTypes,
+          quantities,
+          decimalCounts,
+          unit,
+          handleError,
+        });
+        if (!isvalid) {
+          setOpen(false);
+          return;
+        }
 
         const payload = {
           packing_list: idForEdit.id,
@@ -233,7 +259,11 @@ export const GRNCreate = memo(
                       size="small"
                       label="Quantity"
                       variant="outlined"
-                      value={input.order_quantity || ""}
+                      value={
+                        input.type_of_unit === "decimal"
+                          ? input.order_quantity
+                          : Math.floor(input.order_quantity) || ""
+                      }
                       onChange={(event) => handleFormChange(index, event)}
                     />
                   </Grid>
@@ -256,13 +286,25 @@ export const GRNCreate = memo(
                       label="QA Accepted"
                       variant="outlined"
                       value={
-                        input.qa_rejected !== "" &&
-                        input.order_quantity !== "" &&
-                        !isNaN(input.order_quantity) &&
-                        !isNaN(input.qa_rejected)
-                          ? parseInt(input.order_quantity) -
-                            parseInt(input.qa_rejected)
-                          : ""
+                        input.type_of_unit === "decimal"
+                          ? input.qa_rejected !== "" &&
+                            input.order_quantity !== "" &&
+                            !isNaN(input.order_quantity) &&
+                            !isNaN(input.qa_rejected)
+                            ? (
+                                Number(input.order_quantity) -
+                                Number(input.qa_rejected)
+                              ).toFixed(2)
+                            : ""
+                          : Math.round(
+                              input.qa_rejected !== "" &&
+                                input.order_quantity !== "" &&
+                                !isNaN(input.order_quantity) &&
+                                !isNaN(input.qa_rejected)
+                                ? parseInt(input.order_quantity) -
+                                    parseInt(input.qa_rejected)
+                                : ""
+                            )
                       }
                     />
                   </Grid>
