@@ -402,7 +402,11 @@ export const SalesReturnCreate = (props) => {
                       size="small"
                       label="Quantity"
                       variant="outlined"
-                      value={input.quantity}
+                      value={
+                        input.Type_of_unit === "decimal"
+                          ? input.quantity
+                          : Math.floor(input.quantity)
+                      }
                       onChange={(event) => handleFormChange(index, event)}
                       error={input.pending_quantity < input.quantity}
                       helperText={

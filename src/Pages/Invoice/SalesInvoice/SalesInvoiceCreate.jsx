@@ -588,7 +588,11 @@ export const SalesInvoiceCreate = (props) => {
                       size="small"
                       label="Pending Quantity"
                       variant="outlined"
-                      value={input.pending_quantity}
+                      value={
+                        input.type_of_unit === "decimal"
+                          ? input.pending_quantity
+                          : Math.floor(input.pending_quantity)
+                      }
                     />
                   </Grid>
                   <Grid item xs={12} sm={2}>
