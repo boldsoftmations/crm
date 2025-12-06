@@ -14,12 +14,14 @@ export default function Maintaince() {
       sx={{
         // marginTop: "50px",
         // height: "20vh",
-        width: "100%",
+        width: "98%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#f7f9fc",
+        mt: 0,
+        mx: "auto",
         p: 2,
+        position: "absolute",
       }}
     >
       <Paper
@@ -31,7 +33,10 @@ export default function Maintaince() {
           width: "100%",
           textAlign: "center",
           animation: "fadeIn 1s ease",
-          bgcolor: "#fff",
+          // bgcolor: "#fff",
+          backgroundColor: "#f7f9fc",
+          background:
+            "linear-gradient(90deg, rgba(242, 242, 255, 1) 0%, rgba(227, 227, 255, 1) 35%, rgba(93, 188, 207, 1) 100%)",
         }}
       >
         {/* Image */}
@@ -54,14 +59,14 @@ export default function Maintaince() {
           fontWeight="bold"
           sx={{ color: "#2d2f3a", mb: 0.5 }}
         >
-          504
+          503
         </Typography>
 
         {/* Subtitle */}
         <Typography
           variant="h5"
           fontWeight="500"
-          sx={{ color: "#555", mb: 1, color: "red" }}
+          sx={{ mb: 0.5, color: "red" }}
         >
           Under Maintenance
         </Typography>
@@ -76,12 +81,17 @@ export default function Maintaince() {
         <Button
           variant="contained"
           color="primary"
+          hoverColor="secondary"
           sx={{
             mt: 4,
             py: 1.2,
             px: 4,
             fontWeight: "bold",
             borderRadius: 2,
+            ":hover": {
+              backgroundColor:
+                "linear-gradient(90deg, rgba(242, 242, 255, 1) 0%, rgba(243, 243, 243, 1) 35%, rgba(59, 79, 255, 1) 100%)  ",
+            },
           }}
           onClick={handleLogin}
         >

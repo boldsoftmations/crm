@@ -60,7 +60,6 @@ export const RouteScreen = () => {
 
   return (
     <Routes>
-      <Route path="/maintainance" element={<Maintaince />} />
       {token ? (
         <>
           {/* Preferred private route when token exists */}
@@ -423,6 +422,7 @@ export const RouteScreen = () => {
           {/* Public and authentication routes */}
           <Route path="/" exact element={<Auths />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/maintainance" element={<Maintaince />} />
         </>
       )}
       {/* Redirect unknown routes to login or analytics based on token presence */}
