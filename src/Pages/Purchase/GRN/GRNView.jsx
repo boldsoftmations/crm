@@ -294,21 +294,19 @@ function Row(props) {
                         {ProductsData.description}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {
-                          (ProductsData.type_of_unit = "decimal"
-                            ? ProductsData.order_quantity
-                            : Math.floor(ProductsData.order_quantity))
-                        }
+                        {ProductsData.type_of_unit === "decimal"
+                          ? ProductsData.order_quantity
+                          : Math.floor(ProductsData.order_quantity)}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {
-                          (ProductsData.type_of_unit = "decimal"
-                            ? ProductsData.qa_rejected
-                            : Math.floor(ProductsData.qa_rejected))
-                        }
+                        {ProductsData.type_of_unit === "decimal"
+                          ? ProductsData.qa_rejected
+                          : Math.floor(ProductsData.qa_rejected)}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {ProductsData.qa_accepted}
+                        {ProductsData.type_of_unit === "decimal"
+                          ? ProductsData.qa_accepted
+                          : Math.floor(ProductsData.qa_accepted)}
                       </StyledTableCell>
                     </StyledTableRow>
                   ))}

@@ -43,10 +43,12 @@ export const GRNCreate = memo(
     const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
       useNotificationHandling();
 
-    const calculateQA = (orderQty, rejectedQty) => {
-      return !isNaN(orderQty) && !isNaN(rejectedQty)
-        ? parseInt(orderQty, 10) - parseInt(rejectedQty, 10)
-        : "";
+    const calculateQA = (orderQty, rejectedQty, type) => {
+      if (isNaN(orderQty) || isNaN(rejectedQty)) return "";
+
+      const diff = Number(orderQty) - Number(rejectedQty);
+
+      return type === "decimal" ? diff.toFixed(2) : Math.round(diff);
     };
 
     const handleFormChange = (index, event) => {
@@ -62,7 +64,7 @@ export const GRNCreate = memo(
               [name]: value,
               qa_accepted:
                 name === "qa_rejected"
-                  ? calculateQA(item.order_quantity, value)
+                  ? calculateQA(item.order_quantity, value, item.type_of_unit)
                   : item.qa_accepted,
             }
           : item
@@ -285,27 +287,26 @@ export const GRNCreate = memo(
                       size="small"
                       label="QA Accepted"
                       variant="outlined"
-                      value={
-                        input.type_of_unit === "decimal"
-                          ? input.qa_rejected !== "" &&
-                            input.order_quantity !== "" &&
-                            !isNaN(input.order_quantity) &&
-                            !isNaN(input.qa_rejected)
-                            ? (
-                                Number(input.order_quantity) -
-                                Number(input.qa_rejected)
-                              ).toFixed(2)
-                            : ""
-                          : Math.round(
-                              input.qa_rejected !== "" &&
-                                input.order_quantity !== "" &&
-                                !isNaN(input.order_quantity) &&
-                                !isNaN(input.qa_rejected)
-                                ? parseInt(input.order_quantity) -
-                                    parseInt(input.qa_rejected)
-                                : ""
-                            )
-                      }
+                      value={(() => {
+                        const oq = input.order_quantity;
+                        const qr = input.qa_rejected;
+
+                        // Common validation
+                        const isValid =
+                          oq !== "" && qr !== "" && !isNaN(oq) && !isNaN(qr);
+
+                        if (!isValid) return "";
+
+                        const diff = Number(oq) - Number(qr);
+
+                        // Decimal unit → return as is
+                        if (input.type_of_unit === "decimal") {
+                          return diff.toFixed(input.max_decimal_digit);
+                        }
+
+                        // Non-decimal unit → round whole number
+                        return Math.round(diff);
+                      })()}
                     />
                   </Grid>
                 </>

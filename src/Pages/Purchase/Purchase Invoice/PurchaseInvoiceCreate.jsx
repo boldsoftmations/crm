@@ -50,6 +50,7 @@ export const PurchaseInvoiceCreate = memo(
         };
       })
     );
+    console.log("recordForEdit", recordForEdit);
     console.log("products", products);
 
     const handleFormChange = (index, event) => {
@@ -165,6 +166,7 @@ export const PurchaseInvoiceCreate = memo(
         setOpen(false);
       }
     };
+    console.log(products);
 
     const handleSure = async (e) => {
       e.preventDefault();

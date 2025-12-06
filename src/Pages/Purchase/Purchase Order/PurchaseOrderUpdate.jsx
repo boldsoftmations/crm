@@ -8,6 +8,7 @@ import { MessageAlert } from "../../../Components/MessageAlert";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import ProductService from "../../../services/ProductService";
+import { DecimalValidation } from "../../../Components/Header/DecimalValidation";
 // import { DecimalValidation } from "../../../Components/Header/DecimalValidation";
 
 const Root = styled("div")(({ theme }) => ({
@@ -49,26 +50,29 @@ export const PurchaseOrderUpdate = memo(
           e.preventDefault();
           setLoading(true);
 
-          // const numTypes = inputValues.products.map(
-          //   (item) => item.type_of_unit
-          // );
-          // const quantities = inputValues.products.map((item) => item.quantity);
-          // const decimalCounts = inputValues.products.map((item) =>
-          //   String(item.max_decimal_digit)
-          // );
-          // const unit = inputValues.products.map((item) => item.unit);
+          const numTypes = inputValues.products.map(
+            (item) => item.type_of_unit
+          );
+          const quantities = inputValues.products.map((item) => item.quantity);
+          const decimalCounts = inputValues.products.map((item) =>
+            String(item.max_decimal_digit)
+          );
+          const unit = inputValues.products.map((item) => item.unit);
+          console.log(numTypes);
 
-          // const isvalid = DecimalValidation({
-          //   numTypes,
-          //   quantities,
-          //   decimalCounts,
-          //   unit,
-          //   handleError,
-          // });
-          // if (!isvalid) {
-          //   setLoading(false);
-          //   return;
-          // }
+          if (numTypes.includes("decimal")) {
+            const isvalid = DecimalValidation({
+              numTypes,
+              quantities,
+              decimalCounts,
+              unit,
+              handleError,
+            });
+            if (!isvalid) {
+              setLoading(false);
+              return;
+            }
+          }
 
           const req = {
             created_by: inputValues.created_by,
