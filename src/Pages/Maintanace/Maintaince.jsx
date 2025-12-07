@@ -84,7 +84,7 @@ export default function Maintaince() {
           hoverColor="secondary"
           sx={{
             mt: 4,
-            py: 1.2,
+            py: 1,
             px: 4,
             fontWeight: "bold",
             borderRadius: 2,
