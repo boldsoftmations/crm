@@ -83,6 +83,7 @@ export const MaterialRequisitionFormUpdate = memo((props) => {
 
       console.log(products, "products");
       console.log(productOption, "productiotio");
+      if(numTypes.includes("decimal")){
       const isvalid = DecimalValidation({
         numTypes,
         quantities,
@@ -94,6 +95,7 @@ export const MaterialRequisitionFormUpdate = memo((props) => {
         setOpen(false);
         return;
       }
+    }
       await InventoryServices.updateMaterialRequisitionFormData(
         idForEdit.id,
         payload
