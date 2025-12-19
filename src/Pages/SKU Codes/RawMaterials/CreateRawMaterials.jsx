@@ -64,6 +64,7 @@ export const CreateRawMaterials = memo((props) => {
           productcode: formData.productcode,
           description: description,
           shelf_life: formData.shelf_life,
+          minimum_stock_limit: formData.minimum_stock_limit,
           hsn_code: formData.hsn_code,
           gst: formData.gst,
           cgst: GST,
@@ -242,6 +243,17 @@ export const CreateRawMaterials = memo((props) => {
               label="SGST"
               variant="outlined"
               value={GST ? `${GST}%` : ""}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              size="small"
+              name="minimum_stock_limit"
+              label="Minimum Stock Limit"
+              variant="outlined"
+              value={formData.minimum_stock_limit || ""}
+              onChange={handleInputChange}
             />
           </Grid>
         </Grid>
