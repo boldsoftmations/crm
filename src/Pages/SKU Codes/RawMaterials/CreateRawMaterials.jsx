@@ -1,5 +1,5 @@
 import { Box, Button, Grid } from "@mui/material";
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import ProductService from "../../../services/ProductService";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -7,6 +7,7 @@ import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
+import { DecimalValidation } from "../../../Components/Header/DecimalValidation";
 
 function searchArrayByKey(array, key, searchValue, returnValue) {
   for (let i = 0; i < array.length; i++) {
@@ -19,6 +20,8 @@ function searchArrayByKey(array, key, searchValue, returnValue) {
 export const CreateRawMaterials = memo((props) => {
   const { setOpenPopup, getRawMaterials, currentPage, searchQuery } = props;
   const [open, setOpen] = useState(false);
+  // const productUnit = useSelector((state) => state.auth.unitAllData);
+
   const [formData, setFormData] = useState([]);
   const { brandAllData, colourAllData, productCodeAllData, unitAllData } =
     useSelector((state) => state.auth);
@@ -38,6 +41,16 @@ export const CreateRawMaterials = memo((props) => {
     formData.productcode,
     "description"
   );
+  // useEffect(() => {
+  // }, []);
+  // const getUnits = async () => {
+  //   try {
+  //     const res = await ProductService.getAllUnit("all");
+  //     // set(getUnitData(res.data));
+  //   } catch (err) {
+  //     console.log("error unit finishGoods", err);
+  //   }
+  // };
 
   const productName = `${formData.productcode || ""}-${formData.color || ""}-${
     shortName ? shortName : ""
@@ -71,6 +84,21 @@ export const CreateRawMaterials = memo((props) => {
           sgst: GST,
           type: "raw-materials",
         };
+        let news = unitAllData.find((item) => item.name === data.unit);
+
+        const isvalid = DecimalValidation({
+          numTypes: [news.type_of_unit],
+          quantities: [formData.minimum_stock_limit],
+          decimalCounts: [news.max_decimal_digit],
+          unit: [formData.unit],
+          handleError,
+        });
+        if (!isvalid) {
+          setOpen(false);
+          return;
+        }
+
+        console.log("hello", data);
         const response = await ProductService.createRawMaterials(data);
         const successMessage =
           response.data.message || "Raw Materials Created successfully";
