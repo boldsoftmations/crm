@@ -31,7 +31,8 @@ const SearchComponent = ({ onSearch, onReset }) => {
       }
     }
   };
-//vo kya serch krte hi ham log git confi ? dekh maine ye pull liya our commite kiya to mere name se ho raha hai dal emial dal kru comiiit? kar
+
+
   return (
     <Box sx={{ width: "100%" }}>
       {" "}
