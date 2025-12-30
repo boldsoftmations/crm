@@ -310,7 +310,7 @@ export const ListItems = ({ setOpen }) => {
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
         ]),
-        renderSubmenu("production", <FactoryIcon />, "Production", [
+        renderSubmenu("inventory", <FactoryIcon />, "Inventory", [
           { to: "/inventory/stock-alert", text: "Stock Alert" },
         ]),
       ],
@@ -381,6 +381,7 @@ export const ListItems = ({ setOpen }) => {
         renderListItem("/invoice/orderbook-tab", <ReceiptIcon />, "Order Book"),
         renderSubmenu("inventory", <InventoryIcon />, "Inventory", [
           { to: "/inventory/view-inventory", text: "Inventory" },
+          { to: "/inventory/stock-alert", text: "Stock Alert" },
         ]),
         renderSubmenu("production", <FactoryIcon />, "Production", [
           { to: "/inventory/view-production", text: "Production" },
