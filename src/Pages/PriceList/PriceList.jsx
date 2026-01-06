@@ -73,6 +73,7 @@ export const PriceList = () => {
         return {
           id: row.id,
           product: row.product,
+          zone: row.zone,
           slab1: row.slab1,
           slab1_price: row.slab1_price,
           slab2: row.slab2,
@@ -143,6 +144,7 @@ export const PriceList = () => {
   const Tabledata = priceListData.map((row) => ({
     id: row.id,
     product: row.product,
+    zone: row.zone,
     slab1: row.type_of_unit === "decimal" ? row.slab1 : Math.floor(row.slab1),
     slab1_price: row.slab1_price,
     slab2: row.type_of_unit === "decimal" ? row.slab2 : Math.floor(row.slab2),
@@ -156,6 +158,7 @@ export const PriceList = () => {
   const Tableheaders = [
     "ID",
     "Product",
+    "Zone",
     "Slab1",
     "Slab1 Price",
     "Slab2",
@@ -169,6 +172,7 @@ export const PriceList = () => {
   const headers = [
     { label: "ID", key: "id" },
     { label: "Product", key: "product" },
+    { label: "Zone", key: "zone" },
     { label: "Slab1", key: "slab1" },
     { label: "Slab1 Price", key: "slab1_price" },
     { label: "Slab2", key: "slab2" },
