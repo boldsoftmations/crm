@@ -88,7 +88,7 @@ export const Header = () => {
     } finally {
       setOpen(false);
     }
-  }, [auth.user])
+  }, [auth.user]);
 
   return (
     <div>
