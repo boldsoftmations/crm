@@ -89,7 +89,7 @@ export const CreatePriceList = memo((props) => {
 
         // Build request payload
         const req = {
-          zone: inputValue.zone,
+          zone: selectedZone ? selectedZone.name : "",
           product: inputValue.product,
           slab1: Number(inputValue.slab1),
           slab1_price: Number(inputValue.slab1_price),
