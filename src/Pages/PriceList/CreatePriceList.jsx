@@ -17,6 +17,7 @@ export const CreatePriceList = memo((props) => {
     currentPage,
     filterQuery,
     searchQuery,
+    selectedZone,
   } = props;
   const [inputValue, setInputValue] = useState([]);
   // const [zoneOption, setZoneOptions] = useState([]);
@@ -133,7 +134,7 @@ export const CreatePriceList = memo((props) => {
       >
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <CustomAutocomplete
+            {/* <CustomAutocomplete
               sx={{
                 minWidth: 180,
               }}
@@ -145,6 +146,15 @@ export const CreatePriceList = memo((props) => {
               options={zoneOption.map((option) => option.name)}
               getOptionLabel={(option) => `${option ? option : "No Options"}`}
               label="Zone"
+            /> */}
+            <CustomTextField
+              sx={{
+                minWidth: 180,
+              }}
+              fullWidth
+              value={(selectedZone && selectedZone.name) || ""}
+              label="Zone"
+              disabled={true}
             />
           </Grid>
           <Grid item xs={12}>
