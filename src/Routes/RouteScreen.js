@@ -48,6 +48,7 @@ import LeadSummary from "../Pages/MasterLeadSummary/LeadSummary";
 import FactoryMaster from "../Pages/MasterFactory/FactoryMaster";
 import Maintaince from "../Pages/Maintanace/Maintaince";
 import StocklimitView from "../Pages/Invoice/Rework Entry/StockLimit/StocklimitView";
+import { AllInventoryReportTabs } from "../Pages/InventoryReport/AllInventoryReportTabs";
 
 const PrivateRoute = ({ children, redirectTo = "/" }) => {
   const tokenData = useSelector((state) => state.auth);
@@ -256,7 +257,7 @@ export const RouteScreen = () => {
             path="/inventory/stock-alert"
             element={
               <PrivateRoute>
-                <StocklimitView />
+                <AllInventoryReportTabs />
               </PrivateRoute>
             }
           />

@@ -715,7 +715,28 @@ const getDailyReportData = (id) => {
     `api/inventory/production-product-details/?${params.toString()}`,
   );
 };
+const getStockReportData = (page, state, productType, StartDate, EndDate) => {
+  const params = new URLSearchParams();
 
+  if (page) {
+    params.append("page", page);
+  }
+  if (state) {
+    params.append("state", state);
+  }
+  if (productType) {
+    params.append("product_type", productType);
+  }
+  if (StartDate) {
+    params.append("start_date", StartDate);
+  }
+  if (EndDate) {
+    params.append("end_date", EndDate);
+  }
+  return CustomAxios.get(
+    `api/inventory/inventory-stock-report/?${params.toString()}`,
+  );
+};
 const InventoryServices = {
   isPLApproveReject,
   updatePLApproveListData,
@@ -792,6 +813,7 @@ const InventoryServices = {
   updateReworkInvoiceData,
   getStockAlertData,
   getDailyReportData,
+  getStockReportData,
 };
 
 export default InventoryServices;
