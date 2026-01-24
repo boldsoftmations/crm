@@ -92,7 +92,7 @@ export const ListItems = ({ setOpen }) => {
               selected={isActive(to)}
               activeClassName="Mui-selected"
               sx={{ pl: 8 }}
-              key={to}
+              key={index}
             >
               <ListItemText primary={text} />
             </ListItem>
@@ -511,7 +511,10 @@ export const ListItems = ({ setOpen }) => {
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/products/all-product", text: "Inventory Master" },
-          { to: "/invoice/seller-account", text: "Company Master" },
+          {
+            to: "/county-state-city/master-tab",
+            text: "Country Master",
+          },
           { to: "/user/profile-tab", text: "Employees Master" },
         ]),
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
@@ -519,7 +522,7 @@ export const ListItems = ({ setOpen }) => {
           { to: "/invoice/sales-invoice", text: "Sales Invoice" },
         ]),
         renderSubmenu("accounts", <AttachMoneyIcon />, "Accounts", [
-          { to: "/invoice/credit-debit-note", text: "Debit-Credit" },
+          { to: "/products/view-price-list", text: "Price List" },
         ]),
         renderSubmenu("inventory", <InventoryIcon />, "Inventory", [
           { to: "/inventory/view-inventory", text: "Inventory" },
@@ -903,7 +906,7 @@ export const ListItems = ({ setOpen }) => {
       {menuItems.map(
         (menu, index) =>
           menu.condition && (
-            <React.Fragment key={menu.to}>{menu.items}</React.Fragment>
+            <React.Fragment key={index}>{menu.items}</React.Fragment>
           ),
       )}
     </div>
