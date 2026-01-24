@@ -527,30 +527,29 @@ export const ListItems = ({ setOpen }) => {
         renderSubmenu("inventory", <InventoryIcon />, "Inventory", [
           { to: "/inventory/view-inventory", text: "Inventory" },
         ]),
-        renderSubmenu(
-          "customer_complaint",
-          <ComplaintIcon />,
-          "Customer Complaint",
-          [{ to: "/customer/complaints/ccp-capa", text: "CCF-CAPA" }],
-        ),
+        // renderSubmenu(
+        //   "customer_complaint",
+        //   <ComplaintIcon />,
+        //   "Customer Complaint",
+        //   [{ to: "/customer/complaints/ccp-capa", text: "CCF-CAPA" }],
+        // ),
         renderSubmenu("production", <FactoryIcon />, "Production", [
           { to: "/inventory/view-production", text: "Production" },
         ]),
         renderSubmenu("sales", <TrendingUpIcon />, "Sales", [
           { to: "/customers/all-customer", text: "Customer" },
-          { to: "/forecast/view-product-forecast", text: "Forecast" },
         ]),
-        renderSubmenu("purchase", <PurchaseIcon />, "Purchase", [
-          { to: "/inventory/view-vendor", text: "Vendor" },
-          { to: "/inventory/view-purchase", text: "Purchase" },
-        ]),
+        // renderSubmenu("purchase", <PurchaseIcon />, "Purchase", [
+        //   { to: "/inventory/view-vendor", text: "Vendor" },
+        //   { to: "/inventory/view-purchase", text: "Purchase" },
+        // ]),
         renderListItem("/invoice/orderbook-tab", <ReceiptIcon />, "Order Book"),
         renderListItem("/dispatch/tab-view", <LocalShippingIcon />, "Dispatch"),
-        renderListItem(
-          "/inventory/sales-return",
-          <DescriptionIcon />,
-          "Sales Return",
-        ),
+        // renderListItem(
+        //   "/inventory/sales-return",
+        //   <DescriptionIcon />,
+        //   "Sales Return",
+        // ),
         renderListItem("/task/view-task", <AssignmentTurnedInIcon />, "Task"),
       ],
     },
