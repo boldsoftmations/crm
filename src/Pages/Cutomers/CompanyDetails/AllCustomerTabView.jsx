@@ -23,6 +23,7 @@ export const AllCustomerTabView = () => {
     "Customer Relationship Manager",
     "Business Development Manager",
     "Operations & Supply Chain Manager",
+    "Accounts Executive",
   );
 
   const BdeAndManager = isInGroups(
@@ -61,7 +62,7 @@ export const AllCustomerTabView = () => {
   const isSalesManagerWithoutLeads = isInGroups("Sales Manager without Leads");
   const isSalesManagerWithLeads = isInGroups("Sales Manager with Leads");
   const isCustomerService = isInGroups("Customer Service");
-  const isAccountExecutive = isInGroups("Accounts Executive");
+  // const isAccountExecutive = isInGroups("Accounts Executive");
   const isAccountBillingDepartment = isInGroups("Accounts Billing Department");
   const tabs = useMemo(
     () => [
@@ -75,8 +76,8 @@ export const AllCustomerTabView = () => {
           isSalesManagerWithoutLeads ||
           isSalesManagerWithLeads ||
           isCustomerService ||
-          isAccountBillingDepartment ||
-          isAccountExecutive,
+          isAccountBillingDepartment,
+
         index: 0,
         component: <CompanyDetails />,
       },
