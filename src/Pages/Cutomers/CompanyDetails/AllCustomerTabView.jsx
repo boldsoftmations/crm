@@ -32,6 +32,7 @@ export const AllCustomerTabView = () => {
     "Sales Manager(Retailer)",
     "Sales Executive",
     "Accounts",
+    "Accounts Executive",
     "Sales Deputy Manager",
     "Business Development Manager",
     "Business Development Executive",
