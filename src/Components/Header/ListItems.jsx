@@ -537,7 +537,11 @@ export const ListItems = ({ setOpen }) => {
           { to: "/inventory/view-production", text: "Production" },
         ]),
         renderSubmenu("sales", <TrendingUpIcon />, "Sales", [
+          { to: "/leads/all-lead", text: "Leads" },
           { to: "/customers/all-customer", text: "Customer" },
+          { to: "/followp/view-followup", text: "Followup" },
+
+          { to: "/market-analysis/competitor", text: "Market Analysis" },
         ]),
         // renderSubmenu("purchase", <PurchaseIcon />, "Purchase", [
         //   { to: "/inventory/view-vendor", text: "Vendor" },
