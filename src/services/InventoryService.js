@@ -715,14 +715,21 @@ const getDailyReportData = (id) => {
     `api/inventory/production-product-details/?${params.toString()}`,
   );
 };
-const getStockReportData = (page, state, productType, StartDate, EndDate) => {
+const getStockReportData = (
+  // page,
+  seller_account,
+  productType,
+  StartDate,
+  EndDate,
+  searchQuery,
+) => {
   const params = new URLSearchParams();
 
-  if (page) {
-    params.append("page", page);
-  }
-  if (state) {
-    params.append("state", state);
+  // if (page) {
+  //   params.append("page", page);
+  // }
+  if (seller_account) {
+    params.append("seller_account", seller_account);
   }
   if (productType) {
     params.append("product_type", productType);
@@ -733,9 +740,10 @@ const getStockReportData = (page, state, productType, StartDate, EndDate) => {
   if (EndDate) {
     params.append("end_date", EndDate);
   }
-  return CustomAxios.get(
-    `api/inventory/inventory-stock-report/?${params.toString()}`,
-  );
+  if (searchQuery) {
+    params.append("search", searchQuery);
+  }
+  return CustomAxios.get(`api/inventory/day-wise-stock/?${params.toString()}`);
 };
 const InventoryServices = {
   isPLApproveReject,

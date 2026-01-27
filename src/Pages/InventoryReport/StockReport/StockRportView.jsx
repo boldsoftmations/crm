@@ -10,42 +10,69 @@ import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import CustomTextField from "../../../Components/CustomTextField";
 import { Popup } from "../../../Components/Popup";
+import InvoiceServices from "../../../services/InvoiceService";
 
 const StockRportView = () => {
   const [open, setOpen] = useState(false);
   const [isToday, setIsToday] = useState(false);
   const [productType, setProductType] = useState("finished-goods");
   const [storesInventoryData, setStoresInventoryData] = useState([]);
+  const [stateData, setStateData] = useState([]);
+
   const [searchQuery, setSearchQuery] = useState("");
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-  const [state, setSate] = useState("Maharashtra");
+  const [state, setSate] = useState(null);
   const [endDate, setEndDate] = useState(new Date());
   const [startDate, setStartDate] = useState(new Date());
   const [customDataPopup, setCustomDataPopup] = useState(false);
-  const [selectedValue, setSelectedValue] = useState("Today");
+  // const [selectedValue, setSelectedValue] = useState("Today");
   const getAllStoresInventoryDetails = async () => {
     try {
       setOpen(true);
       const response = await InventoryServices.getStockReportData(
-        "All",
-        state,
+        state ? state.id : 1,
         productType,
         StartDate,
         EndDate,
+        searchQuery,
       );
-      setStoresInventoryData(response.data.data);
-      console.log(response.data.data);
+      setStoresInventoryData(response.data);
+      console.log(response.data);
     } catch (err) {
       handleError(err);
     } finally {
       setOpen(false);
     }
   };
+  useEffect(() => {
+    if (stateData.length > 0) {
+      const defaultState = stateData.find(
+        (item) => item.unit === "M1" && item.id === 1,
+      );
+      setSate(defaultState || null);
+    }
+  }, [stateData]);
+
   const getSubmitDate = () => {
     // setIsToday(!isToday);
     setCustomDataPopup(false);
   };
+  const getAllSellerAccountsDetails = async () => {
+    try {
+      setOpen(true);
+      const response = await InvoiceServices.getAllSellerAccountData();
+      setStateData(response.data.results);
+      console.log("resData :", response.data.results);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setOpen(false);
+    }
+  };
+  useEffect(() => {
+    getAllSellerAccountsDetails();
+  }, []);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -55,7 +82,7 @@ const StockRportView = () => {
 
   useEffect(() => {
     getAllStoresInventoryDetails();
-  }, [state, productType, isToday, customDataPopup]);
+  }, [state, productType, isToday, customDataPopup, searchQuery]);
   const handleReset = () => {
     setSearchQuery("");
   };
@@ -97,26 +124,37 @@ const StockRportView = () => {
   //   );
 
   const Tableheaders = [
+    "DATE",
     "UNIT",
     "PRODUCT",
-    "DESCRIPTION",
-    "BRAND",
-    "TOTAL QUANTITY",
-
-    "COMITTED QUANTITY",
-    "AVAILABLE QUANTITY",
+    "OPEING STOCK",
+    "ORDERBOOK STOCK",
+    "INVOICED STOCK",
+    "CLOSE STOCK",
+    "AVAILABLE STOCK",
   ];
 
+  // available_stock: "40.00";
+  // closing_stock: "40.00";
+  // date: "2026-01-27";
+  // invoiced_stock: "0.00";
+  // opening_stock: "40.00";
+  // orderbook_stock: "0.00";
+  // product: "39C08-GREY-GPX-12x9-240-P1";
+  // seller_account: "M1";
+  // unit: "CTN";
   const headers = [
-    { label: "UNIT", key: "seller_account__unit" },
-    { label: "PRODUCT", key: "product__name" },
-    { label: "DESCRIPTION", key: "product__description__name" },
-    { label: "BRAND", key: "product__brand__name" },
+    { label: "DATE", key: "date" },
+    { label: "UNIT", key: "unit" },
+    { label: "PRODUCT", key: "product" },
     // { label: "SELLER UNIT", key: "seller_account" },
-    { label: "TOTAL QUANTITY", key: "total_stock_qty" },
+    { label: "OPEING STOCK", key: "opening_stock" },
 
-    { label: "COMITTED QUANTITY", key: "commited_stock_qty" },
-    { label: "AVAILABLE QUANTITY", key: "available_stock_qty" },
+    { label: "ORDERBOOK STOCK", key: "orderbook_stock" },
+    { label: "INVOICED STOCK", key: "invoiced_stock" },
+    { label: "CLOSE STOCK", key: "closing_stock" },
+
+    { label: "AVAILABLE STOCK", key: "available_stock" },
   ];
   const DateOptions = ["Today", "Custom Date"];
 
@@ -124,16 +162,20 @@ const StockRportView = () => {
     storesInventoryData &&
     storesInventoryData.map((row) => {
       return {
-        unit: row.seller_account__unit,
-        product: row.product__name,
-        description: row.product__description__name,
-        brand: row.product__brand__name,
-        available_stock_qty: row.available_stock_qty,
-        commited_stock_qty: row.commited_stock_qty,
-        total_stock_qty: row.total_stock_qty,
+        date: row.date,
+
+        unit: row.unit,
+        product: row.product,
+        opening_stock: row.opening_stock,
+        orderbook_stock: row.orderbook_stock,
+        // total_stock: row.total_stock,
+        invoiced_stock: row.invoiced_stock,
+        closing_stock: row.closing_stock,
+
+        available_stock: row.available_stock,
       };
     });
-  const stateOption = ["Maharashtra", "Delhi", "Tirupur"];
+  // const stateOption = ["M1", "M2", "D1", "T1", "BS1"];
   const ProductType = ["finished-goods", "raw-materials", "consumables"];
   return (
     <>
@@ -152,10 +194,12 @@ const StockRportView = () => {
               size="small"
               value={state}
               onChange={(e, value) => setSate(value)}
-              options={stateOption.map((option) => option)}
-              getOptionLabel={(option) => `${option}`}
-              label={"Select a State"}
+              options={stateData || []}
+              getOptionLabel={(option) => (option ? option.unit : "")}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              label="Select a State"
             />
+
             <CustomAutocomplete
               fullWidth
               size="small"
@@ -177,54 +221,58 @@ const StockRportView = () => {
               label="Filter By Date" // Passed directly to CustomAutocomplete
             />
           </Box>
-        </Grid>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            p: 2,
-          }}
-        >
-          <Box sx={{ flexGrow: 1, minWidth: "300px" }}>
-            <SearchComponent onSearch={handleSearch} onReset={handleReset} />
-          </Box>
-          <Typography
-            variant="h3"
-            sx={{
-              flexGrow: 2,
-              textAlign: "center",
-              margin: "0",
-              fontSize: "24px",
-              color: "rgb(34, 34, 34)",
-              fontWeight: 800,
-              minWidth: "150px",
-            }}
-          >
-            Stock Report
-          </Typography>
           <Box
             sx={{
-              flexGrow: 1,
               display: "flex",
-              justifyContent: "flex-end",
-              minWidth: "300px",
+              gap: "1rem",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              mb: 2,
             }}
           >
-            <CSVLink
-              data={data}
-              headers={headers}
-              filename={"Low Stock Alerts.csv"}
-              target="_blank"
-              style={{ textDecoration: "none", outline: "none" }}
+            <Box sx={{ flexGrow: 1, maxWidth: "400px" }}>
+              <SearchComponent
+                onSearch={handleSearch}
+                size="small"
+                onReset={handleReset}
+              />
+            </Box>
+            <Typography
+              variant="h3"
+              sx={{
+                flexGrow: 2,
+                textAlign: "center",
+                margin: "0",
+                fontSize: "24px",
+                color: "rgb(34, 34, 34)",
+                fontWeight: 800,
+                minWidth: "150px",
+              }}
             >
-              <Button variant="contained" sx={{ marginRight: 1 }}>
-                Download CSV
-              </Button>
-            </CSVLink>
+              Stock Report
+            </Typography>
+            <Box
+              sx={{
+                flexGrow: 1,
+                display: "flex",
+                justifyContent: "flex-end",
+                minWidth: "300px",
+              }}
+            >
+              <CSVLink
+                data={data}
+                headers={headers}
+                filename={"Low Stock Alerts.csv"}
+                target="_blank"
+                style={{ textDecoration: "none", outline: "none" }}
+              >
+                <Button variant="contained">Download CSV</Button>
+              </CSVLink>
+            </Box>
           </Box>
-        </Box>
+        </Grid>
+
         <CustomTable Isviewable={false} headers={Tableheaders} data={data} />
       </Paper>
       <Popup
