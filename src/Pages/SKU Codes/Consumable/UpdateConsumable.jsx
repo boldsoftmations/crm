@@ -210,12 +210,25 @@ export const UpdateConsumable = memo((props) => {
               fullWidth
               name="hsn_code"
               size="small"
-              label="Hsn Code"
+              label="Hsn Codes"
               variant="outlined"
               value={formData.hsn_code || ""}
               onChange={handleInputChange}
             />
           </Grid>
+
+          <Grid item xs={12} sm={4}>
+            <CustomTextField
+              fullWidth
+              name="minimum_stock_limit"
+              size="small"
+              label="Minimum Stock Limit"
+              variant="outlined"
+              value={formData.minimum_stock_limit || ""}
+              onChange={handleInputChange}
+            />
+          </Grid>
+
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -228,6 +241,7 @@ export const UpdateConsumable = memo((props) => {
               onChange={handleInputChange}
             />
           </Grid>
+
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth

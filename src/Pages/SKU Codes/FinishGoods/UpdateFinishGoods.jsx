@@ -9,12 +9,17 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import { MessageAlert } from "../../../Components/MessageAlert";
 
 function searchArrayByKey(array, key, searchValue, returnValue) {
+  if (!Array.isArray(array)) return null;
+
   for (let i = 0; i < array.length; i++) {
-    if (array[i][key] === searchValue) {
-      return array[i][returnValue];
+    if (array[i] && array[i][key] === searchValue) {
+      return array[i][returnValue] || null;
     }
   }
+
+  return null;
 }
+
 
 export const UpdateFinishGoods = memo((props) => {
   const {
@@ -175,7 +180,7 @@ export const UpdateFinishGoods = memo((props) => {
               onChange={(event, newValue) => {
                 setFormData((prev) => ({ ...prev, basic_unit: newValue }));
               }}
-              options={basicunitAllData.map((option) => option.name)}
+              options={basicunitAllData && basicunitAllData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label="Basic Unit"
             />
@@ -191,7 +196,7 @@ export const UpdateFinishGoods = memo((props) => {
               onChange={(event, newValue) => {
                 setFormData((prev) => ({ ...prev, unit: newValue }));
               }}
-              options={unitAllData.map((option) => option.name)}
+              options={unitAllData && unitAllData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label={"Unit"}
             />
@@ -207,7 +212,7 @@ export const UpdateFinishGoods = memo((props) => {
               onChange={(event, newValue) => {
                 setFormData((prev) => ({ ...prev, packing_unit: newValue }));
               }}
-              options={packingunitAllData.map((option) => option.name)}
+              options={packingunitAllData && packingunitAllData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label={" Packing Unit"}
             />
@@ -249,7 +254,7 @@ export const UpdateFinishGoods = memo((props) => {
               onChange={(event, newValue) => {
                 setFormData((prev) => ({ ...prev, color: newValue }));
               }}
-              options={colourAllData.map((option) => option.name)}
+              options={colourAllData && colourAllData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label={"Colour"}
             />
@@ -265,7 +270,7 @@ export const UpdateFinishGoods = memo((props) => {
               onChange={(event, newValue) => {
                 setFormData((prev) => ({ ...prev, brand: newValue }));
               }}
-              options={brandAllData.map((option) => option.name)}
+              options={brandAllData && brandAllData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label="Brand"
             />
@@ -281,7 +286,7 @@ export const UpdateFinishGoods = memo((props) => {
               onChange={(event, newValue) => {
                 setFormData((prev) => ({ ...prev, productcode: newValue }));
               }}
-              options={productCodeAllData.map((option) => option.code)}
+              options={productCodeAllData && productCodeAllData.map((option) => option.code)}
               getOptionLabel={(option) => `${option}`}
               label="Product Code"
             />
