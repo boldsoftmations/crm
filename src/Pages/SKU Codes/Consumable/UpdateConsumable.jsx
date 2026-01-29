@@ -30,6 +30,9 @@ export const UpdateConsumable = memo((props) => {
   const { brandAllData, unitAllData } = useSelector((state) => state.auth);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
+    const userData = useSelector((state) => state.auth.profile);
+    const isInGroups = (...groups) =>
+      groups.some((group) => userData.groups.includes(group));
 
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target;
@@ -111,6 +114,7 @@ export const UpdateConsumable = memo((props) => {
               label="Name"
               variant="outlined"
               value={formData.name || ""}
+              disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -122,6 +126,7 @@ export const UpdateConsumable = memo((props) => {
               label="Product Code"
               variant="outlined"
               value={productName || ""}
+               disabled={isInGroups("Stores")}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -132,6 +137,7 @@ export const UpdateConsumable = memo((props) => {
               label="size"
               variant="outlined"
               value={formData.size || ""}
+               disabled={isInGroups("Stores")}
               onChange={handleInputChange}
             />
           </Grid>
@@ -149,6 +155,7 @@ export const UpdateConsumable = memo((props) => {
               options={unitAllData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label={"Unit"}
+               disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -165,6 +172,7 @@ export const UpdateConsumable = memo((props) => {
               options={descriptionOptions.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label="Description"
+               disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -181,6 +189,7 @@ export const UpdateConsumable = memo((props) => {
               options={brandAllData.map((option) => option.name)}
               getOptionLabel={(option) => `${option}`}
               label="Brand"
+               disabled={isInGroups("Stores")}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -192,6 +201,7 @@ export const UpdateConsumable = memo((props) => {
               variant="outlined"
               value={formData.additional_description || ""}
               onChange={handleInputChange}
+               disabled={isInGroups("Stores")}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -203,6 +213,7 @@ export const UpdateConsumable = memo((props) => {
               variant="outlined"
               value={formData.shelf_life || ""}
               onChange={handleInputChange}
+               disabled={isInGroups("Stores")}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -214,6 +225,7 @@ export const UpdateConsumable = memo((props) => {
               variant="outlined"
               value={formData.hsn_code || ""}
               onChange={handleInputChange}
+               disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -239,6 +251,7 @@ export const UpdateConsumable = memo((props) => {
               variant="outlined"
               value={formData.gst || ""}
               onChange={handleInputChange}
+               disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -249,6 +262,7 @@ export const UpdateConsumable = memo((props) => {
               label="CGST"
               variant="outlined"
               value={GST ? `${GST}%` : ""}
+               disabled={isInGroups("Stores")}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -258,6 +272,7 @@ export const UpdateConsumable = memo((props) => {
               label="SGST"
               variant="outlined"
               value={GST ? `${GST}%` : ""}
+               disabled={isInGroups("Stores")}
             />
           </Grid>
         </Grid>
