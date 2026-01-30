@@ -7,7 +7,7 @@ import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
-
+import { DecimalValidation } from "../../../Components/Header/DecimalValidation";
 function searchArrayByKey(array, key, searchValue, returnValue) {
   if (!Array.isArray(array)) return null;
 
@@ -20,7 +20,6 @@ function searchArrayByKey(array, key, searchValue, returnValue) {
   return null;
 }
 
-
 export const UpdateFinishGoods = memo((props) => {
   const {
     recordForEdit,
@@ -29,6 +28,7 @@ export const UpdateFinishGoods = memo((props) => {
     currentPage,
     searchQuery,
   } = props;
+  const [unitType, setUnitType] = useState(recordForEdit.unit);
   const [formData, setFormData] = useState(recordForEdit);
   const GST = JSON.stringify(formData.gst / 2);
   const [open, setOpen] = useState(false);
@@ -40,28 +40,29 @@ export const UpdateFinishGoods = memo((props) => {
     basicunitAllData,
     unitAllData,
   } = useSelector((state) => state.auth);
+  const productUnit = unitAllData;
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-const userData = useSelector((state) => state.auth.profile);
-const isInGroups = (...groups) =>
-  groups.some((group) => userData.groups.includes(group));
+  const userData = useSelector((state) => state.auth.profile);
+  const isInGroups = (...groups) =>
+    groups.some((group) => userData.groups.includes(group));
   const shortName = searchArrayByKey(
     brandAllData,
     "name",
     formData.brand,
-    "short_name"
+    "short_name",
   );
   const description = searchArrayByKey(
     productCodeAllData,
     "code",
     formData.productcode,
-    "description"
+    "description",
   );
   const getPackingUnitShortName = searchArrayByKey(
     packingunitAllData,
     "name",
     formData.packing_unit,
-    "short_name"
+    "short_name",
   );
 
   const productName = useMemo(() => {
@@ -96,6 +97,30 @@ const isInGroups = (...groups) =>
       try {
         e.preventDefault();
         setOpen(true);
+        const selectedUnit = productUnit.find(
+          (item) => item.name === formData.unit,
+        );
+
+        const safeUnitType = selectedUnit ? selectedUnit.type_of_unit : "";
+        const maxDecimal = selectedUnit ? selectedUnit.max_decimal_digit : "";
+
+        setUnitType(safeUnitType);
+
+        if (safeUnitType === "decimal") {
+          const isValid = DecimalValidation({
+            numTypes: [safeUnitType],
+            quantities: [formData.minimum_stock_limit],
+            decimalCounts: [maxDecimal],
+            unit: [formData.unit],
+            handleError,
+          });
+
+          if (!isValid) {
+            setOpen(false);
+            return;
+          }
+        }
+
         const data = {
           name: productName,
           size: formData.size,
@@ -106,6 +131,7 @@ const isInGroups = (...groups) =>
           packing_unit_quantity: formData.packing_unit_quantity,
           color: formData.color,
           brand: formData.brand,
+          minimum_stock_limit: formData.minimum_stock_limit,
           productcode: formData.productcode,
           description: description,
           shelf_life: formData.shelf_life,
@@ -118,7 +144,7 @@ const isInGroups = (...groups) =>
         if (recordForEdit) {
           const response = await ProductService.updateFinishGoods(
             formData.id,
-            data
+            data,
           );
           const successMessage =
             response.data.message || "Finish Goods updated successfully";
@@ -135,11 +161,11 @@ const isInGroups = (...groups) =>
         setOpen(false); // Always close the loader
       }
     },
-    [formData, productName, GST, currentPage, searchQuery]
+    [formData, productName, GST, currentPage, searchQuery],
   );
-
-
-
+  const handleAutoChange = useCallback((name, value) => {
+    setFormData((p) => ({ ...p, [name]: value }));
+  }, []);
   return (
     <>
       <MessageAlert
@@ -184,7 +210,10 @@ const isInGroups = (...groups) =>
               onChange={(event, newValue) => {
                 setFormData((prev) => ({ ...prev, basic_unit: newValue }));
               }}
-              options={basicunitAllData && basicunitAllData.map((option) => option.name)}
+              options={
+                basicunitAllData &&
+                basicunitAllData.map((option) => option.name)
+              }
               getOptionLabel={(option) => `${option}`}
               label="Basic Unit"
               disabled={isInGroups("Stores")}
@@ -193,17 +222,15 @@ const isInGroups = (...groups) =>
 
           <Grid item xs={12} sm={4}>
             <CustomAutocomplete
-              sx={{
-                minWidth: 220,
-              }}
               size="small"
               value={formData.unit || ""}
-              onChange={(event, newValue) => {
-                setFormData((prev) => ({ ...prev, unit: newValue }));
+              options={unitAllData.map((o) => o.name)}
+              label="Unit"
+              onChange={(e, v) => {
+                handleAutoChange("unit", v);
+                const u = productUnit.find((item) => item.name === v);
+                setUnitType(u ? u.type_of_unit : "");
               }}
-              options={unitAllData && unitAllData.map((option) => option.name)}
-              getOptionLabel={(option) => `${option}`}
-              label={"Unit"}
               disabled={isInGroups("Stores")}
             />
           </Grid>
@@ -218,7 +245,10 @@ const isInGroups = (...groups) =>
               onChange={(event, newValue) => {
                 setFormData((prev) => ({ ...prev, packing_unit: newValue }));
               }}
-              options={packingunitAllData && packingunitAllData.map((option) => option.name)}
+              options={
+                packingunitAllData &&
+                packingunitAllData.map((option) => option.name)
+              }
               getOptionLabel={(option) => `${option}`}
               label={" Packing Unit"}
               disabled={isInGroups("Stores")}
@@ -243,12 +273,15 @@ const isInGroups = (...groups) =>
               name="minimum_stock_limit"
               size="small"
               label="Minimum Stock Limit"
-              variant="outlined"
-              value={formData.minimum_stock_limit || ""}
+              value={
+                unitType === "decimal"
+                  ? formData.minimum_stock_limit
+                  : Math.round(formData.minimum_stock_limit) || "0"
+              }
               onChange={handleInputChange}
             />
           </Grid>
-          
+
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -257,7 +290,7 @@ const isInGroups = (...groups) =>
               label="Packing Unit Quantity"
               variant="outlined"
               value={
-              formData.packing_unit_quantity
+                formData.packing_unit_quantity
                   ? formData.packing_unit_quantity
                   : ""
               }
@@ -276,7 +309,9 @@ const isInGroups = (...groups) =>
               onChange={(event, newValue) => {
                 setFormData((prev) => ({ ...prev, color: newValue }));
               }}
-              options={colourAllData && colourAllData.map((option) => option.name)}
+              options={
+                colourAllData && colourAllData.map((option) => option.name)
+              }
               getOptionLabel={(option) => `${option}`}
               label={"Colour"}
               disabled={isInGroups("Stores")}
@@ -293,7 +328,9 @@ const isInGroups = (...groups) =>
               onChange={(event, newValue) => {
                 setFormData((prev) => ({ ...prev, brand: newValue }));
               }}
-              options={brandAllData && brandAllData.map((option) => option.name)}
+              options={
+                brandAllData && brandAllData.map((option) => option.name)
+              }
               getOptionLabel={(option) => `${option}`}
               label="Brand"
               disabled={isInGroups("Stores")}
@@ -310,7 +347,10 @@ const isInGroups = (...groups) =>
               onChange={(event, newValue) => {
                 setFormData((prev) => ({ ...prev, productcode: newValue }));
               }}
-              options={productCodeAllData && productCodeAllData.map((option) => option.code)}
+              options={
+                productCodeAllData &&
+                productCodeAllData.map((option) => option.code)
+              }
               getOptionLabel={(option) => `${option}`}
               label="Product Code"
               disabled={isInGroups("Stores")}

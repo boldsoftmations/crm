@@ -27,16 +27,11 @@ export const UpdateConsumable = memo((props) => {
 
   const [open, setOpen] = useState(false);
   const [unitType, setUnitType] = useState(recordForEdit.unit);
-const [formData, setFormData] = useState({
-  ...recordForEdit,
-  minimum_stock_limit: recordForEdit.minimum_stock_limit
-    ? Number(recordForEdit.minimum_stock_limit)
-    : 0,
-});
-
+  const [formData, setFormData] = useState(recordForEdit);
+  console.log(recordForEdit);
 
   const { brandAllData, unitAllData, productCodeAllData } = useSelector(
-    (state) => state.auth
+    (state) => state.auth,
   );
   const productUnit = unitAllData;
 
@@ -48,14 +43,15 @@ const [formData, setFormData] = useState({
     useNotificationHandling();
 
   // 🔹 Description value
-  const descriptionValue = useMemo(() => formData.description || "", [
-    formData.description,
-  ]);
+  const descriptionValue = useMemo(
+    () => formData.description || "",
+    [formData.description],
+  );
 
   // 🔹 Short name of brand
   const shortName = useMemo(
     () => searchArrayValue(brandAllData, "name", formData.brand, "short_name"),
-    [formData.brand, brandAllData]
+    [formData.brand, brandAllData],
   );
 
   // 🔹 Product Name
@@ -69,21 +65,23 @@ const [formData, setFormData] = useState({
   }, [descriptionValue, formData.name, shortName]);
 
   // 🔹 GST
-  const GST = useMemo(() => (formData.gst ? formData.gst / 2 : 0), [formData.gst]);
+  const GST = useMemo(
+    () => (formData.gst ? formData.gst / 2 : 0),
+    [formData.gst],
+  );
 
   // 🔹 Handle normal text input changes
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
 
     // Ensure minimum_stock_limit is number
- if (name === "minimum_stock_limit") {
-  setFormData((p) => ({
-    ...p,
-    minimum_stock_limit: value === "" ? 0 : Number(value),
-  }));
-  return;
-}
-
+    if (name === "minimum_stock_limit") {
+      setFormData((p) => ({
+        ...p,
+        minimum_stock_limit: value === "" ? 0 : Number(value),
+      }));
+      return;
+    }
 
     setFormData((p) => ({ ...p, [name]: value }));
   }, []);
@@ -101,7 +99,9 @@ const [formData, setFormData] = useState({
         setOpen(true);
 
         // 🔹 Unit validation
-        const selectedUnit = productUnit.find((item) => item.name === formData.unit);
+        const selectedUnit = productUnit.find(
+          (item) => item.name === formData.unit,
+        );
         const safeUnitType = selectedUnit ? selectedUnit.type_of_unit : "";
         const maxDecimal = selectedUnit ? selectedUnit.max_decimal_digit : "";
         setUnitType(safeUnitType);
@@ -135,17 +135,19 @@ const [formData, setFormData] = useState({
           sgst: GST,
           minimum_stock_limit:
             safeUnitType === "decimal"
-              ? parseFloat(formData.minimum_stock_limit)
-              : parseInt(formData.minimum_stock_limit),
+              ? parseFloat(formData.minimum_stock_limit).toString()
+              : parseInt(formData.minimum_stock_limit).toString(),
           type: "consumables",
         };
 
         if (recordForEdit) {
           const response = await ProductService.updateConsumable(
             formData.id,
-            data
+            data,
           );
-          handleSuccess(response.data.message || "Consumable updated successfully");
+          handleSuccess(
+            response.data.message || "Consumable updated successfully",
+          );
 
           setTimeout(() => {
             setOpenPopup(false);
@@ -166,7 +168,7 @@ const [formData, setFormData] = useState({
       currentPage,
       searchQuery,
       recordForEdit,
-    ]
+    ],
   );
 
   return (
@@ -278,13 +280,11 @@ const [formData, setFormData] = useState({
               fullWidth
               name="minimum_stock_limit"
               size="small"
-              type="number"
               label="Minimum Stock Limit"
-              inputProps={{ step: unitType === "decimal" ? "0.01" : "1" }}
               value={
-                formData.minimum_stock_limit !== undefined
+                unitType === "decimal"
                   ? formData.minimum_stock_limit
-                  : ""
+                  : Math.round(formData.minimum_stock_limit) || "0"
               }
               onChange={handleInputChange}
             />
