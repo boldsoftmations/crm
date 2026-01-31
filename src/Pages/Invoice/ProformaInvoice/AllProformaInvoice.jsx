@@ -221,7 +221,11 @@ export const AllProformaInvoice = () => {
     "Payment Terms",
     "ACTION",
   ];
-  const allowedGroups = ["Sales Manager Retailer", "Director", "Sales Manager"];
+  const allowedGroups = [
+    "Sales Manager(Retailer)",
+    "Director",
+    "Sales Manager",
+  ];
   console.log(userData);
 
   const isAllowed = allowedGroups.some(isInGroups);
