@@ -53,13 +53,6 @@ export const CustomerNotHavingForecastView = () => {
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
 
-  // Calculate the previous and next months
-  const lastMonth1 = (currentMonth - 2 + 12) % 12;
-  const lastMonth2 = (currentMonth - 1 + 12) % 12;
-  const nextMonth1 = (currentMonth + 1) % 12;
-  const nextMonth2 = (currentMonth + 2) % 12;
-  const nextMonth3 = (currentMonth + 3) % 12;
-
   // Define the months array
   const months = [
     "January",
@@ -76,6 +69,24 @@ export const CustomerNotHavingForecastView = () => {
     "December",
   ];
 
+  // HELPER FUNCTION: Calculate month and year for offset
+  const getMonthYear = (monthOffset) => {
+    const targetMonth = currentMonth + monthOffset;
+    const monthIndex = ((targetMonth % 12) + 12) % 12; // Handle negative months
+    const yearOffset = Math.floor(targetMonth / 12);
+    const year = currentYear + yearOffset;
+
+    return { monthIndex, year };
+  };
+
+  // Calculate the previous and next months with correct years
+  const lastMonth1Data = getMonthYear(-2);
+  const lastMonth2Data = getMonthYear(-1);
+  const currentMonthData = getMonthYear(0);
+  const nextMonth1Data = getMonthYear(1);
+  const nextMonth2Data = getMonthYear(2);
+  const nextMonth3Data = getMonthYear(3);
+
   useEffect(() => {
     const beforePrint = () => {
       setIsPrinting(true);
@@ -84,7 +95,6 @@ export const CustomerNotHavingForecastView = () => {
 
     const afterPrint = () => {
       setIsPrinting(false);
-      // Fetch the data again and update the companyData state
       getAllCustomerNotHavingForecastDetails();
     };
 
@@ -97,27 +107,21 @@ export const CustomerNotHavingForecastView = () => {
     };
   }, []);
 
+  // FIXED: Correct header generation with proper year calculation
   const generateHeaders = () => {
-    // Basic headers
     const basicHeaders = [
       { label: "Company", key: "company" },
       { label: "Sales Person", key: "sales_person" },
       { label: "Product", key: "product" },
     ];
 
-    // Generating headers for each forecast month
     const forecastHeaders = [];
+
+    // Generate headers for months from -2 to +3
     for (let i = -2; i <= 3; i++) {
-      const monthIndex = (currentMonth + i + 12) % 12;
-      const year =
-        i < 0
-          ? monthIndex > currentMonth
-            ? currentYear
-            : currentYear - 1
-          : monthIndex < currentMonth
-            ? currentYear + 1
-            : currentYear;
+      const { monthIndex, year } = getMonthYear(i);
       const monthName = months[monthIndex];
+
       forecastHeaders.push({
         label: `${monthName} - ${year} Actual-Forecast`,
         key: `${monthName}-${year} Actual-Forecast`,
@@ -132,7 +136,7 @@ export const CustomerNotHavingForecastView = () => {
   useEffect(() => {
     if (isDownloadReady && exportData.length > 0) {
       csvLinkRef.current.link.click();
-      setIsDownloadReady(false); // Reset the flag after download
+      setIsDownloadReady(false);
     }
   }, [isDownloadReady, exportData]);
 
@@ -141,7 +145,6 @@ export const CustomerNotHavingForecastView = () => {
       setOpen(true);
       const data = await handleExport();
       setExportData(data);
-      // Using a small delay to ensure state update
       setTimeout(() => {
         csvLinkRef.current.link.click();
       }, 0);
@@ -185,7 +188,7 @@ export const CustomerNotHavingForecastView = () => {
         return obj;
       });
 
-      console.log("Export Data: ", data); // This line is for debugging, you can remove it later
+      console.log("Export Data: ", data);
       return data;
     } catch (err) {
       console.error("Error in handleExport", err);
@@ -219,12 +222,12 @@ export const CustomerNotHavingForecastView = () => {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    setCurrentPage(1); // Reset to first page with new search
+    setCurrentPage(1);
   };
 
   const handleReset = () => {
     setSearchQuery("");
-    setCurrentPage(1); // Reset to first page with no search query
+    setCurrentPage(1);
   };
 
   const handlePageChange = (event, value) => {
@@ -268,7 +271,6 @@ export const CustomerNotHavingForecastView = () => {
     ),
   ];
 
-  // Sort the index_positions array in ascending order
   indexPositions.sort((a, b) => a - b);
 
   return (
@@ -333,7 +335,7 @@ export const CustomerNotHavingForecastView = () => {
                     headers={headers}
                     ref={csvLinkRef}
                     filename={"Customer Not Having forecast.csv"}
-                    style={{ display: "none" }} // Hide the link
+                    style={{ display: "none" }}
                   />
                 )}
               </Grid>
@@ -377,41 +379,32 @@ export const CustomerNotHavingForecastView = () => {
                   <StyledTableCell align="center">SALES PERSON</StyledTableCell>
                   <StyledTableCell align="center">PRODUCT</StyledTableCell>
                   <StyledTableCell align="center">
-                    {` ${months[lastMonth1]} - ${
-                      lastMonth1 < currentMonth ? currentYear : currentYear - 1
-                    }`}
+                    {`${months[lastMonth1Data.monthIndex]} - ${lastMonth1Data.year}`}
                     <br />
                     ACTUAL - FORECAST
                   </StyledTableCell>
                   <StyledTableCell align="center">
-                    {` ${months[lastMonth2]} - ${
-                      lastMonth2 < currentMonth ? currentYear : currentYear - 1
-                    }`}{" "}
+                    {`${months[lastMonth2Data.monthIndex]} - ${lastMonth2Data.year}`}
                     <br />
                     ACTUAL - FORECAST
                   </StyledTableCell>
                   <StyledTableCell align="center">
-                    {`${months[currentMonth]} - ${currentYear}`} <br />
-                    ACTUAL - FORECAST
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    {` ${months[nextMonth1]} - ${
-                      nextMonth1 > currentMonth ? currentYear : currentYear + 1
-                    }`}{" "}
+                    {`${months[currentMonthData.monthIndex]} - ${currentMonthData.year}`}
                     <br />
                     ACTUAL - FORECAST
                   </StyledTableCell>
                   <StyledTableCell align="center">
-                    {` ${months[nextMonth2]} - ${
-                      nextMonth2 > currentMonth ? currentYear : currentYear + 1
-                    }`}{" "}
+                    {`${months[nextMonth1Data.monthIndex]} - ${nextMonth1Data.year}`}
                     <br />
                     ACTUAL - FORECAST
                   </StyledTableCell>
                   <StyledTableCell align="center">
-                    {` ${months[nextMonth3]} - ${
-                      nextMonth3 > currentMonth ? currentYear : currentYear + 1
-                    }`}{" "}
+                    {`${months[nextMonth2Data.monthIndex]} - ${nextMonth2Data.year}`}
+                    <br />
+                    ACTUAL - FORECAST
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    {`${months[nextMonth3Data.monthIndex]} - ${nextMonth3Data.year}`}
                     <br />
                     ACTUAL - FORECAST
                   </StyledTableCell>
@@ -421,7 +414,7 @@ export const CustomerNotHavingForecastView = () => {
               <TableBody>
                 {customerNotHavingForecast &&
                   customerNotHavingForecast.map((row) => (
-                    <StyledTableRow>
+                    <StyledTableRow key={row.id}>
                       <StyledTableCell align="center">
                         {row.company}
                       </StyledTableCell>
@@ -451,7 +444,6 @@ export const CustomerNotHavingForecastView = () => {
                             );
                           }
                         } else {
-                          // Render an empty cell if no matching rowData is found
                           return (
                             <TableCell key={position} align="center">
                               N/A
@@ -515,11 +507,11 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
-    padding: 0, // Remove padding from header cells
+    padding: 0,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
-    padding: 0, // Remove padding from body cells
+    padding: 0,
   },
 }));
 
@@ -527,7 +519,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
   },
-  // hide last border
   "&:last-child td, &:last-child th": {
     border: 0,
   },
