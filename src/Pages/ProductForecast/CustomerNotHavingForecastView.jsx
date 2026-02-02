@@ -134,7 +134,7 @@ export const CustomerNotHavingForecastView = () => {
   const headers = generateHeaders();
 
   useEffect(() => {
-    if (isDownloadReady && exportData.length > 0) {
+    if (isDownloadReady) {
       csvLinkRef.current.link.click();
       setIsDownloadReady(false);
     }
@@ -143,15 +143,28 @@ export const CustomerNotHavingForecastView = () => {
   const handleDownload = async () => {
     try {
       setOpen(true);
-      const data = await handleExport();
-      setExportData(data);
-      setTimeout(() => {
-        csvLinkRef.current.link.click();
-      }, 0);
-      handleSuccess("CSV Download successfully");
+
+      const response =
+        await ProductForecastService.downloadCustomerNotHavingData("csv");
+
+      const blob = new Blob([response.data], {
+        type: "text/csv;charset=utf-8;",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "customer_not_having_data.csv";
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      handleSuccess("CSV downloaded successfully");
     } catch (error) {
       handleError(error);
-      console.error("CSVLink Download error", error);
+      console.error("CSV Download error", error);
     } finally {
       setOpen(false);
     }
@@ -160,36 +173,23 @@ export const CustomerNotHavingForecastView = () => {
   const handleExport = async () => {
     try {
       setOpen(true);
-      const response = await ProductForecastService.getAllCustomerNotHavingData(
-        "all",
-        salesPersonByFilter,
-        searchQuery,
-      );
 
-      const data = response.data.map((row) => {
-        const obj = {
-          company: row.company,
-          sales_person: row.sales_person,
-          product: row.product,
-        };
+      const response =
+        await ProductForecastService.downloadCustomerNotHavingData("csv");
 
-        row.product_forecast.forEach((forecast) => {
-          // Convert month number to month name and create the key
-          const monthName = months[parseInt(forecast.month) - 1];
-          const forecastKey = `${monthName}-${forecast.year} Actual-Forecast`;
-
-          // Assign the actual-forecast data to the corresponding month-year key
-          obj[forecastKey] =
-            forecast.actual !== null
-              ? `${forecast.actual}--${forecast.forecast}`
-              : `-${forecast.forecast}`;
-        });
-
-        return obj;
+      const blob = new Blob([response.data], {
+        type: "text/csv;charset=utf-8;",
       });
 
-      console.log("Export Data: ", data);
-      return data;
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.setAttribute("download", "customer_not_having_data.csv");
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     } catch (err) {
       console.error("Error in handleExport", err);
     } finally {
@@ -329,15 +329,6 @@ export const CustomerNotHavingForecastView = () => {
                 >
                   Download CSV
                 </Button>
-                {exportData.length > 0 && (
-                  <CSVLink
-                    data={exportData}
-                    headers={headers}
-                    ref={csvLinkRef}
-                    filename={"Customer Not Having forecast.csv"}
-                    style={{ display: "none" }}
-                  />
-                )}
               </Grid>
             </Grid>
           </Box>
