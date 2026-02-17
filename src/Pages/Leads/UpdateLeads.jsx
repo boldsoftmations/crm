@@ -64,6 +64,7 @@ export const UpdateLeads = memo((props) => {
     severity: "",
     open: false,
   });
+  const UserData = useSelector((state) => state.auth.profile);
   const handleClose = () => {
     setAlertMsg({ open: false });
   };
@@ -85,7 +86,7 @@ export const UpdateLeads = memo((props) => {
         setAssigned(
           Array({
             email: users.email,
-          })
+          }),
         );
       } else {
         setAssigned(users.active_sales_user);
@@ -100,7 +101,7 @@ export const UpdateLeads = memo((props) => {
       const PINCODE = leads.pincode;
       const response = await MasterService.getCountryDataByPincode(
         Country,
-        PINCODE
+        PINCODE,
       );
       if (response.data.length === 0) {
         setAlertMsg({
@@ -301,7 +302,7 @@ export const UpdateLeads = memo((props) => {
             currentPage,
             filterQuery,
             filterSelectedQuery,
-            searchQuery
+            searchQuery,
           );
         }, 300);
       } catch (error) {
@@ -310,13 +311,13 @@ export const UpdateLeads = memo((props) => {
         setOpen(false);
       }
     },
-    [leads, currentPage, filterQuery, filterSelectedQuery, searchQuery]
+    [leads, currentPage, filterQuery, filterSelectedQuery, searchQuery],
   );
 
   // Regular expressions for GST and PAN validation
   const GST_NO = (gst_no) =>
     /^[0-9]{2}[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}[1-9A-Za-z]{1}Z[0-9A-Za-z]{1}$/.test(
-      gst_no
+      gst_no,
     );
 
   const PAN_NO = (pan_no) =>
@@ -704,6 +705,7 @@ export const UpdateLeads = memo((props) => {
               onClick={validatePinCode}
               variant="contained"
               sx={{ marginLeft: "1rem" }}
+              disabled={UserData.groups.includes("Digital Marketing")}
             >
               Validate
             </Button>
@@ -933,7 +935,7 @@ export const UpdateLeads = memo((props) => {
                 }
                 value={leads.distribution_type || ""}
                 options={Option.DistributionTypeOption.map(
-                  (option) => option.label
+                  (option) => option.label,
                 )}
                 getOptionLabel={(option) => option}
                 label="Distribution Type"
@@ -1020,6 +1022,7 @@ export const UpdateLeads = memo((props) => {
           variant="contained"
           fullWidth
           sx={{ mt: 3, mb: 2, textAlign: "right" }}
+          disabled={UserData.groups.includes("Digital Marketing")}
         >
           Submit
         </Button>
