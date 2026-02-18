@@ -72,10 +72,14 @@ export const SalesTeamAnalytics = (props) => {
         "Sales Manager(Retailer)",
         "Sales Manager",
         "Sales Deputy Manager",
+        "Field Sales Executive",
+        "Digital Marketing",
         "Sales Assistant Deputy Manager",
         "Director",
+        "Business Development Manager",
       ].includes(user.groups__name),
     );
+    console.log(SALES_PERSON_OPTIONS);
   }
 
   let displayOptions = SALES_PERSON_OPTIONS.map((option) => {
