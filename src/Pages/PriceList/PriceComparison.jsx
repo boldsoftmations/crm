@@ -46,10 +46,11 @@ export const PriceComparison = () => {
       setOpen(true);
       let response;
       if (searchQuery) {
-        response = await ProductService.getPriceComparisionData(searchQuery);
+        response = await ProductService.getPriceComparision(searchQuery);
       } else {
-        response = await ProductService.getPriceComparisionData();
+        response = await ProductService.getPriceComparision();
       }
+      console.log(response);
       const data = response.data.data.map((row, index) => {
         return {
           id: index + 1,
@@ -79,13 +80,10 @@ export const PriceComparison = () => {
   }, [searchQuery]);
 
   const getAllPriceComparisionDataDetails = useCallback(
-    async (page, search = searchQuery) => {
+    async (search = searchQuery) => {
       try {
         setOpen(true);
-        const response = await ProductService.getPriceComparisionData(
-          page,
-          search,
-        );
+        const response = await ProductService.getPriceComparision(search);
         setpriceComparisionData(response.data.data);
       } catch (error) {
         handleError(error);
@@ -93,7 +91,7 @@ export const PriceComparison = () => {
         setOpen(false);
       }
     },
-    [],
+    [searchQuery],
   );
 
   const handleSearch = (query) => {
@@ -142,54 +140,60 @@ export const PriceComparison = () => {
           }}
         >
           <Grid container spacing={2} alignItems="center">
-            <Box sx={{ flexGrow: 1, flexBasis: "40%", minWidth: "300px" }}>
-              <SearchComponent onSearch={handleSearch} onReset={handleReset} />
-            </Box>
-
-            <Box sx={{ flexGrow: 2, textAlign: "center", minWidth: "150px" }}>
-              <h3
-                style={{
-                  margin: 0,
-                  fontSize: "24px",
-                  color: "rgb(34, 34, 34)",
-                  fontWeight: 800,
+            <Grid item sm={12} md={4}>
+              <Box sx={{ flexGrow: 1, flexBasis: "40%", minWidth: "300px" }}>
+                <SearchComponent
+                  onSearch={handleSearch}
+                  onReset={handleReset}
+                />
+              </Box>
+            </Grid>
+            <Grid item sm={12} md={4}>
+              <Box sx={{ flexGrow: 2, textAlign: "center", minWidth: "150px" }}>
+                <h3
+                  style={{
+                    margin: 0,
+                    fontSize: "24px",
+                    color: "rgb(34, 34, 34)",
+                    fontWeight: 800,
+                  }}
+                >
+                  Price Comparision
+                </h3>
+              </Box>
+            </Grid>
+            <Grid item sm={12} md={4}>
+              <Box
+                sx={{
+                  flexGrow: 1,
+                  flexBasis: "40%",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  minWidth: "300px",
                 }}
               >
-                Price Comparision
-              </h3>
-            </Box>
-
-            <Box
-              sx={{
-                flexGrow: 1,
-                flexBasis: "40%",
-                display: "flex",
-                justifyContent: "flex-end",
-                minWidth: "300px",
-              }}
-            >
-              <Button
-                onClick={handleDownload}
-                variant="contained"
-                sx={{ marginRight: 1 }}
-              >
-                Download CSV
-              </Button>
-              {exportData.length > 0 && (
-                <CSVLink
-                  data={[...exportData]}
-                  headers={headers}
-                  ref={csvLinkRef}
-                  filename="Store Inventory.csv"
-                  target="_blank"
-                  style={{
-                    textDecoration: "none",
-                    outline: "none",
-                    marginRight: 1,
-                  }}
-                />
-              )}
-              {/* {(userData.groups.includes("Accounts") ||
+                <Button
+                  onClick={handleDownload}
+                  variant="contained"
+                  sx={{ marginRight: 1 }}
+                >
+                  Download CSV
+                </Button>
+                {exportData.length > 0 && (
+                  <CSVLink
+                    data={[...exportData]}
+                    headers={headers}
+                    ref={csvLinkRef}
+                    filename="Store Inventory.csv"
+                    target="_blank"
+                    style={{
+                      textDecoration: "none",
+                      outline: "none",
+                      marginRight: 1,
+                    }}
+                  />
+                )}
+                {/* {(userData.groups.includes("Accounts") ||
                 userData.groups.includes("Director") ||
                 userData.groups.includes("Production")) && (
                 <Button
@@ -200,7 +204,8 @@ export const PriceComparison = () => {
                   Add
                 </Button>
               )} */}
-            </Box>
+              </Box>
+            </Grid>
           </Grid>
         </Box>
         <CustomTable
