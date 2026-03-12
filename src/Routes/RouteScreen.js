@@ -23,7 +23,7 @@ import { AllLeadsTabView } from "../Pages/Leads/AllLeadsTabView";
 import { AllProductsTabView } from "../Pages/Products/AllProductsTabView";
 import { AllCustomerTabView } from "../Pages/Cutomers/CompanyDetails/AllCustomerTabView";
 import { AllPerformaInvoiceTabView } from "../Pages/Invoice/ProformaInvoice/AllPerformaInvoiceTabView";
-import { PurchaseAllTabView } from "../Pages/Purchase/PurchaseAllTabView";
+import { PurchaseReturnAllTabView } from "../Pages/ReturnOrders/PurchaseReturn/PurchaseReturnAllTabView";
 import { ProductionAllTabView } from "../Pages/Production/ProductionAllTabView";
 import { InventoryAllTabView } from "../Pages/Inventory/InventoryAllTabView";
 import { HrMasterTabView } from "../Pages/HrModel/HrMasterTabView";
@@ -33,7 +33,7 @@ import { Report } from "../Pages/Report/Report";
 import { AnalyticsAllTabView } from "../Pages/Analytics/AnalyticsAllTabView";
 import { AllDispatchTabView } from "../Pages/Dispatch/AllDispatchTabView";
 import { AllProfileTabView } from "../Pages/Users/AllProfileTabView";
-import { SalesReturnAllTabView } from "../Pages/SalesReturn/SalesReturnAllTabView";
+import { SalesReturnAllTabView } from "../Pages/ReturnOrders/SalesReturn/SalesReturnAllTabView";
 import { DebitCreditAllTabView } from "../Pages/DebitCredit/DebitCreditAllTabView";
 import { AllCCFtab } from "../Pages/CCF/AllCCFtab";
 import { AllComplaintListView } from "../Pages/CCF/AllComplaintListView";
@@ -48,6 +48,7 @@ import FactoryMaster from "../Pages/MasterFactory/FactoryMaster";
 import Maintaince from "../Pages/Maintanace/Maintaince";
 import { AllInventoryReportTabs } from "../Pages/InventoryReport/AllInventoryReportTabs";
 import { AllPriceListTabView } from "../Pages/PriceList/AllPriceListTabView";
+// import PurchaseReturnAllTabView from "../Pages/ReturnOrders/PurchaseReturn/PurchaseReturnAllTabView";
 
 const PrivateRoute = ({ children, redirectTo = "/" }) => {
   const tokenData = useSelector((state) => state.auth);
@@ -208,7 +209,7 @@ export const RouteScreen = () => {
             path="/inventory/view-purchase"
             element={
               <PrivateRoute>
-                <PurchaseAllTabView />
+                <PurchaseReturnAllTabView />
               </PrivateRoute>
             }
           />
@@ -265,6 +266,15 @@ export const RouteScreen = () => {
             element={
               <PrivateRoute>
                 <SalesReturnAllTabView />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/inventory/purchase-return"
+            element={
+              <PrivateRoute>
+                <PurchaseReturnAllTabView />
               </PrivateRoute>
             }
           />
