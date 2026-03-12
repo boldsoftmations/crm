@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Chip,
   Divider,
   Grid,
   IconButton,
@@ -9,8 +8,6 @@ import {
   ListItem,
   ListItemText,
   Paper,
-  styled,
-  TextField,
   Typography,
 } from "@mui/material";
 import React, { useRef, useState } from "react";
@@ -21,47 +18,29 @@ import { MessageAlert } from "../../Components/MessageAlert";
 import { CustomLoader } from "../../Components/CustomLoader";
 import CustomerServices from "../../services/CustomerService";
 import CustomTextField from "../../Components/CustomTextField";
-const Root = styled("div")(({ theme }) => ({
-  width: "100%",
-  ...theme.typography.body2,
-  "& > :not(style) + :not(style)": {
-    marginTop: theme.spacing(2),
-  },
-}));
 
 const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
   const [open, setOpen] = useState(false);
   const [files, setFiles] = useState([]);
-  const fileInputRef = useRef(null);
-
   const [documentId, setDocumentId] = useState([]);
-  const [products, setProducts] = useState(null);
   const [documents, setDocuments] = useState([]);
-  const [inputValue, setInputValue] = useState({
-    department: "",
-    complain_for: "",
-    complain_type: "",
-    customer: "",
-    unit: "",
-    invoices: [],
-    batch_nos: [],
-    complaint: "",
-    application: "",
-    problem: "",
-    document: documentId ? documentId : [],
-    products: products,
-  });
 
+  const fileInputRef = useRef(null);
+  console.log(ViewData.document);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
+
+  // ================= FILE HANDLING =================
 
   const handleFileChange = (e) => {
     const newFiles = Array.from(e.target.files);
     const existingFiles = files.map((file) => file.name);
+
     const uniqueFiles = newFiles.filter(
       (file) => !existingFiles.includes(file.name),
     );
-    setFiles([...files, ...uniqueFiles]);
+
+    setFiles((prev) => [...prev, ...uniqueFiles]);
     e.target.value = null;
   };
 
@@ -73,48 +52,24 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
     setFiles(files.filter((_, i) => i !== index));
   };
 
-  const removeFields = (index) => {
-    let data = [...products];
-    data.splice(index, 1);
-    setProducts(data);
-  };
-
-  const SubmitComplaint = async (e) => {
-    e.preventDefault();
-
-    try {
-      let modifyproducts = products.map((product) => {
-        return {
-          product: product.product,
-          quantity: product.quantity,
-        };
-      });
-      const payload = { ...inputValue, products: modifyproducts };
-      const response = await CustomerServices.createCCFComplaintForm(payload);
-      handleSuccess(response.message || "Complaint submitted successfully");
-      getAllCCFData();
-      setOpenCCF(false);
-    } catch (error) {
-      handleError(error);
-    }
-  };
+  // ================= UPLOAD DOCUMENT =================
 
   const handleUploadDocuments = async () => {
     try {
       if (files.length === 0) {
-        alert("No files selected for upload.");
+        handleError("No files selected");
         return;
       }
 
       setOpen(true);
+
       const formData = new FormData();
 
-      // Append each file to the FormData object
       files.forEach((file) => {
         formData.append("file", file);
 
-        // Determine media type based on the file MIME type or extension
-        const fileType = file.type.split("/")[0]; // This gives either "image" or "video"
+        const fileType = file.type.split("/")[0];
+
         const mediaType =
           fileType === "image"
             ? "Photo"
@@ -122,32 +77,55 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
               ? "Video"
               : "Other";
 
-        // Append media type for each file
         formData.append("media_type", mediaType);
       });
 
       const response = await CustomerServices.uploadCCFdocument(formData);
-      console.log("response", response.data.data);
+
       if (response.status === 200) {
+        const uploadedDocs = response.data.data;
+
+        setDocuments(uploadedDocs);
+        const existingIds = ViewData.document.map(function (doc) {
+          return doc.id;
+        });
+
+        const newIds = uploadedDocs.map(function (doc) {
+          return doc.id;
+        });
+
+        setDocumentId(existingIds.concat(newIds));
+
         handleSuccess("Documents uploaded successfully");
-        setDocuments(response.data.data);
-        // Extract IDs from the response and update state
-        const documentIds = response.data.data.map((doc) => doc.id);
-        setDocumentId(documentIds);
 
-        // Update the inputValue state with the document IDs
-        setInputValue((prev) => ({
-          ...prev,
-          document: documentIds ? documentIds : [],
-        }));
-
-        setFiles([]); // Clear files after successful upload
-      } else {
-        handleError("Failed to upload documents");
+        setFiles([]);
       }
     } catch (error) {
-      console.log(error);
-      handleError("An error occurred during the upload");
+      handleError("Upload failed");
+    } finally {
+      setOpen(false);
+    }
+  };
+
+  // ================= UPDATE CCF =================
+
+  const handleUpdateCCF = async () => {
+    try {
+      setOpen(true);
+
+      const payload = {
+        document: documentId,
+      };
+
+      const response = await CustomerServices.CCFUpdate(ViewData.id, payload);
+
+      handleSuccess(response.data.message || "CCF updated successfully");
+
+      getAllCCFData();
+
+      setOpenCCF(false);
+    } catch (error) {
+      handleError(error);
     } finally {
       setOpen(false);
     }
@@ -161,358 +139,314 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
         severity={alertInfo.severity}
         message={alertInfo.message}
       />
+
       <CustomLoader open={open} />
+
       <Grid container spacing={2} style={{ width: "100%", margin: 0 }}>
-        <Box component="form" noValidate onSubmit={SubmitComplaint}>
-          <Paper
-            sx={{
-              p: 2,
-              display: "flex",
-              flexDirection: "column",
-              width: "100%",
-            }}
-          >
-            <Box>
-              <Grid container spacing={2} alignItems="center">
-                {/* Title Text centered */}
-                <Grid item xs={12} sm={4}>
-                  <img src={logo} alt="logo" width={170} />
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  sm={4}
-                  sx={{ textAlign: { xs: "center", md: "center" } }}
+        <Box component="form" noValidate>
+          <Paper sx={{ p: 2 }}>
+            {/* HEADER */}
+
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} sm={4}>
+                <img src={logo} alt="logo" width={170} />
+              </Grid>
+
+              <Grid item xs={12} sm={4} sx={{ textAlign: "center" }}>
+                <h3
+                  style={{
+                    margin: 0,
+                    fontSize: "24px",
+                    fontWeight: 800,
+                  }}
                 >
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontSize: "24px",
-                      color: "rgb(34, 34, 34)",
-                      fontWeight: 800,
-                    }}
-                  >
-                    COMPLAINT FORM
-                  </h3>
-                </Grid>
+                  COMPLAINT FORM
+                </h3>
               </Grid>
-            </Box>
-            <Divider />
-            {/* Form Fields */}
-            <Grid container spacing={2} style={{ marginTop: "12px" }}>
+            </Grid>
+
+            <Divider sx={{ mt: 2, mb: 2 }} />
+
+            {/* FORM DATA */}
+
+            <Grid container spacing={2}>
               <Grid item xs={12} sm={4}>
                 <CustomTextField
-                  name="complain_for"
-                  fullWidth
-                  size="small"
                   label="Complain To"
-                  disablePortal
-                  id="combo-box-demo"
+                  size="small"
+                  fullWidth
                   value={ViewData.department}
-                  disabled={true}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <CustomTextField
-                  name="complain_for"
-                  size="small"
-                  fullWidth
-                  disablePortal
-                  id="combo-box-demo"
-                  label="Complain for"
-                  value={ViewData.complain_for}
-                  disabled={true}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <CustomTextField
-                  name="complain_for"
-                  size="small"
-                  fullWidth
-                  disablePortal
-                  id="combo-box-demo"
-                  label="Complain"
-                  value={ViewData.complain_type}
-                  disabled={true}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <CustomTextField
-                  name="complain_for"
-                  size="small"
-                  disablePortal
-                  fullWidth
-                  id="combo-box-demo"
-                  label="Customer"
-                  value={ViewData.customer}
-                  disabled={true}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <CustomTextField
-                  name="complain_for"
-                  size="small"
-                  fullWidth
-                  disablePortal
-                  id="Seller Unit"
-                  label="Seller Unit"
-                  value={ViewData.unit}
-                  disabled={true}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <CustomTextField
-                  name="complain_for"
-                  size="small"
-                  disablePortal
-                  fullWidth
-                  label="Branch no"
-                  id="combo-box-demo"
-                  value={ViewData.batch_nos.join(",")}
-                  disabled={true}
+                  disabled
                 />
               </Grid>
 
-              <Grid item xs={12} sm={12}></Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <Grid item xs={12} sm={4}>
+                <CustomTextField
+                  label="Complain For"
+                  size="small"
                   fullWidth
-                  label="Nature of Complaint : (Describe in detail)"
-                  variant="outlined"
-                  margin="normal"
-                  name="complaint"
+                  value={ViewData.complain_for}
+                  disabled
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <CustomTextField
+                  label="Complaint Type"
+                  size="small"
+                  fullWidth
+                  value={ViewData.complain_type}
+                  disabled
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <CustomTextField
+                  label="Customer"
+                  size="small"
+                  fullWidth
+                  value={ViewData.customer}
+                  disabled
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <CustomTextField
+                  label="Seller Unit"
+                  size="small"
+                  fullWidth
+                  value={ViewData.unit}
+                  disabled
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <CustomTextField
+                  label="Batch No"
+                  size="small"
+                  fullWidth
+                  value={ViewData.batch_nos.join(",")}
+                  disabled
+                />
+              </Grid>
+
+              {/* Complaint */}
+
+              <Grid item xs={12} sm={6}>
+                <CustomTextField
+                  label="Nature of Complaint"
                   multiline
                   rows={4}
+                  fullWidth
                   value={ViewData.complaint}
-                  disabled={true}
+                  disabled
                 />
               </Grid>
+
               <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Application : (Describe in detail)"
-                  variant="outlined"
-                  margin="normal"
+                <CustomTextField
+                  label="Application"
                   multiline
                   rows={4}
+                  fullWidth
                   value={ViewData.application}
-                  disabled={true}
+                  disabled
                 />
               </Grid>
-              <Grid item xs={12} sm={12}>
-                <div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                      marginBottom: "10px",
-                    }}
-                  >
-                    <input
-                      type="file"
-                      multiple
-                      onChange={handleFileChange}
-                      style={{ display: "none" }}
-                      accept="image/*,video/*"
-                      ref={fileInputRef}
-                    />
-                    <span
-                      style={{
-                        fontSize: "16px",
-                        opacity: "0.9",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Attach Document :{" "}
-                    </span>
+
+              {/* DOCUMENT UPLOAD */}
+
+              {ViewData &&
+                ViewData.document &&
+                ViewData.document.length > 0 && (
+                  <Grid item xs={12}>
+                    <Typography sx={{ fontWeight: 600, mb: 1 }}>
+                      Uploaded Documents
+                    </Typography>
+
+                    <List sx={{ display: "flex", flexWrap: "wrap" }}>
+                      {ViewData.document.map((doc, index) => (
+                        <ListItem
+                          key={index}
+                          sx={{
+                            width: 150,
+                            flexDirection: "column",
+                            background: "#f5f7fa",
+                            border: "1px solid #e0e0e0",
+                            borderRadius: 1,
+                            m: 1,
+                            p: 1,
+                          }}
+                        >
+                          <img
+                            src={doc.file}
+                            alt={doc.name}
+                            style={{
+                              width: "100%",
+                              height: 100,
+                              objectFit: "cover",
+                              borderRadius: 4,
+                            }}
+                          />
+
+                          <ListItemText
+                            primary={doc.name || "Document"}
+                            sx={{
+                              textAlign: "center",
+                              mt: 1,
+                              fontSize: 12,
+                            }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Grid>
+                )}
+
+              <Grid item xs={12}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  <input
+                    type="file"
+                    multiple
+                    ref={fileInputRef}
+                    style={{ display: "none" }}
+                    accept="image/*,video/*"
+                    onChange={handleFileChange}
+                  />
+
+                  {/* Select Button */}
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <Typography fontWeight={500}>Attach Document :</Typography>
+
                     <Button
                       variant="outlined"
-                      color="inherit"
                       size="small"
                       onClick={handleClick}
                     >
                       Select Document
                     </Button>
-                  </div>
-                  <div>
-                    {files.length > 0 && (
-                      <Typography
-                        variant="h6"
-                        gutterBottom
-                        style={{
-                          opacity: ".9",
-                          fontSize: "16px",
-                        }}
-                      >
-                        Selected Files:
+                  </Box>
+
+                  {/* Selected Files */}
+                  {files.length > 0 && (
+                    <>
+                      <Typography sx={{ fontSize: 15, fontWeight: 500 }}>
+                        Selected Files
                       </Typography>
-                    )}
-                    {files.length > 0 ? (
-                      <List style={{ display: "flex", flexWrap: "wrap" }}>
+
+                      <List sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
                         {files.map((file, index) => (
                           <ListItem
                             key={index}
-                            divider
-                            style={{
-                              display: "flex",
+                            sx={{
+                              width: 150,
                               flexDirection: "column",
                               alignItems: "center",
-                              width: "150px",
-                              margin: "10px",
-                              backgroundColor: "#e4f1fe",
-                              borderRadius: "3px",
+                              background: "#e4f1fe",
+                              borderRadius: 1,
+                              p: 1,
                             }}
                           >
-                            <div
-                              style={{
+                            <Box
+                              sx={{
                                 display: "flex",
-                                justifyContent: "space-between",
                                 alignItems: "center",
+                                justifyContent: "space-between",
+                                width: "100%",
                               }}
                             >
-                              <ListItemText
-                                primary={file.name}
-                                primaryTypographyProps={{
-                                  style: { fontSize: "12px" },
+                              <Typography
+                                sx={{
+                                  fontSize: 11,
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                  width: "100px",
                                 }}
-                              />
-                              <IconButton
-                                edge="end"
-                                onClick={() => removeFile(index)}
-                                style={{ marginTop: "10px" }}
                               >
-                                <DeleteIcon />
+                                {file.name}
+                              </Typography>
+
+                              <IconButton
+                                size="small"
+                                onClick={() => removeFile(index)}
+                              >
+                                <DeleteIcon fontSize="small" />
                               </IconButton>
-                            </div>
+                            </Box>
+
                             <img
                               src={URL.createObjectURL(file)}
                               alt={file.name}
                               style={{
-                                width: "100px",
-                                height: "100px",
+                                width: "100%",
+                                height: 100,
                                 objectFit: "cover",
-                                marginTop: "10px",
+                                borderRadius: 4,
+                                marginTop: 6,
                               }}
                             />
                           </ListItem>
                         ))}
                       </List>
-                    ) : (
-                      <Grid>
-                        <div
-                          style={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            gap: "20px",
-                          }}
-                        >
-                          {documents &&
-                            documents.map((doc, index) => (
-                              <div
-                                key={index}
-                                style={{
-                                  width: "200px", // Set a fixed width for each media item
-                                  textAlign: "center",
-                                }}
-                              >
-                                <img
-                                  src={doc.file}
-                                  alt={`Media ${index + 1}`}
-                                  style={{
-                                    width: "100%",
-                                    height: "auto",
-                                    cursor: "pointer",
-                                  }}
-                                />
-                              </div>
-                            ))}
-                        </div>
-                      </Grid>
-                    )}
-                  </div>
-                </div>
+                    </>
+                  )}
+
+                  {/* Uploaded Documents */}
+                  {files.length === 0 && documents.length > 0 && (
+                    <>
+                      <Typography sx={{ fontSize: 15, fontWeight: 500 }}>
+                        Uploaded Documents
+                      </Typography>
+
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                        {documents.map((doc, index) => (
+                          <Box
+                            key={index}
+                            sx={{
+                              width: 150,
+                              background: "#f5f7fa",
+                              borderRadius: 1,
+                              p: 1,
+                              textAlign: "center",
+                            }}
+                          >
+                            <img
+                              src={doc.file}
+                              alt={`doc-${index}`}
+                              style={{
+                                width: "100%",
+                                height: 100,
+                                objectFit: "cover",
+                                borderRadius: 4,
+                              }}
+                            />
+                          </Box>
+                        ))}
+                      </Box>
+                    </>
+                  )}
+                </Box>
+              </Grid>
+
+              {/* UPDATE BUTTON */}
+              <Grid item xs={12}>
                 <Button
                   variant="contained"
                   size="small"
                   color="secondary"
                   onClick={handleUploadDocuments}
                 >
-                  Submit Document
+                  Upload Document
                 </Button>
               </Grid>
               <Grid item xs={12}>
-                <Root>
-                  <Divider>
-                    <Chip label="PRODUCT" />
-                  </Divider>
-                </Root>
-              </Grid>
-              {products &&
-                products.length > 0 &&
-                products.map((input, index) => {
-                  return (
-                    <React.Fragment key={index}>
-                      {" "}
-                      {/* Use React.Fragment with a key for each item */}
-                      <Grid item xs={12} sm={4}>
-                        <CustomTextField
-                          fullWidth
-                          name="product"
-                          size="small"
-                          label="Product"
-                          variant="outlined"
-                          value={input.product}
-                          onChange={(event) =>
-                            setProducts((prevProducts) =>
-                              prevProducts.map((p, i) =>
-                                i === index
-                                  ? { ...p, product: event.target.value }
-                                  : p,
-                              ),
-                            )
-                          }
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={4}>
-                        <CustomTextField
-                          fullWidth
-                          name="quantity"
-                          size="small"
-                          label="Quantity"
-                          variant="outlined"
-                          value={input.quantity}
-                          onChange={(event) =>
-                            setProducts((prevProducts) =>
-                              prevProducts.map((p, i) =>
-                                i === index
-                                  ? { ...p, quantity: event.target.value }
-                                  : p,
-                              ),
-                            )
-                          }
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={2}>
-                        <Button
-                          onClick={() => removeFields(index)}
-                          variant="contained"
-                        >
-                          Remove
-                        </Button>
-                      </Grid>
-                    </React.Fragment>
-                  );
-                })}
-              {/* Buttons */}
-              <Grid item xs={12}>
                 <Button
                   variant="contained"
-                  type="submit"
                   color="primary"
-                  style={{ marginRight: "10px" }}
+                  onClick={handleUpdateCCF}
                 >
-                  Submit Complaint
+                  Update CCF
                 </Button>
               </Grid>
             </Grid>

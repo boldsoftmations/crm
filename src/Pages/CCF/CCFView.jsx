@@ -251,7 +251,8 @@ export const CCFView = () => {
                         {(userData.groups.includes("Director") ||
                           userData.groups.includes(
                             "Operation & Supply Chain Manager",
-                          )) && (
+                          ) ||
+                          userData.groups.includes("Customer Service")) && (
                           <Button
                             color="primary"
                             variant="text"
