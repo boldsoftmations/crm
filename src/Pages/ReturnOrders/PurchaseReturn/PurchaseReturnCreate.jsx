@@ -191,7 +191,7 @@ export const PurchaseReturnCreate = (props) => {
       }
 
       const req = {
-        invoice_type: "Sales Return",
+        invoice_type: "Purchase Return",
         sales_invoices: inputValue.invoice_no,
         gst_number: salesReturnData.buyer_details.gst_number,
         pan_number: salesReturnData.buyer_details.pan_number,
