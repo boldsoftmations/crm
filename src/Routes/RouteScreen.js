@@ -48,6 +48,7 @@ import FactoryMaster from "../Pages/MasterFactory/FactoryMaster";
 import Maintaince from "../Pages/Maintanace/Maintaince";
 import { AllInventoryReportTabs } from "../Pages/InventoryReport/AllInventoryReportTabs";
 import { AllPriceListTabView } from "../Pages/PriceList/AllPriceListTabView";
+import { PurchaseAllTabView } from "../Pages/Purchase/PurchaseAllTabView";
 // import PurchaseReturnAllTabView from "../Pages/ReturnOrders/PurchaseReturn/PurchaseReturnAllTabView";
 
 const PrivateRoute = ({ children, redirectTo = "/" }) => {
@@ -209,7 +210,7 @@ export const RouteScreen = () => {
             path="/inventory/view-purchase"
             element={
               <PrivateRoute>
-                <PurchaseReturnAllTabView />
+                <PurchaseAllTabView />
               </PrivateRoute>
             }
           />

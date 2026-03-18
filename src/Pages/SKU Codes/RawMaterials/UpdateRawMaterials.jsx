@@ -7,15 +7,13 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
-import { DecimalValidation } from "../../../Components/Header/DecimalValidation";
+import { DecimalValidation } from "../../../utility/DecimalValidation";
 
 // 🔍 Utility
 const searchArrayValue = (array, key, value, returnKey) => {
   const found = array.find((item) => item[key] === value);
   return found ? found[returnKey] : "";
 };
-
-
 
 export const UpdateRawMaterials = memo((props) => {
   const {
@@ -32,8 +30,8 @@ export const UpdateRawMaterials = memo((props) => {
   const productUnit = unitAllData;
   const userData = useSelector((state) => state.auth.profile || { groups: [] });
 
-const isInGroups = (...groups) =>
-  groups.some((group) => userData.groups.includes(group));
+  const isInGroups = (...groups) =>
+    groups.some((group) => userData.groups.includes(group));
 
   const [formData, setFormData] = useState(recordForEdit);
   const [open, setOpen] = useState(false);
@@ -45,7 +43,7 @@ const isInGroups = (...groups) =>
   // 🔍 🔥 MEMOIZED – avoids recalculating every render
   const shortName = useMemo(
     () => searchArrayValue(brandAllData, "name", formData.brand, "short_name"),
-    [formData.brand, brandAllData]
+    [formData.brand, brandAllData],
   );
 
   const description = useMemo(
@@ -54,9 +52,9 @@ const isInGroups = (...groups) =>
         productCodeAllData,
         "code",
         formData.productcode,
-        "description"
+        "description",
       ),
-    [formData.productcode, productCodeAllData]
+    [formData.productcode, productCodeAllData],
   );
 
   const productName = useMemo(
@@ -64,12 +62,12 @@ const isInGroups = (...groups) =>
       `${formData.productcode || ""}-${formData.color || ""}-${
         shortName || ""
       }-${formData.size || ""}`,
-    [formData.productcode, formData.color, shortName, formData.size]
+    [formData.productcode, formData.color, shortName, formData.size],
   );
 
   const GST = useMemo(
     () => (formData.gst ? formData.gst / 2 : 0),
-    [formData.gst]
+    [formData.gst],
   );
 
   const handleInputChange = useCallback((e) => {
@@ -89,7 +87,7 @@ const isInGroups = (...groups) =>
         setOpen(true);
 
         const selectedUnit = productUnit.find(
-          (item) => item.name === formData.unit
+          (item) => item.name === formData.unit,
         );
 
         const safeUnitType = selectedUnit ? selectedUnit.type_of_unit : "";
@@ -132,11 +130,11 @@ const isInGroups = (...groups) =>
         if (recordForEdit) {
           const res = await ProductService.updateRawMaterials(
             formData.id,
-            payload
+            payload,
           );
 
           handleSuccess(
-            res.data.message || "Raw Materials updated successfully"
+            res.data.message || "Raw Materials updated successfully",
           );
 
           setTimeout(() => {
@@ -158,7 +156,7 @@ const isInGroups = (...groups) =>
       productUnit,
       currentPage,
       searchQuery,
-    ]
+    ],
   );
 
   return (
@@ -189,7 +187,7 @@ const isInGroups = (...groups) =>
               size="small"
               label="Update Raw Material"
               value={productName}
-                  disabled={isInGroups("Stores")}
+              disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -201,7 +199,7 @@ const isInGroups = (...groups) =>
               label="Size"
               value={formData.size || ""}
               onChange={handleInputChange}
-                  disabled={isInGroups("Stores")}
+              disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -216,9 +214,8 @@ const isInGroups = (...groups) =>
                 handleAutoChange("unit", v);
                 const u = productUnit.find((item) => item.name === v);
                 setUnitType(u ? u.type_of_unit : "");
-                    
               }}
-               disabled={isInGroups("Stores")}
+              disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -230,7 +227,7 @@ const isInGroups = (...groups) =>
               options={colourAllData.map((o) => o.name)}
               label="Colour"
               onChange={(e, v) => handleAutoChange("color", v)}
-                   disabled={isInGroups("Stores")}
+              disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -242,7 +239,7 @@ const isInGroups = (...groups) =>
               options={brandAllData.map((o) => o.name)}
               label="Brand"
               onChange={(e, v) => handleAutoChange("brand", v)}
-                  disabled={isInGroups("Stores")}
+              disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -254,7 +251,7 @@ const isInGroups = (...groups) =>
               options={productCodeAllData.map((o) => o.code)}
               label="Product Code"
               onChange={(e, v) => handleAutoChange("productcode", v)}
-                  disabled={isInGroups("Stores")}
+              disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -265,7 +262,7 @@ const isInGroups = (...groups) =>
               size="small"
               label="Description"
               value={description}
-                  disabled={isInGroups("Stores")}
+              disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -278,7 +275,7 @@ const isInGroups = (...groups) =>
               label="Shelf Life (Month)"
               value={formData.shelf_life || ""}
               onChange={handleInputChange}
-                  disabled={isInGroups("Stores")}
+              disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -291,7 +288,7 @@ const isInGroups = (...groups) =>
               label="HSN Code"
               value={formData.hsn_code || ""}
               onChange={handleInputChange}
-                  disabled={isInGroups("Stores")}
+              disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -321,7 +318,7 @@ const isInGroups = (...groups) =>
               label="IGST %"
               value={formData.gst || ""}
               onChange={handleInputChange}
-                  disabled={isInGroups("Stores")}
+              disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -332,7 +329,7 @@ const isInGroups = (...groups) =>
               size="small"
               label="CGST"
               value={`${GST}%`}
-                  disabled={isInGroups("Stores")}
+              disabled={isInGroups("Stores")}
             />
           </Grid>
 
@@ -343,7 +340,7 @@ const isInGroups = (...groups) =>
               size="small"
               label="SGST"
               value={`${GST}%`}
-                  disabled={isInGroups("Stores")}
+              disabled={isInGroups("Stores")}
             />
           </Grid>
         </Grid>

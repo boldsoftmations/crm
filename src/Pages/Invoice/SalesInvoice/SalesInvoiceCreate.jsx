@@ -16,7 +16,7 @@ import Chip from "@mui/material/Chip";
 import InvoiceServices from "../../../services/InvoiceService";
 import { CustomLoader } from "./../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
-import { DecimalValidation } from "../../../Components/Header/DecimalValidation";
+import { DecimalValidation } from "../../../utility/DecimalValidation";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -96,14 +96,14 @@ export const SalesInvoiceCreate = (props) => {
       const response = await InvoiceServices.getAllOrderBookDataWithSearch(
         "all",
         "customer",
-        inputValue.company
+        inputValue.company,
       );
 
       // Filter data where any product's pending_quantity is greater than 0
       const filteredData = response.data.filter(
         (order) =>
           order.products &&
-          order.products.some((product) => product.pending_quantity > 0)
+          order.products.some((product) => product.pending_quantity > 0),
       );
 
       setCustomerOrderBookOption(filteredData);
@@ -191,7 +191,8 @@ export const SalesInvoiceCreate = (props) => {
       const PRODUCTS = products
         .filter(
           (product) =>
-            Number(product.pending_quantity) > 0 && Number(product.quantity) > 0
+            Number(product.pending_quantity) > 0 &&
+            Number(product.quantity) > 0,
         ) // Keep products where both pending_quantity and quantity are > 0
         .map(
           ({
@@ -201,17 +202,17 @@ export const SalesInvoiceCreate = (props) => {
             requested_date,
             ready_date,
             ...rest
-          }) => rest
+          }) => rest,
         );
       console.log(PRODUCTS);
 
       const decimalCounts = customerorderBookData.products.map(
-        (item) => item.max_decimal_digit
+        (item) => item.max_decimal_digit,
       );
       console.log("products", products);
       const unit = customerorderBookData.products.map((item) => item.unit);
       const numTypes = customerorderBookData.products.map(
-        (item) => item.type_of_unit
+        (item) => item.type_of_unit,
       );
       console.log(numTypes);
 
@@ -237,14 +238,14 @@ export const SalesInvoiceCreate = (props) => {
           inputValue.place_of_supply !== undefined
             ? inputValue.place_of_supply
             : customerorderBookData
-            ? customerorderBookData.place_of_supply
-            : "",
+              ? customerorderBookData.place_of_supply
+              : "",
         transporter_name:
           inputValue.transporter_name !== undefined
             ? inputValue.transporter_name
             : customerorderBookData
-            ? customerorderBookData.transporter_name
-            : "",
+              ? customerorderBookData.transporter_name
+              : "",
         exchange_rate: inputValue.exchange_rate || null,
       };
 
@@ -490,8 +491,8 @@ export const SalesInvoiceCreate = (props) => {
                 inputValue.transporter_name !== undefined
                   ? inputValue.transporter_name
                   : customerorderBookData
-                  ? customerorderBookData.transporter_name
-                  : ""
+                    ? customerorderBookData.transporter_name
+                    : ""
               }
               error={inputValue.transporter_name === ""}
               // helperText={inputValue.transporter_name !== "" && "this field is required"}
@@ -509,8 +510,8 @@ export const SalesInvoiceCreate = (props) => {
                 inputValue.place_of_supply !== undefined
                   ? inputValue.place_of_supply
                   : customerorderBookData
-                  ? customerorderBookData.place_of_supply
-                  : ""
+                    ? customerorderBookData.place_of_supply
+                    : ""
               }
               onChange={handleInputChange}
             />
@@ -545,8 +546,8 @@ export const SalesInvoiceCreate = (props) => {
                     inputValue.exchange_rate !== undefined
                       ? inputValue.exchange_rate
                       : customerorderBookData
-                      ? customerorderBookData.exchange_rate
-                      : ""
+                        ? customerorderBookData.exchange_rate
+                        : ""
                   }
                   onChange={handleInputChange}
                 />
