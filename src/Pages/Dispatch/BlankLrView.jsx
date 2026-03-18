@@ -16,6 +16,8 @@ import {
   Typography,
   Grid,
 } from "@mui/material";
+import DateRangeIcon from "@mui/icons-material/DateRange";
+
 import FileSaver from "file-saver";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -215,7 +217,12 @@ export const BlankLrView = () => {
                 <Button
                   variant="contained"
                   onClick={() => setCustomDateOpen(true)}
+                  sx={{
+                    display: "flex",
+                    gap: "5px",
+                  }}
                 >
+                  <DateRangeIcon fontSize="small" />
                   Select Date
                 </Button>
               </Grid>

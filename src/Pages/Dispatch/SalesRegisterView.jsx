@@ -16,6 +16,7 @@ import {
   Typography,
   Grid,
 } from "@mui/material";
+import DateRangeIcon from "@mui/icons-material/DateRange";
 import FileSaver from "file-saver";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -224,7 +225,12 @@ export const SalesRegisterView = () => {
                 <Button
                   variant="contained"
                   onClick={() => setCustomDataPopup(true)}
+                  sx={{
+                    display: "flex",
+                    gap: "10px",
+                  }}
                 >
+                  <DateRangeIcon fontSize="small" />
                   Select Date
                 </Button>
               </Grid>
