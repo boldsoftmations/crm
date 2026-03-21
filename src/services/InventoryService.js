@@ -631,7 +631,7 @@ const getSalesReturnData = (page, searchValue) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
 
-  params.append("invoice_type", "Purchase Return");
+  params.append("invoice_type", "Sales Return");
 
   if (page) {
     params.append("page", page);
@@ -651,7 +651,7 @@ const getPurchaseReturnData = (page, searchValue) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
 
-  params.append("invoice_type", "Sales Return");
+  params.append("invoice_type", "Purchase Return");
 
   if (page) {
     params.append("page", page);
