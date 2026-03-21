@@ -631,6 +631,26 @@ const getSalesReturnData = (page, searchValue) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
 
+  params.append("invoice_type", "Purchase Return");
+
+  if (page) {
+    params.append("page", page);
+  }
+
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
+
+  // Sending a GET request with query parameters
+  return CustomAxios.get(
+    `api/inventory/list-purchase-invoice/?${params.toString()}`,
+  );
+};
+
+const getPurchaseReturnData = (page, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
+
   params.append("invoice_type", "Sales Return");
 
   if (page) {
@@ -660,6 +680,24 @@ const getSalesReturnInventoryData = (page, searchValue) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
 
+  if (page) {
+    params.append("page", page);
+  }
+
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
+
+  // Sending a GET request with query parameters
+  return CustomAxios.get(
+    `api/inventory/sales-return-inventory/?${params.toString()}`,
+  );
+};
+
+const getPurchaseReturnInventoryData = (page, searchValue) => {
+  // Constructing the query parameters
+  const params = new URLSearchParams();
+  params.append("invoice_type", "Purchase Return");
   if (page) {
     params.append("page", page);
   }
@@ -822,6 +860,8 @@ const InventoryServices = {
   getStockAlertData,
   getDailyReportData,
   getStockReportData,
+  getPurchaseReturnData,
+  getPurchaseReturnInventoryData,
 };
 
 export default InventoryServices;

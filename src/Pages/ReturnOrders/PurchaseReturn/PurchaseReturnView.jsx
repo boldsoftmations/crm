@@ -42,7 +42,7 @@ export const PurchaseReturnView = () => {
   const getSalesReturnDetails = useCallback(async () => {
     try {
       setOpen(true);
-      const response = await InventoryServices.getSalesReturnData(
+      const response = await InventoryServices.getPurchaseReturnData(
         currentPage,
         searchQuery,
       );

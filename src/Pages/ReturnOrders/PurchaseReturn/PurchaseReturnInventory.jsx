@@ -53,7 +53,7 @@ export const PurchaseReturnInventory = () => {
   const getSalesReturnInventoryDetails = useCallback(async (page, query) => {
     try {
       setOpen(true);
-      const response = await InventoryServices.getSalesReturnInventoryData(
+      const response = await InventoryServices.getPurchaseReturnInventoryData(
         page,
         query,
       );
