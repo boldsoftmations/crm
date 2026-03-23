@@ -651,7 +651,7 @@ const getPurchaseReturnData = (page, searchValue) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
 
-  params.append("invoice_type", "Purchase Return");
+  params.append("invoice_type", "purchase_return");
 
   if (page) {
     params.append("page", page);
@@ -660,6 +660,7 @@ const getPurchaseReturnData = (page, searchValue) => {
   if (searchValue) {
     params.append("search", searchValue);
   }
+  console.log(params.toString());
 
   // Sending a GET request with query parameters
   return CustomAxios.get(
@@ -697,7 +698,7 @@ const getSalesReturnInventoryData = (page, searchValue) => {
 const getPurchaseReturnInventoryData = (page, searchValue) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
-  params.append("invoice_type", "Purchase Return");
+  params.append("invoice_type", "purchase_return");
   if (page) {
     params.append("page", page);
   }
