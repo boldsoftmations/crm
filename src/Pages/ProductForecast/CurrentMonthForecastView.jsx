@@ -92,10 +92,10 @@ export const CurrentMonthForecastView = () => {
       const response = await ProductForecastService.getAllCurrentMonthData(
         "all",
         salesPersonByFilter,
-        searchQuery
+        searchQuery,
       );
       const data = response.data
-        .filter((row) => row.forecast > 0)
+        .filter((row) => row.forecast >= 0)
         .map((row) => {
           const sumValue = row.orderbook_value + row.actual;
           const forecast_achieved = row.forecast - sumValue;
@@ -109,6 +109,7 @@ export const CurrentMonthForecastView = () => {
             forecast_achieved: forecast_achieved > 0 ? forecast_achieved : 0,
           };
         });
+      console.log("data", data);
       return data;
     } catch (error) {
       console.log(error);
@@ -123,7 +124,7 @@ export const CurrentMonthForecastView = () => {
       const response = await ProductForecastService.getAllCurrentMonthData(
         currentPage,
         salesPersonByFilter,
-        searchQuery
+        searchQuery,
       );
       setCurrentMonthForecast(response.data.results);
       const total = response.data.count;
@@ -159,7 +160,7 @@ export const CurrentMonthForecastView = () => {
       setIdForEdit(item);
       setOpenPopup(true);
     },
-    [currentMonthForecast]
+    [currentMonthForecast],
   );
 
   const handleFilterChange = (value) => {
@@ -197,7 +198,7 @@ export const CurrentMonthForecastView = () => {
     anticipated.setHours(0, 0, 0, 0);
 
     console.log(
-      `Today: ${today.toISOString()}, Anticipated: ${anticipated.toISOString()}`
+      `Today: ${today.toISOString()}, Anticipated: ${anticipated.toISOString()}`,
     );
 
     if (anticipated.getTime() === today.getTime()) {
@@ -341,6 +342,8 @@ export const CurrentMonthForecastView = () => {
               </TableHead>
               <TableBody>
                 {currentMonthForecast.map((row, i) => {
+                  const sumValue = row.orderbook_value + row.actual;
+                  const forecast_achieved = row.forecast - sumValue;
                   const rowColor = getColorForDate(row.anticipated_date); // Get the color for the date
                   return (
                     <StyledTableRow
@@ -368,7 +371,7 @@ export const CurrentMonthForecastView = () => {
                         {row.orderbook_value}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {row.forecast_achieved}
+                        {forecast_achieved > 0 ? forecast_achieved : 0}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {formatDate(row.anticipated_date)}
