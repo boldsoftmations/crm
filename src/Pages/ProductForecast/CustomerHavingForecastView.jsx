@@ -56,7 +56,23 @@ export const CustomerHavingForecastView = () => {
   const nextMonth1 = (currentMonth + 1) % 12;
   const nextMonth2 = (currentMonth + 2) % 12;
   const nextMonth3 = (currentMonth + 3) % 12;
-
+  const isSupplyChain = UserData.groups.includes(
+    "Operations & Supply Chain Manager",
+  );
+  const emails = [
+    "admin@glutape.com",
+    "rajeev@glutape.com",
+    "gaurav@glutape.com",
+    "arjun@glutape.com",
+    "pruthvi@glutape.com",
+    "anuradha@glutape.com",
+    "vivek_production@glutape.com",
+    "vivek2@glutape.com",
+    "managerwithoutlead@glutape.com",
+    "biraj@glutape.com",
+    "rushilsalian13@glutape.com",
+    "it1@glutape.com",
+  ];
   // Define the months array
   const months = [
     "January",
@@ -112,8 +128,8 @@ export const CustomerHavingForecastView = () => {
             ? currentYear
             : currentYear - 1
           : monthIndex < currentMonth
-          ? currentYear + 1
-          : currentYear;
+            ? currentYear + 1
+            : currentYear;
       const monthName = months[monthIndex];
       forecastHeaders.push({
         label: `${monthName} - ${year} Actual-Forecast`,
@@ -157,7 +173,7 @@ export const CustomerHavingForecastView = () => {
       const response = await ProductForecastService.getAllCustomerHavingData(
         "all",
         salesPersonByFilter,
-        searchQuery
+        searchQuery,
       );
 
       const data = response.data.map((row) => {
@@ -197,7 +213,7 @@ export const CustomerHavingForecastView = () => {
       const response = await ProductForecastService.getAllCustomerHavingData(
         currentPage,
         salesPersonByFilter,
-        searchQuery
+        searchQuery,
       );
       setCustomerHavingForecast(response.data.results);
       const total = response.data.count;
@@ -231,23 +247,23 @@ export const CustomerHavingForecastView = () => {
   const handleEditClick = useCallback(
     (item) => {
       const matchedForecast = customerHavingForecast.find(
-        (forecast) => forecast.id === item.id
+        (forecast) => forecast.id === item.id,
       );
       setForecastDataByID(matchedForecast);
       setOpenPopup(true);
     },
-    [customerHavingForecast]
+    [customerHavingForecast],
   );
 
   const handleAssignTo = useCallback(
     (item) => {
       const matchedForecast = customerHavingForecast.find(
-        (forecast) => forecast.id === item.id
+        (forecast) => forecast.id === item.id,
       );
       setForecastDataByID(matchedForecast);
       setOpenPopup2(true);
     },
-    [customerHavingForecast]
+    [customerHavingForecast],
   );
 
   const handleFilterChange = (value) => {
@@ -260,8 +276,8 @@ export const CustomerHavingForecastView = () => {
     ...new Set(
       customerHavingForecast &&
         customerHavingForecast.flatMap((row) =>
-          row.product_forecast.map((rowData) => rowData.index_position)
-        )
+          row.product_forecast.map((rowData) => rowData.index_position),
+        ),
     ),
   ];
 
@@ -304,7 +320,11 @@ export const CustomerHavingForecastView = () => {
                     sx={{ minWidth: 150 }}
                     onChange={(event, value) => handleFilterChange(value)}
                     value={salesPersonByFilter}
-                    options={assignedOption.map((option) => option.email)}
+                    options={
+                      isSupplyChain
+                        ? emails
+                        : assignedOption.map((option) => option.email)
+                    }
                     getOptionLabel={(option) => option}
                     label="Filter By Sales Person"
                   />
@@ -430,7 +450,7 @@ export const CustomerHavingForecastView = () => {
                       </StyledTableCell>
                       {indexPositions.map((position) => {
                         const rowData = row.product_forecast.find(
-                          (data) => data.index_position === position
+                          (data) => data.index_position === position,
                         );
 
                         if (rowData) {
