@@ -121,6 +121,11 @@ export const ListItems = ({ setOpen }) => {
             text: "CCF Complaint Master",
           },
           // {
+          //   to: "/master/package-master",
+          //   text: "Package Master",
+          // },
+
+          // {
           //   to: "/",
           // },
           {
@@ -389,6 +394,7 @@ export const ListItems = ({ setOpen }) => {
         ]),
         renderSubmenu("sales", <TrendingUpIcon />, "Sales", [
           { to: "/customers/all-customer", text: "Customer" },
+          { to: "/forecast/view-product-forecast", text: "Forecast" },
         ]),
 
         renderListItem("/dispatch/tab-view", <LocalShippingIcon />, "Dispatch"),
@@ -514,6 +520,10 @@ export const ListItems = ({ setOpen }) => {
             to: "/county-state-city/master-tab",
             text: "Country Master",
           },
+          // {
+          //   to: "/master/package-master",
+          //   text: "Package Master",
+          // },
           { to: "/user/profile-tab", text: "Employees Master" },
         ]),
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [

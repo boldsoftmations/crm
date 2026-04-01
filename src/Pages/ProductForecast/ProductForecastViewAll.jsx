@@ -47,7 +47,7 @@ export const ProductForecastViewAll = () => {
 
   const Supplychain =
     userData.groups.includes("Director") ||
-    userData.groups.includes("Operation & Supply Chain Manager");
+    userData.groups.includes("Operations & Supply Chain Manager");
 
   const tabs = [
     { label: "Curr. Month Forecast", visible: isAdmin, index: 0 }, // Shortened "Current" to "Curr."
