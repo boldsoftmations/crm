@@ -1,4 +1,4 @@
-import { Box, Button, Grid } from "@mui/material";
+import { Box, Button, Grid, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { CustomLoader } from "../../Components/CustomLoader";
 import CustomSnackbar from "../../Components/CustomerSnackbar";
@@ -24,6 +24,8 @@ export const UpdatePackagingMaster = ({
 
   const [inputValue, setInputValue] = useState({
     is_inactive: recordForEdit.is_inactive || false,
+    name: recordForEdit.name || "",
+    charges: recordForEdit.charges || 0.0,
     gst: 0.0,
   });
 
@@ -32,6 +34,12 @@ export const UpdatePackagingMaster = ({
     setInputValue((prev) => ({
       ...prev,
       is_inactive: value === "Inactive",
+    }));
+  };
+  const handleInputChange = (event) => {
+    setInputValue((prev) => ({
+      ...prev,
+      [event.target.name]: event.target.value,
     }));
   };
 
@@ -101,8 +109,28 @@ export const UpdatePackagingMaster = ({
               options={["Active", "Inactive"]}
             />
           </Grid>
-        </Grid>
 
+          <Grid item xs={12}>
+            <TextField
+              label="name"
+              size="small"
+              name="name"
+              fullWidth
+              value={inputValue.name} // ✅ FIXED
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="charges"
+              size="small"
+              name="charges"
+              fullWidth
+              value={inputValue.charges} // ✅ FIXED
+              onChange={handleInputChange}
+            />
+          </Grid>
+        </Grid>
         <Button
           type="submit"
           fullWidth

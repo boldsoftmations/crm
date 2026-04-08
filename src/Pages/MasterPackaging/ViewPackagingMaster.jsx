@@ -263,6 +263,7 @@ export const ViewPackagingMaster = () => {
             />
           </Popup>
           <Popup
+            size="sm"
             title="Update Packaging"
             openPopup={openUpdatePopup}
             setOpenPopup={setOpenUpdatePopup}
