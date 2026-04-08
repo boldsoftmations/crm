@@ -190,8 +190,8 @@ export const PhysicalInventoryCreate = memo((props) => {
     [formData, currentPage, searchQuery],
   );
   const isAuthorizedAndPendingZero =
-    users.groups.includes("Accounts") ||
-    (users.groups.includes("Director") && formData.pending_quantity === "0");
+    (users.groups.includes("Accounts") || users.groups.includes("Director")) &&
+    formData.pending_quantity === "0";
   console.log(isAuthorizedAndPendingZero);
   return (
     <>

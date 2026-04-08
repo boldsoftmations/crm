@@ -82,6 +82,7 @@ export const TallyInvoice = () => {
     "PI NO",
     "UNIT",
     "CUSTOMER NAME",
+    "PACKAGING TYPE",
     "PRODUCT CODE",
     "QTY",
     "RATE",
@@ -115,6 +116,9 @@ export const TallyInvoice = () => {
       sgst: row.sgst || "",
       sales_invoice: row.sales_invoice,
       billing_state: row.billing_state,
+      packaging_type: row.packaging_type,
+      packaging_charges: row.packaging_charges,
+      packaging_cost: row.packaging_cost,
       shipping_city: row.shipping_city,
       sales_ledger: "GST Sales",
     }));
@@ -150,6 +154,9 @@ export const TallyInvoice = () => {
     { label: "REF NO", key: "sales_invoice" },
     { label: "BILL TO PLACE", key: "billing_state" },
     { label: "SHIP TO PLACE", key: "shipping_city" },
+    { label: "PACKAGING TYPE", key: "packaging_type" },
+    { label: "PACKAGING CHARGES", key: "packaging_charges" },
+    { label: "PACKAGING COST", key: "packaging_cost" },
     { label: "Sales Ledger", key: "sales_ledger" },
   ];
 
@@ -309,6 +316,9 @@ export const TallyInvoice = () => {
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {row.customer}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.packaging_type || "-"}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {row.product}

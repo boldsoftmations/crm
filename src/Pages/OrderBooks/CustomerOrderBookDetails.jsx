@@ -112,7 +112,7 @@ export const CustomerOrderBookDetails = () => {
             ready_date: item.ready_date,
             requested_date: item.requested_date,
             special_instructions: item.special_instructions,
-
+            packaging_type: item.packaging_type,
             remark: item.remark,
           };
         } else if (
@@ -145,6 +145,7 @@ export const CustomerOrderBookDetails = () => {
             ready_date: item.ready_date,
             requested_date: item.requested_date,
             special_instructions: item.special_instructions,
+            packaging_type: item.packaging_type,
             remark: item.remark,
           };
         } else {
@@ -168,6 +169,7 @@ export const CustomerOrderBookDetails = () => {
             ready_date: item.ready_date,
             requested_date: item.requested_date,
             special_instructions: item.special_instructions,
+            packaging_type: item.packaging_type,
             remark: item.remark,
           };
         }
@@ -237,7 +239,11 @@ export const CustomerOrderBookDetails = () => {
     "Shipping City",
     "Product",
     "Quantity",
+
     "Pending Quantity",
+    "Packaging Type",
+    "Packaging Cost",
+    "Packing  charges",
     "EST DATE",
     "Ready Date",
     "Request Date",
@@ -438,6 +444,15 @@ export const CustomerOrderBookDetails = () => {
                         : Math.floor(row.pending_quantity)}
                     </StyledTableCell>
                     <StyledTableCell align="center">
+                      {row.packaging_type}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.packaging_cost}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.packing_charges ? row.packing_charges : "-"}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
                       {row.estimated_date}
                     </StyledTableCell>
                     <StyledTableCell align="center">
@@ -595,6 +610,10 @@ const headers = [
     key: "special_instructions",
   },
   {
+    label: "Packaging Type",
+    key: "packaging_type",
+  },
+  {
     label: "Remarks",
     key: "remark",
   },
@@ -647,6 +666,10 @@ const headers2 = [
   {
     label: "Special Instruction",
     key: "special_instructions",
+  },
+  {
+    label: "Packaging Type",
+    key: "packaging_type",
   },
   {
     label: "Remarks",

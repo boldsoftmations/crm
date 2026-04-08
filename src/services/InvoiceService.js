@@ -489,6 +489,26 @@ const uploadSalesinvoice = (data) => {
 const updateAllPerformaInvoiceData = (id, data) => {
   return CustomAxios.patch(`/api/invoice/update-proforma-invoice/${id}`, data);
 };
+
+const createDispatchPackagingData = (data) => {
+  return CustomAxios.post(`/api/invoice/packaging-consumption/`, data);
+};
+const getDispatchPackagingData = (page, searchValue) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (searchValue) {
+    params.append("search", searchValue);
+  }
+  return CustomAxios.get(
+    `/api/invoice/packaging-consumption/?${params.toString()}`,
+  );
+};
+
+const updateDispatchPackagingData = (id, data) => {
+  return CustomAxios.patch(`/api/invoice/packaging-consumption/${id}/`, data);
+};
 const InvoiceServices = {
   getAllSellerAccountData,
   getfilterSellerAccountData,
@@ -541,6 +561,9 @@ const InvoiceServices = {
   uploadSalesinvoice,
   createSalesinvoiceData,
   updateAllPerformaInvoiceData,
+  createDispatchPackagingData,
+  getDispatchPackagingData,
+  updateDispatchPackagingData,
 };
 
 export default InvoiceServices;

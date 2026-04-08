@@ -120,10 +120,10 @@ export const ListItems = ({ setOpen }) => {
             to: "/customer/complaints/ccp-capa/master",
             text: "CCF Complaint Master",
           },
-          // {
-          //   to: "/master/package-master",
-          //   text: "Package Master",
-          // },
+          {
+            to: "/master/package-master",
+            text: "Package Master",
+          },
 
           // {
           //   to: "/",
@@ -520,10 +520,10 @@ export const ListItems = ({ setOpen }) => {
             to: "/county-state-city/master-tab",
             text: "Country Master",
           },
-          // {
-          //   to: "/master/package-master",
-          //   text: "Package Master",
-          // },
+          {
+            to: "/master/package-master",
+            text: "Package Master",
+          },
           { to: "/user/profile-tab", text: "Employees Master" },
         ]),
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [

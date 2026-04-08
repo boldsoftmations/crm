@@ -60,6 +60,9 @@ export const SalesHistoryView = () => {
 
     { label: "Customer", key: "customer" },
     { label: "Taxable Amount", key: "taxabale_amount" },
+    { label: "PACKAGING TYPE", key: "packaging_type" },
+    { label: "PACKAGING CHARGES %", key: "packaging_charges" },
+    { label: "PACKAGING COST", key: "packaging_cost" },
   ];
 
   const handleExport = async () => {
@@ -93,13 +96,20 @@ export const SalesHistoryView = () => {
           proforma_invoice: item.proforma_invoice_list.join(", "),
           customer: item.company,
           taxabale_amount: item.amount,
+          // packaging_type: item.packaging_type || "",
+          // packaging_charges: item.packaging_charges || "",
+          // packaging_cost: item.packaging_cost || "",
         };
 
         // Add dynamic product columns (product_0, product_1...)
         item.products_si.forEach((p, i) => {
-          rowData[`product_${i + 1}`] = p.product;
-          rowData[`quantity_${i + 1}`] = p.quantity;
+          rowData[`product`] = p.product;
+          rowData[`quantity`] = p.quantity;
+          rowData[`packaging_charges`] = p.packaging_charges || "";
+          rowData[`packaging_cost`] = p.packaging_cost || "";
+          rowData[`packaging_type`] = p.packaging_type || "";
         });
+        console.log("Data : ", data);
 
         data.push(rowData);
       });
@@ -212,7 +222,7 @@ export const SalesHistoryView = () => {
 
   useEffect(() => {
     getSalesInvoiceDetails();
-  }, [filterInvoiceType, currentPage, filterSelectedQuery, searchQuery]);
+  }, [filterInvoiceType, currentPage, filterSelectedQuery, searchQuery,startDate,endDate]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -389,6 +399,9 @@ export const SalesHistoryView = () => {
                   <StyledTableCell align="center">
                     SALES INVOICE NUMBER
                   </StyledTableCell>
+                  <StyledTableCell align="center">
+                    PACKAGING TYPE
+                  </StyledTableCell>
                   <StyledTableCell align="center">PRODUCT CODE</StyledTableCell>
                   <StyledTableCell align="center">QUANTITY</StyledTableCell>
                   <StyledTableCell align="center">
@@ -439,6 +452,7 @@ export const SalesHistoryView = () => {
 
 function Row(props) {
   const { row } = props;
+  console.log("row data :", row);
 
   return (
     <>
@@ -468,9 +482,11 @@ function Row(props) {
           <StyledTableCell align="center">{row.invoice_type}</StyledTableCell>
           <StyledTableCell align="center">{row.invoice_no}</StyledTableCell>
           {/* Product Columns */}
-
+          <StyledTableCell align="center">
+            {p.packaging_type || "-"}
+          </StyledTableCell>
           <StyledTableCell key={`p-${index}`} align="center">
-            {p.product}
+            {row.product}
           </StyledTableCell>
 
           <StyledTableCell key={`q-${index}`} align="center">

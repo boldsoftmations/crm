@@ -49,6 +49,7 @@ import Maintaince from "../Pages/Maintanace/Maintaince";
 import { AllInventoryReportTabs } from "../Pages/InventoryReport/AllInventoryReportTabs";
 import { AllPriceListTabView } from "../Pages/PriceList/AllPriceListTabView";
 import { PurchaseAllTabView } from "../Pages/Purchase/PurchaseAllTabView";
+import { ViewPackagingMaster } from "../Pages/MasterPackaging/ViewPackagingMaster";
 // import PurchaseReturnAllTabView from "../Pages/ReturnOrders/PurchaseReturn/PurchaseReturnAllTabView";
 
 const PrivateRoute = ({ children, redirectTo = "/" }) => {
@@ -294,6 +295,10 @@ export const RouteScreen = () => {
                 <AllCCFtab />
               </PrivateRoute>
             }
+          />
+          <Route
+            path="/master/package-master"
+            element={<ViewPackagingMaster />}
           />
           <Route
             path="/customer/complaints/ccp-capa/master"

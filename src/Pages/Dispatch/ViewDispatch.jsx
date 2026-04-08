@@ -35,6 +35,7 @@ import { MessageAlert } from "../../Components/MessageAlert";
 import SearchComponent from "../../Components/SearchComponent ";
 import CustomAutocomplete from "../../Components/CustomAutocomplete";
 import UserProfileService from "../../services/UserProfileService";
+import { Tab } from "bootstrap";
 
 export const ViewDispatch = () => {
   const [dispatchData, setDispatchData] = useState([]);
@@ -72,7 +73,7 @@ export const ViewDispatch = () => {
         currentPage,
         searchQuery,
         unitFilter,
-        users.groups.includes("Customer Service") ? "pending_dispatch_tab" : ""
+        users.groups.includes("Customer Service") ? "pending_dispatch_tab" : "",
       );
       setDispatchData(response.data.results);
       setTotalPages(Math.ceil(response.data.count / 25));
@@ -184,7 +185,7 @@ export const ViewDispatch = () => {
                   {(users.groups.includes("Factory-Mumbai-Dispatch") ||
                     users.groups.includes("Factory-Delhi-Dispatch") ||
                     users.groups.includes(
-                      "Operations & Supply Chain Manager"
+                      "Operations & Supply Chain Manager",
                     ) ||
                     users.groups.includes("Director")) && (
                     <StyledTableCell align="center">Dispatched</StyledTableCell>
@@ -313,6 +314,7 @@ function Row(props) {
                 <TableHead>
                   <TableRow>
                     <TableCell align="center">DISPATCH ID</TableCell>
+                    <TableCell align="center">PACKAGING TYPE</TableCell>
                     <TableCell align="center">PRODUCT</TableCell>
                     <TableCell align="center">QUANTITY</TableCell>
                   </TableRow>
@@ -322,6 +324,9 @@ function Row(props) {
                     <TableRow key={historyRow.dispatch_book}>
                       <TableCell align="center">
                         {historyRow.dispatch_book}
+                      </TableCell>
+                      <TableCell align="center">
+                        {historyRow.packaging_type || "-"}
                       </TableCell>
                       <TableCell align="center">{historyRow.product}</TableCell>
                       <TableCell align="center">

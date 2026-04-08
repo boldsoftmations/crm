@@ -426,6 +426,7 @@ function Row(props) {
                 <TableHead>
                   <TableRow>
                     <TableCell align="center">DISPATCH ID</TableCell>
+                    <TableCell align="center">PACKAGING TYPE</TableCell>
                     <TableCell align="center">PRODUCT</TableCell>
                     <TableCell align="center">QUANTITY</TableCell>
                     <TableCell align="center">RATE</TableCell>
@@ -438,6 +439,10 @@ function Row(props) {
                       <TableCell align="center">
                         {historyRow.dispatch_book}
                       </TableCell>
+                      <TableCell align="center">
+                        {historyRow.packaging_type || "-"}
+                      </TableCell>
+
                       <TableCell align="center">{historyRow.product}</TableCell>
                       <TableCell align="center">
                         {historyRow.type_of_unit === "decimal"

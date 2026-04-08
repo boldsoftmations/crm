@@ -45,7 +45,12 @@ const updateProductForecast = (id, data) => {
 };
 // Current MMonth Forecast
 // Generic function to get Customer Not Having Forecast data
-const getAllCurrentMonthData = (page, assignToFilter, searchValue) => {
+const getAllCurrentMonthData = (
+  page,
+  assignToFilter,
+  searchValue,
+  anticipated_date,
+) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
 
@@ -59,6 +64,9 @@ const getAllCurrentMonthData = (page, assignToFilter, searchValue) => {
 
   if (searchValue) {
     params.append("search", searchValue);
+  }
+  if (anticipated_date) {
+    params.append("anticipated_date", anticipated_date);
   }
 
   // Sending a GET request with query parameters

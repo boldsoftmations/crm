@@ -45,6 +45,9 @@ export const SalesInvoiceCreate = (props) => {
       id: "",
       user: "",
       ready_date: "",
+      packaging_charges: "",
+      packaging_type: "",
+      packaging_cost: "",
     },
   ]);
   const calculateTotalAmount = (products) => {
@@ -149,6 +152,9 @@ export const SalesInvoiceCreate = (props) => {
             type_of_unit: data.type_of_unit,
             raised_by: data.raised_by,
             ready_date: data.ready_date,
+            packaging_charges: data.packaging_charges,
+            packaging_type: data.packaging_type,
+            packaging_cost: data.packaging_cost,
           };
 
           // Push product data to array
@@ -170,6 +176,9 @@ export const SalesInvoiceCreate = (props) => {
         id: fruit.id,
         user: fruit.raised_by,
         ready_date: fruit.ready_date,
+        packaging_charges: fruit.packaging_charges,
+        packaging_type: fruit.packaging_type,
+        packaging_cost: fruit.packaging_cost,
       }));
 
       // Update state with new array of product objects
@@ -204,7 +213,7 @@ export const SalesInvoiceCreate = (props) => {
             ...rest
           }) => rest,
         );
-      console.log(PRODUCTS);
+      console.log("products are :", PRODUCTS);
 
       const decimalCounts = customerorderBookData.products.map(
         (item) => item.max_decimal_digit,
@@ -247,7 +256,9 @@ export const SalesInvoiceCreate = (props) => {
               ? customerorderBookData.transporter_name
               : "",
         exchange_rate: inputValue.exchange_rate || null,
+        // packaging_charges:products
       };
+      console.log(products);
 
       setOpen(true);
       if (inputValue.length !== 0) {
@@ -592,7 +603,7 @@ export const SalesInvoiceCreate = (props) => {
                       value={input.product}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={2}>
+                  <Grid item xs={12} sm={1.5}>
                     <CustomTextField
                       fullWidth
                       name="pending_quantity"
@@ -606,7 +617,7 @@ export const SalesInvoiceCreate = (props) => {
                       }
                     />
                   </Grid>
-                  <Grid item xs={12} sm={2}>
+                  <Grid item xs={12} sm={1.5}>
                     <CustomTextField
                       fullWidth
                       name="quantity"
@@ -664,6 +675,18 @@ export const SalesInvoiceCreate = (props) => {
                     ) : (
                       <Typography variant="h6" sx={{ color: "green" }}>
                         <RuleIcon /> Ready
+                      </Typography>
+                    )}
+                  </Grid>
+                  <Grid item xs={12} sm={1}>
+                    {input.packaging_type === "Special Packaging" ? (
+                      <Typography variant="h6" sx={{ color: "success" }}>
+                        <RuleIcon />
+                        {"SP"}
+                      </Typography>
+                    ) : (
+                      <Typography variant="h6" sx={{ color: "error" }}>
+                        {""}
                       </Typography>
                     )}
                   </Grid>
