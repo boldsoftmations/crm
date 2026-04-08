@@ -92,7 +92,7 @@ export const AllDispatchTabView = () => {
       index: 5,
     },
     {
-      label: "dispatch Packaging",
+      label: "Dispatch Packaging",
       visible: isAdmin,
       index: 6,
     },
