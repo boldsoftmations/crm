@@ -82,7 +82,6 @@ export const CreateCustomerProformaInvoice = (props) => {
         type_of_unit: "",
         requested_date: values.someDate,
         special_instructions: "",
-        packaging_type: false,
       },
     ],
     productOption,

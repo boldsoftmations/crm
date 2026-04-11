@@ -35,7 +35,6 @@ import { MessageAlert } from "../../Components/MessageAlert";
 import SearchComponent from "../../Components/SearchComponent ";
 import CustomAutocomplete from "../../Components/CustomAutocomplete";
 import UserProfileService from "../../services/UserProfileService";
-import { Tab } from "bootstrap";
 
 export const ViewDispatch = () => {
   const [dispatchData, setDispatchData] = useState([]);

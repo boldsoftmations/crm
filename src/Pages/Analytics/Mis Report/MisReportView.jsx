@@ -14,32 +14,37 @@ import {
   tableCellClasses,
 } from "@mui/material";
 
+// import { CustomLoader } from "../../../Components/CustomLoader";
 import { CustomLoader } from "../../../Components/CustomLoader";
+// import SearchComponent from "../../../Components/SearchComponent ";
 import SearchComponent from "../../../Components/SearchComponent ";
+// import { CustomPagination } from "../../../Components/CustomPagination";
 import { CustomPagination } from "../../../Components/CustomPagination";
-import { Popup } from "../../../Components/Popup";
+// import { Popup } from "../../../Components/Popup";
+
+// import CustomSnackbar from "../../../Components/CustomerSnackbar";
 import CustomSnackbar from "../../../Components/CustomerSnackbar";
 import { useRef } from "react";
 import { useSelector } from "react-redux";
-import { DispatchPackaginigUpdate } from "./DispatchPackaginigUpdate";
-import { DispatchPackaginigCreate } from "./DispatchPackaginigCreate";
+// import { DispatchPackaginigUpdate } from "./MisReprtUpdate";
+// import { DispatchPackaginigCreate } from "./MisReportCreate";
+
 import InvoiceServices from "../../../services/InvoiceService";
 import CustomTextField from "../../../Components/CustomTextField";
 import moment from "moment";
 import { CSVLink } from "react-csv";
-export const DispatchPackagingView = () => {
+// import { MisReportCreate } from "./MisReportCreate";
+// import MisReportUpdate from "./MisReportUpdate";
+
+// import { MisReportCreate } from "./MisReportCreate";
+export const MisReportView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [country, setCountry] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [recordForEdit, setRecordForEdit] = useState(null);
-  const [openPopup, setOpenPopup] = useState(false);
-  const [openUpdatePopup, setOpenUpdatePopup] = useState(false);
 
   const userData = useSelector((state) => state.auth.profile);
-  const a = userData.active_sales_user.map((item) => item.email);
-  console.log(a);
+
   const [alertmsg, setAlertMsg] = useState({
     message: "",
     severity: "",
@@ -74,10 +79,6 @@ export const DispatchPackagingView = () => {
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
-  const openInPopup = (data) => {
-    setRecordForEdit(data);
-    setOpenUpdatePopup(true);
-  };
 
   const getAllMasterCountries = async () => {
     try {
@@ -86,14 +87,14 @@ export const DispatchPackagingView = () => {
       const dateParts = dateString.split("-");
       const year = dateParts[0];
       const month = dateParts[1];
-      const response = await InvoiceServices.getDispatchPackagingData(
+      const response = await InvoiceServices.getMisPackagingData(
         currentPage,
         searchQuery,
         year,
         month,
       );
-      setCountry(response.data.results);
-      setTotalPages(Math.ceil(response.data.count / 25));
+      setCountry(response.data || []);
+      console.log("reponse is :", response);
     } catch (e) {
       setAlertMsg({
         message: e.response.data.message || "Error fetching countries",
@@ -115,22 +116,25 @@ export const DispatchPackagingView = () => {
       const dateParts = dateString.split("-");
       const year = dateParts[0];
       const month = dateParts[1];
-      const response = await InvoiceServices.getDispatchPackagingData(
+      const response = await InvoiceServices.getMisPackagingData(
         currentPage,
         searchQuery,
         year,
         month,
       );
-      const data = response.data.results.map((row, i) => {
-        return {
-          product_name: row.product_name,
-          unit_name: row.unit_name,
-          seller_account_name: row.seller_account_name,
-          quantity: row.quantity,
+      console.log(response.data);
+      const apiData = response.data || [];
+
+      const data = apiData
+        .filter((item) => item.month <= new Date(searchData).getMonth() + 1)
+        .map((row) => ({
+          month_name: row.month_name,
+          year: row.year,
+          total_packaging_revenue: row.total_packaging_revenue,
+          total_packaging_cost: row.total_packaging_cost,
           created_date: row.created_date,
-          created_by: row.created_by,
-        };
-      });
+          net_profit_or_loss: row.net_profit_or_loss,
+        }));
       console.log("data", data);
       setIsLoading(false);
       return data;
@@ -149,22 +153,23 @@ export const DispatchPackagingView = () => {
     try {
       const data = await handleExport();
       setExportData(data);
+
       setTimeout(() => {
-        csvLinkRef.current.link.click();
-      });
+        if (csvLinkRef.current) {
+          csvLinkRef.current.link.click();
+        }
+      }, 100);
     } catch (error) {
       console.log("CSVLink Download error", error);
     }
   };
-
   const headers = [
-    { label: "PRODUCT", key: "product_name" },
-    { label: "QUANTITY", key: "quantity" },
+    { label: "MONTH", key: "month_name" },
+    { label: "YEAR", key: "year" },
 
-    { label: " UNIT", key: "unit_name" },
-    { label: "SELLER UNIT", key: "seller_account_name" },
-    { label: "CREATED DATE", key: "created_date" },
-    { label: "CREATED BY", key: "created_by" },
+    { label: "PACKAGING REVENUE", key: "total_packaging_revenue" },
+    { label: "PACKAGING COST", key: "total_packaging_cost" },
+    { label: "PROFIT/LOSS", key: "net_profit_or_loss" },
   ];
 
   return (
@@ -181,9 +186,16 @@ export const DispatchPackagingView = () => {
           <Box sx={{ marginBottom: 2, display: "flex", alignItems: "center" }}>
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} sm={4}>
-                <SearchComponent
-                  onSearch={handleSearch}
-                  onReset={handleReset}
+                <CustomTextField
+                  label="Search"
+                  type="month"
+                  variant="outlined"
+                  size="small"
+                  value={searchData}
+                  onChange={(event) => setSearchData(event.target.value)}
+                  inputProps={{
+                    max: currentMonths, // Set the maximum allowed value to the previous month
+                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -196,7 +208,7 @@ export const DispatchPackagingView = () => {
                       textAlign: "center",
                     }}
                   >
-                    Packaging Material Consumption{" "}
+                    MIS Packaging Report{" "}
                   </h3>
                 </Box>
               </Grid>
@@ -205,41 +217,13 @@ export const DispatchPackagingView = () => {
                 item
                 xs={12}
                 sm={4}
-                style={{
-                  textAlign: "right",
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  gap: "30px",
-                  alignItems: "center",
-                  flexDirection: "row",
-                }}
+                sx={{ display: "flex", justifyContent: "end" }}
               >
-                <CustomTextField
-                  label="Search"
-                  type="month"
-                  variant="outlined"
-                  size="small"
-                  value={searchData}
-                  onChange={(event) => setSearchData(event.target.value)}
-                  inputProps={{
-                    max: currentMonths, // Set the maximum allowed value to the previous month
-                  }}
-                />
                 <Button
                   variant="contained"
                   color="info"
-                  size="small"
-                  onClick={() => setOpenPopup(true)}
-                >
-                  Add
-                </Button>
-
-                <Button
-                  variant="contained"
-                  color="info"
-                  size="small"
+                  // size="small"
                   onClick={handleDownload}
-                  sx={{ p: "6px 12px" }}
                 >
                   {" "}
                   Download
@@ -285,94 +269,64 @@ export const DispatchPackagingView = () => {
                 <TableRow>
                   <StyledTableCell align="center">ID</StyledTableCell>
 
-                  <StyledTableCell align="center">Product</StyledTableCell>
-                  <StyledTableCell align="center">UNIT</StyledTableCell>
-                  <StyledTableCell align="center">SELLER UNIT</StyledTableCell>
+                  <StyledTableCell align="center">MONTH</StyledTableCell>
+                  <StyledTableCell align="center">YEAR</StyledTableCell>
+                  <StyledTableCell align="center">
+                    {" "}
+                    PACKAGING REVENUE
+                  </StyledTableCell>
 
-                  <StyledTableCell align="center">QUANTITY</StyledTableCell>
-                  {/* <StyledTableCell align="center">UNIT COST</StyledTableCell>
-                  <StyledTableCell align="center">Total Cost</StyledTableCell> */}
-                  <StyledTableCell align="center">Created By</StyledTableCell>
-                  <StyledTableCell align="center">Created Date</StyledTableCell>
+                  <StyledTableCell align="center">
+                    PACKAGING COST
+                  </StyledTableCell>
+
+                  <StyledTableCell align="center">
+                    {" "}
+                    PROFIT /LOSS
+                  </StyledTableCell>
+
                   {/* editable mode is avalable */}
                 </TableRow>
-                <StyledTableCell align="center" sx={{ display: "none" }}>
-                  Action
-                </StyledTableCell>
               </TableHead>
               <TableBody>
-                {country &&
-                  country.map((row, i) => (
-                    <StyledTableRow key={i}>
-                      <StyledTableCell align="center">{i + 1}</StyledTableCell>
+                {
+                  //country &&
+                  country
+                    .filter(
+                      (data) =>
+                        data.month <= new Date(searchData).getMonth() + 1,
+                    )
 
-                      <StyledTableCell align="center">
-                        {row.product_name}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {row.unit_name}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {row.seller_account_name}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {row.quantity}
-                      </StyledTableCell>
-                      {/* <StyledTableCell align="center">
-                        {row.unit_cost}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {row.total_cost}
-                      </StyledTableCell> */}
-                      <StyledTableCell align="center">
-                        {row.created_by}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {row.created_date}
-                      </StyledTableCell>
-                      {/* editable mode is avalable */}
-                      <StyledTableCell align="center" sx={{ display: "none" }}>
-                        <Button
-                          variant="contained"
-                          color="success"
-                          size="small"
-                          onClick={() => openInPopup(row)}
-                        >
-                          Edit
-                        </Button>
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  ))}
+                    .map((row, i) => (
+                      <StyledTableRow key={i}>
+                        <StyledTableCell align="center">
+                          {i + 1}
+                        </StyledTableCell>
+
+                        <StyledTableCell align="center">
+                          {row.month_name}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {row.year}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {row.total_packaging_revenue}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {row.total_packaging_cost}
+                        </StyledTableCell>
+
+                        <StyledTableCell align="center">
+                          {row.net_profit_or_loss}
+                        </StyledTableCell>
+
+                        {/* editable mode is avalable */}
+                      </StyledTableRow>
+                    ))
+                }
               </TableBody>
             </Table>
           </TableContainer>
-          <CustomPagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            handlePageChange={handlePageChange}
-          />
-          <Popup
-            size="sm"
-            title="Add New Pakaging"
-            openPopup={openPopup}
-            setOpenPopup={setOpenPopup}
-          >
-            <DispatchPackaginigCreate
-              setOpenPopup={setOpenPopup}
-              getAllMasterCountries={getAllMasterCountries}
-            />
-          </Popup>
-          <Popup
-            title="Update Packaging"
-            openPopup={openUpdatePopup}
-            setOpenPopup={setOpenUpdatePopup}
-          >
-            <DispatchPackaginigUpdate
-              recordForEdit={recordForEdit}
-              setOpenUpdatePopup={setOpenUpdatePopup}
-              getAllMasterCountries={getAllMasterCountries}
-            />
-          </Popup>
         </Paper>
       </Grid>
     </>

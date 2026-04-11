@@ -233,8 +233,7 @@ export const PIOrderBookDetails = () => {
     "Pending Quantity",
 
     "Packaging Type",
-    "Packaging Cost",
-    "Packing Charges",
+
     "EST DATE",
     "Ready Date",
     "Request Date",
@@ -572,12 +571,7 @@ export const PIOrderBookDetails = () => {
                     <StyledTableCell align="center">
                       {row.packaging_type ? row.packaging_type : "-"}
                     </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {row.packaging_cost}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {row.packing_charges ? row.packing_charges : "-"}
-                    </StyledTableCell>
+
                     <StyledTableCell align="center">
                       {row.estimated_date}
                     </StyledTableCell>

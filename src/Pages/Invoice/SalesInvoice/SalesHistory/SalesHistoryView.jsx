@@ -104,7 +104,7 @@ export const SalesHistoryView = () => {
         // Add dynamic product columns (product_0, product_1...)
         item.products_si.forEach((p, i) => {
           rowData[`product`] = p.product;
-          rowData[`quantity`] = p.quantity;
+          rowData[`quantity_${i + 1}`] = p.quantity;
           rowData[`packaging_charges`] = p.packaging_charges || "";
           rowData[`packaging_cost`] = p.packaging_cost || "";
           rowData[`packaging_type`] = p.packaging_type || "";
@@ -222,7 +222,14 @@ export const SalesHistoryView = () => {
 
   useEffect(() => {
     getSalesInvoiceDetails();
-  }, [filterInvoiceType, currentPage, filterSelectedQuery, searchQuery,startDate,endDate]);
+  }, [
+    filterInvoiceType,
+    currentPage,
+    filterSelectedQuery,
+    searchQuery,
+    startDate,
+    endDate,
+  ]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -486,7 +493,7 @@ function Row(props) {
             {p.packaging_type || "-"}
           </StyledTableCell>
           <StyledTableCell key={`p-${index}`} align="center">
-            {row.product}
+            {p.product}
           </StyledTableCell>
 
           <StyledTableCell key={`q-${index}`} align="center">

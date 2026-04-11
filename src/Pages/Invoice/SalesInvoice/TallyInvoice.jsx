@@ -35,10 +35,12 @@ export const TallyInvoice = () => {
   const csvLinkRef = useRef(null);
   const [sellerAccountOption, setSellerAccountOption] = useState([]);
   const [filterByUnit, setFilterByUnit] = useState("");
-
+  const [csvData, setCsvData] = useState([]);
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-
+  const [igstPkg, setIgstPkg] = useState(0);
+  const [cgstPkg, setCgstPkg] = useState(0);
+  const [specialpkg, setSpecialPkg] = useState(false);
   // Function to get product base customer data
   const getSalesInvoiceDetails = useCallback(async () => {
     try {
@@ -60,6 +62,30 @@ export const TallyInvoice = () => {
 
   useEffect(() => {
     getSalesInvoiceDetails();
+  }, [customDataPopup, filterByUnit, isToday]);
+
+  const getCsvData = async () => {
+    try {
+      setOpen(true);
+      const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
+      const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
+      const response = await InvoiceServices.getInvoiceCsvData(
+        StartDate,
+        EndDate,
+        filterByUnit,
+      );
+      setCsvData(response.data);
+      console.log("response Data :", response.data);
+    } catch (error) {
+      handleError(error);
+      console.log(error);
+    } finally {
+      setOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    getCsvData();
   }, [customDataPopup, filterByUnit, isToday]);
 
   const handleChange = (value) => {
@@ -87,44 +113,82 @@ export const TallyInvoice = () => {
     "QTY",
     "RATE",
   ];
+
+  function isSpecialPackaging(row) {
+    let cgst = (row.amount * 9) / 100;
+    let sgst = (row.amount * 9) / 100;
+    let igst = (row.amount * 18) / 100;
+
+    setSpecialPkg(true);
+    if (row.cgst) {
+      setCgstPkg(cgst);
+      setIgstPkg(sgst);
+    }
+    return row.cgst ? "" : igst;
+  }
   const DownloadData = () => {
-    const CSVDATA = tallyData.map((row) => ({
-      VCH_TYPE: "GST SALES",
-      invoice_no: row.invoice_no,
-      invoice_date: row.invoice_date,
-      pi_no: row.pi_no,
-      pi_date: row.pi_date,
-      customer: row.customer,
-      transport: row.transport,
-      destination: row.destination,
-      order_no: row.order_no,
-      payment_term: row.payment_term,
-      delivery_term: row.delivery_term,
-      shipping_customer: row.shipping_customer,
-      address1: row.address.address1,
-      address2: row.address.address2,
-      address3: row.address.address3,
-      shipping_state: row.shipping_state,
-      shipping_pincode: row.shipping_pincode,
-      product: row.product,
-      quantity: row.quantity,
-      rate: row.rate,
-      amount: row.amount,
-      cgst: row.cgst || "",
-      igst: row.igst || "",
-      total: row.total,
-      sgst: row.sgst || "",
-      sales_invoice: row.sales_invoice,
-      billing_state: row.billing_state,
-      packaging_type: row.packaging_type,
-      packaging_charges: row.packaging_charges,
-      packaging_cost: row.packaging_cost,
-      shipping_city: row.shipping_city,
-      sales_ledger: "GST Sales",
-    }));
+    const CSVDATA = csvData.map((row) => {
+      const isSpecialPkg = !row.igst; // Special packaging = igst is null
+
+      let amount = row.amount;
+      let cgst = row.cgst || "";
+      let sgst = row.sgst || "";
+      let igst = row.igst || "";
+
+      if (isSpecialPkg) {
+        if (row.cgst != null) {
+          // cgst is present → calculate cgst + sgst at 9% each, igst stays null
+          cgst = (row.amount * 9) / 100;
+          sgst = (row.amount * 9) / 100;
+          igst = ""; // igst is null when cgst & sgst are present
+          amount = row.amount + cgst + sgst; // amount + 18%
+        } else {
+          // cgst is null → calculate igst at 18%
+          igst = (row.amount * 18) / 100;
+          amount = row.amount + igst;
+          cgst = "";
+          sgst = "";
+        }
+      }
+
+      return {
+        VCH_TYPE: "GST SALES",
+        invoice_no: row.invoice_no,
+        invoice_date: row.invoice_date,
+        pi_no: row.pi_no,
+        pi_date: row.pi_date,
+        customer: row.customer,
+        transport: row.transport,
+        destination: row.destination,
+        order_no: row.order_no,
+        payment_term: row.payment_term,
+        delivery_term: row.delivery_term,
+        shipping_customer: row.shipping_customer,
+        address1: row.address.address1,
+        address2: row.address.address2,
+        address3: row.address.address3,
+        shipping_state: row.shipping_state,
+        shipping_pincode: row.shipping_pincode,
+        product: row.product,
+        quantity: row.quantity,
+        rate: row.rate,
+        amount: row.amount,
+        cgst: cgst,
+        sgst: sgst,
+        igst: igst,
+        total: row.total ? row.total : amount,
+        sales_invoice: row.sales_invoice,
+        billing_state: row.billing_state,
+        packaging_type: row.packaging_type,
+        packaging_charges: row.packaging_charges,
+        packaging_cost: row.packaging_cost,
+        shipping_city: row.shipping_city,
+        sales_ledger: "GST Sales",
+      };
+    });
+
     return CSVDATA;
   };
-
   const headers = [
     { label: "VCH TYPE", key: "VCH_TYPE" },
     { label: "INVOICE NO", key: "invoice_no" },
@@ -154,9 +218,7 @@ export const TallyInvoice = () => {
     { label: "REF NO", key: "sales_invoice" },
     { label: "BILL TO PLACE", key: "billing_state" },
     { label: "SHIP TO PLACE", key: "shipping_city" },
-    { label: "PACKAGING TYPE", key: "packaging_type" },
-    { label: "PACKAGING CHARGES", key: "packaging_charges" },
-    { label: "PACKAGING COST", key: "packaging_cost" },
+
     { label: "Sales Ledger", key: "sales_ledger" },
   ];
 

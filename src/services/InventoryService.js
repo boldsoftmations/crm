@@ -337,6 +337,8 @@ const getAllBillofMaterialsData = (
   approvedToFilter,
   is_deactivated,
   searchValue,
+  from_date,
+  to_date,
 ) => {
   // Constructing the query parameters
   const params = new URLSearchParams();
@@ -356,7 +358,12 @@ const getAllBillofMaterialsData = (
   if (searchValue) {
     params.append("search", searchValue);
   }
-
+  if (from_date) {
+    params.append("from_date", from_date);
+  }
+  if (to_date) {
+    params.append("to_date", to_date);
+  }
   // Sending a GET request with query parameters
   return CustomAxios.get(
     `api/inventory/list-bill-of-materials/?${params.toString()}`,

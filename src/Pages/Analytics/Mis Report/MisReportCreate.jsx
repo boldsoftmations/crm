@@ -7,10 +7,7 @@ import InvoiceServices from "../../../services/InvoiceService";
 import ProductService from "../../../services/ProductService";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
-export const DispatchPackaginigCreate = ({
-  setOpenPopup,
-  getAllMasterCountries,
-}) => {
+export const MisReportCreate = ({ setOpenPopup, getAllMasterCountries }) => {
   const [open, setOpen] = useState(false);
   const [alertmsg, setAlertMsg] = useState({
     message: "",

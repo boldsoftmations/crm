@@ -46,7 +46,6 @@ export const ApprovePi = () => {
   const assigned = users.active_sales_user || [];
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-  const [Product, setProduct] = useState([]);
 
   const clearFilterType = () => setFilterType("");
   const clearFilterValue = () => setFilterValue("");
@@ -96,11 +95,7 @@ export const ApprovePi = () => {
         searchValue,
       );
       setInvoiceData(response.data.results);
-      const allProducts = response.data.results.flatMap(
-  (item) => item.products || []
-);
 
-setProduct(allProducts);
       setTotalPages(Math.ceil(response.data.count / 25));
       setTotalPiAmount(response.data.total_amount);
     } catch (error) {
@@ -109,8 +104,6 @@ setProduct(allProducts);
       setOpen(false);
     }
   }, [currentPage, filterType, filterValue, searchValue]); // Ensure dependencies are correctly listed
-
-  const productData = Product.filter((item) => item.packaging_charges > 0);
 
   useEffect(() => {
     getProformaInvoiceData(currentPage);
@@ -330,13 +323,13 @@ setProduct(allProducts);
                       {row.round_off_total}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                     <StyledTableCell align="center">
-  {invoiceData[i].products.some(
-    (item) => item.packaging_charges > 0
-  )
-    ? "Special Packaging"
-    : "Normal Packaging"} 
-</StyledTableCell>
+                      <StyledTableCell align="center">
+                        {invoiceData[i].products.some(
+                          (item) => item.packaging_charges > 0,
+                        )
+                          ? "Special Packaging"
+                          : "Normal Packaging"}
+                      </StyledTableCell>
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {row.balance_amount}

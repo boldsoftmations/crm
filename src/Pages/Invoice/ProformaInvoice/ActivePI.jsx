@@ -51,7 +51,6 @@ export const ActivePI = () => {
   const [isPrinting, setIsPrinting] = useState(false);
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-  const [products, setProduct] = useState([]);
 
   const clearFilterType = () => setFilterType("");
   const clearFilterValue = () => setFilterValue("");
@@ -131,10 +130,7 @@ export const ActivePI = () => {
         searchValue,
       );
       setInvoiceData(response.data.results);
-      const allProducts = response.data.results.flatMap(
-        (item) => item.products || [],
-      );
-      setProduct(allProducts);
+
       setTotalPages(Math.ceil(response.data.count / 25));
     } catch (error) {
       handleError(error);

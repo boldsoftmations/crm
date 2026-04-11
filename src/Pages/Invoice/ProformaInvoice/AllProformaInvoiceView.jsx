@@ -31,12 +31,11 @@ export const AllProformaInvoiceView = (props) => {
   const { handleError, handleSuccess, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
   const [groupedData, setGroupedData] = useState([]);
-  const [totalPackage, setTotalPackage] = useState(0);
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     documentTitle: `PI Number ${invoiceData.pi_number}`,
   });
-  const [totalPackagingCost, setTotalPackagingCost] = useState(0);
+
   const handleDownload = async (data) => {
     try {
       setOpen(true);
@@ -181,12 +180,6 @@ export const AllProformaInvoiceView = (props) => {
     );
 
     setGroupedData(groupedResult);
-
-    const total = groupedResult.reduce(
-      (sum, item) => sum + item.packaging_cost,
-      0,
-    );
-    setTotalPackage(total);
   }, [productData]);
 
   return (
@@ -809,60 +802,7 @@ export const AllProformaInvoiceView = (props) => {
                       </div>
                     </div>
                   )}
-                  {groupedData.length > 0 && (
-                    <div
-                      className="row mb-4"
-                      style={{
-                        ...typographyStyling,
-                        borderBottom: "1px Solid #000000",
-                      }}
-                    >
-                      <div className="col-md-8 text-right table-responsive">
-                        <table className="table table-bordered">
-                          <thead>
-                            <tr>
-                              <th>HSN</th>
 
-                              <th>CHARGES %</th>
-                              <th>PACKAGING AMOUNT</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {groupedData
-                              .filter(
-                                (item) =>
-                                  item.packaging_type === "Special Packaging",
-                              )
-                              .map((row, i) => (
-                                <tr key={i}>
-                                  <td>{row.hsn_code}</td>
-                                  <td>{row.packaging_charges}</td>
-                                  <td>{row.packaging_cost}</td>
-                                </tr>
-                              ))}
-                            <tr>
-                              <td colspan="1" className="text-end">
-                                <strong style={{ ...typographyStyling }}>
-                                  Total :
-                                </strong>
-                              </td>
-
-                              <td colspan="1" className="text-center">
-                                <strong style={{ ...typographyStyling }}>
-                                  -
-                                </strong>
-                              </td>
-                              <td colspan="1" className="text-start">
-                                <strong style={{ ...typographyStyling }}>
-                                  {totalPackage}
-                                </strong>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  )}
                   <div
                     className="row mb-4"
                     style={{
