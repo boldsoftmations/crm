@@ -15,35 +15,23 @@ import {
 } from "@mui/material";
 
 // import { CustomLoader } from "../../../Components/CustomLoader";
-import { CustomLoader } from "../../../Components/CustomLoader";
+import { CustomLoader } from "../../Components/CustomLoader";
 // import SearchComponent from "../../../Components/SearchComponent ";
-import SearchComponent from "../../../Components/SearchComponent ";
-// import { CustomPagination } from "../../../Components/CustomPagination";
-import { CustomPagination } from "../../../Components/CustomPagination";
-// import { Popup } from "../../../Components/Popup";
 
-// import CustomSnackbar from "../../../Components/CustomerSnackbar";
-import CustomSnackbar from "../../../Components/CustomerSnackbar";
+import CustomSnackbar from "../../Components/CustomerSnackbar";
 import { useRef } from "react";
 import { useSelector } from "react-redux";
-// import { DispatchPackaginigUpdate } from "./MisReprtUpdate";
-// import { DispatchPackaginigCreate } from "./MisReportCreate";
 
-import InvoiceServices from "../../../services/InvoiceService";
-import CustomTextField from "../../../Components/CustomTextField";
+import InvoiceServices from "../../services/InvoiceService";
+import CustomTextField from "../../Components/CustomTextField";
 import moment from "moment";
 import { CSVLink } from "react-csv";
-// import { MisReportCreate } from "./MisReportCreate";
-// import MisReportUpdate from "./MisReportUpdate";
 
-// import { MisReportCreate } from "./MisReportCreate";
 export const MisReportView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [country, setCountry] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-
-  const userData = useSelector((state) => state.auth.profile);
 
   const [alertmsg, setAlertMsg] = useState({
     message: "",
@@ -70,14 +58,6 @@ export const MisReportView = () => {
   const handleSearch = (query) => {
     setSearchQuery(query);
     setCurrentPage(1);
-  };
-
-  const handleReset = () => {
-    setSearchQuery("");
-    setCurrentPage(1);
-  };
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
   };
 
   const getAllMasterCountries = async () => {

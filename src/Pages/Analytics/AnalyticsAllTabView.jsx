@@ -12,7 +12,8 @@ import { SalesFieldDashboard } from "./SalesFieldDashboard";
 import SalesParchaseAnalaysis from "./Sales Quantity Analysis/SalesParchaseAnalaysis";
 // import { MisReportView } from "./MIS Report/MisReportView";
 // import { MisReportView } from "./MIS Report/MisReportView";
-import { MisReportView } from "./Mis Report/MisReportView";
+// import { MisReportView } from "./Mis Report/MisReportView";
+import { MisReportView } from "./MisReportView";
 export const AnalyticsAllTabView = () => {
   const userData = useSelector((state) => state.auth.profile);
 
