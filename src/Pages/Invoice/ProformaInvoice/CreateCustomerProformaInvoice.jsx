@@ -29,6 +29,7 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import useDynamicFormFields from "../../../Components/useDynamicFormFields ";
 import ProductService from "../../../services/ProductService";
 import InventoryServices from "../../../services/InventoryService";
+// import { DecimalValidation } from "../../../utility/DecimalValidation";
 import { DecimalValidation } from "../../../utility/DecimalValidation";
 import MasterService from "../../../services/MasterService";
 
@@ -1084,7 +1085,7 @@ export const CreateCustomerProformaInvoice = (props) => {
 
           <Grid item xs={12} sm={2} alignContent="right">
             <Button
-              onClick={addFields}
+              onClick={() => addFields()}
               variant="contained"
               sx={{ marginRight: "1em" }}
             >
