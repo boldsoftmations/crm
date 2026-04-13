@@ -40,7 +40,11 @@ export const AllDispatchTabView = () => {
     "Factory-Mumbai-Dispatch",
     "Factory-Delhi-Dispatch",
   );
-  const isAdmin = isInGroups("Director", "Operations & Supply Chain Manager");
+  const isAdmin = isInGroups(
+    "Director",
+    "Operations & Supply Chain Manager",
+    "Stores",
+  );
   const adminTab = isInGroups("Director", "Operations & Supply Chain Manager");
   const customerServiceTab = isInGroups("Customer Service");
   const salesRegisterTab = isInGroups("Accounts Billing Department");
