@@ -137,7 +137,7 @@ const getAllCustomerHavingData = (page, assignToFilter, searchValue) => {
   }
 
   if (assignToFilter) {
-    params.append("sales_person__email", assignToFilter);
+    params.append("company__assigned_to__email", assignToFilter);
   }
 
   if (searchValue) {
