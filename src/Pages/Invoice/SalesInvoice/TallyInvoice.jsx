@@ -38,9 +38,7 @@ export const TallyInvoice = () => {
   const [csvData, setCsvData] = useState([]);
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-  const [igstPkg, setIgstPkg] = useState(0);
-  const [cgstPkg, setCgstPkg] = useState(0);
-  const [specialpkg, setSpecialPkg] = useState(false);
+
   // Function to get product base customer data
   const getSalesInvoiceDetails = useCallback(async () => {
     try {
@@ -114,18 +112,6 @@ export const TallyInvoice = () => {
     "RATE",
   ];
 
-  function isSpecialPackaging(row) {
-    let cgst = (row.amount * 9) / 100;
-    let sgst = (row.amount * 9) / 100;
-    let igst = (row.amount * 18) / 100;
-
-    setSpecialPkg(true);
-    if (row.cgst) {
-      setCgstPkg(cgst);
-      setIgstPkg(sgst);
-    }
-    return row.cgst ? "" : igst;
-  }
   const DownloadData = () => {
     const CSVDATA = csvData.map((row) => {
       const isSpecialPkg = !row.igst; // Special packaging = igst is null

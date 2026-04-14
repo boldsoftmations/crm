@@ -20,7 +20,6 @@ import { CustomLoader } from "../../Components/CustomLoader";
 
 import CustomSnackbar from "../../Components/CustomerSnackbar";
 import { useRef } from "react";
-import { useSelector } from "react-redux";
 
 import InvoiceServices from "../../services/InvoiceService";
 import CustomTextField from "../../Components/CustomTextField";
@@ -30,8 +29,6 @@ import { CSVLink } from "react-csv";
 export const MisReportView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [country, setCountry] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
 
   const [alertmsg, setAlertMsg] = useState({
     message: "",
@@ -55,10 +52,6 @@ export const MisReportView = () => {
   const handleClose = () => {
     setAlertMsg({ open: false });
   };
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    setCurrentPage(1);
-  };
 
   const getAllMasterCountries = async () => {
     try {
@@ -68,8 +61,8 @@ export const MisReportView = () => {
       const year = dateParts[0];
       const month = dateParts[1];
       const response = await InvoiceServices.getMisPackagingData(
-        currentPage,
-        searchQuery,
+        "all",
+        "",
         year,
         month,
       );
@@ -87,7 +80,7 @@ export const MisReportView = () => {
   };
   useEffect(() => {
     getAllMasterCountries();
-  }, [currentPage, searchQuery]);
+  }, []);
 
   const handleExport = async () => {
     try {
@@ -97,8 +90,8 @@ export const MisReportView = () => {
       const year = dateParts[0];
       const month = dateParts[1];
       const response = await InvoiceServices.getMisPackagingData(
-        currentPage,
-        searchQuery,
+        "all",
+        "",
         year,
         month,
       );
