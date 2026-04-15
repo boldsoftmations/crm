@@ -177,7 +177,7 @@ export const DeadCustomerView = () => {
 
   const handleFilterChange = (value) => {
     setSalesPersonByFilter(value);
-    getAllDeadCustomerForecastDetails(currentPage, value, searchQuery);
+    // getAllDeadCustomerForecastDetails(currentPage, value, searchQuery);
   };
 
   const Tabledata = deadCustomer.map((row) => ({

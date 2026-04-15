@@ -255,7 +255,7 @@ export const CustomerNotHavingForecastView = () => {
 
   const handleFilterChange = (value) => {
     setSalesPersonByFilter(value);
-    getAllCustomerNotHavingForecastDetails(currentPage, value, searchQuery);
+    // getAllCustomerNotHavingForecastDetails(currentPage, value, searchQuery);
   };
 
   // Get the unique index_position values to use as column headers
