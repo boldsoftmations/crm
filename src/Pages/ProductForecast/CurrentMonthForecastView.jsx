@@ -37,7 +37,7 @@ export const CurrentMonthForecastView = () => {
   const csvLinkRef = useRef(null);
   const [isPrinting, setIsPrinting] = useState(false);
   const UserData = useSelector((state) => state.auth.profile);
-  const assignedOption = UserData.sales_customer_user || [];
+  const assignedOption = UserData.sales_customer_user_forecast || [];
   console.log(assignedOption);
   const [startDate, setStartDate] = useState("");
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -66,7 +66,7 @@ export const CurrentMonthForecastView = () => {
 
   const headers = [
     { label: "Company", key: "company" },
-    { label: "Sales Person", key: "sales_person" },
+    { label: "Sales Person", key: "assign_to_email" },
     { label: "Product", key: "product" },
     { label: "Forecast", key: "forecast" },
     { label: "Actual", key: "actual" },
@@ -104,7 +104,7 @@ export const CurrentMonthForecastView = () => {
           const forecast_achieved = row.forecast - sumValue;
           return {
             company: row.company,
-            sales_person: row.sales_person,
+            assign_to_email: row.assign_to_email.join[","],
             product: row.product,
             forecast: row.forecast,
             actual: row.actual,
@@ -281,16 +281,18 @@ export const CurrentMonthForecastView = () => {
                       assignedOption
                         .filter(
                           (option) =>
-                            option.groups__name === "Sales Manager" ||
-                            option.groups__name === "Sales Executive" ||
-                            option.groups__name === "Sales Deputy Manager" ||
-                            option.groups__name ===
-                              "Sales Assistant Deputy Manager" ||
-                            option.groups__name === "Sales Manager(Retailer)" ||
-                            option.groups__name === "Customer Service" ||
-                            option.groups__name === "Director" ||
-                            option.groups__name ===
+                            option.groups.includes("Sales Manager") || // option.groups === "Sales Manager" ||
+                            option.groups.includes("Sales Executive") ||
+                            option.groups.includes("Sales Deputy Manager") ||
+                            option.groups.includes(
+                              "Sales Assistant Deputy Manager",
+                            ) ||
+                            option.groups.includes("Sales Manager(Retailer)") ||
+                            option.groups.includes("Customer Service") || // option.groups === "Customer Service" ||
+                            option.groups.includes("Director") ||
+                            option.groups.includes(
                               "Customer Relationship Executive",
+                            ),
                         )
                         .map((option) => option.email)
                     }
@@ -417,7 +419,7 @@ export const CurrentMonthForecastView = () => {
                         {row.company}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {row.sales_person}
+                        {row.assign_to_email.join(", ")}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {row.product}
