@@ -101,8 +101,11 @@ export const ForecastUpdate = (props) => {
                 fontWeight: 500,
               }}
             >
-              ⚠️ Note: Forecast updates are allowed until the 20th of the
-              current month.
+              <span role="img" aria-label="warning">
+                ⚠️
+              </span>{" "}
+              Note: Forecast updates are allowed until the 20th of the current
+              month.
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>

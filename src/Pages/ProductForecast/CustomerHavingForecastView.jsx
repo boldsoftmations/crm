@@ -57,9 +57,7 @@ export const CustomerHavingForecastView = () => {
   const nextMonth1 = (currentMonth + 1) % 12;
   const nextMonth2 = (currentMonth + 2) % 12;
   const nextMonth3 = (currentMonth + 3) % 12;
-  const isSupplyChain = UserData.groups.includes(
-    "Operations & Supply Chain Manager",
-  );
+
   // const emails = [
   //   "admin@glutape.com",
   //   "rajeev@glutape.com",
