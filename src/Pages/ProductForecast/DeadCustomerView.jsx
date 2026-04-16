@@ -67,6 +67,23 @@ export const DeadCustomerView = () => {
       console.error("CSVLink Download error", error);
     }
   };
+  const isSupplyChain = UserData.groups.includes(
+    "Operations & Supply Chain Manager",
+  );
+  const emails = [
+    "admin@glutape.com",
+    "rajeev@glutape.com",
+    "gaurav@glutape.com",
+    "arjun@glutape.com",
+    "pruthvi@glutape.com",
+    "anuradha@glutape.com",
+    "vivek_production@glutape.com",
+    "vivek2@glutape.com",
+    "managerwithoutlead@glutape.com",
+    "biraj@glutape.com",
+    "rushilsalian13@glutape.com",
+    "it1@glutape.com",
+  ];
 
   const headers = [
     { label: "Company", key: "company" },
@@ -238,24 +255,28 @@ export const DeadCustomerView = () => {
                   onChange={(event, value) => handleFilterChange(value)}
                   value={salesPersonByFilter}
                   options={
-                    assignedOption.length > 0 &&
-                    assignedOption
-                      .filter(
-                        (option) =>
-                          option.groups.includes("Sales Manager") || // option.groups === "Sales Manager" ||
-                          option.groups.includes("Sales Executive") ||
-                          option.groups.includes("Sales Deputy Manager") ||
-                          option.groups.includes(
-                            "Sales Assistant Deputy Manager",
-                          ) ||
-                          option.groups.includes("Sales Manager(Retailer)") ||
-                          option.groups.includes("Customer Service") || // option.groups === "Customer Service" ||
-                          option.groups.includes("Director") ||
-                          option.groups.includes(
-                            "Customer Relationship Executive",
-                          ),
-                      )
-                      .map((option) => option.email)
+                    isSupplyChain
+                      ? emails
+                      : assignedOption.length > 0 &&
+                        assignedOption
+                          .filter(
+                            (option) =>
+                              option.groups.includes("Sales Manager") || // option.groups === "Sales Manager" ||
+                              option.groups.includes("Sales Executive") ||
+                              option.groups.includes("Sales Deputy Manager") ||
+                              option.groups.includes(
+                                "Sales Assistant Deputy Manager",
+                              ) ||
+                              option.groups.includes(
+                                "Sales Manager(Retailer)",
+                              ) ||
+                              option.groups.includes("Customer Service") || // option.groups === "Customer Service" ||
+                              option.groups.includes("Director") ||
+                              option.groups.includes(
+                                "Customer Relationship Executive",
+                              ),
+                          )
+                          .map((option) => option.email)
                   }
                   getOptionLabel={(option) => option}
                   label="Filter By Sales Person"
