@@ -165,6 +165,7 @@ export const CustomerNotHavingForecastView = () => {
             }
           },
         });
+      console.log(response.data);
 
       // Trigger file download
       const blob = new Blob([response.data], {
@@ -182,9 +183,9 @@ export const CustomerNotHavingForecastView = () => {
       handleSuccess("CSV downloaded successfully");
 
       // Start 30-min cooldown
-      const endTime = Date.now() + 1800 * 1000;
+      const endTime = Date.now() + 900 * 1000;
       localStorage.setItem("csvDownloadEndTime", endTime.toString());
-      setCountdown(1800);
+      setCountdown(900);
       setIsDisabled(true);
     } catch (error) {
       handleError(error);
