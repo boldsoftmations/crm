@@ -613,7 +613,7 @@ export const CustomerHavingForecastView = () => {
                         <Button
                           sx={{ color: "#1976d2" }}
                           onClick={() => handleEditClick(row)}
-                          disabled={date >= 20}
+                          // disabled={date >= 20}
                         >
                           View
                         </Button>
