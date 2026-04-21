@@ -429,9 +429,18 @@ export const CurrentMonthForecastView = () => {
               </TableHead>
               <TableBody>
                 {currentMonthForecast.map((row, i) => {
-                  const sumValue = row.orderbook_value + row.actual;
-                  const forecast_achieved = row.forecast - sumValue;
-                  const rowColor = getColorForDate(row.anticipated_date); // Get the color for the date
+                  const sumValue =
+                    Number(row.orderbook_value) + Number(row.actual);
+
+                  const forecast_achieved = (
+                    Number(row.forecast) - sumValue
+                  ).toFixed(2);
+
+                  const rowColor = getColorForDate(row.anticipated_date);
+
+                  // Get the color for the date
+
+                  console.log(sumValue, forecast_achieved, rowColor);
                   return (
                     <StyledTableRow
                       key={row.id}
@@ -449,13 +458,14 @@ export const CurrentMonthForecastView = () => {
                         {row.product}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {row.forecast}
+                        {row.forecast && Number(row.forecast).toFixed(2)}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {row.actual}
+                        {row.actual && Number(row.actual).toFixed(2)}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {row.orderbook_value}
+                        {row.orderbook_value &&
+                          Number(row.orderbook_value).toFixed(2)}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {forecast_achieved > 0 ? forecast_achieved : 0}

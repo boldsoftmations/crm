@@ -27,6 +27,7 @@ import { useNotificationHandling } from "../../Components/useNotificationHandlin
 import SearchComponent from "../../Components/SearchComponent ";
 import { MessageAlert } from "../../Components/MessageAlert";
 import { CustomDownloadLoader } from "../../Components/CustomDownloadLoader";
+import { CustomLoader } from "../../Components/CustomLoader";
 
 export const CustomerHavingForecastView = () => {
   const [open, setOpen] = useState(false);
@@ -119,38 +120,6 @@ export const CustomerHavingForecastView = () => {
   }, []);
   const date = new Date().getDate();
   console.log("date is : ", date);
-
-  const generateHeaders = () => {
-    // Basic headers
-    const basicHeaders = [
-      { label: "Company", key: "company" },
-      { label: "Sales Person", key: "sales_person" },
-      { label: "Product", key: "product" },
-    ];
-
-    // Generating headers for each forecast month
-    const forecastHeaders = [];
-    for (let i = -2; i <= 3; i++) {
-      const monthIndex = (currentMonth + i + 12) % 12;
-      const year =
-        i < 0
-          ? monthIndex > currentMonth
-            ? currentYear
-            : currentYear - 1
-          : monthIndex < currentMonth
-            ? currentYear + 1
-            : currentYear;
-      const monthName = months[monthIndex];
-      forecastHeaders.push({
-        label: `${monthName} - ${year} Actual-Forecast`,
-        key: `${monthName}-${year} Actual-Forecast`,
-      });
-    }
-
-    return [...basicHeaders, ...forecastHeaders];
-  };
-
-  const headers = generateHeaders();
 
   useEffect(() => {
     const savedEndTime = localStorage.getItem("csvDownloadEndTime_having"); // different key!
@@ -343,6 +312,7 @@ export const CustomerHavingForecastView = () => {
         severity={alertInfo.severity}
         message={alertInfo.message}
       />
+      <CustomLoader open={open} />
       <CustomDownloadLoader
         open={DownloadOpen}
         downloadedMB={downloadedMB}
