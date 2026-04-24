@@ -97,17 +97,19 @@ export const SalesInvoiceCreate = (props) => {
       e.preventDefault();
       setOpen(true);
       const response = await InvoiceServices.getAllOrderBookDataWithSearch(
-        "all",
+        "",
         "customer",
         inputValue.company,
       );
 
-      // Filter data where any product's pending_quantity is greater than 0
-      const filteredData = response.data.filter(
-        (order) =>
-          order.products &&
-          order.products.some((product) => product.pending_quantity > 0),
-      );
+      const filteredData =
+        response.data &&
+        response.data.results.filter(
+          (order) =>
+            order.products &&
+            order.products.some((product) => product.pending_quantity > 0),
+        );
+      // console.log("response is :")
 
       setCustomerOrderBookOption(filteredData);
 
@@ -115,7 +117,14 @@ export const SalesInvoiceCreate = (props) => {
     } catch (err) {
       setOpen(false);
       console.log("err", err);
-      alert(err.response.data.errors.proforma_invoice);
+      const msg =
+        (err.response &&
+          err.response.data &&
+          err.response.data.errors &&
+          err.response.data.errors.proforma_invoice) ||
+        err.message ||
+        "An unexpected error occurred.";
+      alert(msg);
     }
   };
 
