@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { CustomTabs } from "../../Components/CustomTabs";
-import { CCFView } from "./CCFView";
-import { CapaView } from "./CAFA/CapaView";
-import { ClosedComplaint } from "./ClosedComplaint";
+// import { CCFView } from "./CCFView";
+
+import { CapaView } from "./CAPA/CapaView";
+import { ClosedComplaint } from "./Close-Complaint/ClosedComplaint";
+import { CCFView } from "./CCF/CCFView";
 export const AllCCFtab = () => {
   const userData = useSelector((state) => state.auth.profile);
 
@@ -21,6 +23,7 @@ export const AllCCFtab = () => {
         "Customer Service",
         "QA",
         "Operations & Supply Chain Manager",
+        "Sales Executive",
       ],
       component: <CCFView />,
     },
@@ -35,6 +38,7 @@ export const AllCCFtab = () => {
         "Production",
         "QA",
         "Operations & Supply Chain Manager",
+        "Sales Executive",
       ],
       component: <CapaView />,
     },

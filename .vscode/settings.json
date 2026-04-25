@@ -4,5 +4,6 @@
   },
   "editor.formatOnSave": true,
   "eslint.alwaysShowStatus": true,
-  "files.autoSave": "onFocusChange"
+  "files.autoSave": "onFocusChange",
+  "docwriter.style": "Doxygen"
 }

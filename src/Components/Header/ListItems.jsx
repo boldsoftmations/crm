@@ -844,7 +844,7 @@ export const ListItems = ({ setOpen }) => {
           { to: "/invoice/credit-debit-note", text: "Debit-Credit" },
         ]),
         renderSubmenu("inventory", <InventoryIcon />, "Inventory", [
-          { to: "/inventory/view-inventory", text: "Inventory" },
+          { to: "/inventory/view-inventory", text: "In ventory" },
         ]),
         renderSubmenu(
           "customer_complaint",
@@ -890,6 +890,12 @@ export const ListItems = ({ setOpen }) => {
           { to: "/followp/view-followup", text: "Followup" },
           { to: "/forecast/view-product-forecast", text: "Forecast" },
         ]),
+        renderSubmenu(
+          "customer_complaint",
+          <ComplaintIcon />,
+          "Customer Complaint",
+          [{ to: "/customer/complaints/ccp-capa", text: "CCF-CAPA" }],
+        ),
         renderListItem("/invoice/orderbook-tab", <ReceiptIcon />, "Order Book"),
         renderListItem("/dispatch/tab-view", <LocalShippingIcon />, "Dispatch"),
         renderListItem("/task/view-task", <AssignmentTurnedInIcon />, "Task"),

@@ -12,26 +12,43 @@ import {
   Typography,
   styled,
 } from "@mui/material";
-import React, { useRef, useState } from "react";
-import logo from "../../Images/glutape logo.jpg";
+import React, { useRef, useState, useEffect } from "react";
+import logo from "../../../Images/glutape logo.jpg";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useNotificationHandling } from "../../Components/useNotificationHandling ";
-import { MessageAlert } from "../../Components/MessageAlert";
-import { CustomLoader } from "../../Components/CustomLoader";
-import CustomerServices from "../../services/CustomerService";
-import CustomTextField from "../../Components/CustomTextField";
-// import styled from "styled-components";
+import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
+import { MessageAlert } from "../../../Components/MessageAlert";
+import { CustomLoader } from "../../../Components/CustomLoader";
+import CustomerServices from "../../../services/CustomerService";
+import CustomTextField from "../../../Components/CustomTextField";
+import { Popup } from "../../../Components/Popup";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
 const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
   const [open, setOpen] = useState(false);
   const [files, setFiles] = useState([]);
   const [documentId, setDocumentId] = useState([]);
   const [documents, setDocuments] = useState([]);
-
+  const [products, setProducts] = useState(ViewData.products || []);
+  const [openPopup1, setOpenPopup1] = useState(false);
   const fileInputRef = useRef(null);
-  console.log(ViewData.document);
+  const [ccf_id, setccf_id] = useState(null);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
+  const [localDocuments, setLocalDocuments] = useState(ViewData.document || []);
+  const [inputvalue, setInputValue] = useState({
+    source_of_complaint: ViewData.source_of_complaint,
+    priority: ViewData.priority,
+  });
+  const ugrganecy = ["Critical", "Normal", "High"];
+  const sourceOFComplaint = [
+    "Customer Call",
+    "Email",
+    "WhatsApp",
+    "Sales Visit",
+    "Internal Detection",
+    "Transporter Feedback",
+  ];
+
   console.log("ViewData:", ViewData);
   // ================= FILE HANDLING =================
   const Root = styled("div")(({ theme }) => ({
@@ -60,6 +77,9 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
   const removeFile = (index) => {
     setFiles(files.filter((_, i) => i !== index));
   };
+  useEffect(() => {
+    setLocalDocuments(ViewData.document || []);
+  }, [ViewData]);
 
   // ================= UPLOAD DOCUMENT =================
 
@@ -115,6 +135,42 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
       setOpen(false);
     }
   };
+  const handleAutoComplete = (name, value) => {
+    setInputValue((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleDeleteDocument = async () => {
+    try {
+      setOpen(true);
+
+      const payload = {
+        ccf_id: ViewData.id,
+        document_id: ccf_id,
+      };
+
+      await CustomerServices.DeleteCCFImage(payload);
+
+      // ✅ REMOVE FROM UI IMMEDIATELY
+      const updatedDocs = ViewData.document.filter((doc) => doc.id !== ccf_id);
+
+      // ❗ IMPORTANT: You cannot mutate props directly
+      // So create local state for documents
+
+      setLocalDocuments(updatedDocs);
+      await getAllCCFData();
+
+      handleSuccess("Document deleted successfully");
+
+      setOpenPopup1(false);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setOpen(false);
+    }
+  };
 
   // ================= UPDATE CCF =================
 
@@ -124,6 +180,9 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
 
       const payload = {
         document: documentId,
+        priority: inputvalue.priority,
+        source_of_complaint: inputvalue.source_of_complaint,
+        products: products, // send full updated products
       };
 
       const response = await CustomerServices.CCFUpdate(ViewData.id, payload);
@@ -138,6 +197,17 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
     } finally {
       setOpen(false);
     }
+  };
+
+  const handleQuantityChange = (index, value) => {
+    const updatedProducts = [...products];
+    updatedProducts[index].quantity = value;
+    setProducts(updatedProducts);
+  };
+
+  const handleDelete = (row) => {
+    setOpenPopup1(true);
+    setccf_id(row.id);
   };
 
   return (
@@ -218,7 +288,34 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
                   disabled
                 />
               </Grid>
-
+              <Grid item xs={12} sm={4}>
+                <CustomAutocomplete
+                  label="Urgency Type"
+                  name="urgency_type"
+                  size="small"
+                  fullWidth
+                  value={inputvalue.priority}
+                  options={ugrganecy}
+                  onChange={(event, newvalue) =>
+                    handleAutoComplete("priority", newvalue)
+                  }
+                  // disabled
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <CustomAutocomplete
+                  label="Source of Complaint"
+                  name="source_of_complaint"
+                  size="small"
+                  fullWidth
+                  value={inputvalue.source_of_complaint}
+                  options={sourceOFComplaint}
+                  onChange={(event, newValue) =>
+                    handleAutoComplete("source_of_complaint", newValue)
+                  }
+                  // disabled
+                />
+              </Grid>
               <Grid item xs={12} sm={4}>
                 <CustomTextField
                   label="Seller Unit"
@@ -265,52 +362,66 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
 
               {/* DOCUMENT UPLOAD */}
 
-              {ViewData &&
-                ViewData.document &&
-                ViewData.document.length > 0 && (
-                  <Grid item xs={12}>
-                    <Typography sx={{ fontWeight: 600, mb: 1 }}>
-                      Uploaded Documents
-                    </Typography>
+              {ViewData && localDocuments && localDocuments.length > 0 && (
+                <Grid item xs={12}>
+                  <Typography sx={{ fontWeight: 600, mb: 1 }}>
+                    Uploaded Documents
+                  </Typography>
 
-                    <List sx={{ display: "flex", flexWrap: "wrap" }}>
-                      {ViewData.document.map((doc, index) => (
-                        <ListItem
-                          key={index}
+                  <List sx={{ display: "flex", flexWrap: "wrap" }}>
+                    {localDocuments.map((doc, index) => (
+                      <ListItem
+                        key={index}
+                        sx={{
+                          width: 150,
+                          flexDirection: "column",
+                          background: "#f5f7fa",
+                          border: "1px solid #e0e0e0",
+                          borderRadius: 1,
+                          m: 1,
+                          p: 1,
+                          position: "relative", // ✅ IMPORTANT
+                        }}
+                      >
+                        <IconButton
+                          onClick={() => handleDelete(doc)}
                           sx={{
-                            width: 150,
-                            flexDirection: "column",
-                            background: "#f5f7fa",
-                            border: "1px solid #e0e0e0",
-                            borderRadius: 1,
-                            m: 1,
-                            p: 1,
+                            position: "absolute",
+                            top: 4,
+                            right: 4,
+                            color: "black",
+                            background: "white",
+                            "&:hover": {
+                              background: "#f8d7da",
+                            },
                           }}
                         >
-                          <img
-                            src={doc.file}
-                            alt={doc.name}
-                            style={{
-                              width: "100%",
-                              height: 100,
-                              objectFit: "cover",
-                              borderRadius: 4,
-                            }}
-                          />
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                        <img
+                          src={doc.file}
+                          alt={doc.name}
+                          style={{
+                            width: "100%",
+                            height: 100,
+                            objectFit: "cover",
+                            borderRadius: 4,
+                          }}
+                        />
 
-                          <ListItemText
-                            primary={doc.name || "Document"}
-                            sx={{
-                              textAlign: "center",
-                              mt: 1,
-                              fontSize: 12,
-                            }}
-                          />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Grid>
-                )}
+                        <ListItemText
+                          primary={doc.name || "Document"}
+                          sx={{
+                            textAlign: "center",
+                            mt: 1,
+                            fontSize: 12,
+                          }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Grid>
+              )}
 
               <Grid item xs={12}>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -472,18 +583,22 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
                           label="Product"
                           variant="outlined"
                           value={input.product}
-                          disabled={true}
+                          // disabled={true}
+                          inputProps={{ readOnly: true }}
                         />
                       </Grid>
                       <Grid item xs={12} sm={4}>
                         <CustomTextField
                           fullWidth
+                          type="number"
                           name="quantity"
                           size="small"
                           label="Quantity"
                           variant="outlined"
-                          value={input.quantity}
-                          disabled={true}
+                          value={products[index].quantity}
+                          onChange={(e) =>
+                            handleQuantityChange(index, e.target.value)
+                          }
                         />
                       </Grid>
                       <Grid item xs={12} sm={4}>
@@ -494,7 +609,7 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
                           label="Quantity"
                           variant="outlined"
                           value={input.unit}
-                          disabled={true}
+                          inputProps={{ readOnly: true }}
                         />
                       </Grid>
                     </React.Fragment>
@@ -513,6 +628,18 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
           </Paper>
         </Box>
       </Grid>
+
+      <Popup
+        title="Delete image"
+        openPopup={openPopup1}
+        setOpenPopup={setOpenPopup1}
+      >
+        <Box>
+          <Typography>{`Are you sure you want to delete this `}</Typography>
+          <Button onClick={() => setOpenPopup1(false)}>NO</Button>
+          <Button onClick={() => handleDeleteDocument()}>yes</Button>
+        </Box>
+      </Popup>
     </>
   );
 };

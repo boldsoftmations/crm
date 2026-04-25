@@ -724,6 +724,15 @@ const CCFUpdate = (id, data) => {
   return CustomAxios.patch(`/api/customer/ccf/${id}/`, data);
 };
 
+const DeleteCCFImage = (data) => {
+  return CustomAxios.delete(
+    `/api/customer/ccf-document-delete/delete_document/`,
+    {
+      data,
+    },
+  );
+};
+
 const CustomerServices = {
   getproductToDescription,
   getDiscription,
@@ -823,6 +832,7 @@ const CustomerServices = {
   getLeadsMasterListByPincode,
   getCustomerAddressType,
   CCFUpdate,
+  DeleteCCFImage,
 };
 
 export default CustomerServices;
