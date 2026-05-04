@@ -328,7 +328,7 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 20 }}>
+            <span role="img" aria-label="document" style={{ fontSize: 20 }}>
               {current.media_type === "Photo" ? "🖼️" : "📄"}
             </span>
             <div>
@@ -348,7 +348,7 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
             <a
               href={current.file}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -383,7 +383,9 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
                 color: C.text2,
               }}
             >
-              ✕
+              <span role="img" aria-label="close">
+                ✕
+              </span>
             </button>
           </div>
         </div>
@@ -417,14 +419,20 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
             />
           ) : (
             <div style={{ textAlign: "center", padding: 48 }}>
-              <div style={{ fontSize: 56, marginBottom: 16 }}>📄</div>
+              <span
+                style={{ fontSize: 56, marginBottom: 16 }}
+                role="img"
+                aria-label="document"
+              >
+                📄
+              </span>
               <div style={{ fontSize: 14, color: "#aaa", marginBottom: 20 }}>
                 Preview not available for this file type.
               </div>
               <a
                 href={current.file}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 style={{
                   fontSize: 13,
                   fontWeight: 600,
@@ -470,7 +478,10 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
                 transition: "all 0.15s ease",
               }}
             >
-              ← Previous
+              <span role="img" aria-label="previous">
+                ←
+              </span>
+              Previous
             </button>
 
             {/* Thumbnail strip */}
@@ -508,7 +519,13 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
                       }}
                     />
                   ) : (
-                    <span style={{ fontSize: 16 }}>📄</span>
+                    <span
+                      role="img"
+                      aria-label="document"
+                      style={{ fontSize: 16 }}
+                    >
+                      📄
+                    </span>
                   )}
                 </div>
               ))}
@@ -539,7 +556,10 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
                 transition: "all 0.15s ease",
               }}
             >
-              Next →
+              <span role="img" aria-label="next">
+                →
+              </span>{" "}
+              Next
             </button>
           </div>
         )}
@@ -738,7 +758,9 @@ export const CapaStatusView = ({
                   marginBottom: 16,
                 }}
               >
-                <span style={{ fontSize: 18 }}>✕</span>
+                <span role="img" aria-label="rejected" style={{ fontSize: 18 }}>
+                  ✕
+                </span>
                 <div>
                   <div
                     style={{
@@ -799,7 +821,19 @@ export const CapaStatusView = ({
                           color: done ? "#fff" : active ? "#fff" : C.text3,
                         }}
                       >
-                        {done ? "✓" : active && isRejected ? "✕" : scfg.icon}
+                        {done ? (
+                          <span role="img" aria-label="completed">
+                            ✓
+                          </span>
+                        ) : active && isRejected ? (
+                          <span role="img" aria-label="rejected">
+                            ✕
+                          </span>
+                        ) : (
+                          <span role="img" aria-label="status">
+                            {scfg.icon}
+                          </span>
+                        )}
                       </div>
                       <div
                         style={{
@@ -1283,7 +1317,13 @@ export const CapaStatusView = ({
                         }}
                       />
                     ) : (
-                      <span style={{ fontSize: 20 }}>📄</span>
+                      <span
+                        role="img"
+                        aria-label="document"
+                        style={{ fontSize: 20 }}
+                      >
+                        📄
+                      </span>
                     )}
                   </div>
 
@@ -1303,7 +1343,11 @@ export const CapaStatusView = ({
                   </div>
 
                   {/* Zoom icon hint */}
-                  <span style={{ fontSize: 14, color: C.text3, flexShrink: 0 }}>
+                  <span
+                    role="img"
+                    aria-label="search"
+                    style={{ fontSize: 14, color: C.text3, flexShrink: 0 }}
+                  >
                     🔍
                   </span>
                 </div>
