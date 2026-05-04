@@ -31,7 +31,7 @@ export const CreateMaterialReturn = (props) => {
   const UserData = useSelector((state) => state.auth) || {};
   console.log(UserData.email);
   console.log(UserData.emp_id); // Access emp_id from UserData
-  console.log("UserData", UserData);
+  console.log("UserData", UserData.profile.employee_id);
   const navigate = useNavigate();
   const [activeUsersData, setActiveUsersData] = useState([]);
 
@@ -46,6 +46,7 @@ export const CreateMaterialReturn = (props) => {
       const response = await TaskService.getAllUsers("True");
       // setGroupsData(response.data.groups);
       setActiveUsersData(response.data.users);
+      console.log(response.data.users);
       setOpen(false);
     } catch (error) {
       setAlertMsg({
@@ -57,9 +58,7 @@ export const CreateMaterialReturn = (props) => {
       setOpen(false);
     }
   };
-  useEffect(() => {
-    getAllUsersDetails();
-  }, []);
+
   const getsearchByCompany = async () => {
     if (!recordForEdit || !recordForEdit.ccf_details) {
       return; // Prevents the API call if no data
@@ -136,8 +135,7 @@ export const CreateMaterialReturn = (props) => {
         seller_state_code: unit.seller_state_code ? unit.seller_state_code : "",
         seller_unit: ccf.unit ? ccf.unit : "",
         products_data: formatProductData.length > 0 ? formatProductData : [],
-        user:
-          employe_id && employe_id.employee_id ? employe_id.employee_id : "",
+        user: UserData.profile.employee_id ? UserData.profile.employee_id : "",
       };
 
       // ✅ API call with proper error handling

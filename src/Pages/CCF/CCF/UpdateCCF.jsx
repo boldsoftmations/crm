@@ -184,7 +184,10 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
         return;
       }
       const payload = {
-        document: documentId,
+        document: [
+          ...localDocuments.map((doc) => doc.id), // existing (after delete)
+          ...documents.map((doc) => doc.id), // newly uploaded
+        ],
         priority: inputvalue.priority,
         source_of_complaint: inputvalue.source_of_complaint,
         products: products, // send full updated products
