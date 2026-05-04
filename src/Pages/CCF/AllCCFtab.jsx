@@ -6,6 +6,7 @@ import { CustomTabs } from "../../Components/CustomTabs";
 import { CapaView } from "./CAPA/CapaView";
 import { ClosedComplaint } from "./Close-Complaint/ClosedComplaint";
 import { CCFView } from "./CCF/CCFView";
+import TrainingCapaView from "./TrainingCAPA/TrainingCapaView";
 export const AllCCFtab = () => {
   const userData = useSelector((state) => state.auth.profile);
 
@@ -19,6 +20,7 @@ export const AllCCFtab = () => {
         "Director",
         "Sales Manager",
         "Sales Manager(Retailer)",
+        "Accounts",
         "Production",
         "Customer Service",
         "QA",
@@ -31,14 +33,12 @@ export const AllCCFtab = () => {
       label: "CAPA",
       roles: [
         "Director",
-        "Sales Manager",
-        "Sales Manager(Retailer)",
+
         "Accounts",
         "Customer Service",
         "Production",
         "QA",
         "Operations & Supply Chain Manager",
-        "Sales Executive",
       ],
       component: <CapaView />,
     },
@@ -53,8 +53,21 @@ export const AllCCFtab = () => {
         "Production",
         "QA",
         "Operations & Supply Chain Manager",
+        "Sales Executive",
       ],
       component: <ClosedComplaint />,
+    },
+
+    {
+      label: "Training CAPA",
+      roles: [
+        "Director",
+
+        "Production",
+        "QA",
+        "Operations & Supply Chain Manager",
+      ],
+      component: <TrainingCapaView />,
     },
   ];
 

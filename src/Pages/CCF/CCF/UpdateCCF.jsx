@@ -78,8 +78,10 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
     setFiles(files.filter((_, i) => i !== index));
   };
   useEffect(() => {
-    setLocalDocuments(ViewData.document || []);
-  }, [ViewData]);
+    if (ViewData && ViewData.document) {
+      setLocalDocuments(ViewData.document);
+    }
+  }, [ViewData && ViewData.document]);
 
   // ================= UPLOAD DOCUMENT =================
 
@@ -147,37 +149,40 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
       setOpen(true);
 
       const payload = {
-        ccf_id: ViewData.id,
+        id: ViewData.id,
         document_id: ccf_id,
+        document_type: "ccf",
       };
 
       await CustomerServices.DeleteCCFImage(payload);
 
-      // ✅ REMOVE FROM UI IMMEDIATELY
-      const updatedDocs = ViewData.document.filter((doc) => doc.id !== ccf_id);
-
-      // ❗ IMPORTANT: You cannot mutate props directly
-      // So create local state for documents
+      // ✅ FIX: use localDocuments instead of ViewData.document
+      const updatedDocs = localDocuments.filter((doc) => doc.id !== ccf_id);
 
       setLocalDocuments(updatedDocs);
-      await getAllCCFData();
 
       handleSuccess("Document deleted successfully");
 
       setOpenPopup1(false);
+
+      // optional: refresh backend data AFTER UI update
+      await getAllCCFData();
     } catch (error) {
       handleError(error);
     } finally {
       setOpen(false);
     }
   };
-
   // ================= UPDATE CCF =================
 
   const handleUpdateCCF = async () => {
     try {
       setOpen(true);
-
+      if (!inputvalue.priority || !inputvalue.source_of_complaint) {
+        handleError("Please fill all the required fields");
+        setOpen(false);
+        return;
+      }
       const payload = {
         document: documentId,
         priority: inputvalue.priority,
@@ -210,6 +215,7 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
     setccf_id(row.id);
   };
 
+  console.log("Document", documents);
   return (
     <>
       <MessageAlert
@@ -290,7 +296,7 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
               </Grid>
               <Grid item xs={12} sm={4}>
                 <CustomAutocomplete
-                  label="Urgency Type"
+                  // label="Urgency Type"
                   name="urgency_type"
                   size="small"
                   fullWidth
@@ -299,6 +305,18 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
                   onChange={(event, newvalue) =>
                     handleAutoComplete("priority", newvalue)
                   }
+                  error={!inputvalue.priority}
+                  helperText={!inputvalue.priority ? "Required" : ""}
+                  renderInput={(params) => (
+                    <CustomTextField
+                      {...params}
+                      label="Urgency Type"
+                      error={!inputvalue.priority}
+                      helperText={!inputvalue.priority ? "Required" : ""}
+                    />
+                  )}
+                  // renderInput={<TextField required label="Urgency Type" />}
+
                   // disabled
                 />
               </Grid>
@@ -313,6 +331,18 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
                   onChange={(event, newValue) =>
                     handleAutoComplete("source_of_complaint", newValue)
                   }
+                  error={!inputvalue.source_of_complaint}
+                  helperText={!inputvalue.source_of_complaint ? "Required" : ""}
+                  renderInput={(params) => (
+                    <CustomTextField
+                      {...params}
+                      label="Source of Complaint"
+                      error={!inputvalue.source_of_complaint}
+                      helperText={
+                        !inputvalue.source_of_complaint ? "Required" : ""
+                      }
+                    />
+                  )}
                   // disabled
                 />
               </Grid>
@@ -513,7 +543,7 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
                   )}
 
                   {/* Uploaded Documents */}
-                  {files.length === 0 && documents.length > 0 && (
+                  {documents.length > 0 && (
                     <>
                       <Typography sx={{ fontSize: 15, fontWeight: 500 }}>
                         Uploaded Documents
@@ -630,14 +660,78 @@ const UpdateCCF = ({ getAllCCFData, setOpenCCF, ViewData }) => {
       </Grid>
 
       <Popup
-        title="Delete image"
+        title="Delete Confirmation"
         openPopup={openPopup1}
         setOpenPopup={setOpenPopup1}
       >
-        <Box>
-          <Typography>{`Are you sure you want to delete this `}</Typography>
-          <Button onClick={() => setOpenPopup1(false)}>NO</Button>
-          <Button onClick={() => handleDeleteDocument()}>yes</Button>
+        <Box
+          sx={{
+            minWidth: { xs: "100%", sm: 400 },
+            p: 1,
+          }}
+        >
+          {/* Message */}
+          {/* <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 600,
+              color: "#d32f2f",
+              mb: 1,
+            }}
+          >
+            Delete Image
+          </Typography> */}
+
+          <Typography
+            variant="body1"
+            sx={{
+              color: "text.secondary",
+              mb: 3,
+              lineHeight: 1.8,
+            }}
+          >
+            Are you sure you want to delete this image?
+            <br />
+            This action cannot be undone.
+          </Typography>
+
+          {/* Buttons */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 2,
+            }}
+          >
+            <Button
+              variant="outlined"
+              color="inherit"
+              onClick={() => setOpenPopup1(false)}
+              sx={{
+                px: 3,
+                borderRadius: 2,
+                textTransform: "none",
+                fontWeight: 600,
+              }}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleDeleteDocument}
+              sx={{
+                px: 3,
+                borderRadius: 2,
+                textTransform: "none",
+                fontWeight: 600,
+                boxShadow: "none",
+              }}
+            >
+              Delete
+            </Button>
+          </Box>
         </Box>
       </Popup>
     </>

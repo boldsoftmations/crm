@@ -20,7 +20,6 @@ import { CustomPagination } from "../../../Components/CustomPagination";
 import { Popup } from "../../../Components/Popup";
 import CustomSnackbar from "../../../Components/CustomerSnackbar";
 import { useRef } from "react";
-import { useSelector } from "react-redux";
 import { DispatchPackaginigUpdate } from "./DispatchPackaginigUpdate";
 import { DispatchPackaginigCreate } from "./DispatchPackaginigCreate";
 import InvoiceServices from "../../../services/InvoiceService";
@@ -37,7 +36,6 @@ export const DispatchPackagingView = () => {
   const [openPopup, setOpenPopup] = useState(false);
   const [openUpdatePopup, setOpenUpdatePopup] = useState(false);
 
-  const userData = useSelector((state) => state.auth.profile);
   const [alertmsg, setAlertMsg] = useState({
     message: "",
     severity: "",

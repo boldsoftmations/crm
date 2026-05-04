@@ -9,7 +9,8 @@ import InvoiceServices from "../../../services/InvoiceService";
 import InventoryServices from "../../../services/InventoryService";
 import CustomSnackbar from "../../../Components/CustomerSnackbar";
 import { useNavigate } from "react-router-dom";
-
+import { useSelector } from "react-redux";
+import TaskService from "../../../services/TaskService";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -27,7 +28,38 @@ export const CreateMaterialReturn = (props) => {
     severity: "",
     open: false,
   });
+  const UserData = useSelector((state) => state.auth) || {};
+  console.log(UserData.email);
+  console.log(UserData.emp_id); // Access emp_id from UserData
+  console.log("UserData", UserData);
   const navigate = useNavigate();
+  const [activeUsersData, setActiveUsersData] = useState([]);
+
+  const employe_id = activeUsersData.find(
+    (user) => user.email === salesReturnData.user,
+  );
+  console.log("Employee id is:", employe_id && employe_id.employee_id);
+
+  const getAllUsersDetails = async () => {
+    try {
+      setOpen(true);
+      const response = await TaskService.getAllUsers("True");
+      // setGroupsData(response.data.groups);
+      setActiveUsersData(response.data.users);
+      setOpen(false);
+    } catch (error) {
+      setAlertMsg({
+        message: error.message,
+        severity: "error",
+        open: true,
+      });
+    } finally {
+      setOpen(false);
+    }
+  };
+  useEffect(() => {
+    getAllUsersDetails();
+  }, []);
   const getsearchByCompany = async () => {
     if (!recordForEdit || !recordForEdit.ccf_details) {
       return; // Prevents the API call if no data
@@ -50,6 +82,7 @@ export const CreateMaterialReturn = (props) => {
       setOpen(false);
     }
   };
+  console.log(salesReturnData);
 
   // ✅ UseEffect with Dependency Array
   useEffect(() => {
@@ -103,7 +136,8 @@ export const CreateMaterialReturn = (props) => {
         seller_state_code: unit.seller_state_code ? unit.seller_state_code : "",
         seller_unit: ccf.unit ? ccf.unit : "",
         products_data: formatProductData.length > 0 ? formatProductData : [],
-        user: salesReturnData.user,
+        user:
+          employe_id && employe_id.employee_id ? employe_id.employee_id : "",
       };
 
       // ✅ API call with proper error handling
@@ -298,7 +332,7 @@ export const CreateMaterialReturn = (props) => {
                       size="small"
                       label="Product"
                       variant="outlined"
-                      value={input.product}
+                      value={input.product__name}
                     />
                   </Grid>
                   <Grid item xs={12} sm={3}>

@@ -121,6 +121,7 @@ export const MaterialTransferNoteCreate = memo((props) => {
         searchQuery,
         acceptedFilter,
       );
+      getProduct();
     } catch (error) {
       handleError(error);
     } finally {

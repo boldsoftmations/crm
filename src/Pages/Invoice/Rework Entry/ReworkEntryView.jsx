@@ -44,7 +44,7 @@ export const ReworkEntryView = () => {
       setOpen(true);
       const response = await InventoryServices.getReworkinvoiceData(
         currentPage,
-        searchQuery
+        searchQuery,
       );
       console.log("rework Data", response.data.results);
       setReworkInvoiceData(response.data.results);
@@ -203,7 +203,7 @@ export const ReworkEntryView = () => {
                       {row.creation_date}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.ytpe_of_unit === "decimal"
+                      {row.type_of_unit === "decimal"
                         ? row.quantity
                         : Math.round(row.quantity)}
                     </StyledTableCell>

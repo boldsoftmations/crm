@@ -44,11 +44,14 @@ export const CCFView = () => {
   const [imagesData, setImagesData] = useState(null);
   const [ViewData, setViewData] = useState(null);
   const [openStatusPopup, setOpenStatusPopup] = useState(false);
+  const [recordForStatus, setRecordForStatus] = useState(null);
 
   const allowedRoles = [
     "Director",
     "Operations & Supply Chain Manager",
-    "Customer Service",
+    "Sales Executive",
+    "Sales Manager",
+    "Sales Manager(Retailer)",
   ];
   const userData = useSelector((state) => state.auth.profile);
   const { handleError, handleCloseSnackbar, alertInfo } =
@@ -79,8 +82,9 @@ export const CCFView = () => {
     setCurrentPage(1); // Reset to first page with new search
   };
 
-  const openStatusPopupHandler = () => {
+  const openStatusPopupHandler = (row) => {
     setOpenStatusPopup(true);
+    setRecordForStatus(row);
   };
 
   const handleReset = () => {
@@ -163,7 +167,9 @@ export const CCFView = () => {
                 }}
               >
                 {(userData.groups.includes("Director") ||
-                  userData.groups.includes("Sales Executive")) && (
+                  userData.groups.includes("Sales Executive") ||
+                  userData.groups.includes("Sales Manager") ||
+                  userData.groups.includes("Sales Manager(Retailer)")) && (
                   <Button
                     color="primary"
                     variant="contained"
@@ -277,6 +283,13 @@ export const CCFView = () => {
                             color="primary"
                             variant="text"
                             onClick={() => updateCCFData(row)}
+                            disabled={
+                              row.ccfstatus !== "Under Review" ||
+                              userData.groups.includes(
+                                "Operations & Supply Chain Manager",
+                                "Customer Service",
+                              )
+                            }
                           >
                             Update
                           </Button>
@@ -290,14 +303,20 @@ export const CCFView = () => {
                           DownLoad
                         </Button>
                         {(userData.groups.includes("Director") ||
-                          userData.groups.includes("Production") ||
-                          userData.groups.includes("Sales Executive") ||
                           userData.groups.includes("QA")) &&
                           row.is_closed === false && (
                             <Button
                               color="success"
                               size="small"
                               onClick={() => handledOpenCapa(row)}
+                              disabled={
+                                userData.groups.includes(
+                                  "Customer Service",
+                                  "Operations & Supply Chain Manager",
+                                ) ||
+                                row.ccfstatus !==
+                                  ("Under Review" || "CAPA Created")
+                              }
                             >
                               Create CAPA
                             </Button>
@@ -305,7 +324,7 @@ export const CCFView = () => {
 
                         <Button
                           color="success"
-                          onClick={() => openStatusPopupHandler()}
+                          onClick={() => openStatusPopupHandler(row)}
                           size="small"
                         >
                           Status View
@@ -332,7 +351,7 @@ export const CCFView = () => {
         </Popup>
         <Popup
           fullScreen={true}
-          title="Create CCF"
+          title="Update CCF"
           openPopup={updateCCF}
           setOpenPopup={setUpdateCCF}
         >
@@ -365,16 +384,23 @@ export const CCFView = () => {
           openPopup={openCapa}
           setOpenPopup={setOpenCapa}
         >
-          <CreateCapa recordForEdit={recordForEdit} setOpenCapa={setOpenCapa} />
+          <CreateCapa
+            recordForEdit={recordForEdit}
+            getAllCCFData={getAllCCFData}
+            setOpenCapa={setOpenCapa}
+          />
         </Popup>
 
         <Popup
           fullScreen={true}
-          title="Corrective And Preventive Action Form"
+          title="CCF Trracking Status"
           openPopup={openStatusPopup}
           setOpenPopup={setOpenStatusPopup}
         >
-          <CapaStatusView setOpenCapa={setOpenCapa} />
+          <CapaStatusView
+            setOpenCapa={setOpenCapa}
+            recordForEdit={recordForStatus}
+          />
         </Popup>
       </Grid>
     </>

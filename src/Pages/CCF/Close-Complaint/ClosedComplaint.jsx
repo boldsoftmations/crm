@@ -10,6 +10,7 @@ import {
   TableRow,
   TableBody,
   Table,
+  Button,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
@@ -18,12 +19,18 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import { CustomPagination } from "../../../Components/CustomPagination";
 import SearchComponent from "../../../Components/SearchComponent ";
 import CustomerServices from "../../../services/CustomerService";
+import { Popup } from "../../../Components/Popup";
+import { CapaStatusView } from "../CCF/CapaStatusView";
+// import { Button } from "bootstrap";
+
 export const ClosedComplaint = () => {
   const [open, setOpen] = useState(false);
   const [CCFData, setCCFData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [recordForEdit, setRecordForEdit] = useState();
+  const [openPopup1, setOpenPopup1] = useState(false);
 
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
@@ -52,6 +59,10 @@ export const ClosedComplaint = () => {
   const handleSearch = (query) => {
     setSearchQuery(query);
     setCurrentPage(1); // Reset to first page with new search
+  };
+  const handleViewDetails = (row) => {
+    setOpenPopup1(true);
+    setRecordForEdit(row);
   };
 
   const handleReset = () => {
@@ -143,6 +154,7 @@ export const ClosedComplaint = () => {
                   <StyledTableCell align="center">CLosed Date</StyledTableCell>
                   <StyledTableCell align="center">Unit</StyledTableCell>
                   <StyledTableCell align="center">Invoices</StyledTableCell>
+                  <StyledTableCell align="center">Action</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -177,6 +189,15 @@ export const ClosedComplaint = () => {
                         </span>
                       ))}
                     </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => handleViewDetails(row)}
+                      >
+                        View
+                      </Button>
+                    </StyledTableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>
@@ -189,6 +210,18 @@ export const ClosedComplaint = () => {
           />
         </Paper>
       </Grid>
+
+      <Popup
+        title="Complaint Details"
+        openPopup={openPopup1}
+        setOpenPopup={setOpenPopup1}
+        fullScreen={true}
+      >
+        <CapaStatusView
+          recordForEdit={recordForEdit}
+          setOpenCapa={setOpenPopup1}
+        />
+      </Popup>
     </>
   );
 };

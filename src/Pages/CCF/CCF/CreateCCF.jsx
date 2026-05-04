@@ -179,6 +179,44 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
 
   const SubmitComplaint = async (e) => {
     e.preventDefault();
+    if (inputValue.invoices.length === 0) {
+      alert("Please select at least one invoice.");
+      return;
+    }
+    if (inputValue.products.length === 0) {
+      alert("Please select at least one product.");
+      return;
+    }
+    if (!inputValue.source_of_complaint) {
+      alert("Please select a source of complaint.");
+      return;
+    }
+    if (!inputValue.complaint) {
+      alert("Please enter a complaint.");
+      return;
+    }
+    if (!inputValue.application) {
+      alert("Please select an application.");
+      return;
+    }
+    if (!inputValue.problem) {
+      alert("Please select a problem.");
+      return;
+    }
+    if (!inputValue.priority) {
+      alert("Please select a priority.");
+      return;
+    }
+    if (
+      !inputValue.department ||
+      inputValue.complain_for === "" ||
+      inputValue.complain_type === "" ||
+      inputValue.customer === "" ||
+      inputValue.unit === ""
+    ) {
+      handleError("Please fill all the required fields.");
+      return;
+    }
 
     try {
       let modifyproducts = products.map((product) => {
@@ -311,6 +349,16 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
                   getOptionLabel={(option) => option}
                   fullWidth
                   label="Complaint to"
+                  error={!inputValue.department}
+                  helperText={!inputValue.department ? "Required" : ""}
+                  renderInput={(params) => (
+                    <CustomTextField
+                      {...params}
+                      label="Complaint to"
+                      error={!inputValue.department}
+                      helperText={!inputValue.department ? "Required" : ""}
+                    />
+                  )}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -324,6 +372,16 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
                   getOptionLabel={(option) => option}
                   fullWidth
                   label="Complaint for"
+                  error={!inputValue.complain_for}
+                  helperText={!inputValue.complain_for ? "Required" : ""}
+                  renderInput={(params) => (
+                    <CustomTextField
+                      {...params}
+                      label="Complaint for"
+                      error={!inputValue.complain_for}
+                      helperText={!inputValue.complain_for ? "Required" : ""}
+                    />
+                  )}
                 />
               </Grid>
               {inputValue.complain_for === "Account" && (
@@ -340,6 +398,16 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
                     getOptionLabel={(option) => option}
                     fullWidth
                     label="Complaint Problem"
+                    error={!inputValue.problem}
+                    helperText={!inputValue.problem ? "Required" : ""}
+                    renderInput={(params) => (
+                      <CustomTextField
+                        {...params}
+                        label="Complaint Problem"
+                        error={!inputValue.problem}
+                        helperText={!inputValue.problem ? "Required" : ""}
+                      />
+                    )}
                   />
                 </Grid>
               )}
@@ -356,7 +424,16 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
                     }}
                     getOptionLabel={(option) => option}
                     fullWidth
-                    label="Complaint Problem"
+                    error={!inputValue.problem}
+                    helperText={!inputValue.problem ? "Required" : ""}
+                    renderInput={(params) => (
+                      <CustomTextField
+                        {...params}
+                        label="Complaint Problem"
+                        error={!inputValue.problem}
+                        helperText={!inputValue.problem ? "Required" : ""}
+                      />
+                    )}
                   />
                 </Grid>
               )}
@@ -374,6 +451,16 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
                     getOptionLabel={(option) => option}
                     fullWidth
                     label="Complaint Problem"
+                    error={!inputValue.problem}
+                    helperText={!inputValue.problem ? "Required" : ""}
+                    renderInput={(params) => (
+                      <CustomTextField
+                        {...params}
+                        label="Complaint Problem"
+                        error={!inputValue.problem}
+                        helperText={!inputValue.problem ? "Required" : ""}
+                      />
+                    )}
                   />
                 </Grid>
               )}
@@ -391,6 +478,16 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
                     getOptionLabel={(option) => option}
                     fullWidth
                     label="Complaint Problem"
+                    error={!inputValue.problem}
+                    helperText={!inputValue.problem ? "Required" : ""}
+                    renderInput={(params) => (
+                      <CustomTextField
+                        {...params}
+                        label="Complaint Problem"
+                        error={!inputValue.problem}
+                        helperText={!inputValue.problem ? "Required" : ""}
+                      />
+                    )}
                   />
                 </Grid>
               )}
@@ -410,6 +507,16 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
                   }}
                   fullWidth
                   label="Complaint Type"
+                  error={!inputValue.complain_type}
+                  helperText={!inputValue.complain_type ? "Required" : ""}
+                  renderInput={(params) => (
+                    <CustomTextField
+                      {...params}
+                      label="Complaint Type"
+                      error={!inputValue.complain_type}
+                      helperText={!inputValue.complain_type ? "Required" : ""}
+                    />
+                  )}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -425,6 +532,16 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
                   }}
                   fullWidth
                   label="Customer"
+                  error={!inputValue.customer}
+                  helperText={!inputValue.customer ? "Required" : ""}
+                  renderInput={(params) => (
+                    <CustomTextField
+                      {...params}
+                      label="Customer"
+                      error={!inputValue.customer}
+                      helperText={!inputValue.customer ? "Required" : ""}
+                    />
+                  )}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -438,22 +555,42 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
                   onChange={handleUnitchange}
                   fullWidth
                   label="Seller Unit"
+                  error={!inputValue.unit}
+                  helperText={!inputValue.unit ? "Required" : ""}
+                  renderInput={(params) => (
+                    <CustomTextField
+                      {...params}
+                      label="Seller Unit"
+                      error={!inputValue.unit}
+                      helperText={!inputValue.unit ? "Required" : ""}
+                    />
+                  )}
                 />
               </Grid>
 
               <Grid item xs={12} sm={4}>
                 <CustomAutocomplete
-                  name="unit"
+                  name="priority"
                   size="small"
                   disablePortal
                   id="combo-box-demo"
-                  options={["Normal", "Urgent", "Critical"]}
+                  options={["Normal", "High", "Critical"]}
                   // getOptionLabel={(option) => option}
                   onChange={(event, value) => {
                     setInputValue((prev) => ({ ...prev, priority: value }));
                   }}
                   fullWidth
                   label="URGENCY TYPE"
+                  error={!inputValue.priority}
+                  helperText={!inputValue.priority ? "Required" : ""}
+                  renderInput={(params) => (
+                    <CustomTextField
+                      {...params}
+                      label="URGENCY TYPE"
+                      error={!inputValue.priority}
+                      helperText={!inputValue.priority ? "Required" : ""}
+                    />
+                  )}
                 />
               </Grid>
 
@@ -480,6 +617,18 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
                   }}
                   fullWidth
                   label="SOURCE OF COMPLAINT TYPE "
+                  error={!inputValue.source_of_complaint}
+                  helperText={!inputValue.source_of_complaint ? "Required" : ""}
+                  renderInput={(params) => (
+                    <CustomTextField
+                      {...params}
+                      label="SOURCE OF COMPLAINT TYPE "
+                      error={!inputValue.source_of_complaint}
+                      helperText={
+                        !inputValue.source_of_complaint ? "Required" : ""
+                      }
+                    />
+                  )}
                 />
               </Grid>
               {invoiceNoOption && invoiceNoOption.length > 0 && (
@@ -532,6 +681,8 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
                       complaint: e.target.value,
                     }))
                   }
+                  error={!inputValue.complaint}
+                  helperText={!inputValue.complaint ? "Required" : ""}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -548,6 +699,8 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
                       application: e.target.value,
                     }))
                   }
+                  error={!inputValue.application}
+                  helperText={!inputValue.application ? "Required" : ""}
                 />
               </Grid>
               <Grid item xs={12} sm={12}>

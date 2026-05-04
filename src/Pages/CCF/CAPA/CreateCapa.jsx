@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -23,14 +23,22 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
-const CreateCapa = ({ recordForEdit, setOpenCapa }) => {
+const CreateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
   const [documentId, setDocumentId] = useState([]);
   const [formData, setFormData] = useState({
     ccf: recordForEdit && recordForEdit.id,
     complaint: (recordForEdit && recordForEdit.complaint) || "",
-    root_cause: "",
+
     cap: "",
     pap: "",
+    root_cause_why1: "",
+    root_cause_why2: "",
+    root_cause_why3: "",
+    root_cause_why4: "",
+    root_cause_why5: "",
+    root_cause_category: "",
+    final_root_cause: "",
+    ccf_status: "Pending Verifier Approval",
     document: documentId ? documentId : [],
   });
   const [files, setFiles] = useState([]);
@@ -39,12 +47,39 @@ const CreateCapa = ({ recordForEdit, setOpenCapa }) => {
   const [loader, setLoader] = useState(false);
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("");
-
+  const [rootCauses, setRootCause] = useState([]);
+  const [catogories, setCategories] = useState([]);
+  const [rootCauseId, setRootCauseId] = useState(null);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (errors[e.target.name]) {
       setErrors({ ...errors, [e.target.name]: "" });
     }
+  };
+
+  const getCategoriesLists = async () => {
+    try {
+      if (!rootCauseId) return; // ✅ extra safety
+
+      setLoader(true);
+
+      const response = await CustomerServices.getCategoryList(rootCauseId);
+      console.log("res is :", response);
+      setCategories(response.data.data || []);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!rootCauseId) return; // ✅ STOP if empty
+    getCategoriesLists();
+  }, [rootCauseId]);
+
+  const handleAutocompleteChange = (name, value) => {
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleFileChange = (e) => {
@@ -65,11 +100,12 @@ const CreateCapa = ({ recordForEdit, setOpenCapa }) => {
   };
   const handleUploadDocuments = async () => {
     try {
+      console.log("length is :", files.length);
       if (files.length === 0) {
         alert("No files selected for upload.");
         return;
       }
-      setOpen(true);
+      setLoader(true);
       const formData = new FormData();
 
       // Append each file to the FormData object and detect file type (image or video)
@@ -114,12 +150,31 @@ const CreateCapa = ({ recordForEdit, setOpenCapa }) => {
       setSeverity("error");
       setOpen(true);
     } finally {
-      setOpen(false);
+      setLoader(false);
     }
   };
+  const getRootCause = async () => {
+    try {
+      const response = await CustomerServices.getRootCauseList();
+      setRootCause(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getRootCause();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.document.length === 0) {
+      setMessage(
+        "Please upload at least one document before submitting the form.",
+      );
+      setSeverity("error");
+      setOpen(true);
+      return;
+    }
 
     try {
       setLoader(true);
@@ -128,6 +183,7 @@ const CreateCapa = ({ recordForEdit, setOpenCapa }) => {
       setSeverity("success");
       setOpen(true);
       setLoader(false);
+      getAllCCFData(); // Refresh CCF data after creating CAPA
       setOpenCapa(false); // Close the form dialog if submission is successful
     } catch (error) {
       console.log(error);
@@ -281,21 +337,139 @@ const CreateCapa = ({ recordForEdit, setOpenCapa }) => {
                   value={formData.complaint}
                   onChange={handleChange}
                   error={!!errors.complaint}
-                  helperText={errors.complaint}
+                  required
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  multiline
+                  rows={4}
+                  size="small"
+                  label="Root Cause (1 Whys)"
+                  name="root_cause_why1"
+                  value={formData.root_cause_why1}
+                  onChange={handleChange}
+                  error={!!errors.root_cause_why1}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  rows={4}
+                  size="small"
+                  label="Root Cause (2 Whys)"
+                  name="root_cause_why2"
+                  value={formData.root_cause_why2}
+                  onChange={handleChange}
+                  error={!!errors.root_cause_why2}
+                  required
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  rows={4}
+                  size="small"
+                  label="Root Cause (3 Whys)"
+                  name="root_cause_why3"
+                  value={formData.root_cause_why3}
+                  onChange={handleChange}
+                  error={!!errors.root_cause_why3}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  rows={4}
+                  size="small"
+                  label="Root Cause (4 Whys)"
+                  name="root_cause_why4"
+                  value={formData.root_cause_why4}
+                  onChange={handleChange}
+                  error={!!errors.root_cause_why4}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
                   rows={4}
                   size="small"
                   label="Root Cause (5 Whys)"
-                  name="root_cause"
-                  value={formData.root_cause}
+                  name="root_cause_why5"
+                  value={formData.root_cause_why5}
                   onChange={handleChange}
-                  error={!!errors.root_cause}
-                  helperText={errors.root_cause}
+                  error={!!errors.root_cause_why5}
+                  required
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <CustomAutocomplete
+                  fullWidth
+                  name="final_root_cause"
+                  size="small"
+                  disablePortal
+                  value={formData.final_root_cause || ""}
+                  options={rootCauses && rootCauses.map((data) => data.name)}
+                  onChange={(event, value) => {
+                    handleAutocompleteChange("final_root_cause", value);
+
+                    const selected = rootCauses.find(
+                      (option) => option.name === value,
+                    );
+
+                    if (selected) {
+                      setRootCauseId(selected.category__id);
+
+                      // ✅ RESET CATEGORY WHEN ROOT CAUSE CHANGES
+                      setFormData((prev) => ({
+                        ...prev,
+                        root_cause_category: "",
+                      }));
+                    } else {
+                      setRootCauseId(null);
+                    }
+                  }}
+                  error={!formData.final_root_cause}
+                  helperText={!formData.final_root_cause ? "Required" : ""}
+                  renderInput={(params) => (
+                    <CustomTextField
+                      {...params}
+                      label="Root Cause"
+                      error={!formData.final_root_cause}
+                      helperText={!formData.final_root_cause ? "Required" : ""}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <CustomAutocomplete
+                  fullWidth
+                  size="small"
+                  name="root_cause_category"
+                  value={formData.root_cause_category || ""}
+                  disabled={catogories.length === 0} // ✅ FIXED
+                  options={catogories.map((data) => data.name)} // ✅ SAFE
+                  onChange={(event, value) =>
+                    handleAutocompleteChange("root_cause_category", value)
+                  }
+                  // getOptionLabel={(option) => option.name || ""} // ✅ SAFE
+                  error={!formData.root_cause_category}
+                  helperText={!formData.root_cause_category ? "Required" : ""}
+                  renderInput={(params) => (
+                    <CustomTextField
+                      {...params}
+                      label="Root Cause Category"
+                      error={!formData.root_cause_category}
+                      helperText={
+                        !formData.root_cause_category ? "Required" : ""
+                      }
+                    />
+                  )}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -310,6 +484,7 @@ const CreateCapa = ({ recordForEdit, setOpenCapa }) => {
                   onChange={handleChange}
                   error={!!errors.cap}
                   helperText={errors.cap}
+                  required
                 />
               </Grid>
               <Grid item xs={12}>
@@ -324,6 +499,7 @@ const CreateCapa = ({ recordForEdit, setOpenCapa }) => {
                   onChange={handleChange}
                   error={!!errors.pap}
                   helperText={errors.pap}
+                  required
                 />
               </Grid>
               <Grid item xs={12} sm={12}>

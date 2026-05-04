@@ -11,7 +11,6 @@ import {
   TableRow,
   TableBody,
   Table,
-  Switch,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import CustomerServices from "../../../services/CustomerService";
@@ -22,11 +21,14 @@ import CapaDownload from "./CapaDownload";
 import CapaImageView from "./CapaImagesView";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { useSelector } from "react-redux";
-import UpdateCAPA from "./UpdateCAPA";
+
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import CustomSnackbar from "../../../Components/CustomerSnackbar";
 import { CreateCreditNote } from "./CreateCreditNote";
 import { CreateMaterialReturn } from "./CreateMaterialReturn";
+import UpdateCAPAStatus from "./UpdateCAPAStatus";
+// import { UpdateCapa } from "./UpdateCapa";
+import UpdateCapa from "./UpdateCapa";
 
 export const CapaView = () => {
   const [open, setOpen] = useState(false);
@@ -47,14 +49,20 @@ export const CapaView = () => {
   const [loader, setLoader] = useState(false);
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("success");
+  const [openNewPopup, setOpenNewPopup] = useState(false);
+  const [capaStatus, setCapaStatus] = useState("");
 
+  const statusOptions = ["Reject", "Accept", "Pending", "Closed"];
+  // const [closeFiltered, setCloseFiltered] = useState([]);
   // ✅ Fetch CAPA Data
+
   const getAllCAPAData = useCallback(async () => {
     try {
       setLoader(true);
       const response = await CustomerServices.getAllCapaData(
         currentPage,
         searchQuery,
+        capaStatus,
       );
       setCCFData(response.data.results);
       setTotalPages(Math.ceil(response.data.count / 25));
@@ -63,7 +71,7 @@ export const CapaView = () => {
     } finally {
       setLoader(false);
     }
-  }, [currentPage, searchQuery]);
+  }, [currentPage, searchQuery, capaStatus]);
 
   useEffect(() => {
     getAllCAPAData();
@@ -119,36 +127,7 @@ export const CapaView = () => {
       setLoader(false);
     }
   };
-  const handleCheck = async (row, checked) => {
-    try {
-      // payload
-      const payload = {
-        is_accepted: checked,
-      };
 
-      await CustomerServices.UpdateCapa(row.id, payload);
-
-      // Optimistically update UI
-      setCCFData((prev) =>
-        prev.map((item) =>
-          item.id === row.id ? { ...item, is_accepted: checked } : item,
-        ),
-      );
-
-      setMessage("CAPA acceptance updated successfully");
-      setSeverity("success");
-      setOpen(true);
-    } catch (error) {
-      console.error(error);
-      setMessage("Failed to update acceptance");
-      setSeverity("error");
-      setOpen(true);
-    }
-  };
-  const canAcceptCapa =
-    userData.groups.includes("Production") ||
-    userData.groups.includes("Director") ||
-    userData.groups.includes("Factory-Mumbai-OrderBook");
   return (
     <>
       <CustomLoader open={loader} />
@@ -192,6 +171,25 @@ export const CapaView = () => {
                   Corrective & Preventive Action List
                 </h3>
               </Grid>
+
+              <Grid
+                item
+                xs={12}
+                md={4}
+                sx={{ textAlign: { xs: "center", md: "right" } }}
+              >
+                <CustomAutocomplete
+                  fullWidth
+                  size="small"
+                  options={statusOptions}
+                  getOptionLabel={(option) => option}
+                  onChange={(e, value) => {
+                    setCapaStatus(value || "");
+                    setCurrentPage(1);
+                  }}
+                  label="Filter by Status"
+                />
+              </Grid>
             </Grid>
           </Box>
 
@@ -228,15 +226,23 @@ export const CapaView = () => {
                   <StyledTableCell align="center">Status</StyledTableCell>
                   <StyledTableCell align="center">Updated By</StyledTableCell>
 
-                  {canAcceptCapa && (
+                  {/* {canAcceptCapa && (
                     <StyledTableCell align="center">Accept</StyledTableCell>
-                  )}
+                  )} */}
 
                   <StyledTableCell align="center">Action</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {CCFData.map((row, i) => (
+                {CCFData.filter((item) => {
+                  // If user selected "Closed" → show only Closed
+                  if (capaStatus === "Closed") {
+                    return item.status === "Closed";
+                  }
+
+                  // Otherwise → hide Closed
+                  return item.status !== "Closed";
+                }).map((row, i) => (
                   <StyledTableRow key={i}>
                     <StyledTableCell align="center">
                       {row.ccf_details.complain_no}
@@ -259,14 +265,14 @@ export const CapaView = () => {
                     <StyledTableCell align="center">
                       {row.updated_by}
                     </StyledTableCell>
-                    <StyledTableCell align="center" hidden={!canAcceptCapa}>
+                    {/* <StyledTableCell align="center" hidden={!canAcceptCapa}>
                       <Switch
                         checked={Boolean(row.is_accepted)}
                         disabled={row.is_accepted}
                         onChange={(e) => handleCheck(row, e.target.checked)}
                         color="primary"
                       />
-                    </StyledTableCell>
+                    </StyledTableCell> */}
 
                     <StyledTableCell align="center">
                       <Box
@@ -316,7 +322,10 @@ export const CapaView = () => {
                               Material Return
                             </Button>
                           )}
-                        {(userData.groups.includes("QA") ||
+                        {(userData.groups.includes("Production") ||
+                          userData.groups.includes(
+                            "Factory-Mumbai-OrderBook",
+                          ) ||
                           userData.groups.includes("Director")) &&
                           row.status === "Pending" && (
                             <Button
@@ -326,12 +335,28 @@ export const CapaView = () => {
                               onClick={() =>
                                 handlePopup(setUpdateCAPAPopup, row)
                               }
-                              disabled={!row.is_accepted}
+                              disabled={row.status !== "Pending"}
                             >
-                              Update
+                              Update Status
                             </Button>
                           )}
 
+                        {(userData.groups.includes("QA") ||
+                          userData.groups.includes("Director")) && (
+                          <Button
+                            variant="text"
+                            color="success"
+                            size="small"
+                            onClick={() => handlePopup(setOpenNewPopup, row)}
+                            disabled={
+                              !row.status === "Reject" ||
+                              row.status === "Accept" ||
+                              row.status === "Pending"
+                            }
+                          >
+                            Update CAPA
+                          </Button>
+                        )}
                         <Button
                           variant="text"
                           color="secondary"
@@ -374,6 +399,18 @@ export const CapaView = () => {
       >
         <CapaImageView imagesData={imagesData} setImageShow={setImageShow} />
       </Popup>
+      <Popup
+        fullScreen={true}
+        title="Update Capa"
+        openPopup={openNewPopup}
+        setOpenPopup={setOpenNewPopup}
+      >
+        <UpdateCapa
+          recordForEdit={recordForEdit}
+          setOpenCapa={setOpenNewPopup}
+          getAllCCFData={getAllCAPAData}
+        />
+      </Popup>
 
       <Popup
         fullScreen={true}
@@ -398,7 +435,7 @@ export const CapaView = () => {
         openPopup={updateCAPAPopup}
         setOpenPopup={setUpdateCAPAPopup}
       >
-        <UpdateCAPA
+        <UpdateCAPAStatus
           recordForEdit={recordForEdit}
           setUpdateCAPAPopup={setUpdateCAPAPopup}
           getAllCAPAData={getAllCAPAData}

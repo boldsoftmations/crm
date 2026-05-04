@@ -3,60 +3,44 @@ import moment from "moment";
 
 // ── Modern color palette ─────────────────────────────────────────────────────
 const C = {
-  // Primary - Modern Blue
   primary: "#0066cc",
   primaryLight: "#e6f2ff",
   primaryBorder: "#4d94ff",
   primaryDark: "#003d99",
   primaryGradient: "linear-gradient(135deg, #0066cc 0%, #0052a3 100%)",
-
-  // Success - Modern Green
   success: "#16a34a",
   successLight: "#dcfce7",
   successBorder: "#86efac",
   successDark: "#15803d",
   successGradient: "linear-gradient(135deg, #16a34a 0%, #15803d 100%)",
-
-  // Error - Modern Red
   error: "#dc2626",
   errorLight: "#fee2e2",
   errorBorder: "#fca5a5",
   errorDark: "#991b1b",
   errorGradient: "linear-gradient(135deg, #dc2626 0%, #991b1b 100%)",
-
-  // Warning - Modern Orange
   warning: "#ea580c",
   warningLight: "#fed7aa",
   warningBorder: "#fdba74",
   warningDark: "#b45309",
   warningGradient: "linear-gradient(135deg, #ea580c 0%, #b45309 100%)",
-
-  // Info - Modern Indigo
   info: "#4f46e5",
   infoLight: "#e0e7ff",
   infoBorder: "#a5b4fc",
   infoDark: "#312e81",
-
-  // Neutral colors
   divider: "#e5e7eb",
   bgPage: "#f8fafc",
   bgCard: "#ffffff",
   bgHover: "#f3f4f6",
-
-  // Text colors
   text1: "#1f2937",
   text2: "#6b7280",
   text3: "#9ca3af",
   textLight: "#d1d5db",
-
-  // Shadows
   shadowSm: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
   shadowMd: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
   shadowLg: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
   shadowXl: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
 };
 
-// ── Status → color mapping ───────────────────────────────────────────────────
 const STATUS_CFG = {
   "Under Review": {
     dot: C.info,
@@ -66,13 +50,13 @@ const STATUS_CFG = {
     icon: "🔍",
     label: "Under Review",
   },
-  "Pending Evidence": {
+  "CAPA Created": {
     dot: C.warning,
     bg: C.warningLight,
     color: C.warningDark,
     border: C.warningBorder,
     icon: "📋",
-    label: "Evidence Needed",
+    label: "CAPA Created",
   },
   "Pending Verifier Approval": {
     dot: C.primary,
@@ -122,12 +106,27 @@ const STATUS_CFG = {
     icon: "✕",
     label: "Rejected",
   },
+  "IN Progress": {
+    dot: C.warning,
+    bg: C.warningLight,
+    color: C.warningDark,
+    border: C.warningBorder,
+    icon: "⏳",
+    label: "In Progress",
+  },
+  Completed: {
+    dot: C.success,
+    bg: C.successLight,
+    color: C.successDark,
+    border: C.successBorder,
+    icon: "✓",
+    label: "Completed",
+  },
 };
 
-// Main flow order (Rejected* are off-flow branches, not steps)
 const FLOW_STEPS = [
   "Under Review",
-  "Pending Evidence",
+  "CAPA Created",
   "Pending Verifier Approval",
   "Approved",
   "Pending Note",
@@ -135,7 +134,7 @@ const FLOW_STEPS = [
 ];
 
 const initials = (name) =>
-  name
+  (name || "?")
     .split(" ")
     .map((n) => n[0])
     .join("")
@@ -143,7 +142,6 @@ const initials = (name) =>
     .slice(0, 2);
 
 // ── Helper components ────────────────────────────────────────────────────────
-
 const Pill = ({ label, bg, color, border, small, icon }) => (
   <span
     style={{
@@ -183,12 +181,7 @@ const SectionLabel = ({ children }) => (
     }}
   >
     <div
-      style={{
-        width: 3,
-        height: 16,
-        background: C.primary,
-        borderRadius: 2,
-      }}
+      style={{ width: 3, height: 16, background: C.primary, borderRadius: 2 }}
     />
     {children}
   </div>
@@ -272,73 +265,395 @@ const StatTile = ({ label, value, color, bg, last, trend }) => (
   </div>
 );
 
+// ── Image Lightbox Modal ─────────────────────────────────────────────────────
+const LightboxModal = ({ doc, allDocs, onClose }) => {
+  const [currentIndex, setCurrentIndex] = React.useState(
+    allDocs.findIndex((d) => d.id === doc.id),
+  );
+  const current = allDocs[currentIndex];
+
+  // Close on Escape key
+  React.useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft" && currentIndex > 0)
+        setCurrentIndex(currentIndex - 1);
+      if (e.key === "ArrowRight" && currentIndex < allDocs.length - 1)
+        setCurrentIndex(currentIndex + 1);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [currentIndex, onClose, allDocs.length]);
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 9999,
+        background: "rgba(0,0,0,0.82)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 24,
+        backdropFilter: "blur(6px)",
+      }}
+    >
+      {/* Modal box */}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: C.bgCard,
+          borderRadius: 16,
+          boxShadow: C.shadowXl,
+          overflow: "hidden",
+          maxWidth: "92vw",
+          maxHeight: "92vh",
+          display: "flex",
+          flexDirection: "column",
+          minWidth: 320,
+        }}
+      >
+        {/* ── Header ── */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "14px 20px",
+            borderBottom: `1px solid ${C.divider}`,
+            background: C.bgCard,
+            flexShrink: 0,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 20 }}>
+              {current.media_type === "Photo" ? "🖼️" : "📄"}
+            </span>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: C.text1 }}>
+                {current.media_type} #{currentIndex + 1}
+              </div>
+              {allDocs.length > 1 && (
+                <div style={{ fontSize: 11, color: C.text3 }}>
+                  {currentIndex + 1} of {allDocs.length}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {/* Open original */}
+            <a
+              href={current.file}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+                fontSize: 12,
+                fontWeight: 600,
+                color: C.primary,
+                textDecoration: "none",
+                padding: "6px 12px",
+                borderRadius: 6,
+                border: `1px solid ${C.primaryBorder}`,
+                background: C.primaryLight,
+              }}
+            >
+              ↗ Open original
+            </a>
+
+            {/* Close */}
+            <button
+              onClick={onClose}
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: "50%",
+                border: `1px solid ${C.divider}`,
+                background: C.bgPage,
+                cursor: "pointer",
+                fontSize: 16,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: C.text2,
+              }}
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        {/* ── Image area ── */}
+        <div
+          style={{
+            flex: 1,
+            overflow: "auto",
+            padding: 28,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "#1a1a2e",
+            minHeight: 240,
+            position: "relative",
+          }}
+        >
+          {current.media_type === "Photo" ? (
+            <img
+              src={current.file}
+              alt={`Attachment ${currentIndex + 1}`}
+              style={{
+                maxWidth: "80vw",
+                maxHeight: "68vh",
+                borderRadius: 10,
+                objectFit: "contain",
+                display: "block",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+              }}
+            />
+          ) : (
+            <div style={{ textAlign: "center", padding: 48 }}>
+              <div style={{ fontSize: 56, marginBottom: 16 }}>📄</div>
+              <div style={{ fontSize: 14, color: "#aaa", marginBottom: 20 }}>
+                Preview not available for this file type.
+              </div>
+              <a
+                href={current.file}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: C.primaryBorder,
+                  textDecoration: "none",
+                }}
+              >
+                Open file ↗
+              </a>
+            </div>
+          )}
+        </div>
+
+        {/* ── Navigation footer (only when multiple docs) ── */}
+        {allDocs.length > 1 && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "12px 20px",
+              borderTop: `1px solid ${C.divider}`,
+              background: C.bgCard,
+              flexShrink: 0,
+            }}
+          >
+            {/* Prev */}
+            <button
+              onClick={() => setCurrentIndex((p) => Math.max(0, p - 1))}
+              disabled={currentIndex === 0}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                fontSize: 13,
+                fontWeight: 600,
+                padding: "7px 16px",
+                borderRadius: 8,
+                border: `1px solid ${C.divider}`,
+                background: currentIndex === 0 ? C.bgPage : C.bgCard,
+                color: currentIndex === 0 ? C.text3 : C.text1,
+                cursor: currentIndex === 0 ? "not-allowed" : "pointer",
+                transition: "all 0.15s ease",
+              }}
+            >
+              ← Previous
+            </button>
+
+            {/* Thumbnail strip */}
+            <div style={{ display: "flex", gap: 6 }}>
+              {allDocs.map((d, idx) => (
+                <div
+                  key={d.id}
+                  onClick={() => setCurrentIndex(idx)}
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 6,
+                    overflow: "hidden",
+                    cursor: "pointer",
+                    border:
+                      idx === currentIndex
+                        ? `2px solid ${C.primary}`
+                        : `2px solid ${C.divider}`,
+                    flexShrink: 0,
+                    background: C.bgPage,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    transition: "border-color 0.15s ease",
+                  }}
+                >
+                  {d.media_type === "Photo" ? (
+                    <img
+                      src={d.file}
+                      alt=""
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    <span style={{ fontSize: 16 }}>📄</span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Next */}
+            <button
+              onClick={() =>
+                setCurrentIndex((p) => Math.min(allDocs.length - 1, p + 1))
+              }
+              disabled={currentIndex === allDocs.length - 1}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                fontSize: 13,
+                fontWeight: 600,
+                padding: "7px 16px",
+                borderRadius: 8,
+                border: `1px solid ${C.divider}`,
+                background:
+                  currentIndex === allDocs.length - 1 ? C.bgPage : C.bgCard,
+                color: currentIndex === allDocs.length - 1 ? C.text3 : C.text1,
+                cursor:
+                  currentIndex === allDocs.length - 1
+                    ? "not-allowed"
+                    : "pointer",
+                transition: "all 0.15s ease",
+              }}
+            >
+              Next →
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ── Data transformation helper ───────────────────────────────────────────────
+export const transformRecordToCapaProps = (record) => {
+  const timelineData = (record.status_details || []).map((item, index) => {
+    const sc = STATUS_CFG[item.status] || STATUS_CFG["Under Review"];
+    return {
+      id: item.id,
+      status: item.status,
+      title: sc.label || item.status,
+      description:
+        index === 0
+          ? `Complaint logged: ${record.complaint || record.problem || "—"}. Complaint No: ${record.complain_no}`
+          : `Status updated to "${item.status}" by ${item.created_by_name || item.created_by}.`,
+      user: item.created_by_name || item.created_by || "Unknown",
+      role: item.created_by_designation || "—",
+      date: item.creation_date,
+    };
+  });
+
+  return {
+    capaId: record.complain_no,
+    capaTitle: `${record.complain_type} — ${record.department}`,
+    assignedTo: record.customer,
+    createdDate: record.creation_date,
+    currentStatus: record.ccfstatus,
+    timelineData,
+    recordForEdit: record,
+  };
+};
+
 // ── Main component ───────────────────────────────────────────────────────────
-
 export const CapaStatusView = ({
-  capaId = "CAPA-2026-0042",
-  capaTitle = "Invoice Dispute — Sales",
-  priority = "High",
-  assignedTo = "Finance Team",
-  createdDate = "2026-04-10",
-
-  // Current status must be one of the 8 API statuses
-  currentStatus = "Pending Verifier Approval",
-
-  timelineData = [
-    {
-      id: 1,
-      status: "Under Review",
-      title: "Complaint submitted",
-      description:
-        "Initial CAPA complaint logged by sales team regarding invoice discrepancy in order #ORD-9821.",
-      user: "Abhishek",
-      role: "Sales Executive",
-      date: "2026-04-10 10:30",
-    },
-    {
-      id: 2,
-      status: "Pending Evidence",
-      title: "Evidence requested",
-      description:
-        "Reviewer requested supporting documents — original PO, delivery challan, and invoice copy.",
-      user: "Ramesh Kumar",
-      role: "QA Manager",
-      date: "2026-04-11 09:15",
-    },
-    {
-      id: 3,
-      status: "Rejected for Rework",
-      title: "Sent back for rework",
-      description:
-        "Submitted evidence was incomplete. Missing delivery challan. Returned to originator for correction.",
-      user: "Priya Nair",
-      role: "Verifier",
-      date: "2026-04-11 14:40",
-    },
-    {
-      id: 4,
-      status: "Pending Verifier Approval",
-      title: "Awaiting verifier approval",
-      description:
-        "Revised evidence submitted with all required documents. Pending sign-off from assigned verifier.",
-      user: "Finance Team",
-      role: "Accounts",
-      date: "2026-04-12 11:00",
-    },
-  ],
+  recordForEdit = {},
+  setOpenCapa,
+  capaId,
+  capaTitle,
+  assignedTo,
+  createdDate,
+  currentStatus,
+  timelineData = [],
 }) => {
-  const cfg = STATUS_CFG[currentStatus] || STATUS_CFG["Under Review"];
-  const activeStep = FLOW_STEPS.indexOf(currentStatus);
+  // ── Lightbox state ──
+  const [lightboxDoc, setLightboxDoc] = React.useState(null);
+
+  const derived = React.useMemo(() => {
+    if (recordForEdit && recordForEdit.ccfstatus && !currentStatus) {
+      return transformRecordToCapaProps(recordForEdit);
+    }
+    return null;
+  }, [recordForEdit, currentStatus]);
+
+  const _capaId =
+    capaId !== undefined
+      ? capaId
+      : derived && derived.capaId !== undefined
+        ? derived.capaId
+        : "—";
+  const _capaTitle =
+    capaTitle !== undefined
+      ? capaTitle
+      : derived && derived.capaTitle !== undefined
+        ? derived.capaTitle
+        : "—";
+  const _assignedTo =
+    assignedTo !== undefined
+      ? assignedTo
+      : derived && derived.assignedTo !== undefined
+        ? derived.assignedTo
+        : "—";
+  const _createdDate =
+    createdDate !== undefined
+      ? createdDate
+      : derived && derived.createdDate !== undefined
+        ? derived.createdDate
+        : moment().format("YYYY-MM-DD");
+  const _currentStatus =
+    currentStatus !== undefined
+      ? currentStatus
+      : derived && derived.currentStatus !== undefined
+        ? derived.currentStatus
+        : "Under Review";
+  const _timelineData =
+    timelineData && timelineData.length
+      ? timelineData
+      : derived && derived.timelineData
+        ? derived.timelineData
+        : [];
+  const _record = recordForEdit
+    ? recordForEdit
+    : derived && derived.recordForEdit
+      ? derived.recordForEdit
+      : {};
+
+  const cfg = STATUS_CFG[_currentStatus] || STATUS_CFG["Under Review"];
+  const activeStep = FLOW_STEPS.indexOf(_currentStatus);
   const isRejected =
-    currentStatus === "Rejected" || currentStatus === "Rejected for Rework";
-  const daysOpen = moment().diff(moment(createdDate), "days");
+    _currentStatus === "Rejected" || _currentStatus === "Rejected for Rework";
+  const daysOpen = moment().diff(moment(_createdDate), "days");
 
   const priorityCfg =
-    priority === "High"
+    _record.priority === "Critical"
       ? { bg: C.errorLight, color: C.errorDark, border: C.errorBorder }
-      : priority === "Medium"
+      : _record.priority === "High"
         ? { bg: C.warningLight, color: C.warningDark, border: C.warningBorder }
         : { bg: C.successLight, color: C.successDark, border: C.successBorder };
+
+  const allDocs = _record.document || [];
 
   return (
     <div
@@ -350,6 +665,15 @@ export const CapaStatusView = ({
         boxSizing: "border-box",
       }}
     >
+      {/* ── Lightbox ── */}
+      {lightboxDoc && (
+        <LightboxModal
+          doc={lightboxDoc}
+          allDocs={allDocs}
+          onClose={() => setLightboxDoc(null)}
+        />
+      )}
+
       {/* ── Top bar ── */}
       <div
         style={{
@@ -368,16 +692,16 @@ export const CapaStatusView = ({
       >
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: C.primary }}>
-            {capaId}
+            {_capaId}
           </span>
           <span style={{ width: 1, height: 18, background: C.divider }} />
           <span style={{ fontSize: 14, fontWeight: 500, color: C.text1 }}>
-            {capaTitle}
+            {_capaTitle}
           </span>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
           <Pill
-            label={currentStatus}
+            label={_currentStatus}
             bg={cfg.bg}
             color={cfg.color}
             border={cfg.border}
@@ -401,7 +725,6 @@ export const CapaStatusView = ({
           <Card>
             <SectionLabel>Process flow</SectionLabel>
 
-            {/* Rejected banner — shown when current status is a rejection */}
             {isRejected && (
               <div
                 style={{
@@ -424,7 +747,7 @@ export const CapaStatusView = ({
                       color: C.errorDark,
                     }}
                   >
-                    {currentStatus}
+                    {_currentStatus}
                   </div>
                   <div
                     style={{ fontSize: 12, color: C.errorDark, opacity: 0.8 }}
@@ -466,22 +789,14 @@ export const CapaStatusView = ({
                           background: done
                             ? C.success
                             : active
-                              ? isRejected
-                                ? C.error
-                                : C.primary
+                              ? scfg.dot
                               : C.bgPage,
                           border: done
                             ? "none"
                             : active
-                              ? `2px solid ${isRejected ? C.error : C.primary}`
+                              ? `2px solid ${scfg.dot}`
                               : `1px solid ${C.divider}`,
-                          color: done
-                            ? "#fff"
-                            : active
-                              ? isRejected
-                                ? C.error
-                                : C.primary
-                              : C.text3,
+                          color: done ? "#fff" : active ? "#fff" : C.text3,
                         }}
                       >
                         {done ? "✓" : active && isRejected ? "✕" : scfg.icon}
@@ -523,7 +838,6 @@ export const CapaStatusView = ({
               })}
             </div>
 
-            {/* Off-flow rejected states legend */}
             <div
               style={{
                 display: "flex",
@@ -536,9 +850,12 @@ export const CapaStatusView = ({
               <span
                 style={{ fontSize: 11, color: C.text3, alignSelf: "center" }}
               >
-                Off-flow states:
+                Current flow:
               </span>
-              {["Rejected for Rework", "Rejected"].map((s) => {
+              {(_currentStatus !== "Closed"
+                ? ["IN Progress"]
+                : ["Completed"]
+              ).map((s) => {
                 const sc = STATUS_CFG[s];
                 return (
                   <Pill
@@ -554,15 +871,90 @@ export const CapaStatusView = ({
             </div>
           </Card>
 
+          {/* Complaint details card */}
+          {_record.complain_no && (
+            <Card>
+              <SectionLabel>Complaint details</SectionLabel>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "0 24px",
+                }}
+              >
+                <DetailRow label="Complaint No." value={_record.complain_no} />
+                <DetailRow
+                  label="Complaint Type"
+                  value={_record.complain_type || "—"}
+                />
+                <DetailRow
+                  label="Complain For"
+                  value={_record.complain_for || "—"}
+                />
+                <DetailRow
+                  label="Source"
+                  value={_record.source_of_complaint || "—"}
+                />
+                <DetailRow
+                  label="Application"
+                  value={_record.application || "—"}
+                />
+                <DetailRow label="Problem" value={_record.problem || "—"} />
+                {(_record.batch_nos || []).length > 0 && (
+                  <DetailRow
+                    label="Batch No(s)."
+                    value={_record.batch_nos.join(", ")}
+                  />
+                )}
+                {(_record.invoices || []).length > 0 && (
+                  <DetailRow
+                    label="Invoice(s)"
+                    value={_record.invoices.join(", ")}
+                  />
+                )}
+                <DetailRow label="Unit" value={_record.unit || "—"} last />
+              </div>
+              {_record.unit_address && (
+                <div
+                  style={{
+                    marginTop: 8,
+                    padding: "10px 0",
+                    borderTop: `1px solid ${C.divider}`,
+                  }}
+                >
+                  <span
+                    style={{ fontSize: 12, color: C.text3, fontWeight: 500 }}
+                  >
+                    Unit Address:{" "}
+                  </span>
+                  <span style={{ fontSize: 13, color: C.text1 }}>
+                    {_record.unit_address}
+                  </span>
+                </div>
+              )}
+            </Card>
+          )}
+
           {/* Timeline */}
           <Card>
             <SectionLabel>Activity log</SectionLabel>
-            {timelineData.map((item, index) => {
-              const isLast = index === timelineData.length - 1;
+            {_timelineData.length === 0 && (
+              <div
+                style={{
+                  fontSize: 13,
+                  color: C.text3,
+                  textAlign: "center",
+                  padding: "24px 0",
+                }}
+              >
+                No activity recorded yet.
+              </div>
+            )}
+            {_timelineData.map((item, index) => {
+              const isLast = index === _timelineData.length - 1;
               const sc = STATUS_CFG[item.status] || STATUS_CFG["Under Review"];
               return (
                 <div key={item.id} style={{ display: "flex", gap: 16 }}>
-                  {/* Dot + line */}
                   <div
                     style={{
                       display: "flex",
@@ -594,8 +986,6 @@ export const CapaStatusView = ({
                       />
                     )}
                   </div>
-
-                  {/* Entry card */}
                   <div
                     style={{
                       flex: 1,
@@ -714,26 +1104,35 @@ export const CapaStatusView = ({
           {/* Case details */}
           <Card>
             <SectionLabel>Case details</SectionLabel>
-            <DetailRow label="CAPA ID" value={capaId} />
-            <DetailRow label="Assigned to" value={assignedTo} />
+            <DetailRow label="CAPA ID" value={_capaId} />
+            <DetailRow label="Customer" value={_assignedTo} />
             <DetailRow
               label="Created"
-              value={moment(createdDate).format("DD MMM YYYY")}
+              value={moment(_createdDate).format("DD MMM YYYY")}
             />
             <DetailRow
+              label="Updated"
+              value={
+                _record.updated_date
+                  ? moment(_record.updated_date).format("DD MMM YYYY")
+                  : "—"
+              }
+            />
+            <DetailRow label="Department" value={_record.department || "—"} />
+            <DetailRow
               label="Priority"
-              value={priority}
+              value={_record.priority || "—"}
               color={priorityCfg.color}
               last
             />
           </Card>
 
-          {/* All 8 statuses reference */}
+          {/* All statuses */}
           <Card>
             <SectionLabel>All statuses</SectionLabel>
             {[
               "Under Review",
-              "Pending Evidence",
+              "CAPA Created",
               "Pending Verifier Approval",
               "Rejected for Rework",
               "Approved",
@@ -742,7 +1141,7 @@ export const CapaStatusView = ({
               "Rejected",
             ].map((s) => {
               const sc = STATUS_CFG[s];
-              const isCurr = s === currentStatus;
+              const isCurr = s === _currentStatus;
               return (
                 <div
                   key={s}
@@ -819,11 +1218,103 @@ export const CapaStatusView = ({
               value={`${daysOpen}d`}
               color={daysOpen > 7 ? C.error : C.success}
               bg={daysOpen > 7 ? C.errorLight : C.successLight}
+            />
+            <StatTile
+              label="Status updates"
+              value={(_record.status_details || []).length}
+              color={C.info}
+              bg={C.infoLight}
               last
             />
           </Card>
+
+          {/* ── Attachments with lightbox ── */}
+          {allDocs.length > 0 && (
+            <Card>
+              <SectionLabel>Attachments</SectionLabel>
+              {allDocs.map((doc, i) => (
+                <div
+                  key={doc.id}
+                  onClick={() => setLightboxDoc(doc)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    padding: "10px 12px",
+                    borderRadius: 8,
+                    border: `1px solid ${C.divider}`,
+                    marginBottom: i < allDocs.length - 1 ? 8 : 0,
+                    background: C.bgPage,
+                    transition: "all 0.2s ease",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = C.primaryLight;
+                    e.currentTarget.style.borderColor = C.primaryBorder;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = C.bgPage;
+                    e.currentTarget.style.borderColor = C.divider;
+                  }}
+                >
+                  {/* Thumbnail preview */}
+                  <div
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 6,
+                      overflow: "hidden",
+                      flexShrink: 0,
+                      background: C.bgHover,
+                      border: `1px solid ${C.divider}`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {doc.media_type === "Photo" ? (
+                      <img
+                        src={doc.file}
+                        alt=""
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    ) : (
+                      <span style={{ fontSize: 20 }}>📄</span>
+                    )}
+                  </div>
+
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: C.primary,
+                      }}
+                    >
+                      {doc.media_type} #{i + 1}
+                    </div>
+                    <div style={{ fontSize: 11, color: C.text3 }}>
+                      Click to view
+                    </div>
+                  </div>
+
+                  {/* Zoom icon hint */}
+                  <span style={{ fontSize: 14, color: C.text3, flexShrink: 0 }}>
+                    🔍
+                  </span>
+                </div>
+              ))}
+            </Card>
+          )}
         </div>
       </div>
     </div>
   );
 };
+
+// ── Usage ─────────────────────────────────────────────────────────────────────
+//   <CapaStatusView recordForEdit={apiRecord} />

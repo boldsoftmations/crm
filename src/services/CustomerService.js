@@ -469,7 +469,7 @@ const getAllCCFData = (page, searchValue) => {
   }
 
   return CustomAxios.get(
-    `/api/customer/ccf/?is_closed=false&${params.toString()}`,
+    `/api/customer/ccf/?is_closed=false&is_active=True&${params.toString()}`,
   );
 };
 
@@ -482,7 +482,7 @@ const getAllClosedCCF = (page, search) => {
     params.append("search", search);
   }
   return CustomAxios.get(
-    `/api/customer/ccf/?is_closed=true&${params.toString()}`,
+    `/api/customer/ccf/?is_closed=true&is_active=True&${params.toString()}`,
   );
 };
 const getAllComplaintsList = (page, department) => {
@@ -563,10 +563,16 @@ const UpdateCapa = (id, data) => {
   return CustomAxios.patch(`/api/customer/cpa/${id}/`, data);
 };
 
-const getAllCapaData = (page, search) => {
+const getAllCapaData = (page, search, status, training) => {
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
+  }
+  if (status) {
+    params.append("status", status);
+  }
+  if (training) {
+    params.append("training", training);
   }
   if (search) {
     params.append("search", search);
@@ -733,6 +739,30 @@ const DeleteCCFImage = (data) => {
   );
 };
 
+const getRootCauseList = () => {
+  return CustomAxios.get(`/api/customer/ccf-root-cause-list/`);
+};
+const getCategoryList = (id) => {
+  const params = new URLSearchParams();
+  if (id) {
+    params.append("category_id", id);
+  }
+  return CustomAxios.get(
+    `/api/customer/ccf-root-category-list?${params.toString()}`,
+  );
+};
+
+const getComplaintNo = (customer, seller_account) => {
+  const params = new URLSearchParams();
+  if (customer) params.append("customer", customer);
+  if (seller_account) params.append("seller_unit", seller_account);
+  return CustomAxios.get(`/api/invoice/company-ccf-list/?${params.toString()}`);
+};
+
+// const UpdateCapa = (id, data) => {
+//   return CustomAxios.patch(`/api/customer/cpa/${id}/`, data);
+// };
+
 const CustomerServices = {
   getproductToDescription,
   getDiscription,
@@ -833,6 +863,9 @@ const CustomerServices = {
   getCustomerAddressType,
   CCFUpdate,
   DeleteCCFImage,
+  getRootCauseList,
+  getCategoryList,
+  getComplaintNo,
 };
 
 export default CustomerServices;

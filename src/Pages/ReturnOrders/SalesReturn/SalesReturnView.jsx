@@ -162,6 +162,7 @@ export const SalesReturnView = () => {
                   <StyledTableCell align="center">DATE</StyledTableCell>
                   <StyledTableCell align="center">INVOICE TYPE</StyledTableCell>
                   <StyledTableCell align="center">INVOICE NO</StyledTableCell>
+                  <StyledTableCell align="center">Complaint NO</StyledTableCell>
                   <StyledTableCell align="center">COMPANY</StyledTableCell>
                   <StyledTableCell align="center">TOTAL</StyledTableCell>
                 </TableRow>
@@ -219,6 +220,7 @@ function Row(props) {
         <StyledTableCell align="center">{row.invoice_date}</StyledTableCell>
         <StyledTableCell align="center">{row.invoice_type}</StyledTableCell>
         <StyledTableCell align="center">{row.invoice_no}</StyledTableCell>
+        <StyledTableCell align="center">{row.ccf_complain_no}</StyledTableCell>
         <StyledTableCell align="center">{row.supplier_name}</StyledTableCell>
         <StyledTableCell align="center">{row.total}</StyledTableCell>
       </StyledTableRow>
@@ -244,11 +246,9 @@ function Row(props) {
                         {historyRow.product}
                       </TableCell>
                       <TableCell align="center">
-                        {historyRow.type_of_unit
+                        {historyRow.type_of_unit === "decimal"
                           ? historyRow.quantity
-                            ? Math.floor(historyRow.quantity)
-                            : 0
-                          : 0}
+                          : Math.floor(historyRow.quantity)}
                       </TableCell>
                       <TableCell align="center">{historyRow.amount}</TableCell>
                     </TableRow>
