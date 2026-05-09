@@ -11,6 +11,7 @@ import {
   TableRow,
   TableBody,
   Table,
+  Typography,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import CustomerServices from "../../../services/CustomerService";
@@ -21,16 +22,15 @@ import CapaDownload from "./CapaDownload";
 import CapaImageView from "./CapaImagesView";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { useSelector } from "react-redux";
-
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import CustomSnackbar from "../../../Components/CustomerSnackbar";
 import { CreateCreditNote } from "./CreateCreditNote";
 import { CreateMaterialReturn } from "./CreateMaterialReturn";
 import UpdateCAPAStatus from "./UpdateCAPAStatus";
-// import { UpdateCapa } from "./UpdateCapa";
 import UpdateCapa from "./UpdateCapa";
 
-export const CapaView = () => {
+export const CapaView = ({ defaultStatus = "" }) => {
+  // 👈 accept prop
   const [open, setOpen] = useState(false);
   const [CCFData, setCCFData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,11 +50,9 @@ export const CapaView = () => {
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("success");
   const [openNewPopup, setOpenNewPopup] = useState(false);
-  const [capaStatus, setCapaStatus] = useState("");
-
+  const [capaStatus, setCapaStatus] = useState(defaultStatus); // 👈 init with defaultStatus
+  const [openRejectPopup, setOpenRejectPopup] = useState(false);
   const statusOptions = ["Reject", "Accept", "Pending", "Closed"];
-  // const [closeFiltered, setCloseFiltered] = useState([]);
-  // ✅ Fetch CAPA Data
 
   const getAllCAPAData = useCallback(async () => {
     try {
@@ -79,12 +77,12 @@ export const CapaView = () => {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    setCurrentPage(1); // Reset to first page with new search
+    setCurrentPage(1);
   };
 
   const handleReset = () => {
     setSearchQuery("");
-    setCurrentPage(1); // Reset to first page with no search query
+    setCurrentPage(1);
   };
 
   const handlePageChange = (event, value) => {
@@ -98,6 +96,10 @@ export const CapaView = () => {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleReject = () => {
+    setOpenRejectPopup(true);
   };
 
   const handlePopup = (setter, data = null) => {
@@ -115,7 +117,7 @@ export const CapaView = () => {
       setSeverity("success");
       setOpen(true);
       setTimeout(() => {
-        setOpenPopup(false); // Close the form dialog if submission is successful
+        setOpenPopup(false);
         getAllCAPAData();
       }, 400);
     } catch (error) {
@@ -139,13 +141,8 @@ export const CapaView = () => {
       />
       <Grid item xs={12}>
         <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
-          <Box
-            sx={{
-              p: 2,
-            }}
-          >
+          <Box sx={{ p: 2 }}>
             <Grid container spacing={2} alignItems="center">
-              {/* Search Component on the left */}
               <Grid item xs={12} md={4}>
                 <SearchComponent
                   onSearch={handleSearch}
@@ -153,7 +150,6 @@ export const CapaView = () => {
                 />
               </Grid>
 
-              {/* Title Text centered */}
               <Grid
                 item
                 xs={12}
@@ -182,6 +178,7 @@ export const CapaView = () => {
                   fullWidth
                   size="small"
                   options={statusOptions}
+                  value={capaStatus || null} // 👈 controlled value
                   getOptionLabel={(option) => option}
                   onChange={(e, value) => {
                     setCapaStatus(value || "");
@@ -196,15 +193,9 @@ export const CapaView = () => {
           <TableContainer
             sx={{
               maxHeight: 440,
-              "&::-webkit-scrollbar": {
-                width: 15,
-              },
-              "&::-webkit-scrollbar-track": {
-                backgroundColor: "#f2f2f2",
-              },
-              "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "#aaa9ac",
-              },
+              "&::-webkit-scrollbar": { width: 15 },
+              "&::-webkit-scrollbar-track": { backgroundColor: "#f2f2f2" },
+              "&::-webkit-scrollbar-thumb": { backgroundColor: "#aaa9ac" },
             }}
           >
             <Table
@@ -214,6 +205,7 @@ export const CapaView = () => {
             >
               <TableHead>
                 <TableRow>
+                  <StyledTableCell align="center">No</StyledTableCell>
                   <StyledTableCell align="center">
                     Complaint No.
                   </StyledTableCell>
@@ -225,25 +217,16 @@ export const CapaView = () => {
                   </StyledTableCell>
                   <StyledTableCell align="center">Status</StyledTableCell>
                   <StyledTableCell align="center">Updated By</StyledTableCell>
-
-                  {/* {canAcceptCapa && (
-                    <StyledTableCell align="center">Accept</StyledTableCell>
-                  )} */}
-
                   <StyledTableCell align="center">Action</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {CCFData.filter((item) => {
-                  // If user selected "Closed" → show only Closed
-                  if (capaStatus === "Closed") {
-                    return item.status === "Closed";
-                  }
-
-                  // Otherwise → hide Closed
+                  if (capaStatus === "Closed") return item.status === "Closed";
                   return item.status !== "Closed";
                 }).map((row, i) => (
                   <StyledTableRow key={i}>
+                    <StyledTableCell align="center">{i + 1}</StyledTableCell>
                     <StyledTableCell align="center">
                       {row.ccf_details.complain_no}
                     </StyledTableCell>
@@ -265,15 +248,6 @@ export const CapaView = () => {
                     <StyledTableCell align="center">
                       {row.updated_by}
                     </StyledTableCell>
-                    {/* <StyledTableCell align="center" hidden={!canAcceptCapa}>
-                      <Switch
-                        checked={Boolean(row.is_accepted)}
-                        disabled={row.is_accepted}
-                        onChange={(e) => handleCheck(row, e.target.checked)}
-                        color="primary"
-                      />
-                    </StyledTableCell> */}
-
                     <StyledTableCell align="center">
                       <Box
                         display="flex"
@@ -340,7 +314,6 @@ export const CapaView = () => {
                               Update Status
                             </Button>
                           )}
-
                         {(userData.groups.includes("QA") ||
                           userData.groups.includes("Director")) && (
                           <Button
@@ -351,7 +324,8 @@ export const CapaView = () => {
                             disabled={
                               !row.status === "Reject" ||
                               row.status === "Accept" ||
-                              row.status === "Pending"
+                              row.status === "Pending" ||
+                              row.status === "Closed"
                             }
                           >
                             Update CAPA
@@ -411,7 +385,6 @@ export const CapaView = () => {
           getAllCCFData={getAllCAPAData}
         />
       </Popup>
-
       <Popup
         fullScreen={true}
         title="Create Credit Note"
@@ -428,7 +401,6 @@ export const CapaView = () => {
       >
         <CapaDownload recordForEdit={recordForEdit} setOpenPdf={setOpenPdf} />
       </Popup>
-
       <Popup
         fullScreen={true}
         title="Update Corrective And Preventive Action"
@@ -441,7 +413,6 @@ export const CapaView = () => {
           getAllCAPAData={getAllCAPAData}
         />
       </Popup>
-
       <Popup
         fullScreen={true}
         title="Create Sales Material Return"
@@ -454,7 +425,22 @@ export const CapaView = () => {
           getAllCAPAData={getAllCAPAData}
         />
       </Popup>
-
+      <Popup
+        title="Confirm Rejection"
+        openPopup={openRejectPopup}
+        setOpenPopup={setOpenRejectPopup}
+      >
+        <Typography>Are you sure you want to reject?</Typography>
+        <br />
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Button variant="text" onClick={() => setOpenRejectPopup(false)}>
+            NO
+          </Button>
+          <Button color="error" variant="contained">
+            Yes
+          </Button>
+        </Box>
+      </Popup>
       <Popup
         maxWidth="md"
         title="Update capa settlement"
@@ -489,6 +475,7 @@ export const CapaView = () => {
     </>
   );
 };
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     fontSize: 12,
@@ -503,6 +490,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     padding: 6,
   },
 }));
+
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,

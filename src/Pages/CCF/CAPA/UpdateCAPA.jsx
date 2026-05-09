@@ -24,24 +24,24 @@ import { Popup } from "../../../Components/Popup";
 
 const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
   const { handleSuccess, handleError } = useNotificationHandling();
-  const [documentId, setDocumentId] = useState([]);
-  const [formData, setFormData] = useState({
-    // ccf: recordForEdit && recordForEdit.id,
-    complaint: (recordForEdit && recordForEdit.complaint) || "",
 
-    cap: recordForEdit && recordForEdit.cap ? recordForEdit.cap : "",
-    pap: recordForEdit && recordForEdit.pap ? recordForEdit.pap : "",
-    root_cause_why1: recordForEdit && recordForEdit.root_cause_why1,
-    root_cause_why2: recordForEdit && recordForEdit.root_cause_why2,
-    root_cause_why3: recordForEdit && recordForEdit.root_cause_why3,
-    root_cause_why4: recordForEdit && recordForEdit.root_cause_why4,
-    root_cause_why5: recordForEdit && recordForEdit.root_cause_why5,
-    root_cause_category: recordForEdit && recordForEdit.root_cause_category,
-    final_root_cause: recordForEdit && recordForEdit.final_root_cause,
-    ccf_status: "Pending Verifier Approval",
-    document: documentId ? documentId : [],
+  const [formData, setFormData] = useState({
+    complaint: (recordForEdit && recordForEdit.complaint) || "",
+    cap: (recordForEdit && recordForEdit.cap) || "",
+    pap: (recordForEdit && recordForEdit.pap) || "",
+    root_cause_why1: (recordForEdit && recordForEdit.root_cause_why1) || "",
+    root_cause_why2: (recordForEdit && recordForEdit.root_cause_why2) || "",
+    root_cause_why3: (recordForEdit && recordForEdit.root_cause_why3) || "",
+    root_cause_why4: (recordForEdit && recordForEdit.root_cause_why4) || "",
+    root_cause_why5: (recordForEdit && recordForEdit.root_cause_why5) || "",
+    root_cause_category:
+      (recordForEdit && recordForEdit.root_cause_category) || "",
+    final_root_cause: (recordForEdit && recordForEdit.final_root_cause) || "",
+    ccf_status: "Capa Revision Required",
+    document: [],
     status: "Pending",
   });
+
   const [files, setFiles] = useState([]);
   const [errors, setErrors] = useState({});
   const [open, setOpen] = useState(false);
@@ -49,150 +49,74 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("");
   const [rootCauses, setRootCause] = useState([]);
-  const [catogories, setCategories] = useState([]);
+  const [catogories, setCategories] = useState("");
   const [rootCauseId, setRootCauseId] = useState(null);
   const [openPopup1, setOpenPopup1] = useState(false);
   const [ccf_id, setccf_id] = useState(null);
   const [localDocuments, setLocalDocuments] = useState(
-    recordForEdit.document || [],
+    (recordForEdit && recordForEdit.document) || [],
   );
+
+  const fileInputRef = useRef(null);
+
+  // ─── Handlers ────────────────────────────────────────────────────────────────
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    if (errors[e.target.name]) {
-      setErrors({ ...errors, [e.target.name]: "" });
+    const name = e.target.name;
+    const value = e.target.value;
+    setFormData(function (prev) {
+      return Object.assign({}, prev, { [name]: value });
+    });
+    if (errors[name]) {
+      setErrors(function (prev) {
+        return Object.assign({}, prev, { [name]: "" });
+      });
     }
   };
 
-  const getCategoriesLists = async () => {
-    try {
-      if (!rootCauseId) return; // ✅ extra safety
-
-      setLoader(true);
-
-      const response = await CustomerServices.getCategoryList(rootCauseId);
-      console.log("res is :", response);
-      setCategories(response.data.data || []);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoader(false);
-    }
+  const handleAutocompleteChange = (name, value) => {
+    setFormData(function (prev) {
+      return Object.assign({}, prev, { [name]: value });
+    });
   };
+
+  const handleFileChange = (e) => {
+    const newFiles = Array.from(e.target.files);
+    const existingNames = files.map(function (f) {
+      return f.name;
+    });
+    const uniqueFiles = newFiles.filter(function (f) {
+      return !existingNames.includes(f.name);
+    });
+    setFiles(function (prev) {
+      return prev.concat(uniqueFiles);
+    });
+    e.target.value = null;
+  };
+
+  const removeFile = (index) => {
+    setFiles(function (prev) {
+      return prev.filter(function (_, i) {
+        return i !== index;
+      });
+    });
+  };
+
+  const handleClick = () => {
+    fileInputRef.current.click();
+  };
+
   const handleDelete = (row) => {
     setOpenPopup1(true);
     setccf_id(row.id);
   };
 
-  const handleDeleteDocument = async () => {
-    try {
-      setOpen(true);
-
-      const payload = {
-        id: recordForEdit.id,
-        document_id: ccf_id,
-        document_type: "capa",
-      };
-
-      await CustomerServices.DeleteCCFImage(payload);
-
-      // ✅ FIX: use localDocuments instead of ViewData.document
-      const updatedDocs = localDocuments.filter((doc) => doc.id !== ccf_id);
-
-      setLocalDocuments(updatedDocs);
-
-      handleSuccess("Document deleted successfully");
-
-      setOpenPopup1(false);
-
-      // optional: refresh backend data AFTER UI update
-      await getAllCCFData();
-    } catch (error) {
-      handleError(error);
-    } finally {
-      setOpen(false);
-    }
+  const handleClose = () => {
+    setOpen(false);
   };
 
-  useEffect(() => {
-    if (!rootCauseId) return; // ✅ STOP if empty
-    getCategoriesLists();
-  }, [rootCauseId]);
+  // ─── API Calls ────────────────────────────────────────────────────────────────
 
-  const handleAutocompleteChange = (name, value) => {
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleFileChange = (e) => {
-    const newFiles = Array.from(e.target.files);
-    const existingFiles = files.map((file) => file.name);
-    const uniqueFiles = newFiles.filter(
-      (file) => !existingFiles.includes(file.name),
-    );
-    setFiles([...files, ...uniqueFiles]);
-    e.target.value = null;
-  };
-  const removeFile = (index) => {
-    setFiles(files.filter((_, i) => i !== index));
-  };
-  const fileInputRef = useRef(null);
-  const handleClick = () => {
-    fileInputRef.current.click();
-  };
-  const handleUploadDocuments = async () => {
-    try {
-      console.log("length is :", files.length);
-      if (files.length === 0) {
-        alert("No files selected for upload.");
-        return;
-      }
-      setLoader(true);
-      const formData = new FormData();
-
-      // Append each file to the FormData object and detect file type (image or video)
-      files.forEach((file) => {
-        formData.append("file", file);
-
-        // Detect media type based on file type
-        if (file.type.startsWith("image")) {
-          formData.append("media_type", "Photo");
-        } else if (file.type.startsWith("video")) {
-          formData.append("media_type", "Video");
-        }
-      });
-
-      const response = await CustomerServices.uploadCCFdocument(formData);
-
-      if (response.status === 200) {
-        setMessage(
-          response.data.message || "Document(s) submitted successfully",
-        );
-        setSeverity("success"); // Change severity to success
-        setOpen(true);
-
-        // Extract IDs from the response and update state
-        const documentIds = response.data.data.map((doc) => doc.id);
-        setDocumentId(documentIds);
-
-        // Update the inputValue state with the document IDs
-        setFormData((prev) => ({
-          ...prev,
-          document: documentIds ? documentIds : [],
-        }));
-        setFiles([]); // Clear files after successful upload
-      } else {
-        setMessage("Error creating CAPA upload");
-        setSeverity("error");
-        setOpen(true);
-      }
-    } catch (error) {
-      console.log(error);
-      setMessage(error.message || "An error occurred during the upload");
-      setSeverity("error");
-      setOpen(true);
-    } finally {
-      setLoader(false);
-    }
-  };
   const getRootCause = async () => {
     try {
       const response = await CustomerServices.getRootCauseList();
@@ -201,16 +125,102 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
       console.log(error);
     }
   };
-  useEffect(() => {
-    getRootCause();
-  }, []);
+
+  const getCategoriesLists = async () => {
+    if (!rootCauseId) return;
+    try {
+      setLoader(true);
+      const response = await CustomerServices.getCategoryList(rootCauseId);
+      const categoryName =
+        response.data.data[0] && response.data.data[0].name
+          ? response.data.data[0].name
+          : "";
+      setCategories(categoryName);
+      setFormData(function (prev) {
+        return Object.assign({}, prev, { root_cause_category: categoryName });
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const handleUploadDocuments = async () => {
+    if (files.length === 0) {
+      alert("No files selected for upload.");
+      return;
+    }
+    try {
+      setLoader(true);
+      const uploadData = new FormData();
+      files.forEach(function (file) {
+        uploadData.append("file", file);
+        if (file.type.startsWith("image")) {
+          uploadData.append("media_type", "Photo");
+        } else if (file.type.startsWith("video")) {
+          uploadData.append("media_type", "Video");
+        }
+      });
+
+      const response = await CustomerServices.uploadCCFdocument(uploadData);
+
+      if (response.status === 200) {
+        const documentIds = response.data.data.map(function (doc) {
+          return doc.id;
+        });
+        setFormData(function (prev) {
+          return Object.assign({}, prev, { document: documentIds });
+        });
+        setFiles([]);
+        setMessage(
+          response.data.message || "Document(s) submitted successfully",
+        );
+        setSeverity("success");
+        setOpen(true);
+      } else {
+        setMessage("Error uploading document(s)");
+        setSeverity("error");
+        setOpen(true);
+      }
+    } catch (error) {
+      setMessage(error.message || "An error occurred during the upload");
+      setSeverity("error");
+      setOpen(true);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const handleDeleteDocument = async () => {
+    try {
+      setLoader(true);
+      const payload = {
+        id: recordForEdit.id,
+        document_id: ccf_id,
+        document_type: "capa",
+      };
+      await CustomerServices.DeleteCCFImage(payload);
+      setLocalDocuments(function (prev) {
+        return prev.filter(function (doc) {
+          return doc.id !== ccf_id;
+        });
+      });
+      handleSuccess("Document deleted successfully");
+      setOpenPopup1(false);
+      await getAllCCFData();
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoader(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (recordForEdit.document.length === 0 && formData.document.length === 0) {
-      setMessage(
-        "Please upload at least one document before submitting the form.",
-      );
+
+    if (localDocuments.length === 0 && formData.document.length === 0) {
+      setMessage("Please upload at least one document before submitting.");
       setSeverity("error");
       setOpen(true);
       return;
@@ -224,20 +234,18 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
       );
       setMessage(response.data.message);
       setSeverity("success");
-      getAllCCFData();
       setOpen(true);
-      setLoader(false);
-      setOpenCapa(false); // Close the form dialog if submission is successful
+      getAllCCFData();
+      setOpenCapa(false);
     } catch (error) {
-      console.log(error);
-      setMessage(
+      const errMsg =
         error &&
-          error.response &&
-          error.response.data &&
-          error.response.data.message
+        error.response &&
+        error.response.data &&
+        error.response.data.message
           ? error.response.data.message
-          : error.message || "Error creating CPA",
-      );
+          : error.message || "Error updating CAPA";
+      setMessage(errMsg);
       setSeverity("error");
       setOpen(true);
     } finally {
@@ -245,10 +253,21 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
     }
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-  console.log("Customer is :", recordForEdit);
+  // ─── Effects ─────────────────────────────────────────────────────────────────
+
+  useEffect(function () {
+    getRootCause();
+  }, []);
+
+  useEffect(
+    function () {
+      if (!rootCauseId) return;
+      getCategoriesLists();
+    },
+    [rootCauseId],
+  );
+
+  // ─── Render ───────────────────────────────────────────────────────────────────
 
   return (
     <>
@@ -267,60 +286,40 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
               fullWidth
               size="small"
               label="Complaint No."
-              name="ccf"
-              value={formData.ccf}
-              onChange={handleChange}
+              value={(recordForEdit && recordForEdit.id) || ""}
               inputProps={{ readOnly: true }}
-              error={!!errors.ccf}
-              helperText={errors.ccf}
               disabled
             />
           </Grid>
+
           <Grid item xs={6}>
             <TextField
               fullWidth
               size="small"
-              label="Customer Name."
-              value={recordForEdit && recordForEdit.ccf_details.customer}
+              label="Customer Name"
+              value={
+                recordForEdit &&
+                recordForEdit.ccf_details &&
+                recordForEdit.ccf_details.customer
+                  ? recordForEdit.ccf_details.customer
+                  : ""
+              }
               inputProps={{ readOnly: true }}
               disabled
             />
           </Grid>
-          <Grid item xs={12}>
-            {/* <CustomAutocomplete
-                  fullWidth
-                  multiple
-                  inputProps={{ readOnly: true }}
-                  disabled
-                  size="small"
-                  disablePortal
-                  id="combo-box-demo"
-                  options={
-                    recordForEdit && recordForEdit.batch_no
-                      ? recordForEdit.batch_no
-                      : []
-                  } // Ensure options are set properly
-                  value={
-                    recordForEdit && recordForEdit.batch_no
-                      ? recordForEdit.batch_no
-                      : []
-                  } // Set the value to all options
-                  getOptionLabel={(option) => option} // Adjusted to get the label correctly
-                  renderInput={(params) => (
-                    <CustomTextField {...params} label="Batch No" />
-                  )} */}
-            {/* /> */}
 
+          <Grid item xs={12}>
             <TextField
               fullWidth
               size="small"
               label="Batch No"
-              name="batch_no"
-              value={recordForEdit && recordForEdit.batch_no}
+              value={(recordForEdit && recordForEdit.batch_no) || ""}
               inputProps={{ readOnly: true }}
               disabled
             />
           </Grid>
+
           <Grid item xs={12}>
             <CustomAutocomplete
               fullWidth
@@ -329,7 +328,6 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
               disabled
               size="small"
               disablePortal
-              id="combo-box-demo"
               options={
                 recordForEdit && recordForEdit.invoices
                   ? recordForEdit.invoices
@@ -339,11 +337,13 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
                 recordForEdit && recordForEdit.invoices
                   ? recordForEdit.invoices
                   : []
-              } // Set the value to all options
-              getOptionLabel={(option) => option} // Adjusted to get the label correctly
-              renderInput={(params) => (
-                <CustomTextField {...params} label="Invoice No" />
-              )}
+              }
+              getOptionLabel={function (option) {
+                return option;
+              }}
+              renderInput={function (params) {
+                return <CustomTextField {...params} label="Invoice No" />;
+              }}
             />
           </Grid>
 
@@ -352,20 +352,17 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
               <Chip label="PRODUCT" />
             </Divider>
           </Grid>
+
           {recordForEdit &&
             recordForEdit.products &&
-            recordForEdit.products.map((input, index) => {
+            recordForEdit.products.map(function (input, index) {
               return (
                 <React.Fragment key={index}>
-                  {" "}
-                  {/* Use React.Fragment with a key for each item */}
                   <Grid item xs={12} sm={6}>
                     <CustomTextField
                       fullWidth
-                      name="product"
                       size="small"
                       label="Product"
-                      variant="outlined"
                       value={input.product}
                       inputProps={{ readOnly: true }}
                       disabled
@@ -374,10 +371,8 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
                   <Grid item xs={12} sm={6}>
                     <CustomTextField
                       fullWidth
-                      name="quantity"
                       size="small"
                       label="Quantity"
-                      variant="outlined"
                       value={input.quantity}
                       inputProps={{ readOnly: true }}
                       disabled
@@ -386,6 +381,7 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
                 </React.Fragment>
               );
             })}
+
           <Grid item xs={12}>
             <TextField
               fullWidth
@@ -400,72 +396,24 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
               required
             />
           </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              rows={4}
-              size="small"
-              label="Root Cause (1 Whys)"
-              name="root_cause_why1"
-              value={formData.root_cause_why1}
-              onChange={handleChange}
-              error={!!errors.root_cause_why1}
-              required
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              rows={4}
-              size="small"
-              label="Root Cause (2 Whys)"
-              name="root_cause_why2"
-              value={formData.root_cause_why2}
-              onChange={handleChange}
-              error={!!errors.root_cause_why2}
-              required
-            />
-          </Grid>
 
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              rows={4}
-              size="small"
-              label="Root Cause (3 Whys)"
-              name="root_cause_why3"
-              value={formData.root_cause_why3}
-              onChange={handleChange}
-              error={!!errors.root_cause_why3}
-              required
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              rows={4}
-              size="small"
-              label="Root Cause (4 Whys)"
-              name="root_cause_why4"
-              value={formData.root_cause_why4}
-              onChange={handleChange}
-              error={!!errors.root_cause_why4}
-              required
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              rows={4}
-              size="small"
-              label="Root Cause (5 Whys)"
-              name="root_cause_why5"
-              value={formData.root_cause_why5}
-              onChange={handleChange}
-              error={!!errors.root_cause_why5}
-              required
-            />
-          </Grid>
+          {["1", "2", "3", "4", "5"].map(function (n) {
+            return (
+              <Grid item xs={12} key={n}>
+                <TextField
+                  fullWidth
+                  rows={4}
+                  size="small"
+                  label={"Root Cause (" + n + " Whys)"}
+                  name={"root_cause_why" + n}
+                  value={formData["root_cause_why" + n]}
+                  onChange={handleChange}
+                  error={!!errors["root_cause_why" + n]}
+                  required
+                />
+              </Grid>
+            );
+          })}
 
           <Grid item xs={12} sm={6}>
             <CustomAutocomplete
@@ -474,62 +422,57 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
               size="small"
               disablePortal
               value={formData.final_root_cause || ""}
-              options={rootCauses && rootCauses.map((data) => data.name)}
-              onChange={(event, value) => {
+              options={rootCauses.map(function (data) {
+                return data.name;
+              })}
+              onChange={function (event, value) {
                 handleAutocompleteChange("final_root_cause", value);
-
-                const selected = rootCauses.find(
-                  (option) => option.name === value,
-                );
-
+                const selected = rootCauses.find(function (opt) {
+                  return opt.name === value;
+                });
                 if (selected) {
                   setRootCauseId(selected.category__id);
-
-                  // ✅ RESET CATEGORY WHEN ROOT CAUSE CHANGES
-                  setFormData((prev) => ({
-                    ...prev,
-                    root_cause_category: "",
-                  }));
+                  setFormData(function (prev) {
+                    return Object.assign({}, prev, { root_cause_category: "" });
+                  });
                 } else {
                   setRootCauseId(null);
+                  setCategories("");
+                  setFormData(function (prev) {
+                    return Object.assign({}, prev, { root_cause_category: "" });
+                  });
                 }
               }}
               error={!formData.final_root_cause}
               helperText={!formData.final_root_cause ? "Required" : ""}
-              renderInput={(params) => (
-                <CustomTextField
-                  {...params}
-                  label="Root Cause"
-                  error={!formData.final_root_cause}
-                  helperText={!formData.final_root_cause ? "Required" : ""}
-                />
-              )}
+              renderInput={function (params) {
+                return (
+                  <CustomTextField
+                    {...params}
+                    label="Root Cause"
+                    error={!formData.final_root_cause}
+                    helperText={!formData.final_root_cause ? "Required" : ""}
+                  />
+                );
+              }}
             />
           </Grid>
+
           <Grid item xs={12} sm={6}>
-            <CustomAutocomplete
+            <CustomTextField
               fullWidth
               size="small"
               name="root_cause_category"
-              value={formData.root_cause_category || ""}
-              disabled={catogories.length === 0} // ✅ FIXED
-              options={catogories.map((data) => data.name)} // ✅ SAFE
-              onChange={(event, value) =>
-                handleAutocompleteChange("root_cause_category", value)
+              label="Root Cause Category"
+              value={
+                catogories
+                  ? catogories
+                  : (recordForEdit && recordForEdit.root_cause_category) || ""
               }
-              // getOptionLabel={(option) => option.name || ""} // ✅ SAFE
-              error={!formData.root_cause_category}
-              helperText={!formData.root_cause_category ? "Required" : ""}
-              renderInput={(params) => (
-                <CustomTextField
-                  {...params}
-                  label="Root Cause Category"
-                  error={!formData.root_cause_category}
-                  helperText={!formData.root_cause_category ? "Required" : ""}
-                />
-              )}
+              disabled
             />
           </Grid>
+
           <Grid item xs={12}>
             <TextField
               fullWidth
@@ -545,6 +488,7 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
               required
             />
           </Grid>
+
           <Grid item xs={12}>
             <TextField
               fullWidth
@@ -566,62 +510,59 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
               <Typography sx={{ fontWeight: 600, mb: 1 }}>
                 Uploaded Documents
               </Typography>
-
               <List sx={{ display: "flex", flexWrap: "wrap" }}>
-                {localDocuments.map((doc, index) => (
-                  <ListItem
-                    key={index}
-                    sx={{
-                      width: 150,
-                      flexDirection: "column",
-                      background: "#f5f7fa",
-                      border: "1px solid #e0e0e0",
-                      borderRadius: 1,
-                      m: 1,
-                      p: 1,
-                      position: "relative", // ✅ IMPORTANT
-                    }}
-                  >
-                    <IconButton
-                      onClick={() => handleDelete(doc)}
+                {localDocuments.map(function (doc, index) {
+                  return (
+                    <ListItem
+                      key={index}
                       sx={{
-                        position: "absolute",
-                        top: 4,
-                        right: 4,
-                        color: "black",
-                        background: "white",
-                        "&:hover": {
-                          background: "#f8d7da",
-                        },
+                        width: 150,
+                        flexDirection: "column",
+                        background: "#f5f7fa",
+                        border: "1px solid #e0e0e0",
+                        borderRadius: 1,
+                        m: 1,
+                        p: 1,
+                        position: "relative",
                       }}
                     >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
-                    <img
-                      src={doc.file}
-                      alt={doc.name}
-                      style={{
-                        width: "100%",
-                        height: 100,
-                        objectFit: "cover",
-                        borderRadius: 4,
-                      }}
-                    />
-
-                    <ListItemText
-                      primary={doc.name || "Document"}
-                      sx={{
-                        textAlign: "center",
-                        mt: 1,
-                        fontSize: 12,
-                      }}
-                    />
-                  </ListItem>
-                ))}
+                      <IconButton
+                        onClick={function () {
+                          handleDelete(doc);
+                        }}
+                        sx={{
+                          position: "absolute",
+                          top: 4,
+                          right: 4,
+                          color: "black",
+                          background: "white",
+                          "&:hover": { background: "#f8d7da" },
+                        }}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                      <img
+                        src={doc.file}
+                        alt={doc.name || "document"}
+                        style={{
+                          width: "100%",
+                          height: 100,
+                          objectFit: "cover",
+                          borderRadius: 4,
+                        }}
+                      />
+                      <ListItemText
+                        primary={doc.name || "Document"}
+                        sx={{ textAlign: "center", mt: 1, fontSize: 12 }}
+                      />
+                    </ListItem>
+                  );
+                })}
               </List>
             </Grid>
           )}
-          <Grid item xs={12} sm={12}>
+
+          <Grid item xs={12}>
             <div>
               <div
                 style={{
@@ -646,7 +587,7 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
                     fontWeight: "bold",
                   }}
                 >
-                  Attach Document :{" "}
+                  Attach Document:
                 </span>
                 <Button
                   variant="outlined"
@@ -657,73 +598,73 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
                   Select Document
                 </Button>
               </div>
-              <div>
-                {files.length > 0 && (
+
+              {files.length > 0 && (
+                <>
                   <Typography
                     variant="h6"
                     gutterBottom
-                    style={{
-                      opacity: ".9",
-                      fontSize: "16px",
-                    }}
+                    style={{ opacity: ".9", fontSize: "16px" }}
                   >
                     Selected Files:
                   </Typography>
-                )}
-
-                {files.length > 0 && (
                   <List style={{ display: "flex", flexWrap: "wrap" }}>
-                    {files.map((file, index) => (
-                      <ListItem
-                        key={index}
-                        divider
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          width: "150px",
-                          margin: "10px",
-                          backgroundColor: "#e4f1fe",
-                          borderRadius: "3px",
-                        }}
-                      >
-                        <div
+                    {files.map(function (file, index) {
+                      return (
+                        <ListItem
+                          key={index}
+                          divider
                           style={{
                             display: "flex",
-                            justifyContent: "space-between",
+                            flexDirection: "column",
                             alignItems: "center",
+                            width: "150px",
+                            margin: "10px",
+                            backgroundColor: "#e4f1fe",
+                            borderRadius: "3px",
                           }}
                         >
-                          <ListItemText
-                            primary={file.name}
-                            primaryTypographyProps={{
-                              style: { fontSize: "12px" },
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <ListItemText
+                              primary={file.name}
+                              primaryTypographyProps={{
+                                style: { fontSize: "12px" },
+                              }}
+                            />
+                            <IconButton
+                              edge="end"
+                              onClick={function () {
+                                removeFile(index);
+                              }}
+                              style={{ marginTop: "10px" }}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </div>
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt={file.name}
+                            style={{
+                              width: "100px",
+                              height: "100px",
+                              objectFit: "cover",
+                              marginTop: "10px",
                             }}
                           />
-                          <IconButton
-                            edge="end"
-                            onClick={() => removeFile(index)}
-                            style={{ marginTop: "10px" }}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </div>
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt={file.name}
-                          style={{
-                            width: "100px",
-                            height: "100px",
-                            objectFit: "cover",
-                            marginTop: "10px",
-                          }}
-                        />
-                      </ListItem>
-                    ))}
+                        </ListItem>
+                      );
+                    })}
                   </List>
-                )}
-              </div>
+                </>
+              )}
             </div>
+
             <Button
               variant="contained"
               size="small"
@@ -734,6 +675,7 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
             </Button>
           </Grid>
         </Grid>
+
         <Grid sx={12} style={{ marginTop: "2rem" }}>
           <Button variant="contained" color="primary" type="submit" fullWidth>
             Submit
@@ -747,9 +689,17 @@ const UpdateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
         setOpenPopup={setOpenPopup1}
       >
         <Box>
-          <Typography>{`Are you sure you want to delete this `}</Typography>
-          <Button onClick={() => setOpenPopup1(false)}>NO</Button>
-          <Button onClick={() => handleDeleteDocument()}>yes</Button>
+          <Typography>
+            Are you sure you want to delete this document?
+          </Typography>
+          <Button
+            onClick={function () {
+              setOpenPopup1(false);
+            }}
+          >
+            No
+          </Button>
+          <Button onClick={handleDeleteDocument}>Yes</Button>
         </Box>
       </Popup>
     </>

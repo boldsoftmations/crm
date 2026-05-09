@@ -27,6 +27,7 @@ import CreateCapa from "../CAPA/CreateCapa";
 import { useSelector } from "react-redux";
 import UpdateCCF from "./UpdateCCF";
 import { CapaStatusView } from "./CapaStatusView";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
 export const CCFView = () => {
   const [open, setOpen] = useState(false);
@@ -45,6 +46,9 @@ export const CCFView = () => {
   const [ViewData, setViewData] = useState(null);
   const [openStatusPopup, setOpenStatusPopup] = useState(false);
   const [recordForStatus, setRecordForStatus] = useState(null);
+  const [openRejectConfirm, setOpenRejectConfirm] = useState(false);
+  const [recordForReject, setRecordForReject] = useState(null);
+  const [activeFilter, setActiveFilter] = useState("active");
 
   const allowedRoles = [
     "Director",
@@ -60,9 +64,11 @@ export const CCFView = () => {
   const getAllCCFData = useCallback(async () => {
     try {
       setOpen(true);
+      const isActiveParam = activeFilter === "active" ? true : false;
       const response = await CustomerServices.getAllCCFData(
         currentPage,
         searchQuery,
+        isActiveParam,
       );
       setCCFData(response.data.results);
       setTotalPages(Math.ceil(response.data.count / 25));
@@ -71,11 +77,11 @@ export const CCFView = () => {
     } finally {
       setOpen(false);
     }
-  }, [currentPage, searchQuery]); // Ensure dependencies are correctly listed
+  }, [currentPage, searchQuery, activeFilter]); // Ensure dependencies are correctly listed
 
   useEffect(() => {
     getAllCCFData();
-  }, [currentPage, searchQuery]);
+  }, [currentPage, searchQuery, activeFilter]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -85,6 +91,27 @@ export const CCFView = () => {
   const openStatusPopupHandler = (row) => {
     setOpenStatusPopup(true);
     setRecordForStatus(row);
+  };
+
+  const handleRejectClick = (row) => {
+    setRecordForReject(row);
+    setOpenRejectConfirm(true);
+  };
+
+  const handleConfirmReject = async () => {
+    try {
+      setOpen(true);
+      await CustomerServices.CCFUpdate(recordForReject.id, {
+        is_active: false,
+      });
+      setOpenRejectConfirm(false);
+      setRecordForReject(null);
+      getAllCCFData();
+      setOpen(false);
+    } catch (error) {
+      handleError(error);
+      setOpen(false);
+    }
   };
 
   const handleReset = () => {
@@ -113,6 +140,18 @@ export const CCFView = () => {
     setRecordForEdit(data);
     setOpenCapa(true);
   };
+
+  const handleupdateInactive = async () => {
+    try {
+      setOpen(true);
+      await CustomerServices.CCFUpdate(ViewData.id, { is_active: true });
+      getAllCCFData();
+      setOpen(false);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   return (
     <>
       <MessageAlert
@@ -132,10 +171,30 @@ export const CCFView = () => {
           >
             <Grid container spacing={2} alignItems="center">
               {/* Search Component on the left */}
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={3}>
                 <SearchComponent
                   onSearch={handleSearch}
                   onReset={handleReset}
+                />
+              </Grid>
+
+              {/* Filter Dropdown */}
+              <Grid item xs={12} md={2}>
+                <CustomAutocomplete
+                  id="status-filter"
+                  label="Status"
+                  value={activeFilter}
+                  onChange={(event, newValue) => {
+                    if (newValue) {
+                      setActiveFilter(newValue);
+                      setCurrentPage(1);
+                    }
+                  }}
+                  options={["active", "inactive"]}
+                  getOptionLabel={(option) =>
+                    option === "active" ? "Active" : "Inactive"
+                  }
+                  fullWidth
                 />
               </Grid>
 
@@ -143,7 +202,7 @@ export const CCFView = () => {
               <Grid
                 item
                 xs={12}
-                md={4}
+                md={3}
                 sx={{ textAlign: { xs: "center", md: "center" } }}
               >
                 <h3
@@ -175,7 +234,7 @@ export const CCFView = () => {
                     variant="contained"
                     onClick={() => setOpenCCF(true)}
                   >
-                    Add
+                    Create CCF
                   </Button>
                 )}
               </Grid>
@@ -203,6 +262,7 @@ export const CCFView = () => {
             >
               <TableHead>
                 <TableRow>
+                  <StyledTableCell align="center">No</StyledTableCell>
                   <StyledTableCell align="center">
                     Complaint No.
                   </StyledTableCell>
@@ -220,6 +280,7 @@ export const CCFView = () => {
                   <StyledTableCell align="center">
                     Compaint Source
                   </StyledTableCell>
+                  <StyledTableCell align="center">Status</StyledTableCell>
                   <StyledTableCell align="center">Invoices</StyledTableCell>
                   <StyledTableCell align="center">Action</StyledTableCell>
                 </TableRow>
@@ -228,6 +289,7 @@ export const CCFView = () => {
                 {CCFData &&
                   CCFData.map((row, i) => (
                     <StyledTableRow key={i}>
+                      <StyledTableCell align="center">{i + 1}</StyledTableCell>
                       <StyledTableCell align="center">
                         {row.complain_no}
                       </StyledTableCell>
@@ -254,6 +316,9 @@ export const CCFView = () => {
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {row.source_of_complaint}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.ccfstatus}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {row.invoices.map((invoice, index) => (
@@ -285,10 +350,8 @@ export const CCFView = () => {
                             onClick={() => updateCCFData(row)}
                             disabled={
                               row.ccfstatus !== "Under Review" ||
-                              userData.groups.includes(
-                                "Operations & Supply Chain Manager",
-                                "Customer Service",
-                              )
+                              userData.groups.includes("Customer Service") ||
+                              row.is_active === false
                             }
                           >
                             Update
@@ -315,7 +378,8 @@ export const CCFView = () => {
                                   "Operations & Supply Chain Manager",
                                 ) ||
                                 row.ccfstatus !==
-                                  ("Under Review" || "CAPA Created")
+                                  ("Under Review" || "CAPA Created") ||
+                                row.is_active === false
                               }
                             >
                               Create CAPA
@@ -329,6 +393,27 @@ export const CCFView = () => {
                         >
                           Status View
                         </Button>
+
+                        {(userData.groups.includes("Director") ||
+                          userData.groups.includes("QA") ||
+                          userData.groups.includes(
+                            "Operations & Supply Chain Manager",
+                          ) ||
+                          userData.groups.includes("Customer Service")) && (
+                          <Button
+                            color="error"
+                            variant="text"
+                            size="small"
+                            onClick={() => handleRejectClick(row)}
+                            disabled={
+                              // row.ccfstatus !== "Under Review" ||
+                              row.is_active === false ||
+                              userData.groups.includes("Customer Service")
+                            }
+                          >
+                            Reject
+                          </Button>
+                        )}
                       </StyledTableCell>
                     </StyledTableRow>
                   ))}
@@ -393,7 +478,7 @@ export const CCFView = () => {
 
         <Popup
           fullScreen={true}
-          title="CCF Trracking Status"
+          title="CCF Tracking Status"
           openPopup={openStatusPopup}
           setOpenPopup={setOpenStatusPopup}
         >
@@ -401,6 +486,33 @@ export const CCFView = () => {
             setOpenCapa={setOpenCapa}
             recordForEdit={recordForStatus}
           />
+        </Popup>
+
+        <Popup
+          title="Confirm Rejection"
+          openPopup={openRejectConfirm}
+          setOpenPopup={setOpenRejectConfirm}
+        >
+          <Box sx={{ p: 3, textAlign: "center" }}>
+            <p>Are you sure you want to reject this complaint?</p>
+            <Box
+              sx={{ display: "flex", gap: 2, justifyContent: "center", mt: 2 }}
+            >
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleConfirmReject}
+              >
+                Yes
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={() => setOpenRejectConfirm(false)}
+              >
+                No
+              </Button>
+            </Box>
+          </Box>
         </Popup>
       </Grid>
     </>

@@ -22,6 +22,7 @@ const UpdateCAPAStatus = ({
   const [formData, setFormData] = useState({
     status: recordForEdit.status || "",
     ccf_status: "",
+    remark: null,
   });
 
   useEffect(() => {
@@ -29,7 +30,7 @@ const UpdateCAPAStatus = ({
       formData.status === "Accept"
         ? "Pending Note"
         : formData.status === "Reject"
-          ? "Rejected for Rework"
+          ? "Capa Revision Required"
           : "";
 
     setFormData((prev) => ({
@@ -42,6 +43,7 @@ const UpdateCAPAStatus = ({
   const [loader, setLoader] = useState(false);
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("success");
+  const [isRemarkRequired, setisRemarkRequired] = useState(false);
 
   // const handleChange = (e) => {
   //   setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -49,7 +51,6 @@ const UpdateCAPAStatus = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       setLoader(true);
       const response = await CustomerServices.UpdateCapa(
@@ -60,7 +61,7 @@ const UpdateCAPAStatus = ({
       setSeverity("success");
       setOpen(true);
       setTimeout(() => {
-        setUpdateCAPAPopup(false); // Close the form dialog if submission is successful
+        setUpdateCAPAPopup(false);
         getAllCAPAData();
       }, 400);
     } catch (error) {
@@ -197,10 +198,33 @@ const UpdateCAPAStatus = ({
                   value={formData.status}
                   options={CAPAstatus}
                   getOptionLabel={(option) => option}
-                  onChange={(e, value) =>
-                    setFormData((prev) => ({ ...prev, status: value }))
-                  }
+                  onChange={(e, value) => {
+                    if (value === "Reject") {
+                      setisRemarkRequired(true);
+                    }
+                    setFormData((prev) => ({ ...prev, status: value }));
+                  }}
                   label="Complaint Status"
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                style={{
+                  display: formData.status === "Reject" ? "block" : "none",
+                }}
+              >
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Remark"
+                  name="remark"
+                  variant="outlined"
+                  value={formData.remark}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, remark: e.target.value }))
+                  }
                 />
               </Grid>
             </Grid>

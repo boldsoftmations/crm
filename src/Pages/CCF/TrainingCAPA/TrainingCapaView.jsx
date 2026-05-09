@@ -1,18 +1,18 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  styled,
-  TableCell,
-  Paper,
+  Box,
   Button,
   Grid,
-  Box,
+  Paper,
+  Switch,
+  Table,
+  TableBody,
+  TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  TableBody,
-  Table,
-  Switch,
   Typography,
+  styled,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import CustomerServices from "../../../services/CustomerService";
@@ -23,24 +23,56 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import CustomSnackbar from "../../../Components/CustomerSnackbar";
 
+// ================= CONSTANTS =================
+const PAGE_SIZE = 25;
+const STATUS_OPTIONS = ["Pending", "Completed"];
+
+const INITIAL_SNACKBAR = { open: false, message: "", severity: "success" };
+
+// ================= STYLES =================
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: "#006BA1",
+    color: "#fff",
+    fontWeight: "bold",
+    textTransform: "uppercase",
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+}));
+
+// ================= HELPERS =================
+const getNestedValue = (obj, path, fallback) => {
+  var result = obj;
+  for (var i = 0; i < path.length; i++) {
+    if (result === null || result === undefined)
+      return fallback !== undefined ? fallback : "";
+    result = result[path[i]];
+  }
+  return result !== null && result !== undefined
+    ? result
+    : fallback !== undefined
+      ? fallback
+      : "";
+};
+
+// ================= COMPONENT =================
 const TrainingCapaView = () => {
-  // ================= STATE =================
-  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [CCFData, setCCFData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [capaStatus, setCapaStatus] = useState("");
-
   const [loader, setLoader] = useState(false);
-  const [message, setMessage] = useState("");
-  const [severity, setSeverity] = useState("success");
-
+  const [isTraining, setIsTraining] = useState("false");
+  const [selectedStatus, setSelectedStatus] = useState("Pending");
+  const [snackbar, setSnackbar] = useState(INITIAL_SNACKBAR);
   const [openPopup, setOpenPopup] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [trainedMap, setTrainedMap] = useState({});
-
-  const statusOptions = ["Pending", "Completed"];
 
   // ================= API =================
   const getAllCAPAData = useCallback(async () => {
@@ -50,67 +82,73 @@ const TrainingCapaView = () => {
         currentPage,
         searchQuery,
         "",
-        false,
+        isTraining,
       );
+      var results =
+        response && response.data && response.data.results
+          ? response.data.results
+          : [];
+      var count =
+        response && response.data && response.data.count
+          ? response.data.count
+          : 0;
+      setCCFData(results);
+      setTotalPages(Math.ceil(count / PAGE_SIZE));
 
-      if (response && response.data) {
-        setCCFData(response.data.results || []);
-        setTotalPages(Math.ceil(response.data.count / 25));
+      var map = {};
+      for (var j = 0; j < results.length; j++) {
+        var item = results[j];
+        if (item && item.id && item.is_training) {
+          map[item.id] = true;
+        }
       }
+      setTrainedMap(map);
     } catch (error) {
       console.error("Error fetching CAPA data:", error);
     } finally {
       setLoader(false);
     }
-  }, [currentPage, searchQuery, capaStatus]);
+  }, [currentPage, searchQuery, isTraining]);
 
   useEffect(() => {
     getAllCAPAData();
   }, [getAllCAPAData]);
 
-  // ================= UPDATE API =================
   const updateTrainingStatus = async () => {
     if (!selectedRow || !selectedRow.id) return;
 
     try {
       setLoader(true);
-
       const response = await CustomerServices.UpdateCapa(selectedRow.id, {
         is_training: true,
       });
 
-      setMessage(
+      var successMessage =
         response && response.data && response.data.message
           ? response.data.message
-          : "Training updated",
-      );
-      setSeverity("success");
-      setOpenSnackbar(true);
-
-      // update UI
-      setTrainedMap(function (prev) {
-        const updated = { ...prev };
-        updated[selectedRow.id] = true;
-        return updated;
+          : "Training updated";
+      setSnackbar({
+        open: true,
+        message: successMessage,
+        severity: "success",
       });
 
+      setTrainedMap((prev) => ({ ...prev, [selectedRow.id]: true }));
       setOpenPopup(false);
-
-      // refresh
       getAllCAPAData();
     } catch (error) {
-      console.log(error);
-
-      setMessage(
+      var errorMessage =
         error &&
-          error.response &&
-          error.response.data &&
-          error.response.data.message
+        error.response &&
+        error.response.data &&
+        error.response.data.message
           ? error.response.data.message
-          : "Error updating training",
-      );
-      setSeverity("error");
-      setOpenSnackbar(true);
+          : "Error updating training";
+      setSnackbar({
+        open: true,
+        message: errorMessage,
+        severity: "error",
+      });
     } finally {
       setLoader(false);
     }
@@ -127,28 +165,27 @@ const TrainingCapaView = () => {
     setCurrentPage(1);
   };
 
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
+  const handleStatusChange = (_, value) => {
+    setSelectedStatus(value);
+    setIsTraining(value === "Completed" ? "true" : "false");
+    setCurrentPage(1);
   };
 
-  const handleTrained = () => {
-    updateTrainingStatus(); // ✅ API call
+  const handleSwitchChange = (row) => {
+    setSelectedRow(row);
+    setOpenPopup(true);
   };
 
-  const handleClickNo = () => {
-    setOpenPopup(false);
-  };
-
-  // ================= UI =================
+  // ================= RENDER =================
   return (
     <>
       <CustomLoader open={loader} />
 
       <CustomSnackbar
-        open={openSnackbar}
-        message={message}
-        severity={severity}
-        onClose={() => setOpenSnackbar(false)}
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
       />
 
       <Grid item xs={12}>
@@ -163,9 +200,9 @@ const TrainingCapaView = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} md={4} style={{ textAlign: "center" }}>
-                <Typography variant="h6" style={{ fontWeight: "bold" }}>
-                  Corrective & Preventive Action List
+              <Grid item xs={12} md={4} sx={{ textAlign: "center" }}>
+                <Typography variant="h6" fontWeight="bold">
+                  Corrective &amp; Preventive Action List
                 </Typography>
               </Grid>
 
@@ -173,12 +210,10 @@ const TrainingCapaView = () => {
                 <CustomAutocomplete
                   fullWidth
                   size="small"
-                  options={statusOptions}
+                  options={STATUS_OPTIONS}
                   getOptionLabel={(option) => option}
-                  onChange={(e, value) => {
-                    setCapaStatus(value || "");
-                    setCurrentPage(1);
-                  }}
+                  value={selectedStatus}
+                  onChange={handleStatusChange}
                   label="Filter by Status"
                 />
               </Grid>
@@ -190,55 +225,37 @@ const TrainingCapaView = () => {
             <Table stickyHeader>
               <TableHead>
                 <TableRow>
-                  <StyledTableCell align="center">ID</StyledTableCell>
-                  <StyledTableCell align="center">
-                    Complaint No.
-                  </StyledTableCell>
-                  <StyledTableCell align="center">Customer</StyledTableCell>
-                  <StyledTableCell align="center">Status</StyledTableCell>
-                  <StyledTableCell align="center">Action</StyledTableCell>
+                  {["ID", "Complaint No.", "Customer", "Status", "Action"].map(
+                    (header) => (
+                      <StyledTableCell key={header} align="center">
+                        {header}
+                      </StyledTableCell>
+                    ),
+                  )}
                 </TableRow>
               </TableHead>
 
               <TableBody>
-                {CCFData.map(function (row, i) {
-                  var complainNo =
-                    row && row.ccf_details && row.ccf_details.complain_no
-                      ? row.ccf_details.complain_no
-                      : "";
-
-                  var customer =
-                    row && row.ccf_details && row.ccf_details.customer
-                      ? row.ccf_details.customer
-                      : "";
-
+                {CCFData.map((row, i) => {
+                  const rowId = row && row.id ? row.id : null;
+                  const isTrained = Boolean(rowId && trainedMap[rowId]);
                   return (
-                    <StyledTableRow key={i}>
+                    <StyledTableRow key={rowId || i}>
                       <StyledTableCell align="center">{i + 1}</StyledTableCell>
-
                       <StyledTableCell align="center">
-                        {complainNo}
+                        {getNestedValue(row, ["ccf_details", "complain_no"])}
                       </StyledTableCell>
-
                       <StyledTableCell align="center">
-                        {customer}
+                        {getNestedValue(row, ["ccf_details", "customer"])}
                       </StyledTableCell>
-
                       <StyledTableCell align="center">
-                        {row.status}
+                        {row && row.status ? row.status : ""}
                       </StyledTableCell>
-
-                      <StyledTableCell
-                        align="center"
-                        hidden={row.status === "Closed"}
-                      >
+                      <StyledTableCell align="center">
                         <Switch
-                          checked={row.id && trainedMap[row.id] ? true : false}
-                          disabled={row.id && trainedMap[row.id] ? true : false}
-                          onChange={function () {
-                            setSelectedRow(row);
-                            setOpenPopup(true);
-                          }}
+                          checked={isTrained}
+                          disabled={isTrained}
+                          onChange={() => handleSwitchChange(row)}
                         />
                       </StyledTableCell>
                     </StyledTableRow>
@@ -251,12 +268,12 @@ const TrainingCapaView = () => {
           <CustomPagination
             totalPages={totalPages}
             currentPage={currentPage}
-            handlePageChange={handlePageChange}
+            handlePageChange={(_, value) => setCurrentPage(value)}
           />
         </Paper>
       </Grid>
 
-      {/* Popup */}
+      {/* Confirmation Popup */}
       <Popup
         title="Training Confirmation"
         openPopup={openPopup}
@@ -264,15 +281,14 @@ const TrainingCapaView = () => {
       >
         <Box sx={{ p: 2, textAlign: "center" }}>
           <Typography variant="h6">Is training completed?</Typography>
-
-          <Box sx={{ marginTop: 2 }}>
-            <Button onClick={handleClickNo}>No</Button>
-
+          <Box
+            sx={{ mt: 2, display: "flex", justifyContent: "center", gap: 2 }}
+          >
+            <Button onClick={() => setOpenPopup(false)}>No</Button>
             <Button
               variant="contained"
               color="success"
-              onClick={handleTrained}
-              sx={{ marginLeft: 2 }}
+              onClick={updateTrainingStatus}
             >
               Yes
             </Button>
@@ -282,21 +298,5 @@ const TrainingCapaView = () => {
     </>
   );
 };
-
-// ================= STYLES =================
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  ["&." + tableCellClasses.head]: {
-    backgroundColor: "#006BA1",
-    color: "#fff",
-    fontWeight: "bold",
-    textTransform: "uppercase",
-  },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-}));
 
 export default TrainingCapaView;

@@ -38,7 +38,7 @@ const CreateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
     root_cause_why5: "",
     root_cause_category: "",
     final_root_cause: "",
-    ccf_status: "Pending Verifier Approval",
+    ccf_status: "Pending Capa Approval",
     document: documentId ? documentId : [],
   });
   const [files, setFiles] = useState([]);
@@ -48,7 +48,7 @@ const CreateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("");
   const [rootCauses, setRootCause] = useState([]);
-  const [catogories, setCategories] = useState([]);
+  const [catogaries, setCategories] = useState([]);
   const [rootCauseId, setRootCauseId] = useState(null);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -59,20 +59,25 @@ const CreateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
 
   const getCategoriesLists = async () => {
     try {
-      if (!rootCauseId) return; // ✅ extra safety
-
+      if (!rootCauseId) return;
       setLoader(true);
 
       const response = await CustomerServices.getCategoryList(rootCauseId);
-      console.log("res is :", response);
-      setCategories(response.data.data || []);
+      const categoryName = response.data.data[0].name || "";
+
+      setCategories(categoryName);
+
+      // ✅ Sync formData too
+      setFormData((prev) => ({
+        ...prev,
+        root_cause_category: categoryName,
+      }));
     } catch (error) {
       console.log(error);
     } finally {
       setLoader(false);
     }
   };
-
   useEffect(() => {
     if (!rootCauseId) return; // ✅ STOP if empty
     getCategoriesLists();
@@ -447,29 +452,14 @@ const CreateCapa = ({ recordForEdit, setOpenCapa, getAllCCFData }) => {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <CustomAutocomplete
+                <CustomTextField
                   fullWidth
-                  size="small"
                   name="root_cause_category"
-                  value={formData.root_cause_category || ""}
-                  disabled={catogories.length === 0} // ✅ FIXED
-                  options={catogories.map((data) => data.name)} // ✅ SAFE
-                  onChange={(event, value) =>
-                    handleAutocompleteChange("root_cause_category", value)
-                  }
-                  // getOptionLabel={(option) => option.name || ""} // ✅ SAFE
-                  error={!formData.root_cause_category}
-                  helperText={!formData.root_cause_category ? "Required" : ""}
-                  renderInput={(params) => (
-                    <CustomTextField
-                      {...params}
-                      label="Root Cause Category"
-                      error={!formData.root_cause_category}
-                      helperText={
-                        !formData.root_cause_category ? "Required" : ""
-                      }
-                    />
-                  )}
+                  size="small"
+                  label="Root Cause Category"
+                  variant="outlined"
+                  value={catogaries || ""}
+                  inputProps={{ readOnly: true }}
                 />
               </Grid>
               <Grid item xs={12}>

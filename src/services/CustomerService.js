@@ -457,7 +457,7 @@ const createCCFComplaintForm = (data) => {
   return CustomAxios.post("/api/customer/ccf/", data);
 };
 
-const getAllCCFData = (page, searchValue) => {
+const getAllCCFData = (page, searchValue, isActive) => {
   const params = new URLSearchParams();
 
   if (page) {
@@ -468,8 +468,12 @@ const getAllCCFData = (page, searchValue) => {
     params.append("search", searchValue);
   }
 
+  // Set is_active parameter - defaults to True if not provided (convert to Python format)
+  const activeParam =
+    isActive !== undefined ? (isActive ? "True" : "False") : "True";
+
   return CustomAxios.get(
-    `/api/customer/ccf/?is_closed=false&is_active=True&${params.toString()}`,
+    `/api/customer/ccf/?is_closed=false&is_active=${activeParam}&${params.toString()}`,
   );
 };
 
@@ -563,7 +567,7 @@ const UpdateCapa = (id, data) => {
   return CustomAxios.patch(`/api/customer/cpa/${id}/`, data);
 };
 
-const getAllCapaData = (page, search, status, training) => {
+const getAllCapaData = (page, search, status, training = false) => {
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
@@ -572,7 +576,7 @@ const getAllCapaData = (page, search, status, training) => {
     params.append("status", status);
   }
   if (training) {
-    params.append("training", training);
+    params.append("is_training", training);
   }
   if (search) {
     params.append("search", search);

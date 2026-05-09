@@ -648,23 +648,7 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
                   />
                 </Grid>
               )}
-              <Grid item xs={12} sm={6}>
-                <Autocomplete
-                  fullWidth
-                  multiple
-                  size="small"
-                  disablePortal
-                  id="combo-box-demo"
-                  options={batch_no}
-                  getOptionLabel={(option) => option}
-                  onChange={(e, value) =>
-                    setInputValue((prev) => ({ ...prev, batch_nos: value }))
-                  }
-                  renderInput={(params) => (
-                    <CustomTextField {...params} label="Batch No" />
-                  )}
-                />
-              </Grid>
+
               <Grid item xs={12} sm={12}></Grid>
               <Grid item xs={12} sm={6}>
                 <TextField

@@ -235,6 +235,47 @@ export const UpdateLeads = memo((props) => {
       try {
         e.preventDefault();
         setOpen(true);
+        if (!leads.name) {
+          setAlertMsg({
+            message: "Name is required",
+            severity: "error",
+            open: true,
+          });
+          setOpen(false);
+          return;
+        }
+        if (!leads.email) {
+          setAlertMsg({
+            message: "Email is required",
+            severity: "error",
+            open: true,
+          });
+          setOpen(false);
+          return;
+        }
+        if (
+          !leads.type_of_customer ||
+          !leads.origin_type ||
+          !leads.business_type ||
+          !leads.address ||
+          !leads.city ||
+          !leads.state ||
+          !leads.pincode ||
+          (leads.type_of_customer === "Distribution Customer" &&
+            (!leads.category ||
+              !leads.distribution_type ||
+              !leads.main_distribution)) ||
+          (leads.type_of_customer === "Industrial Customer" &&
+            !leads.industrial_list)
+        ) {
+          setAlertMsg({
+            message: "Please fill all the required fields",
+            severity: "error",
+            open: true,
+          });
+          setOpen(false);
+          return;
+        }
 
         const data = {
           hot_lead: leads.hot_lead,
@@ -803,7 +844,7 @@ export const UpdateLeads = memo((props) => {
           <Grid item xs={12}>
             <>
               <FormControl>
-                <FormLabel id="demo-row-radio-buttons-group-label">
+                <FormLabel id="demo-row-radio-buttons-group-label" required>
                   Customer Type
                 </FormLabel>
                 <RadioGroup
@@ -831,7 +872,7 @@ export const UpdateLeads = memo((props) => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <>
-              <FormControl>
+              <FormControl required>
                 <FormLabel id="demo-row-radio-buttons-group-label">
                   Type of Customer
                 </FormLabel>
@@ -930,8 +971,9 @@ export const UpdateLeads = memo((props) => {
                   minWidth: 220,
                 }}
                 size="small"
-                onChange={(event, value) =>
-                  handleSelectChange("distribution_type", value)
+                onChange={
+                  (event, value) =>
+                    handleSelectChange("distribution_type", value) //onching to distru
                 }
                 value={leads.distribution_type || ""}
                 options={Option.DistributionTypeOption.map(

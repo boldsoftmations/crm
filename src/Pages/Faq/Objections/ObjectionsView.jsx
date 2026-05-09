@@ -49,7 +49,7 @@ export const ObjectionsView = () => {
         setOpen(true);
         const response = await UserProfileService.getAllObjectionData(
           page,
-          query
+          query,
         );
         setObjection(response.data.results);
         const total = response.data.count;
@@ -60,7 +60,7 @@ export const ObjectionsView = () => {
         setOpen(false);
       }
     },
-    [searchQuery]
+    [searchQuery],
   );
 
   useEffect(() => {
@@ -154,8 +154,9 @@ export const ObjectionsView = () => {
                   {(userData.groups.includes("Sales Manager") ||
                     userData.groups.includes("Sales Deputy Manager") ||
                     userData.groups.includes(
-                      "Sales Assistant Deputy Manager"
+                      "Sales Assistant Deputy Manager",
                     ) ||
+                    userData.groups.includes("Sales Manager(Retailer) ") ||
                     userData.groups.includes("Director")) && (
                     <Grid item xs={12} sm={1}>
                       <Button

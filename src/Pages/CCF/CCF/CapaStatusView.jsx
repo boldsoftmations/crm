@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import moment from "moment";
+import InvoiceServices from "../../../services/InvoiceService";
 
 // ── Modern color palette ─────────────────────────────────────────────────────
 const C = {
@@ -58,7 +59,7 @@ const STATUS_CFG = {
     icon: "📋",
     label: "CAPA Created",
   },
-  "Pending Verifier Approval": {
+  "Pending Capa Approval": {
     dot: C.primary,
     bg: C.primaryLight,
     color: C.primaryDark,
@@ -66,7 +67,7 @@ const STATUS_CFG = {
     icon: "⏳",
     label: "Awaiting Approval",
   },
-  "Rejected for Rework": {
+  "Capa Revision Required": {
     dot: C.error,
     bg: C.errorLight,
     color: C.errorDark,
@@ -127,7 +128,7 @@ const STATUS_CFG = {
 const FLOW_STEPS = [
   "Under Review",
   "CAPA Created",
-  "Pending Verifier Approval",
+  "Pending Capa Approval",
   "Approved",
   "Pending Note",
   "Closed",
@@ -328,7 +329,7 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span role="img" aria-label="document" style={{ fontSize: 20 }}>
+            <span style={{ fontSize: 20 }}>
               {current.media_type === "Photo" ? "🖼️" : "📄"}
             </span>
             <div>
@@ -348,7 +349,7 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
             <a
               href={current.file}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noreferrer"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -383,9 +384,7 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
                 color: C.text2,
               }}
             >
-              <span role="img" aria-label="close">
-                ✕
-              </span>
+              ✕
             </button>
           </div>
         </div>
@@ -419,20 +418,14 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
             />
           ) : (
             <div style={{ textAlign: "center", padding: 48 }}>
-              <span
-                style={{ fontSize: 56, marginBottom: 16 }}
-                role="img"
-                aria-label="document"
-              >
-                📄
-              </span>
+              <div style={{ fontSize: 56, marginBottom: 16 }}>📄</div>
               <div style={{ fontSize: 14, color: "#aaa", marginBottom: 20 }}>
                 Preview not available for this file type.
               </div>
               <a
                 href={current.file}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noreferrer"
                 style={{
                   fontSize: 13,
                   fontWeight: 600,
@@ -478,10 +471,7 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
                 transition: "all 0.15s ease",
               }}
             >
-              <span role="img" aria-label="previous">
-                ←
-              </span>
-              Previous
+              ← Previous
             </button>
 
             {/* Thumbnail strip */}
@@ -519,13 +509,7 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
                       }}
                     />
                   ) : (
-                    <span
-                      role="img"
-                      aria-label="document"
-                      style={{ fontSize: 16 }}
-                    >
-                      📄
-                    </span>
+                    <span style={{ fontSize: 16 }}>📄</span>
                   )}
                 </div>
               ))}
@@ -556,10 +540,7 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
                 transition: "all 0.15s ease",
               }}
             >
-              <span role="img" aria-label="next">
-                →
-              </span>{" "}
-              Next
+              Next →
             </button>
           </div>
         )}
@@ -580,6 +561,7 @@ export const transformRecordToCapaProps = (record) => {
         index === 0
           ? `Complaint logged: ${record.complaint || record.problem || "—"}. Complaint No: ${record.complain_no}`
           : `Status updated to "${item.status}" by ${item.created_by_name || item.created_by}.`,
+      remark: item.remark || null,
       user: item.created_by_name || item.created_by || "Unknown",
       role: item.created_by_designation || "—",
       date: item.creation_date,
@@ -609,12 +591,47 @@ export const CapaStatusView = ({
   timelineData = [],
 }) => {
   // ── Lightbox state ──
+
+  const [invoices, setInvoices] = React.useState([]);
+
+  const getInvoicesDetails = async () => {
+    try {
+      const response = await InvoiceServices.getInvoiceByCustomerAndSellerUnit(
+        recordForEdit.customer,
+        recordForEdit.unit,
+      );
+      setInvoices(response.data.data);
+      console.log(response);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => {
+    getInvoicesDetails();
+  }, []);
+  console.log("data is :", recordForEdit);
+
+  const invoiceNos = recordForEdit.invoices;
+
+  const invoiceDates = invoices
+    .filter(function (inv) {
+      return invoiceNos.indexOf(inv.invoice_no) !== -1;
+    })
+    .map(function (inv) {
+      return inv.generation_date;
+    });
+
+  console.log("invoiceDates:", invoiceDates);
+
+  // console.log("invoice is :", inoviceDate);
+
   const [lightboxDoc, setLightboxDoc] = React.useState(null);
 
   const derived = React.useMemo(() => {
     if (recordForEdit && recordForEdit.ccfstatus && !currentStatus) {
       return transformRecordToCapaProps(recordForEdit);
     }
+
     return null;
   }, [recordForEdit, currentStatus]);
 
@@ -639,8 +656,8 @@ export const CapaStatusView = ({
   const _createdDate =
     createdDate !== undefined
       ? createdDate
-      : derived && derived.createdDate !== undefined
-        ? derived.createdDate
+      : derived && derived.creation_date !== undefined
+        ? derived.creation_date
         : moment().format("YYYY-MM-DD");
   const _currentStatus =
     currentStatus !== undefined
@@ -663,8 +680,17 @@ export const CapaStatusView = ({
   const cfg = STATUS_CFG[_currentStatus] || STATUS_CFG["Under Review"];
   const activeStep = FLOW_STEPS.indexOf(_currentStatus);
   const isRejected =
-    _currentStatus === "Rejected" || _currentStatus === "Rejected for Rework";
+    _currentStatus === "Rejected" ||
+    _currentStatus === "Capa Revision Required";
   const daysOpen = moment().diff(moment(_createdDate), "days");
+
+  // Count occurrences of each main-flow status in history (for retry badge on stepper)
+  const stepRetryCount = {};
+  (_record.status_details || []).forEach((item) => {
+    if (FLOW_STEPS.indexOf(item.status) !== -1) {
+      stepRetryCount[item.status] = (stepRetryCount[item.status] || 0) + 1;
+    }
+  });
 
   const priorityCfg =
     _record.priority === "Critical"
@@ -758,9 +784,7 @@ export const CapaStatusView = ({
                   marginBottom: 16,
                 }}
               >
-                <span role="img" aria-label="rejected" style={{ fontSize: 18 }}>
-                  ✕
-                </span>
+                <span style={{ fontSize: 18 }}>✕</span>
                 <div>
                   <div
                     style={{
@@ -821,19 +845,7 @@ export const CapaStatusView = ({
                           color: done ? "#fff" : active ? "#fff" : C.text3,
                         }}
                       >
-                        {done ? (
-                          <span role="img" aria-label="completed">
-                            ✓
-                          </span>
-                        ) : active && isRejected ? (
-                          <span role="img" aria-label="rejected">
-                            ✕
-                          </span>
-                        ) : (
-                          <span role="img" aria-label="status">
-                            {scfg.icon}
-                          </span>
-                        )}
+                        {done ? "✓" : active && isRejected ? "✕" : scfg.icon}
                       </div>
                       <div
                         style={{
@@ -854,6 +866,24 @@ export const CapaStatusView = ({
                       >
                         {label}
                       </div>
+                      {/* Retry badge on stepper bubble */}
+                      {(stepRetryCount[label] || 0) > 1 && (
+                        <div
+                          style={{
+                            marginTop: 4,
+                            fontSize: 9,
+                            fontWeight: 700,
+                            background: C.warningLight,
+                            color: C.warningDark,
+                            border: `1px solid ${C.warningBorder}`,
+                            borderRadius: 8,
+                            padding: "1px 6px",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          x{stepRetryCount[label]}
+                        </div>
+                      )}
                     </div>
                     {!last && (
                       <div
@@ -936,8 +966,8 @@ export const CapaStatusView = ({
                 <DetailRow label="Problem" value={_record.problem || "—"} />
                 {(_record.batch_nos || []).length > 0 && (
                   <DetailRow
-                    label="Batch No(s)."
-                    value={_record.batch_nos.join(", ")}
+                    label="Invoice date"
+                    value={invoiceDates ? invoiceDates.join(", ") : ""}
                   />
                 )}
                 {(_record.invoices || []).length > 0 && (
@@ -984,152 +1014,274 @@ export const CapaStatusView = ({
                 No activity recorded yet.
               </div>
             )}
-            {_timelineData.map((item, index) => {
-              const isLast = index === _timelineData.length - 1;
-              const sc = STATUS_CFG[item.status] || STATUS_CFG["Under Review"];
-              return (
-                <div key={item.id} style={{ display: "flex", gap: 16 }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      width: 20,
-                      flexShrink: 0,
-                    }}
-                  >
+            {(() => {
+              // Track how many times each status has appeared as we iterate
+              const seenCount = {};
+              return _timelineData.map((item, index) => {
+                const isLast = index === _timelineData.length - 1;
+                const sc =
+                  STATUS_CFG[item.status] || STATUS_CFG["Under Review"];
+
+                seenCount[item.status] = (seenCount[item.status] || 0) + 1;
+                const occurrence = seenCount[item.status];
+                const isRetry = occurrence > 1;
+
+                return (
+                  <div key={item.id} style={{ display: "flex", gap: 16 }}>
+                    {/* Dot + connector */}
                     <div
                       style={{
-                        width: 12,
-                        height: 12,
-                        borderRadius: "50%",
-                        background: sc.dot,
-                        marginTop: 6,
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        width: 20,
                         flexShrink: 0,
                       }}
-                    />
-                    {!isLast && (
+                    >
                       <div
                         style={{
-                          width: 2,
-                          flex: 1,
-                          background: C.divider,
-                          margin: "4px 0",
-                          minHeight: 28,
+                          width: 12,
+                          height: 12,
+                          borderRadius: "50%",
+                          background: isRetry ? C.warning : sc.dot,
+                          marginTop: 6,
+                          flexShrink: 0,
+                          boxShadow: isRetry
+                            ? `0 0 0 3px ${C.warningLight}`
+                            : "none",
                         }}
                       />
-                    )}
-                  </div>
-                  <div
-                    style={{
-                      flex: 1,
-                      background: C.bgPage,
-                      border: `1px solid ${C.divider}`,
-                      borderRadius: 8,
-                      padding: "14px 16px",
-                      marginBottom: isLast ? 0 : 14,
-                      borderLeft: `3px solid ${sc.dot}`,
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
-                        marginBottom: 6,
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: 14,
-                          fontWeight: 600,
-                          color: C.text1,
-                        }}
-                      >
-                        {item.title}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: 11,
-                          color: C.text3,
-                          fontFamily: "monospace",
-                          whiteSpace: "nowrap",
-                          marginLeft: 12,
-                        }}
-                      >
-                        {moment(item.date).format("DD MMM YYYY · h:mm A")}
-                      </span>
+                      {!isLast && (
+                        <div
+                          style={{
+                            width: 2,
+                            flex: 1,
+                            background: C.divider,
+                            margin: "4px 0",
+                            minHeight: 28,
+                          }}
+                        />
+                      )}
                     </div>
-                    <p
-                      style={{
-                        fontSize: 13,
-                        color: C.text2,
-                        lineHeight: 1.6,
-                        margin: "0 0 12px",
-                      }}
-                    >
-                      {item.description}
-                    </p>
+
+                    {/* Entry card */}
                     <div
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        paddingTop: 10,
-                        borderTop: `1px solid ${C.divider}`,
+                        flex: 1,
+                        background: isRetry ? "#fffbeb" : C.bgPage,
+                        border: `1px solid ${isRetry ? C.warningBorder : C.divider}`,
+                        borderRadius: 8,
+                        padding: "14px 16px",
+                        marginBottom: isLast ? 0 : 14,
+                        borderLeft: `3px solid ${isRetry ? C.warning : sc.dot}`,
                       }}
                     >
+                      {/* Title row */}
                       <div
                         style={{
                           display: "flex",
-                          alignItems: "center",
-                          gap: 10,
+                          justifyContent: "space-between",
+                          alignItems: "flex-start",
+                          marginBottom: 8,
                         }}
                       >
                         <div
                           style={{
-                            width: 30,
-                            height: 30,
-                            borderRadius: "50%",
                             display: "flex",
                             alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: 11,
-                            fontWeight: 700,
-                            background: sc.bg,
-                            color: sc.color,
-                            border: `1px solid ${sc.border}`,
+                            gap: 8,
+                            flexWrap: "wrap",
                           }}
                         >
-                          {initials(item.user)}
-                        </div>
-                        <div>
-                          <div
+                          <span
                             style={{
-                              fontSize: 13,
-                              fontWeight: 500,
+                              fontSize: 14,
+                              fontWeight: 600,
                               color: C.text1,
                             }}
                           >
-                            {item.user}
-                          </div>
-                          <div style={{ fontSize: 11, color: C.text3 }}>
-                            {item.role}
+                            {item.title}
+                          </span>
+                        </div>
+                        <span
+                          style={{
+                            fontSize: 11,
+                            color: C.text3,
+                            fontFamily: "monospace",
+                            whiteSpace: "nowrap",
+                            marginLeft: 12,
+                          }}
+                        >
+                          {moment(item.date, "DD-MM-YYYY HH:mm:ss").format(
+                            "DD MMM YYYY · h:mm A",
+                          )}
+                        </span>
+                      </div>
+
+                      {/* Re-attempt explanation */}
+                      {/* {isRetry && (
+                        <div
+                          style={{
+                            fontSize: 12,
+                            color: C.warningDark,
+                            background: "#fff8f0",
+                            border: `1px solid ${C.warningBorder}`,
+                            borderRadius: 6,
+                            padding: "6px 10px",
+                            marginBottom: 10,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 6,
+                          }}
+                        >
+                          <span>⚠️</span>
+                          This step was revisited after a rejection — re-attempt{" "}
+                          {occurrence} for{" "}
+                          <strong style={{ marginLeft: 3 }}>
+                            &quot;{item.status}&quot;
+                          </strong>
+                          .
+                        </div>
+                      )} */}
+
+                      <p
+                        style={{
+                          fontSize: 13,
+                          color: C.text2,
+                          lineHeight: 1.6,
+                          margin: "0 0 10px",
+                        }}
+                      >
+                        {item.description}
+                      </p>
+
+                      {/* Remark block */}
+                      {item.remark && (
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "flex-start",
+                            gap: 8,
+                            background:
+                              item.status === "Capa Revision Required" ||
+                              item.status === "Rejected"
+                                ? C.errorLight
+                                : C.infoLight,
+                            border:
+                              "1px solid " +
+                              (item.status === "Capa Revision Required" ||
+                              item.status === "Rejected"
+                                ? C.errorBorder
+                                : C.infoBorder),
+                            borderRadius: 6,
+                            padding: "8px 12px",
+                            marginBottom: 12,
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: 14,
+                              flexShrink: 0,
+                              marginTop: 1,
+                            }}
+                          >
+                            {item.status === "Capa Revision Required" ||
+                            item.status === "Rejected"
+                              ? "🚫"
+                              : "💬"}
+                          </span>
+                          <div>
+                            <span
+                              style={{
+                                fontSize: 11,
+                                fontWeight: 700,
+                                textTransform: "uppercase",
+                                letterSpacing: "0.06em",
+                                color:
+                                  item.status === "Capa Revision Required" ||
+                                  item.status === "Rejected"
+                                    ? C.errorDark
+                                    : C.infoDark,
+                                display: "block",
+                                marginBottom: 2,
+                              }}
+                            >
+                              Reason
+                            </span>
+                            <span
+                              style={{
+                                fontSize: 13,
+                                color: C.text1,
+                                fontWeight: 500,
+                              }}
+                            >
+                              {item.remark}
+                            </span>
                           </div>
                         </div>
+                      )}
+
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          paddingTop: 10,
+                          borderTop: `1px solid ${C.divider}`,
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 10,
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: 30,
+                              height: 30,
+                              borderRadius: "50%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: 11,
+                              fontWeight: 700,
+                              background: sc.bg,
+                              color: sc.color,
+                              border: `1px solid ${sc.border}`,
+                            }}
+                          >
+                            {initials(item.user)}
+                          </div>
+                          <div>
+                            <div
+                              style={{
+                                fontSize: 13,
+                                fontWeight: 500,
+                                color: C.text1,
+                              }}
+                            >
+                              {item.user}
+                            </div>
+                            <div style={{ fontSize: 11, color: C.text3 }}>
+                              {item.role}
+                            </div>
+                          </div>
+                        </div>
+                        <Pill
+                          label={item.status}
+                          bg={sc.bg}
+                          color={sc.color}
+                          border={sc.border}
+                          small
+                        />
                       </div>
-                      <Pill
-                        label={item.status}
-                        bg={sc.bg}
-                        color={sc.color}
-                        border={sc.border}
-                        small
-                      />
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              });
+            })()}
           </Card>
         </div>
 
@@ -1142,13 +1294,19 @@ export const CapaStatusView = ({
             <DetailRow label="Customer" value={_assignedTo} />
             <DetailRow
               label="Created"
-              value={moment(_createdDate).format("DD MMM YYYY")}
+              value={moment(_createdDate, [
+                "YYYY-MM-DD",
+                "DD-MM-YYYY HH:mm:ss",
+              ]).format("DD MMM YYYY")}
             />
             <DetailRow
               label="Updated"
               value={
                 _record.updated_date
-                  ? moment(_record.updated_date).format("DD MMM YYYY")
+                  ? moment(_record.updated_date, [
+                      "YYYY-MM-DD",
+                      "DD-MM-YYYY HH:mm:ss",
+                    ]).format("DD MMM YYYY")
                   : "—"
               }
             />
@@ -1167,8 +1325,8 @@ export const CapaStatusView = ({
             {[
               "Under Review",
               "CAPA Created",
-              "Pending Verifier Approval",
-              "Rejected for Rework",
+              "Pending Capa Approval",
+              "Capa Revision Required",
               "Approved",
               "Pending Note",
               "Closed",
@@ -1317,13 +1475,7 @@ export const CapaStatusView = ({
                         }}
                       />
                     ) : (
-                      <span
-                        role="img"
-                        aria-label="document"
-                        style={{ fontSize: 20 }}
-                      >
-                        📄
-                      </span>
+                      <span style={{ fontSize: 20 }}>📄</span>
                     )}
                   </div>
 
@@ -1343,11 +1495,7 @@ export const CapaStatusView = ({
                   </div>
 
                   {/* Zoom icon hint */}
-                  <span
-                    role="img"
-                    aria-label="search"
-                    style={{ fontSize: 14, color: C.text3, flexShrink: 0 }}
-                  >
+                  <span style={{ fontSize: 14, color: C.text3, flexShrink: 0 }}>
                     🔍
                   </span>
                 </div>
