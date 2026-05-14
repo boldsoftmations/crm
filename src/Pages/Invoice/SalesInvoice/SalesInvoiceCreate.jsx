@@ -250,6 +250,7 @@ export const SalesInvoiceCreate = (props) => {
       if (!isvalid) {
         return;
       }
+      console.log(numTypes, decimalCounts, unit);
       const req = {
         invoice_type: "customer",
         order_book: customerorderBookData.id,
