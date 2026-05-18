@@ -51,6 +51,7 @@ import { AllInventoryReportTabs } from "../Pages/InventoryReport/AllInventoryRep
 import { AllPriceListTabView } from "../Pages/PriceList/AllPriceListTabView";
 import { PurchaseAllTabView } from "../Pages/Purchase/PurchaseAllTabView";
 import { ViewPackagingMaster } from "../Pages/MasterPackaging/ViewPackagingMaster";
+import { AllTransportMasterTabView } from "../Pages/MasterTransport/AllTransportMasterTabView";
 // import PurchaseReturnAllTabView from "../Pages/ReturnOrders/PurchaseReturn/PurchaseReturnAllTabView";
 
 const PrivateRoute = ({ children, redirectTo = "/" }) => {
@@ -439,6 +440,14 @@ export const RouteScreen = () => {
             element={
               <PrivateRoute>
                 <ViewMasterBeat />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/master/transport"
+            element={
+              <PrivateRoute>
+                <AllTransportMasterTabView />
               </PrivateRoute>
             }
           />
