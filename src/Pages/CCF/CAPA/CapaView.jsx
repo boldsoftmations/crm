@@ -270,6 +270,7 @@ export const CapaView = ({ defaultStatus = "" }) => {
                             </Button>
                           )}
                         {(userData.groups.includes("Accounts") ||
+                          userData.groups.includes("Accounts Billing Department") ||
                           userData.groups.includes("Director")) &&
                           row.status === "Accept" &&
                           row.sfcs === "Credit" && (
@@ -283,6 +284,7 @@ export const CapaView = ({ defaultStatus = "" }) => {
                             </Button>
                           )}
                         {(userData.groups.includes("Accounts") ||
+                          userData.groups.includes("Accounts Billing Department") ||
                           userData.groups.includes("Director")) &&
                           row.status === "Accept" &&
                           row.sfcs === "Material Return" && (
