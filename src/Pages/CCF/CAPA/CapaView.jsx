@@ -455,7 +455,7 @@ export const CapaView = ({ defaultStatus = "" }) => {
               size="small"
               disablePortal
               id="product-selector"
-              options={["Credit", "Material Return","No Note"]}
+              options={["Credit", "Material Return"]}
               getOptionLabel={(option) => option}
               onChange={(e, value) => setFormData(value)}
               label="Suggestion for claim settlement"
