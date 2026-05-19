@@ -58,11 +58,11 @@ export const ListItems = ({ setOpen }) => {
 
   if (!userData || !userData.groups) {
     return <div>Loading...</div>;
-  }
+  } 
 
   const renderListItem = (to, icon, primaryText) => (
     <ListItem
-      button
+      button 
       component={RouterLink}
       to={to}
       style={{ width: 300 }}
@@ -587,6 +587,12 @@ export const ListItems = ({ setOpen }) => {
         renderSubmenu("production", <FactoryIcon />, "Production", [
           { to: "/inventory/view-production", text: "Production" },
         ]),
+         renderSubmenu(
+          "customer_complaint",
+          <ComplaintIcon />,
+          "Customer Complaint",
+          [{ to: "/customer/complaints/ccp-capa", text: "CCF-CAPA" }],
+        ),
         renderSubmenu("sales", <TrendingUpIcon />, "Sales", [
           { to: "/customers/all-customer", text: "Customer" },
         ]),

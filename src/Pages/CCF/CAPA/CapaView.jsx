@@ -27,7 +27,7 @@ import CustomSnackbar from "../../../Components/CustomerSnackbar";
 import { CreateCreditNote } from "./CreateCreditNote";
 import { CreateMaterialReturn } from "./CreateMaterialReturn";
 import UpdateCAPAStatus from "./UpdateCAPAStatus";
-import UpdateCapa from "./UpdateCapa";
+import UpdateCapa from "./UpdateCAPA.jsx";
 
 export const CapaView = ({ defaultStatus = "" }) => {
   // 👈 accept prop
@@ -256,6 +256,7 @@ export const CapaView = ({ defaultStatus = "" }) => {
                         justifyContent="center"
                       >
                         {(userData.groups.includes("Accounts") ||
+                        userData.groups.includes("Accounts Billing Department") ||
                           userData.groups.includes("Director")) &&
                           row.status === "Accept" &&
                           row.sfcs === null && (
@@ -454,7 +455,7 @@ export const CapaView = ({ defaultStatus = "" }) => {
               size="small"
               disablePortal
               id="product-selector"
-              options={["Credit", "Material Return"]}
+              options={["Credit", "Material Return","No Note"]}
               getOptionLabel={(option) => option}
               onChange={(e, value) => setFormData(value)}
               label="Suggestion for claim settlement"
