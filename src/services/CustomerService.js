@@ -763,6 +763,14 @@ const getComplaintNo = (customer, seller_account) => {
   return CustomAxios.get(`/api/invoice/company-ccf-list/?${params.toString()}`);
 };
 
+const getTransportList = (pincode) => {
+  const params = new URLSearchParams();
+  if (pincode) params.append("pincode", pincode);
+  return CustomAxios.get(
+    `/api/master/pincode-transporter/?${params.toString()}`,
+  );
+};
+
 // const UpdateCapa = (id, data) => {
 //   return CustomAxios.patch(`/api/customer/cpa/${id}/`, data);
 // };

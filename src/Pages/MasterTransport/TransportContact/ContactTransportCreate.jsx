@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Grid, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControlLabel,
+  Grid,
+  Switch,
+  TextField,
+} from "@mui/material";
 
 import MasterService from "../../../services/MasterService";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
@@ -14,142 +21,211 @@ const initialFormState = {
   contact_person: "",
   designation_role: "",
   mobile_number: "",
+  alternate_mobile_number: "",
+  email: "",
+  office_address: "",
+  is_primary: false,
 };
 
-const TransportContactCreate = ({ getTransportContactData, setOpenPopup }) => {
+function ContactTransportCreate({ getTransportContactData, setOpenPopup }) {
   const [formData, setFormData] = useState(initialFormState);
+  const DESIGNATION_ROLE_CHOICES = [
+    "Booking",
+    "Delivery",
+    "Accounts",
+    "Branch Manager",
+    "Owner",
+  ];
   const [loading, setLoading] = useState(false);
 
-  // All transport mapping records
-  const [mappingData, setMappingData] = useState([]);
-
-  // Derived options filtered by selected transporter
+  // transporter dropdown
   const [transporterOptions, setTransporterOptions] = useState([]);
+
+  // auto unit & city data
+  const [unitCityData, setUnitCityData] = useState([]);
+
   const [unitOptions, setUnitOptions] = useState([]);
+
   const [cityOptions, setCityOptions] = useState([]);
 
   const { handleError, handleCloseSnackbar, alertInfo, handleSuccess } =
     useNotificationHandling();
 
-  const getTransportMappingData = async () => {
+  // ==============================
+  // Get Transporter Master
+  // ==============================
+  const getTransporterOptions = async () => {
     try {
-      const response = await MasterService.getTransportMapping(false, 1, "");
-      if (response && response.data && response.data.results) {
-        const results = response.data.results;
-        setMappingData(results);
+      const response = await MasterService.getAllTransportMaster();
 
-        // Build unique transporter list from mapping data
-        const seen = {};
-        const uniqueTransporters = [];
-        results.forEach((item) => {
-          if (!seen[item.transporter]) {
-            seen[item.transporter] = true;
-            uniqueTransporters.push({
-              transporter: item.transporter,
-            });
-          }
-        });
-        setTransporterOptions(uniqueTransporters);
+      if (response && response.data && response.data.results) {
+        setTransporterOptions(response.data.results);
       } else {
-        setMappingData([]);
         setTransporterOptions([]);
       }
     } catch (error) {
       handleError(error);
     }
   };
-  const getMasterCities = async () => {
+
+  useEffect(() => {
+    setLoading(true);
+
+    getTransporterOptions().finally(() => setLoading(false));
+  }, []);
+
+  // ==============================
+  // Transporter Change
+  // ==============================
+  const handleTransporterChange = async (value) => {
+    setFormData((prev) => ({
+      ...prev,
+      transporter: value ? value.transporter_name : "",
+      unit: "",
+      city: "",
+    }));
+
+    setUnitCityData([]);
+    setUnitOptions([]);
+    setCityOptions([]);
+
+    if (!value || !value.id) {
+      return;
+    }
+
     try {
       setLoading(true);
-      const response = await MasterService.getMasterCities();
-      setCityOptions(response.data.results);
-    } catch (e) {
-      //   setAlertMsg({
-      //     message: e.response.data.message || "Error fetching countries",
-      //     severity: "error",
-      //     open: true,
-      //   });
-      handleError(e.response.data.message || "Error fetching countries");
+
+      const response = await MasterService.getTransportContact(
+        value.transporter_id,
+      );
+
+      const results = Array.isArray(response.data) ? response.data : [];
+
+      setUnitCityData(results);
+
+      // ==============================
+      // Unit Options
+      // ==============================
+      const seenUnits = {};
+
+      const units = [];
+
+      results.forEach((item) => {
+        if (item.unit && !seenUnits[item.unit]) {
+          seenUnits[item.unit] = true;
+
+          units.push({
+            unit_id: item.unit_id,
+            unit: item.unit,
+          });
+        }
+      });
+
+      // ==============================
+      // City Options
+      // ==============================
+      const seenCities = {};
+
+      const cities = [];
+
+      results.forEach((item) => {
+        if (item.city && !seenCities[item.city]) {
+          seenCities[item.city] = true;
+
+          cities.push({
+            city_id: item.city_id,
+            city: item.city,
+          });
+        }
+      });
+
+      setUnitOptions(units);
+
+      setCityOptions(cities);
+
+      // ==============================
+      // Auto Fill Single Option
+      // ==============================
+      setFormData((prev) => ({
+        ...prev,
+        transporter: value.transporter_name,
+        unit: units.length === 1 ? units[0].unit : "",
+        city: cities.length === 1 ? cities[0].city : "",
+      }));
+    } catch (error) {
+      handleError(error);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    setLoading(true);
-    getTransportMappingData().finally(() => setLoading(false));
-    getMasterCities();
-  }, []);
-
-  // When transporter changes — filter unit and city from mapping data
-  // and auto-fill if only one match exists
-  const handleTransporterChange = (value) => {
-    const transporterName = value ? value.transporter : "";
-
-    // Reset unit and city whenever transporter changes
-    setFormData((prev) => ({
-      ...prev,
-      transporter: transporterName,
-      unit: "",
-    }));
-
-    if (!transporterName) {
-      setUnitOptions([]);
-      setCityOptions([]);
-      return;
-    }
-
-    // Filter all mapping rows for the selected transporter
-    const filtered = mappingData.filter(
-      (item) => item.transporter === transporterName,
-    );
-
-    // Build unique unit options
-    const seenUnits = {};
-    const units = [];
-    filtered.forEach((item) => {
-      if (item.unit && !seenUnits[item.unit]) {
-        seenUnits[item.unit] = true;
-        units.push({ unit: item.unit });
-      }
-    });
-
-    // Build unique city options
-    const seenCities = {};
-
-    setUnitOptions(units);
-
-    // Auto-fill unit only if single option exists; city is always manually selected
-    setFormData((prev) => ({
-      ...prev,
-      transporter: transporterName,
-      unit: units.length === 1 ? units[0].unit : "",
-      // always reset — user must select manually
-    }));
-  };
-
-  const handleAutocompleteChange = (name, value) => {
-    setFormData((prev) => ({ ...prev, [name]: value || "" }));
-  };
-
+  // ==============================
+  // Text Change
+  // ==============================
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
+  // ==============================
+  // Autocomplete Change
+  // ==============================
+  const handleAutocompleteChange = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value || "",
+    }));
+  };
+
+  // ==============================
+  // Toggle Change
+  // ==============================
+  const handleToggle = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      is_primary: e.target.checked,
+    }));
+  };
+
+  // ==============================
+  // Submit
+  // ==============================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       setLoading(true);
 
-      await MasterService.createTransportContact(formData);
+      const payload = {
+        transporter: formData.transporter,
+        unit: formData.unit,
+        city: formData.city,
+        contact_person: formData.contact_person,
+        designation_role: formData.designation_role,
+        mobile_number: formData.mobile_number,
+        alternate_mobile_number: formData.alternate_mobile_number || "",
+        office_address: formData.office_address || "",
+        email: formData.email || "",
+        is_primary: formData.is_primary,
+      };
 
-      handleSuccess("Transporter contact created successfully");
+      console.log("payload", payload);
+
+      await MasterService.createTransportContact(payload);
+
+      handleSuccess("Transport contact created successfully");
 
       setTimeout(() => {
         setOpenPopup(false);
+
         getTransportContactData();
+
+        handleReset();
       }, 1000);
     } catch (error) {
       handleError(error);
@@ -158,9 +234,16 @@ const TransportContactCreate = ({ getTransportContactData, setOpenPopup }) => {
     }
   };
 
+  // ==============================
+  // Reset
+  // ==============================
   const handleReset = () => {
     setFormData(initialFormState);
+
+    setUnitCityData([]);
+
     setUnitOptions([]);
+
     setCityOptions([]);
   };
 
@@ -185,11 +268,11 @@ const TransportContactCreate = ({ getTransportContactData, setOpenPopup }) => {
               options={transporterOptions}
               value={
                 transporterOptions.find(
-                  (opt) => opt.transporter === formData.transporter,
+                  (opt) => opt.transporter_name === formData.transporter,
                 ) || null
               }
               getOptionLabel={(option) =>
-                option.transporter ? option.transporter : option
+                option.transporter_name ? option.transporter_name : ""
               }
               onChange={(e, value) => handleTransporterChange(value)}
               label="Transporter"
@@ -197,7 +280,7 @@ const TransportContactCreate = ({ getTransportContactData, setOpenPopup }) => {
             />
           </Grid>
 
-          {/* Unit — auto-filled or selectable from filtered options */}
+          {/* Unit */}
           <Grid item xs={12} sm={6}>
             <CustomAutocomplete
               fullWidth
@@ -206,7 +289,7 @@ const TransportContactCreate = ({ getTransportContactData, setOpenPopup }) => {
               value={
                 unitOptions.find((opt) => opt.unit === formData.unit) || null
               }
-              getOptionLabel={(option) => (option.unit ? option.unit : option)}
+              getOptionLabel={(option) => (option.unit ? option.unit : "")}
               onChange={(e, value) =>
                 handleAutocompleteChange("unit", value ? value.unit : "")
               }
@@ -216,18 +299,20 @@ const TransportContactCreate = ({ getTransportContactData, setOpenPopup }) => {
             />
           </Grid>
 
-          {/* City — auto-filled or selectable from filtered options */}
+          {/* City */}
           <Grid item xs={12} sm={6}>
             <CustomAutocomplete
               fullWidth
               size="small"
-              options={cityOptions.map((item) => item.state_name)}
-              value={formData.city}
-              //   onChange={handleChange}
-              label="City"
-              onChange={(e, value) =>
-                handleAutocompleteChange("city", value ? value : "")
+              options={cityOptions}
+              value={
+                cityOptions.find((opt) => opt.city === formData.city) || null
               }
+              getOptionLabel={(option) => (option.city ? option.city : "")}
+              onChange={(e, value) =>
+                handleAutocompleteChange("city", value ? value.city : "")
+              }
+              label="City"
               required
               disabled={!formData.transporter}
             />
@@ -246,20 +331,28 @@ const TransportContactCreate = ({ getTransportContactData, setOpenPopup }) => {
             />
           </Grid>
 
+          {/* Designation */}
           {/* Designation / Role */}
           <Grid item xs={12} sm={6}>
-            <TextField
+            <CustomAutocomplete
               fullWidth
-              required
-              label="Designation / Role"
-              name="designation_role"
-              value={formData.designation_role}
-              onChange={handleChange}
               size="small"
+              options={DESIGNATION_ROLE_CHOICES}
+              value={
+                DESIGNATION_ROLE_CHOICES.find(
+                  (option) => option === formData.designation_role,
+                ) || null
+              }
+              getOptionLabel={(option) => option || ""}
+              onChange={(e, value) =>
+                handleAutocompleteChange("designation_role", value || "")
+              }
+              label="Designation / Role"
+              required
             />
           </Grid>
 
-          {/* Mobile Number */}
+          {/* Mobile */}
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
@@ -270,18 +363,93 @@ const TransportContactCreate = ({ getTransportContactData, setOpenPopup }) => {
               onChange={handleChange}
               size="small"
               placeholder="+919087675434"
-              inputProps={{ maxLength: 13 }}
+              inputProps={{
+                maxLength: 13,
+              }}
+            />
+          </Grid>
+
+          {/* Alternate Mobile */}
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Alternate Mobile Number"
+              name="alternate_mobile_number"
+              value={formData.alternate_mobile_number}
+              onChange={handleChange}
+              size="small"
+              placeholder="+919087675434"
+              inputProps={{
+                maxLength: 13,
+              }}
+            />
+          </Grid>
+
+          {/* Email */}
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              size="small"
+              placeholder="example@email.com"
+            />
+          </Grid>
+
+          {/* Office Address */}
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Office Address"
+              name="office_address"
+              value={formData.office_address}
+              onChange={handleChange}
+              size="small"
+              multiline
+              rows={2}
+            />
+          </Grid>
+
+          {/* Is Primary */}
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={formData.is_primary}
+                  onChange={handleToggle}
+                  name="is_primary"
+                  color="primary"
+                />
+              }
+              label={formData.is_primary ? "Primary Contact" : "Not Primary"}
             />
           </Grid>
         </Grid>
 
-        {/* Action Buttons */}
+        {/* Buttons */}
         <Box
-          sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 3 }}
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: 1,
+            mt: 3,
+          }}
         >
           <Button variant="outlined" color="error" onClick={handleReset}>
             Reset
           </Button>
+
           <Button
             type="submit"
             variant="contained"
@@ -294,6 +462,6 @@ const TransportContactCreate = ({ getTransportContactData, setOpenPopup }) => {
       </Box>
     </>
   );
-};
+}
 
-export default TransportContactCreate;
+export default ContactTransportCreate;

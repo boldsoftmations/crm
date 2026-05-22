@@ -310,13 +310,23 @@ const updateTransportMapping = (id, data) => {
   return CustomAxios.patch(`/api/master/transporter-mapping/${id}/`, data);
 };
 
-const getTransportContact = (page) => {
+const getTransportContact = (tranporter_id) => {
+  const params = new URLSearchParams();
+  if (tranporter_id) {
+    params.append("transporter_id", tranporter_id);
+  }
+  return CustomAxios.get(
+    `/api/master/transporter-unit-city/?${params.toString()}`,
+  );
+};
+const getAllTransportConstact = (page, is_inactive) => {
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
   }
+  params.append("is_inactive", is_inactive);
   return CustomAxios.get(
-    `/api/master/transporter-unit-city/?${params.toString()}`,
+    `/api/master/transporter-contact/?${params.toString()}`,
   );
 };
 const createTransportContact = (data) => {
@@ -375,5 +385,6 @@ const MasterService = {
   updateTransportMapping,
   getTransportContact,
   createTransportContact,
+  getAllTransportConstact,
 };
 export default MasterService;
