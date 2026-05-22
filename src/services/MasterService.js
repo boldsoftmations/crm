@@ -293,6 +293,35 @@ const createTransportMaster = (data) => {
 const updateTransportMaster = (id, data) => {
   return CustomAxios.patch(`/api/master/transporter-master/${id}/`, data);
 };
+const getTransportMapping = (isActive, page) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  return CustomAxios.get(
+    `/api/master/transporter-mapping/?${params.toString()}`,
+  );
+};
+
+const createTransportMapping = (data) => {
+  return CustomAxios.post("/api/master/transporter-mapping/", data);
+};
+const updateTransportMapping = (id, data) => {
+  return CustomAxios.patch(`/api/master/transporter-mapping/${id}/`, data);
+};
+
+const getTransportContact = (page) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  return CustomAxios.get(
+    `/api/master/transporter-unit-city/?${params.toString()}`,
+  );
+};
+const createTransportContact = (data) => {
+  return CustomAxios.post("/api/master/transporter-contact/", data);
+};
 
 const MasterService = {
   getLeavapproval,
@@ -338,8 +367,13 @@ const MasterService = {
   getPackagingMaster,
   createPackagingMaster,
   updatePackagingMaster,
-  getAllTransportMaster,
+  getTransportMapping,
   createTransportMaster,
   updateTransportMaster,
+  getAllTransportMaster,
+  createTransportMapping,
+  updateTransportMapping,
+  getTransportContact,
+  createTransportContact,
 };
 export default MasterService;

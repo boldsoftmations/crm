@@ -473,7 +473,7 @@ const getAllCCFData = (page, searchValue, isActive) => {
     isActive !== undefined ? (isActive ? "True" : "False") : "True";
 
   return CustomAxios.get(
-    `/api/customer/ccf/?is_active=${activeParam}&${params.toString()}`,
+    `/api/customer/ccf/?is_closed=False&is_active=${activeParam}&${params.toString()}`,
   );
 };
 
