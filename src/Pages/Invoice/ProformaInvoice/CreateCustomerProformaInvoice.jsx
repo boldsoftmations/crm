@@ -310,7 +310,12 @@ export const CreateCustomerProformaInvoice = (props) => {
     }
   }, [openPopup3]);
 
-  const Universal_type = ["bus", "train", "Air", "Self Pickup"];
+  const Universal_type = [
+    { value: "bus", label: "Bus" },
+    { value: "train", label: "Train" },
+    { value: "air", label: "Air" },
+    { value: "self_pickup", label: "Self Pickup" },
+  ];
 
   const createCustomerProformaInvoiceDetails = async (e) => {
     e.preventDefault();
@@ -894,22 +899,23 @@ export const CreateCustomerProformaInvoice = (props) => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={4}>
-            <CustomAutocomplete
-              name="transporter_name"
-              size="small"
-              disablePortal
-              id="combo-box-transporter"
-              onChange={(event, value) => setTransporterName(value)}
-              // FIX 3: Always pass an array — never undefined/false
-              options={(transportList || []).map((option) => option)}
-              getOptionLabel={(option) => option.transporter}
-              sx={{ minWidth: 300 }}
-              disabled={!(warehouseData && warehouseData.pincode)}
-              label="Transporter Name"
-              style={tfStyle}
-            />
-          </Grid>
+          <CustomAutocomplete
+            name="universal_dispatch_type"
+            size="small"
+            disablePortal
+            id="combo-box-universal"
+            onChange={(event, value) =>
+              setUniversalType(value ? value.value : "")
+            }
+            options={Universal_type}
+            getOptionLabel={(option) => option.label || ""}
+            value={
+              Universal_type.find((opt) => opt.value === universalType) || null
+            }
+            sx={{ minWidth: 300 }}
+            label="Universal Type"
+            style={tfStyle}
+          />
 
           {/* ─── Products section ─────────────────────────────────────────── */}
           <Grid item xs={12}>
