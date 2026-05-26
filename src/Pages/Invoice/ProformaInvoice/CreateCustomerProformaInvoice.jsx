@@ -32,6 +32,7 @@ import InventoryServices from "../../../services/InventoryService";
 import { DecimalValidation } from "../../../utility/DecimalValidation";
 import MasterService from "../../../services/MasterService";
 
+// ─── Styled components defined at top so they are always available ────────────
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -39,6 +40,11 @@ const Root = styled("div")(({ theme }) => ({
     marginTop: theme.spacing(2),
   },
 }));
+
+const HelperText = styled(FormHelperText)(() => ({
+  padding: "0px",
+}));
+// ─────────────────────────────────────────────────────────────────────────────
 
 const tfStyle = {
   "& .MuiButtonBase-root.MuiAutocomplete-clearIndicator": {
@@ -61,7 +67,6 @@ const values = {
 export const CreateCustomerProformaInvoice = (props) => {
   const { recordForEdit, rowData, setOpenPopup } = props;
 
-  // ─── All state declarations at the top (before any function that uses them) ───
   const [productOption, setProductOption] = useState([]);
   const [productDetails, setProductDetails] = useState(null);
   const [transportList, setTransportList] = useState([]);
@@ -73,11 +78,9 @@ export const CreateCustomerProformaInvoice = (props) => {
   const [paymentTermData, setPaymentTermData] = useState("");
   const [deliveryTermData, setDeliveryTermData] = useState("");
   const [contactData, setContactData] = useState("");
-  // FIX 1: was initialized as [] (array). Must be null so null-checks work correctly.
   const [customerData, setCustomerData] = useState(null);
   const [contactOptions, setContactOptions] = useState([]);
   const [warehouseOptions, setWarehouseOptions] = useState([]);
-  // FIX 2: was initialized as [] (array). Must be null so null-checks work correctly.
   const [warehouseData, setWarehouseData] = useState(null);
   const [checked, setChecked] = useState(true);
   const [priceApproval, setPriceApproval] = useState(false);
@@ -89,6 +92,7 @@ export const CreateCustomerProformaInvoice = (props) => {
   const [timeLeft, setTimeLeft] = useState(5 * 60);
   const [transporterName, setTransporterName] = useState(null);
   const [universalType, setUniversalType] = useState("");
+
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
   const { profile: users } = useSelector((state) => state.auth);
@@ -120,27 +124,25 @@ export const CreateCustomerProformaInvoice = (props) => {
 
   const buyer_date = new Date().toISOString().slice(0, 10);
 
-  // ─── FIX 3: useCallback so the effect dependency is stable ───────────────────
-  // FIX 4: customerData is now declared above, so it's safely accessible here.
-  // FIX 5: dependency is customerData (the state variable), not a computed expression.
   const getTranportList = useCallback(async () => {
     try {
       const pincode =
         warehouseData && warehouseData.pincode ? warehouseData.pincode : "";
       const res = await CustomerServices.getTransportList(pincode);
-      setTransportList(res.data.results);
-      console.log("data  is", res);
+      // FIX 3: Guard against undefined results — always set an array
+      setTransportList(res.data && res.data ? res.data : []);
+      console.log("Transport List is :", res.data);
     } catch (error) {
       console.error("Transport list error:", error);
+      setTransportList([]);
     }
   }, [warehouseData]);
 
-  // FIX 6: depend on the memoized function, not a computed boolean expression
   useEffect(() => {
     getTranportList();
   }, [getTranportList]);
 
-  // ─── Timer effect ─────────────────────────────────────────────────────────────
+  // ─── Timer effect ─────────────────────────────────────────────────────────
   useEffect(() => {
     if (timeLeft <= 0) {
       setOpenPopup(false);
@@ -322,6 +324,13 @@ export const CreateCustomerProformaInvoice = (props) => {
       warehouseData.city !== null &&
       warehouseData.pincode !== null;
 
+    // FIX 2: Validate before opening loader. If invalid, open popup and return
+    // without ever calling setOpen(true), so the loader never gets stuck.
+    if (!isValidData) {
+      setOpenPopup2(true);
+      return;
+    }
+
     const numTypes = products.map((item) => item.type_of_unit);
     const quantities = products.map((item) => item.quantity);
     const decimalCounts = products.map((item) =>
@@ -338,7 +347,6 @@ export const CreateCustomerProformaInvoice = (props) => {
     });
 
     if (!isvalid) {
-      setOpen(false);
       return;
     }
 
@@ -415,11 +423,6 @@ export const CreateCustomerProformaInvoice = (props) => {
         (customerLastPiData && customerLastPiData.place_of_supply
           ? customerLastPiData.place_of_supply
           : ""),
-      transporter_name:
-        inputValue.transporter_name ||
-        (customerLastPiData && customerLastPiData.transporter_name
-          ? customerLastPiData.transporter_name
-          : ""),
       buyer_order_no: checked === true ? "verbal" : inputValue.buyer_order_no,
       buyer_order_date: inputValue.buyer_order_date
         ? inputValue.buyer_order_date
@@ -438,6 +441,7 @@ export const CreateCustomerProformaInvoice = (props) => {
       price_approval: priceApproval,
       products: constructPayload(),
       warehouse_person_name: warehouseData ? warehouseData.contact_name : null,
+      // FIX 1: Single transporter_name key — duplicate removed.
       transporter_name: transporterName ? transporterName.transporter : "",
       universal_dispatch_type: universalType ? universalType : "",
     };
@@ -450,10 +454,6 @@ export const CreateCustomerProformaInvoice = (props) => {
 
     try {
       setOpen(true);
-      if (!isValidData) {
-        setOpenPopup2(true);
-        return;
-      }
       const response =
         await InvoiceServices.createCustomerProformaInvoiceData(payload);
       const successMessage =
@@ -485,13 +485,13 @@ export const CreateCustomerProformaInvoice = (props) => {
         onSubmit={(e) => createCustomerProformaInvoiceDetails(e)}
       >
         <Grid container spacing={2}>
-          {/* ─── Seller / Terms ─────────────────────────────────────────── */}
+          {/* ─── Seller / Terms ──────────────────────────────────────────── */}
           <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               name="seller_account"
               size="small"
               disablePortal
-              id="combo-box-demo"
+              id="combo-box-seller"
               onChange={handleSellerAccountChange}
               options={sellerData.map((option) => option)}
               getOptionLabel={(option) => option.unit}
@@ -506,7 +506,7 @@ export const CreateCustomerProformaInvoice = (props) => {
               name="payment_terms"
               size="small"
               disablePortal
-              id="combo-box-demo"
+              id="combo-box-payment"
               onChange={(event, value) => setPaymentTermData(value)}
               options={paymentTermsOptions.map((option) => option.label)}
               getOptionLabel={(option) => option}
@@ -528,7 +528,7 @@ export const CreateCustomerProformaInvoice = (props) => {
               name="delivery_terms"
               size="small"
               disablePortal
-              id="combo-box-demo"
+              id="combo-box-delivery"
               onChange={(event, value) => setDeliveryTermData(value)}
               options={deliveryTermsOptions.map((option) => option.label)}
               getOptionLabel={(option) => option}
@@ -570,7 +570,7 @@ export const CreateCustomerProformaInvoice = (props) => {
             </Grid>
           )}
 
-          {/* ─── Customer section ────────────────────────────────────────── */}
+          {/* ─── Customer section ─────────────────────────────────────────── */}
           <Grid item xs={12}>
             <Root>
               <Divider>
@@ -597,12 +597,10 @@ export const CreateCustomerProformaInvoice = (props) => {
               size="small"
               sx={{ padding: "0", margin: "0" }}
             >
-              <InputLabel id="demo-simple-select-required-label">
-                Contact Name
-              </InputLabel>
+              <InputLabel id="contact-name-label">Contact Name</InputLabel>
               <Select
-                labelId="demo-simple-select-required-label"
-                id="demo-simple-select-required"
+                labelId="contact-name-label"
+                id="contact-name-select"
                 label="Contact Name"
                 value={
                   contactData ||
@@ -726,14 +724,14 @@ export const CreateCustomerProformaInvoice = (props) => {
           {/* ─── Shipping address ─────────────────────────────────────────── */}
           <Grid item xs={12} sm={4}>
             <FormControl fullWidth size="small">
-              <InputLabel id="demo-simple-select-label">
+              <InputLabel id="shipping-address-label">
                 Shipping Address
               </InputLabel>
               {rowData.type_of_customer ===
               "Exclusive Distribution Customer" ? (
                 <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
+                  labelId="shipping-address-label"
+                  id="shipping-address-select-edc"
                   label="Shipping Address"
                   onChange={(e) => setWarehouseData(e.target.value)}
                 >
@@ -747,8 +745,8 @@ export const CreateCustomerProformaInvoice = (props) => {
                 </Select>
               ) : (
                 <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
+                  labelId="shipping-address-label"
+                  id="shipping-address-select"
                   label="Shipping Address"
                   onChange={(e) => setWarehouseData(e.target.value)}
                 >
@@ -812,14 +810,15 @@ export const CreateCustomerProformaInvoice = (props) => {
               }
             />
           </Grid>
+
           <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               name="universal_dispatch_type"
               size="small"
               disablePortal
-              id="combo-box-universal" // unique id
+              id="combo-box-universal"
               onChange={(event, value) => setUniversalType(value)}
-              options={Universal_type} // no need to .map() plain strings
+              options={Universal_type}
               getOptionLabel={(option) => option}
               value={universalType}
               sx={{ minWidth: 300 }}
@@ -897,16 +896,17 @@ export const CreateCustomerProformaInvoice = (props) => {
 
           <Grid item xs={12} sm={4}>
             <CustomAutocomplete
-              name="Transpoer Name"
+              name="transporter_name"
               size="small"
               disablePortal
-              id="combo-box-demo"
+              id="combo-box-transporter"
               onChange={(event, value) => setTransporterName(value)}
-              options={transportList && transportList.map((option) => option)}
+              // FIX 3: Always pass an array — never undefined/false
+              options={(transportList || []).map((option) => option)}
               getOptionLabel={(option) => option.transporter}
               sx={{ minWidth: 300 }}
               disabled={!(warehouseData && warehouseData.pincode)}
-              label="Tranpoter Name"
+              label="Transporter Name"
               style={tfStyle}
             />
           </Grid>
@@ -945,7 +945,7 @@ export const CreateCustomerProformaInvoice = (props) => {
                     name="product"
                     size="small"
                     disablePortal
-                    id={"combo-box-" + index}
+                    id={"combo-box-product-" + index}
                     onChange={async (event, value) => {
                       handleAutocompleteChange(index, event, value);
                       if (!selectedSellerData) {
@@ -1288,7 +1288,3 @@ const deliveryTermsOptions = [
     value: "courier_(freight_add_in_invoice)",
   },
 ];
-
-const HelperText = styled(FormHelperText)(() => ({
-  padding: "0px",
-}));
