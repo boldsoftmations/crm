@@ -878,6 +878,7 @@ const CustomerServices = {
   getRootCauseList,
   getCategoryList,
   getComplaintNo,
+  getTransportList,
 };
 
 export default CustomerServices;

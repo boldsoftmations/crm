@@ -29,7 +29,6 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import useDynamicFormFields from "../../../Components/useDynamicFormFields ";
 import ProductService from "../../../services/ProductService";
 import InventoryServices from "../../../services/InventoryService";
-// import { DecimalValidation } from "../../../utility/DecimalValidation";
 import { DecimalValidation } from "../../../utility/DecimalValidation";
 import MasterService from "../../../services/MasterService";
 
@@ -51,7 +50,7 @@ const tfStyle = {
 const getNextFiveDates = () => {
   const today = new Date();
   const futureDate = new Date();
-  futureDate.setDate(today.getDate() + 7); // Add i days to today's date
+  futureDate.setDate(today.getDate() + 7);
   return futureDate.toISOString().substring(0, 10);
 };
 
@@ -61,11 +60,40 @@ const values = {
 
 export const CreateCustomerProformaInvoice = (props) => {
   const { recordForEdit, rowData, setOpenPopup } = props;
+
+  // ─── All state declarations at the top (before any function that uses them) ───
   const [productOption, setProductOption] = useState([]);
   const [productDetails, setProductDetails] = useState(null);
+  const [transportList, setTransportList] = useState([]);
+  const [openPopup2, setOpenPopup2] = useState(false);
+  const [openPopup3, setOpenPopup3] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState({});
+  const [selectedSellerData, setSelectedSellerData] = useState("");
+  const [paymentTermData, setPaymentTermData] = useState("");
+  const [deliveryTermData, setDeliveryTermData] = useState("");
+  const [contactData, setContactData] = useState("");
+  // FIX 1: was initialized as [] (array). Must be null so null-checks work correctly.
+  const [customerData, setCustomerData] = useState(null);
+  const [contactOptions, setContactOptions] = useState([]);
+  const [warehouseOptions, setWarehouseOptions] = useState([]);
+  // FIX 2: was initialized as [] (array). Must be null so null-checks work correctly.
+  const [warehouseData, setWarehouseData] = useState(null);
+  const [checked, setChecked] = useState(true);
+  const [priceApproval, setPriceApproval] = useState(false);
+  const [sellerData, setSellerData] = useState([]);
+  const [edcData, setEdcData] = useState([]);
+  const [currencyOption, setCurrencyOption] = useState([]);
+  const [customerLastPiData, setCustomerLastPiData] = useState(null);
+  const [packageList, setPackageList] = useState([]);
+  const [timeLeft, setTimeLeft] = useState(5 * 60);
+  const [transporterName, setTransporterName] = useState(null);
+  const [universalType, setUniversalType] = useState("");
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-  const [transportList, setTransportList] = useState([]);
+  const { profile: users } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
   const {
     handleAutocompleteChange,
     handleFormChange,
@@ -90,54 +118,69 @@ export const CreateCustomerProformaInvoice = (props) => {
     true,
   );
 
-  const getTranportList = async () => {
+  const buyer_date = new Date().toISOString().slice(0, 10);
+
+  // ─── FIX 3: useCallback so the effect dependency is stable ───────────────────
+  // FIX 4: customerData is now declared above, so it's safely accessible here.
+  // FIX 5: dependency is customerData (the state variable), not a computed expression.
+  const getTranportList = useCallback(async () => {
     try {
-      const res = await CustomerServices.getTransportList(
-        warehouseData.pincode ? warehouseData.pincode : "",
-      );
-      setTransportList(res.data);
-      console.log("Res is:", res.data);
-    } catch (error) {}
-  };
+      const pincode =
+        warehouseData && warehouseData.pincode ? warehouseData.pincode : "";
+      const res = await CustomerServices.getTransportList(pincode);
+      setTransportList(res.data.results);
+      console.log("data  is", res);
+    } catch (error) {
+      console.error("Transport list error:", error);
+    }
+  }, [warehouseData]);
+
+  // FIX 6: depend on the memoized function, not a computed boolean expression
   useEffect(() => {
     getTranportList();
-  }, []);
+  }, [getTranportList]);
+
+  // ─── Timer effect ─────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      setOpenPopup(false);
+      return;
+    }
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime) => prevTime - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft, setOpenPopup]);
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return (
+      String(minutes).padStart(2, "0") + ":" + String(secs).padStart(2, "0")
+    );
+  };
+
   const constructPayload = () => {
     return products.map((input, index) => {
+      const detailRate =
+        productDetails && productDetails[index]
+          ? productDetails[index].rate
+          : "";
+      const detailInstructions =
+        productDetails && productDetails[index]
+          ? productDetails[index].special_instructions
+          : "";
       return {
         ...input,
-        rate:
-          input.rate || (productDetails[index] && productDetails[index].rate),
-        special_instructions:
-          input.special_instructions ||
-          (productDetails[index] && productDetails[index].special_instructions),
+        rate: input.rate || detailRate,
+        special_instructions: input.special_instructions || detailInstructions,
         packaging_type: input.packaging_type
           ? "Special Packaging"
           : "Normal Packaging",
       };
     });
   };
-  const navigate = useNavigate();
-  const [openPopup2, setOpenPopup2] = useState(false);
-  const [openPopup3, setOpenPopup3] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState({});
-  const [selectedSellerData, setSelectedSellerData] = useState("");
-  const [paymentTermData, setPaymentTermData] = useState("");
-  const [deliveryTermData, setDeliveryTermData] = useState("");
-  const [contactData, setContactData] = useState("");
-  const [customerData, setCustomerData] = useState([]);
-  const [contactOptions, setContactOptions] = useState([]);
-  const [warehouseOptions, setWarehouseOptions] = useState([]);
-  const [warehouseData, setWarehouseData] = useState([]);
-  const [checked, setChecked] = useState(true);
-  const [priceApproval, setPriceApproval] = useState(false);
-  const [sellerData, setSellerData] = useState([]);
-  const [edcData, setEdcData] = useState([]);
-  const [currencyOption, setCurrencyOption] = useState([]);
-  const [customerLastPiData, setCustomerLastPiData] = useState(null);
-  const { profile: users } = useSelector((state) => state.auth);
-  const [packageList, setPackageList] = useState([]);
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setInputValue({ ...inputValue, [name]: value });
@@ -145,7 +188,7 @@ export const CreateCustomerProformaInvoice = (props) => {
       return { ...prev, [name]: value };
     });
   };
-  let buyer_date = new Date().toISOString().slice(0, 10);
+
   const openInPopup = () => {
     setOpenPopup3(true);
     setOpenPopup2(false);
@@ -160,39 +203,15 @@ export const CreateCustomerProformaInvoice = (props) => {
     }
   };
 
-  const [timeLeft, setTimeLeft] = useState(5 * 60); // 5 minutes in seconds
-
-  useEffect(() => {
-    if (timeLeft <= 0) {
-      setOpenPopup(false); // Close the popup when the timer reaches 0
-      return;
-    }
-
-    const timer = setInterval(() => {
-      setTimeLeft((prevTime) => prevTime - 1);
-    }, 1000);
-
-    return () => clearInterval(timer); // Cleanup on component unmount
-  }, [timeLeft, setOpenPopup]);
-
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(
-      2,
-      "0",
-    )}`;
-  };
-
   const getProduct = useCallback(async () => {
     try {
       const res = await ProductService.getProductPriceList();
       setProductOption(res.data.products);
-      console.log(res.data);
     } catch (err) {
       console.error("error potential", err);
     }
   }, []);
+
   const getAllSellerAccountsDetails = async () => {
     try {
       const response =
@@ -202,6 +221,7 @@ export const CreateCustomerProformaInvoice = (props) => {
       console.log("Error fetching seller account data:", error);
     }
   };
+
   const getBillingAddressbyCustomer = async () => {
     try {
       const response = await InvoiceServices.getBillingAddressbyCustomer(
@@ -212,6 +232,7 @@ export const CreateCustomerProformaInvoice = (props) => {
       console.log("Error fetching customer billing address data:", error);
     }
   };
+
   useEffect(() => {
     getBillingAddressbyCustomer();
   }, [rowData]);
@@ -244,16 +265,15 @@ export const CreateCustomerProformaInvoice = (props) => {
       console.log("company data by id error", err);
     }
   };
-  const handleSellerAccountChange = async (e, value, name) => {
-    setSelectedSellerData(value);
 
+  const handleSellerAccountChange = async (e, value) => {
+    setSelectedSellerData(value);
     try {
       setOpen(true);
       const response = await CustomerServices.getCustomerLastPi(
         rowData && rowData.name,
         value.unit,
       );
-
       setCustomerLastPiData(response.data || {});
     } catch (err) {
       console.error("error getting last pi", err);
@@ -261,17 +281,13 @@ export const CreateCustomerProformaInvoice = (props) => {
       setOpen(false);
     }
   };
+
   const getCurrencyDetails = async () => {
     setOpen(true);
     try {
       const response = await InventoryServices.getCurrencyData();
-
       if (response && response.data) {
-        // Filter out INR for international vendors
-        const filteredCurrencyOptions = response.data;
-        setCurrencyOption(filteredCurrencyOptions);
-
-        // Set default currency to INR if vendor is Domestic and no currency is selected
+        setCurrencyOption(response.data);
         if (rowData.origin_type === "Domestic" && !inputValue.currency) {
           setInputValue((prevValues) => ({ ...prevValues, currency: "INR" }));
         }
@@ -292,18 +308,19 @@ export const CreateCustomerProformaInvoice = (props) => {
     }
   }, [openPopup3]);
 
+  const Universal_type = ["bus", "train", "Air", "Self Pickup"];
+
   const createCustomerProformaInvoiceDetails = async (e) => {
     e.preventDefault();
 
     const isValidData =
+      contactData &&
       contactData.contact !== null &&
+      warehouseData &&
       warehouseData.address !== null &&
       warehouseData.state !== null &&
       warehouseData.city !== null &&
       warehouseData.pincode !== null;
-
-    console.log(products, "products");
-    console.log(productOption);
 
     const numTypes = products.map((item) => item.type_of_unit);
     const quantities = products.map((item) => item.quantity);
@@ -311,6 +328,7 @@ export const CreateCustomerProformaInvoice = (props) => {
       String(item.max_decimal_digit),
     );
     const unit = products.map((item) => item.unit);
+
     const isvalid = DecimalValidation({
       numTypes,
       quantities,
@@ -318,12 +336,13 @@ export const CreateCustomerProformaInvoice = (props) => {
       unit,
       handleError,
     });
+
     if (!isvalid) {
       setOpen(false);
       return;
     }
-    const unwantedInstructions = ["jhota", "jota", "shrink wrap", "strap"];
 
+    const unwantedInstructions = ["jhota", "jota", "shrink wrap", "strap"];
     const hasInvalidInstruction = products.some((item) =>
       unwantedInstructions.includes(
         (item.special_instructions || "").trim().toLowerCase(),
@@ -340,62 +359,87 @@ export const CreateCustomerProformaInvoice = (props) => {
       raised_by: users.email,
       raised_by_first_name: users.first_name,
       raised_by_last_name: users.last_name,
-      seller_account: selectedSellerData.unit,
-      seller_address: selectedSellerData.address,
-      seller_pincode: selectedSellerData.pincode,
-      seller_state: selectedSellerData.state,
-      seller_city: selectedSellerData.city,
-      seller_gst: selectedSellerData.gst_number,
-      seller_pan: selectedSellerData.pan_number,
-      seller_state_code: selectedSellerData.state_code,
-      seller_cin: selectedSellerData.cin_number,
-      seller_email: selectedSellerData.email,
-      seller_contact: selectedSellerData.contact,
-      seller_bank_name: selectedSellerData.bank_name,
-      seller_account_no: selectedSellerData.current_account_no,
-      seller_ifsc_code: selectedSellerData.ifsc_code,
-      seller_branch: selectedSellerData.branch,
-      company: customerData.id,
+      seller_account: selectedSellerData ? selectedSellerData.unit : "",
+      seller_address: selectedSellerData ? selectedSellerData.address : "",
+      seller_pincode: selectedSellerData ? selectedSellerData.pincode : "",
+      seller_state: selectedSellerData ? selectedSellerData.state : "",
+      seller_city: selectedSellerData ? selectedSellerData.city : "",
+      seller_gst: selectedSellerData ? selectedSellerData.gst_number : "",
+      seller_pan: selectedSellerData ? selectedSellerData.pan_number : "",
+      seller_state_code: selectedSellerData
+        ? selectedSellerData.state_code
+        : "",
+      seller_cin: selectedSellerData ? selectedSellerData.cin_number : "",
+      seller_email: selectedSellerData ? selectedSellerData.email : "",
+      seller_contact: selectedSellerData ? selectedSellerData.contact : "",
+      seller_bank_name: selectedSellerData ? selectedSellerData.bank_name : "",
+      seller_account_no: selectedSellerData
+        ? selectedSellerData.current_account_no
+        : "",
+      seller_ifsc_code: selectedSellerData ? selectedSellerData.ifsc_code : "",
+      seller_branch: selectedSellerData ? selectedSellerData.branch : "",
+      company: customerData ? customerData.id : null,
       company_name:
         rowData.type_of_customer === "Exclusive Distribution Customer"
-          ? warehouseData.company
-          : customerData.name,
-      contact: contactData.contact,
-      contact_person_name: contactData.name,
-      alternate_contact: contactData.alternate_contact,
-      gst_number: customerData.gst_number || null,
-      pan_number: customerData.pan_number,
-      billing_address: customerData.address,
-      billing_state: customerData.state,
-      billing_city: customerData.city,
-      billing_pincode: customerData.pincode,
+          ? warehouseData && warehouseData.company
+            ? warehouseData.company
+            : ""
+          : customerData && customerData.name
+            ? customerData.name
+            : "",
+      contact: contactData ? contactData.contact : null,
+      contact_person_name: contactData ? contactData.name : null,
+      alternate_contact: contactData ? contactData.alternate_contact : null,
+      gst_number:
+        customerData && customerData.gst_number
+          ? customerData.gst_number
+          : null,
+      pan_number: customerData ? customerData.pan_number : null,
+      billing_address: customerData ? customerData.address : null,
+      billing_state: customerData ? customerData.state : null,
+      billing_city: customerData ? customerData.city : null,
+      billing_pincode: customerData ? customerData.pincode : null,
       address:
         rowData.type_of_customer === "Exclusive Distribution Customer"
-          ? warehouseData.customer_address
-          : warehouseData.address,
-      pincode: warehouseData.pincode,
-      state: warehouseData.state,
-      city: warehouseData.city,
+          ? warehouseData && warehouseData.customer_address
+            ? warehouseData.customer_address
+            : ""
+          : warehouseData && warehouseData.address
+            ? warehouseData.address
+            : "",
+      pincode: warehouseData ? warehouseData.pincode : null,
+      state: warehouseData ? warehouseData.state : null,
+      city: warehouseData ? warehouseData.city : null,
       place_of_supply:
         inputValue.place_of_supply ||
-        (customerLastPiData && customerLastPiData.place_of_supply),
+        (customerLastPiData && customerLastPiData.place_of_supply
+          ? customerLastPiData.place_of_supply
+          : ""),
       transporter_name:
         inputValue.transporter_name ||
-        (customerLastPiData && customerLastPiData.transporter_name),
+        (customerLastPiData && customerLastPiData.transporter_name
+          ? customerLastPiData.transporter_name
+          : ""),
       buyer_order_no: checked === true ? "verbal" : inputValue.buyer_order_no,
       buyer_order_date: inputValue.buyer_order_date
         ? inputValue.buyer_order_date
         : buyer_date,
       payment_terms:
         paymentTermData ||
-        (customerLastPiData && customerLastPiData.payment_terms),
+        (customerLastPiData && customerLastPiData.payment_terms
+          ? customerLastPiData.payment_terms
+          : ""),
       delivery_terms:
         deliveryTermData ||
-        (customerLastPiData && customerLastPiData.delivery_terms),
+        (customerLastPiData && customerLastPiData.delivery_terms
+          ? customerLastPiData.delivery_terms
+          : ""),
       status: priceApproval ? "Price Approval" : "Approved",
       price_approval: priceApproval,
       products: constructPayload(),
-      warehouse_person_name: warehouseData.contact_name,
+      warehouse_person_name: warehouseData ? warehouseData.contact_name : null,
+      transporter_name: transporterName ? transporterName.transporter : "",
+      universal_dispatch_type: universalType ? universalType : "",
     };
 
     if (rowData.origin_type === "International") {
@@ -403,29 +447,25 @@ export const CreateCustomerProformaInvoice = (props) => {
     } else {
       payload.currency = "INR";
     }
-    console.log(inputValue);
 
     try {
       setOpen(true);
       if (!isValidData) {
         setOpenPopup2(true);
-        return; // Exit if data validation fails
+        return;
       }
-
-      // Perform the API call if data is valid
       const response =
         await InvoiceServices.createCustomerProformaInvoiceData(payload);
       const successMessage =
         response.data.message || "Proforma Invoice created successfully!";
       handleSuccess(successMessage);
-
       setTimeout(() => {
         navigate("/invoice/active-pi");
       }, 300);
     } catch (error) {
-      handleError(error); // Handle errors from the API call
+      handleError(error);
     } finally {
-      setOpen(false); // Always close the loader
+      setOpen(false);
     }
   };
 
@@ -442,10 +482,10 @@ export const CreateCustomerProformaInvoice = (props) => {
       <Box
         component="form"
         noValidate
-        // onSubmit={formik.handleSubmit}
         onSubmit={(e) => createCustomerProformaInvoiceDetails(e)}
       >
         <Grid container spacing={2}>
+          {/* ─── Seller / Terms ─────────────────────────────────────────── */}
           <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               name="seller_account"
@@ -460,6 +500,7 @@ export const CreateCustomerProformaInvoice = (props) => {
               style={tfStyle}
             />
           </Grid>
+
           <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               name="payment_terms"
@@ -474,11 +515,14 @@ export const CreateCustomerProformaInvoice = (props) => {
               value={
                 paymentTermData === ""
                   ? customerLastPiData && customerLastPiData.payment_terms
+                    ? customerLastPiData.payment_terms
+                    : ""
                   : paymentTermData
               }
               style={tfStyle}
             />
           </Grid>
+
           <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               name="delivery_terms"
@@ -493,11 +537,14 @@ export const CreateCustomerProformaInvoice = (props) => {
               value={
                 deliveryTermData === ""
                   ? customerLastPiData && customerLastPiData.delivery_terms
+                    ? customerLastPiData.delivery_terms
+                    : ""
                   : deliveryTermData
               }
               style={tfStyle}
             />
           </Grid>
+
           {rowData.origin_type === "International" && (
             <Grid item xs={12} sm={3}>
               <CustomAutocomplete
@@ -509,15 +556,21 @@ export const CreateCustomerProformaInvoice = (props) => {
                   null
                 }
                 onChange={(event, value) =>
-                  setInputValue({ ...inputValue, currency: value.name })
+                  value
+                    ? setInputValue({ ...inputValue, currency: value.name })
+                    : null
                 }
                 options={currencyOption.map((option) => option)}
-                getOptionLabel={(option) => `${option.name} (${option.symbol})`}
+                getOptionLabel={(option) =>
+                  option.name + " (" + option.symbol + ")"
+                }
                 sx={{ minWidth: 300 }}
                 label="Currency"
               />
             </Grid>
           )}
+
+          {/* ─── Customer section ────────────────────────────────────────── */}
           <Grid item xs={12}>
             <Root>
               <Divider>
@@ -525,6 +578,7 @@ export const CreateCustomerProformaInvoice = (props) => {
               </Divider>
             </Root>
           </Grid>
+
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -532,9 +586,10 @@ export const CreateCustomerProformaInvoice = (props) => {
               size="small"
               label="Company"
               variant="outlined"
-              value={customerData.name ? customerData.name : ""}
+              value={customerData && customerData.name ? customerData.name : ""}
             />
           </Grid>
+
           <Grid item xs={12} sm={4}>
             <FormControl
               required
@@ -550,15 +605,18 @@ export const CreateCustomerProformaInvoice = (props) => {
                 id="demo-simple-select-required"
                 label="Contact Name"
                 value={
-                  contactData || // Use the selected contactData
+                  contactData ||
                   contactOptions.find(
                     (option) =>
-                      option.name === customerLastPiData &&
-                      customerLastPiData.contact_person_name,
-                  ) // Default to customerLastPiData if contactData is not set
+                      customerLastPiData &&
+                      option.name === customerLastPiData.contact_person_name,
+                  ) ||
+                  ""
                 }
-                onChange={(e) => setContactData(e.target.value)} // Handle changes to update contactData
-                renderValue={(selected) => (selected ? selected.name : "")} // Display contact name as value
+                onChange={(e) => setContactData(e.target.value)}
+                renderValue={(selected) =>
+                  selected && selected.name ? selected.name : ""
+                }
               >
                 {contactOptions.map((option, i) => (
                   <MenuItem key={i} value={option}>
@@ -585,9 +643,7 @@ export const CreateCustomerProformaInvoice = (props) => {
                     ? customerLastPiData.contact
                     : ""
               }
-              InputLabelProps={{
-                shrink: true, // This will ensure the label stays above the field
-              }}
+              InputLabelProps={{ shrink: true }}
             />
           </Grid>
 
@@ -600,14 +656,13 @@ export const CreateCustomerProformaInvoice = (props) => {
               label="Alt. Contact"
               variant="outlined"
               value={
-                warehouseData
+                warehouseData && warehouseData.contact_number
                   ? warehouseData.contact_number
-                    ? warehouseData.contact_number
-                    : ""
                   : ""
               }
             />
           </Grid>
+
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -618,7 +673,9 @@ export const CreateCustomerProformaInvoice = (props) => {
               size="small"
               label="Billing Address"
               variant="outlined"
-              value={customerData.address ? customerData.address : ""}
+              value={
+                customerData && customerData.address ? customerData.address : ""
+              }
             />
           </Grid>
 
@@ -631,9 +688,10 @@ export const CreateCustomerProformaInvoice = (props) => {
               size="small"
               label="Billing City"
               variant="outlined"
-              value={customerData.city ? customerData.city : ""}
+              value={customerData && customerData.city ? customerData.city : ""}
             />
           </Grid>
+
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -643,9 +701,12 @@ export const CreateCustomerProformaInvoice = (props) => {
               size="small"
               label="Billing State"
               variant="outlined"
-              value={customerData.state ? customerData.state : ""}
+              value={
+                customerData && customerData.state ? customerData.state : ""
+              }
             />
           </Grid>
+
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -653,12 +714,16 @@ export const CreateCustomerProformaInvoice = (props) => {
               required
               name="pincode"
               size="small"
-              type={"number"}
+              type="number"
               label="Billing Pin Code"
               variant="outlined"
-              value={customerData.pincode ? customerData.pincode : ""}
+              value={
+                customerData && customerData.pincode ? customerData.pincode : ""
+              }
             />
           </Grid>
+
+          {/* ─── Shipping address ─────────────────────────────────────────── */}
           <Grid item xs={12} sm={4}>
             <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">
@@ -670,32 +735,30 @@ export const CreateCustomerProformaInvoice = (props) => {
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   label="Shipping Address"
-                  onChange={(e, value) => setWarehouseData(e.target.value)}
+                  onChange={(e) => setWarehouseData(e.target.value)}
                 >
-                  {warehouseOptions &&
-                    edcData.map((option, i) => (
-                      <MenuItem key={i} value={option}>
-                        {option
-                          ? option.customer_address
-                          : "Please First Select Contact"}
-                      </MenuItem>
-                    ))}
+                  {edcData.map((option, i) => (
+                    <MenuItem key={i} value={option}>
+                      {option && option.customer_address
+                        ? option.customer_address
+                        : "Please First Select Contact"}
+                    </MenuItem>
+                  ))}
                 </Select>
               ) : (
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   label="Shipping Address"
-                  onChange={(e, value) => setWarehouseData(e.target.value)}
+                  onChange={(e) => setWarehouseData(e.target.value)}
                 >
-                  {warehouseOptions &&
-                    warehouseOptions.map((option, i) => (
-                      <MenuItem key={i} value={option}>
-                        {option
-                          ? option.address
-                          : "Please First Select Contact"}
-                      </MenuItem>
-                    ))}
+                  {warehouseOptions.map((option, i) => (
+                    <MenuItem key={i} value={option}>
+                      {option && option.address
+                        ? option.address
+                        : "Please First Select Contact"}
+                    </MenuItem>
+                  ))}
                 </Select>
               )}
               <HelperText>first select Contact</HelperText>
@@ -712,14 +775,11 @@ export const CreateCustomerProformaInvoice = (props) => {
               label="Shipping City"
               variant="outlined"
               value={
-                warehouseData
-                  ? warehouseData.city
-                    ? warehouseData.city
-                    : ""
-                  : ""
+                warehouseData && warehouseData.city ? warehouseData.city : ""
               }
             />
           </Grid>
+
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -730,14 +790,11 @@ export const CreateCustomerProformaInvoice = (props) => {
               label="Shipping State"
               variant="outlined"
               value={
-                warehouseData
-                  ? warehouseData.state
-                    ? warehouseData.state
-                    : ""
-                  : ""
+                warehouseData && warehouseData.state ? warehouseData.state : ""
               }
             />
           </Grid>
+
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -745,18 +802,33 @@ export const CreateCustomerProformaInvoice = (props) => {
               disabled
               name="pincode"
               size="small"
-              type={"number"}
+              type="number"
               label="Shipping Pin Code"
               variant="outlined"
               value={
-                warehouseData
+                warehouseData && warehouseData.pincode
                   ? warehouseData.pincode
-                    ? warehouseData.pincode
-                    : ""
                   : ""
               }
             />
           </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomAutocomplete
+              name="universal_dispatch_type"
+              size="small"
+              disablePortal
+              id="combo-box-universal" // unique id
+              onChange={(event, value) => setUniversalType(value)}
+              options={Universal_type} // no need to .map() plain strings
+              getOptionLabel={(option) => option}
+              value={universalType}
+              sx={{ minWidth: 300 }}
+              label="Universal Type"
+              style={tfStyle}
+            />
+          </Grid>
+
+          {/* ─── Order info ───────────────────────────────────────────────── */}
           <Grid item xs={12} sm={4}>
             <FormControlLabel
               label="Verbal"
@@ -767,7 +839,6 @@ export const CreateCustomerProformaInvoice = (props) => {
                 />
               }
             />
-
             <CustomTextField
               required
               name="buyer_order_no"
@@ -783,15 +854,14 @@ export const CreateCustomerProformaInvoice = (props) => {
                     : ""
               }
               onChange={handleInputChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
+              InputLabelProps={{ shrink: true }}
             />
           </Grid>
+
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
-              type={"date"}
+              type="date"
               name="buyer_order_date"
               size="small"
               label="Buyer Order Date"
@@ -802,11 +872,10 @@ export const CreateCustomerProformaInvoice = (props) => {
                   : buyer_date
               }
               onChange={handleInputChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
+              InputLabelProps={{ shrink: true }}
             />
           </Grid>
+
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -814,35 +883,35 @@ export const CreateCustomerProformaInvoice = (props) => {
               size="small"
               label="Place of Supply"
               variant="outlined"
-              InputLabelProps={{
-                shrink: true, // This will ensure the label stays above the field
-              }}
+              InputLabelProps={{ shrink: true }}
               value={
                 inputValue.place_of_supply
                   ? inputValue.place_of_supply
                   : customerLastPiData && customerLastPiData.place_of_supply
+                    ? customerLastPiData.place_of_supply
+                    : ""
               }
               onChange={handleInputChange}
             />
           </Grid>
+
           <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              name="transporter_name"
+            <CustomAutocomplete
+              name="Transpoer Name"
               size="small"
-              label="Transporter Name"
-              variant="outlined"
-              InputLabelProps={{
-                shrink: true, // This will ensure the label stays above the field
-              }}
-              value={
-                inputValue.transporter_name
-                  ? inputValue.transporter_name
-                  : customerLastPiData && customerLastPiData.transporter_name
-              }
-              onChange={handleInputChange}
+              disablePortal
+              id="combo-box-demo"
+              onChange={(event, value) => setTransporterName(value)}
+              options={transportList && transportList.map((option) => option)}
+              getOptionLabel={(option) => option.transporter}
+              sx={{ minWidth: 300 }}
+              disabled={!(warehouseData && warehouseData.pincode)}
+              label="Tranpoter Name"
+              style={tfStyle}
             />
           </Grid>
+
+          {/* ─── Products section ─────────────────────────────────────────── */}
           <Grid item xs={12}>
             <Root>
               <Divider>
@@ -850,6 +919,7 @@ export const CreateCustomerProformaInvoice = (props) => {
               </Divider>
             </Root>
           </Grid>
+
           <Grid item xs={12}>
             <FormControlLabel
               label="Price Approval"
@@ -861,20 +931,25 @@ export const CreateCustomerProformaInvoice = (props) => {
               }
             />
           </Grid>
+
           {products.map((input, index) => {
+            const detail =
+              productDetails && productDetails[index]
+                ? productDetails[index]
+                : null;
+
             return (
-              <>
-                <Grid key={index} item xs={12} sm={4}>
+              <React.Fragment key={index}>
+                <Grid item xs={12} sm={4}>
                   <CustomAutocomplete
                     name="product"
                     size="small"
                     disablePortal
-                    id={`combo-box-${index}`}
+                    id={"combo-box-" + index}
                     onChange={async (event, value) => {
-                      // Handle product change
-                      handleAutocompleteChange(index, event, value); // Update product state
+                      handleAutocompleteChange(index, event, value);
                       if (!selectedSellerData) {
-                        return alert("Please select seller unit first! ");
+                        return alert("Please select seller unit first!");
                       }
                       if (value) {
                         try {
@@ -883,13 +958,11 @@ export const CreateCustomerProformaInvoice = (props) => {
                             await CustomerServices.getProductLastPi(
                               rowData && rowData.name,
                               selectedSellerData.unit,
-
                               value,
                             );
-
                           setProductDetails((prev) => ({
                             ...prev,
-                            [index]: response.data, // Store product details by index
+                            [index]: response.data,
                           }));
                         } catch (err) {
                           console.error("Error fetching product details:", err);
@@ -907,6 +980,7 @@ export const CreateCustomerProformaInvoice = (props) => {
                     style={tfStyle}
                   />
                 </Grid>
+
                 <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
@@ -915,15 +989,12 @@ export const CreateCustomerProformaInvoice = (props) => {
                     variant="outlined"
                     disabled
                     value={
-                      productDetails &&
-                      productDetails[index] &&
-                      productDetails[index].available_qty
+                      detail && detail.available_qty ? detail.available_qty : ""
                     }
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
+                    InputLabelProps={{ shrink: true }}
                   />
                 </Grid>
+
                 <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
@@ -935,6 +1006,7 @@ export const CreateCustomerProformaInvoice = (props) => {
                     onChange={(event) => handleFormChange(index, event)}
                   />
                 </Grid>
+
                 <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
@@ -944,6 +1016,7 @@ export const CreateCustomerProformaInvoice = (props) => {
                     value={input.unit || ""}
                   />
                 </Grid>
+
                 <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
@@ -951,28 +1024,24 @@ export const CreateCustomerProformaInvoice = (props) => {
                     size="small"
                     label="Rate"
                     value={
-                      input.rate // Use the rate if the user edited it
+                      input.rate
                         ? input.rate
-                        : productDetails &&
-                            productDetails[index] &&
-                            productDetails[index].rate
-                          ? parseFloat(productDetails[index].rate).toFixed(2) // Use productDetails if not edited
+                        : detail && detail.rate
+                          ? parseFloat(detail.rate).toFixed(2)
                           : ""
                     }
                     variant="outlined"
                     onChange={(event) => {
-                      handleFormChange(index, event); // Track changes for user input
+                      handleFormChange(index, event);
                       setProductDetails((prev) => ({
                         ...prev,
                         [index]: {
-                          ...prev[index],
+                          ...(prev && prev[index] ? prev[index] : {}),
                           rate: event.target.value,
                         },
                       }));
                     }}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
+                    InputLabelProps={{ shrink: true }}
                   />
                 </Grid>
 
@@ -984,35 +1053,31 @@ export const CreateCustomerProformaInvoice = (props) => {
                     size="small"
                     label="Amount"
                     variant="outlined"
+                    disabled
                     value={(() => {
                       const qty = parseFloat(input.quantity || 0);
                       const rate = parseFloat(
-                        input.rate ||
-                          (productDetails &&
-                            productDetails[index] &&
-                            productDetails[index].rate) ||
-                          0,
+                        input.rate || (detail && detail.rate ? detail.rate : 0),
+                      );
+                      const packageItem = packageList.find(
+                        (p) => p.name === input.packaging_type,
                       );
                       const charges = parseFloat(
-                        (
-                          packageList.find(
-                            (p) => p.name === input.packaging_type,
-                          ) || {}
-                        ).charges || 0,
+                        packageItem && packageItem.charges
+                          ? packageItem.charges
+                          : 0,
                       );
                       const base = qty * rate;
                       const total = base + (base * charges) / 100;
-
                       return total.toFixed(2);
                     })()}
-                    disabled // The amount is calculated, so it should not be manually editable.
                   />
                 </Grid>
 
                 <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
-                    type={"date"}
+                    type="date"
                     name="requested_date"
                     size="small"
                     label="Request Date"
@@ -1023,18 +1088,17 @@ export const CreateCustomerProformaInvoice = (props) => {
                         : values.someDate
                     }
                     onChange={(event) => handleFormChange(index, event)}
-                    InputLabelProps={{
-                      shrink: true, // Ensures the label stays visible
-                    }}
+                    InputLabelProps={{ shrink: true }}
                     inputProps={{
                       min: new Date(
                         new Date().setDate(new Date().getDate() + 1),
                       )
                         .toISOString()
-                        .substring(0, 10), // Prevent selecting past and current dates
+                        .substring(0, 10),
                     }}
                   />
                 </Grid>
+
                 <Grid item xs={12} sm={2}>
                   <CustomTextField
                     fullWidth
@@ -1042,27 +1106,27 @@ export const CreateCustomerProformaInvoice = (props) => {
                     size="small"
                     label="Special Instructions"
                     variant="outlined"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
+                    InputLabelProps={{ shrink: true }}
                     value={
-                      input.special_instructions ||
-                      (productDetails &&
-                        productDetails[index] &&
-                        productDetails[index].special_instructions)
+                      input.special_instructions
+                        ? input.special_instructions
+                        : detail && detail.special_instructions
+                          ? detail.special_instructions
+                          : ""
                     }
                     onChange={(event) => {
                       handleFormChange(index, event);
                       setProductDetails((prev) => ({
                         ...prev,
                         [index]: {
-                          ...prev[index],
+                          ...(prev && prev[index] ? prev[index] : {}),
                           special_instructions: event.target.value,
                         },
                       }));
                     }}
                   />
                 </Grid>
+
                 <Grid item xs={12} sm={2}>
                   <FormControlLabel
                     label="Special Packaging"
@@ -1085,7 +1149,6 @@ export const CreateCustomerProformaInvoice = (props) => {
                 <Grid item xs={12} sm={2} alignContent="right">
                   {index !== 0 && (
                     <Button
-                      disabled={index === 0}
                       onClick={() => removeFields(index)}
                       variant="contained"
                     >
@@ -1093,7 +1156,7 @@ export const CreateCustomerProformaInvoice = (props) => {
                     </Button>
                   )}
                 </Grid>
-              </>
+              </React.Fragment>
             );
           })}
 
@@ -1107,6 +1170,7 @@ export const CreateCustomerProformaInvoice = (props) => {
             </Button>
           </Grid>
         </Grid>
+
         <Button
           type="submit"
           fullWidth
@@ -1116,9 +1180,10 @@ export const CreateCustomerProformaInvoice = (props) => {
           Submit
         </Button>
       </Box>
+
       <Popup
-        maxWidth={"xl"}
-        title={"Update Lead Details"}
+        maxWidth="xl"
+        title="Update Lead Details"
         openPopup={openPopup2}
         setOpenPopup={setOpenPopup2}
       >
@@ -1129,9 +1194,10 @@ export const CreateCustomerProformaInvoice = (props) => {
           Update Customer
         </Button>
       </Popup>
+
       <Popup
-        maxWidth={"xl"}
-        title={"Update Leads"}
+        maxWidth="xl"
+        title="Update Leads"
         openPopup={openPopup3}
         setOpenPopup={setOpenPopup3}
       >
@@ -1192,10 +1258,7 @@ const paymentTermsOptions = [
 ];
 
 const deliveryTermsOptions = [
-  {
-    label: "Ex-Work (Freight to pay)",
-    value: "ex_work_(freight_to_pay)",
-  },
+  { label: "Ex-Work (Freight to pay)", value: "ex_work_(freight_to_pay)" },
   {
     label: "Transporter Warehouse (Freight to Pay)",
     value: "transporter_warehouse_(freight_to_pay)",
@@ -1222,7 +1285,7 @@ const deliveryTermsOptions = [
   },
   {
     label: "Courier (Freight Add in Invoice)",
-    value: "courier_(freight_add_in_invoice",
+    value: "courier_(freight_add_in_invoice)",
   },
 ];
 
