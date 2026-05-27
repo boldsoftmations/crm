@@ -32,7 +32,7 @@ import InventoryServices from "../../../services/InventoryService";
 import { DecimalValidation } from "../../../utility/DecimalValidation";
 import MasterService from "../../../services/MasterService";
 
-// ─── Styled components defined at top so they are always available ────────────
+// ─── Styled components defined at top ────────────────────────────────────────
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -64,6 +64,14 @@ const values = {
   someDate: getNextFiveDates(),
 };
 
+// FIX: Universal_type defined as objects with value + label
+const Universal_type = [
+  { value: "Bus", label: "Bus" },
+  { value: "Train", label: "Train" },
+  { value: "Air", label: "Air" },
+  { value: "Self Pickup", label: "Self Pickup" },
+];
+
 export const CreateCustomerProformaInvoice = (props) => {
   const { recordForEdit, rowData, setOpenPopup } = props;
 
@@ -90,7 +98,9 @@ export const CreateCustomerProformaInvoice = (props) => {
   const [customerLastPiData, setCustomerLastPiData] = useState(null);
   const [packageList, setPackageList] = useState([]);
   const [timeLeft, setTimeLeft] = useState(5 * 60);
+  // transporterName holds the full object from transportList { transporter, ... }
   const [transporterName, setTransporterName] = useState(null);
+  // universalType holds the raw value string e.g. "bus", "self_pickup"
   const [universalType, setUniversalType] = useState("");
 
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
@@ -129,9 +139,8 @@ export const CreateCustomerProformaInvoice = (props) => {
       const pincode =
         warehouseData && warehouseData.pincode ? warehouseData.pincode : "";
       const res = await CustomerServices.getTransportList(pincode);
-      // FIX 3: Guard against undefined results — always set an array
-      setTransportList(res.data && res.data ? res.data : []);
-      console.log("Transport List is :", res.data);
+      const data = res && res.data ? res.data.results : [];
+      setTransportList(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Transport list error:", error);
       setTransportList([]);
@@ -310,13 +319,6 @@ export const CreateCustomerProformaInvoice = (props) => {
     }
   }, [openPopup3]);
 
-  const Universal_type = [
-    { value: "bus", label: "Bus" },
-    { value: "train", label: "Train" },
-    { value: "air", label: "Air" },
-    { value: "self_pickup", label: "Self Pickup" },
-  ];
-
   const createCustomerProformaInvoiceDetails = async (e) => {
     e.preventDefault();
 
@@ -329,8 +331,6 @@ export const CreateCustomerProformaInvoice = (props) => {
       warehouseData.city !== null &&
       warehouseData.pincode !== null;
 
-    // FIX 2: Validate before opening loader. If invalid, open popup and return
-    // without ever calling setOpen(true), so the loader never gets stuck.
     if (!isValidData) {
       setOpenPopup2(true);
       return;
@@ -446,8 +446,9 @@ export const CreateCustomerProformaInvoice = (props) => {
       price_approval: priceApproval,
       products: constructPayload(),
       warehouse_person_name: warehouseData ? warehouseData.contact_name : null,
-      // FIX 1: Single transporter_name key — duplicate removed.
+      // FIX: single transporter_name key using the transporter field from the selected object
       transporter_name: transporterName ? transporterName.transporter : "",
+      // FIX: universalType already holds raw value string e.g. "self_pickup"
       universal_dispatch_type: universalType ? universalType : "",
     };
 
@@ -816,18 +817,49 @@ export const CreateCustomerProformaInvoice = (props) => {
             />
           </Grid>
 
+          {/* FIX: Universal Type — options are objects, so getOptionLabel reads .label
+              onChange stores only the raw value string into universalType state
+              value finds the matching object by comparing universalType string to opt.value */}
           <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               name="universal_dispatch_type"
               size="small"
               disablePortal
               id="combo-box-universal"
-              onChange={(event, value) => setUniversalType(value)}
+              onChange={(event, value) =>
+                setUniversalType(value ? value.value : "")
+              }
               options={Universal_type}
-              getOptionLabel={(option) => option}
-              value={universalType}
+              getOptionLabel={(option) => option.label || ""}
+              value={
+                Universal_type.find((opt) => opt.value === universalType) ||
+                null
+              }
               sx={{ minWidth: 300 }}
               label="Universal Type"
+              style={tfStyle}
+            />
+          </Grid>
+
+          {/* FIX: Transporter Name — was a stray broken element outside Grid.
+              Now correctly placed inside Grid, uses transportList as options,
+              stores the full object in transporterName state so .transporter
+              can be read in the payload */}
+          <Grid item xs={12} sm={4}>
+            <CustomAutocomplete
+              name="transporter_name"
+              size="small"
+              disablePortal
+              id="combo-box-transporter"
+              onChange={(event, value) => setTransporterName(value)}
+              options={Array.isArray(transportList) ? transportList : []}
+              getOptionLabel={(option) =>
+                option.transporter ? option.transporter : ""
+              }
+              value={transporterName}
+              sx={{ minWidth: 300 }}
+              disabled={!(warehouseData && warehouseData.pincode)}
+              label="Transporter Name"
               style={tfStyle}
             />
           </Grid>
@@ -898,24 +930,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               onChange={handleInputChange}
             />
           </Grid>
-
-          <CustomAutocomplete
-            name="universal_dispatch_type"
-            size="small"
-            disablePortal
-            id="combo-box-universal"
-            onChange={(event, value) =>
-              setUniversalType(value ? value.value : "")
-            }
-            options={Universal_type}
-            getOptionLabel={(option) => option.label || ""}
-            value={
-              Universal_type.find((opt) => opt.value === universalType) || null
-            }
-            sx={{ minWidth: 300 }}
-            label="Universal Type"
-            style={tfStyle}
-          />
 
           {/* ─── Products section ─────────────────────────────────────────── */}
           <Grid item xs={12}>

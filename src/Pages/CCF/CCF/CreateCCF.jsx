@@ -40,7 +40,7 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
   const fileInputRef = useRef(null);
   const [invoiceNoOption, setInvoiceNoOption] = useState([]);
   const [departmentData, setDepartmentData] = useState([]);
-  const [batch_no, setBatch_no] = useState([]);
+
   const [documentId, setDocumentId] = useState([]);
   const [products, setProducts] = useState([]);
   const [documents, setDocuments] = useState([]);
@@ -165,10 +165,6 @@ const CreateCCF = ({ getAllCCFData, setOpenCCF }) => {
       })),
     );
 
-    const batch_nos = selectedProducts.flatMap(
-      (product) => product.source_list,
-    );
-    setBatch_no(batch_nos);
     setProducts(selectedProducts);
     setInputValue((prev) => ({
       ...prev,

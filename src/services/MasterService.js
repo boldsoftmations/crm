@@ -274,10 +274,13 @@ const updatePackagingMaster = (id, data) => {
   return CustomAxios.patch(`/api/master/packaging-master/${id}/`, data);
 };
 
-const getAllTransportMaster = (page, is_inactive) => {
+const getAllTransportMaster = (page, is_inactive, search) => {
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
+  }
+  if (search) {
+    params.append("search", search);
   }
 
   params.append("is_inactive", is_inactive);
@@ -293,11 +296,15 @@ const createTransportMaster = (data) => {
 const updateTransportMaster = (id, data) => {
   return CustomAxios.patch(`/api/master/transporter-master/${id}/`, data);
 };
-const getTransportMapping = (isActive, page) => {
+const getTransportMapping = (isActive, page, search) => {
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
   }
+  if (search) {
+    params.append("search", search);
+  }
+  params.append("is_active", isActive);
   return CustomAxios.get(
     `/api/master/transporter-mapping/?${params.toString()}`,
   );
@@ -319,12 +326,15 @@ const getTransportContact = (tranporter_id) => {
     `/api/master/transporter-unit-city/?${params.toString()}`,
   );
 };
-const getAllTransportConstact = (page, is_inactive) => {
+const getAllTransportConstact = (page, is_inactive, search) => {
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
   }
   params.append("is_inactive", is_inactive);
+  if (search) {
+    params.append("search", search);
+  }
   return CustomAxios.get(
     `/api/master/transporter-contact/?${params.toString()}`,
   );

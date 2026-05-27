@@ -349,7 +349,7 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
             <a
               href={current.file}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -418,14 +418,18 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
             />
           ) : (
             <div style={{ textAlign: "center", padding: 48 }}>
-              <div style={{ fontSize: 56, marginBottom: 16 }}>📄</div>
+              <div style={{ fontSize: 56, marginBottom: 16 }}>
+                <span role="img" aria-label="document">
+                  📄
+                </span>
+              </div>
               <div style={{ fontSize: 14, color: "#aaa", marginBottom: 20 }}>
                 Preview not available for this file type.
               </div>
               <a
                 href={current.file}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 style={{
                   fontSize: 13,
                   fontWeight: 600,
@@ -509,7 +513,13 @@ const LightboxModal = ({ doc, allDocs, onClose }) => {
                       }}
                     />
                   ) : (
-                    <span style={{ fontSize: 16 }}>📄</span>
+                    <span
+                      style={{ fontSize: 16 }}
+                      role="img"
+                      aria-label="document"
+                    >
+                      📄
+                    </span>
                   )}
                 </div>
               ))}
@@ -1294,13 +1304,6 @@ export const CapaStatusView = ({
             <DetailRow label="Customer" value={_assignedTo} />
             <DetailRow
               label="Created"
-              value={moment(_createdDate, [
-                "YYYY-MM-DD",
-                "DD-MM-YYYY HH:mm:ss",
-              ]).format("DD MMM YYYY")}
-            />
-            <DetailRow
-              label="Updated"
               value={
                 _record.updated_date
                   ? moment(_record.updated_date, [
@@ -1310,6 +1313,14 @@ export const CapaStatusView = ({
                   : "—"
               }
             />
+            <DetailRow
+              label="Updated"
+              value={moment(_createdDate, [
+                "YYYY-MM-DD",
+                "DD-MM-YYYY HH:mm:ss",
+              ]).format("DD MMM YYYY")}
+            />
+
             <DetailRow label="Department" value={_record.department || "—"} />
             <DetailRow
               label="Priority"
@@ -1475,7 +1486,13 @@ export const CapaStatusView = ({
                         }}
                       />
                     ) : (
-                      <span style={{ fontSize: 20 }}>📄</span>
+                      <span
+                        style={{ fontSize: 20 }}
+                        role="img"
+                        aria-label="document"
+                      >
+                        📄
+                      </span>
                     )}
                   </div>
 
@@ -1495,7 +1512,11 @@ export const CapaStatusView = ({
                   </div>
 
                   {/* Zoom icon hint */}
-                  <span style={{ fontSize: 14, color: C.text3, flexShrink: 0 }}>
+                  <span
+                    style={{ fontSize: 14, color: C.text3, flexShrink: 0 }}
+                    role="img"
+                    aria-label="view"
+                  >
                     🔍
                   </span>
                 </div>

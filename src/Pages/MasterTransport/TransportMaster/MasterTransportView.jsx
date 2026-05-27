@@ -68,6 +68,7 @@ export const MasterTransportView = () => {
         currentPage,
 
         isInactiveFilter, // pass filter to service
+        searchQuery, // pass search query to service
       );
 
       if (response && response.data && response.data.results) {

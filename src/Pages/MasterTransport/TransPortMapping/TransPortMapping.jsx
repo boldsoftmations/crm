@@ -215,8 +215,8 @@ const TransPortMapping = () => {
               size="small"
               color="primary"
             >
-              <ToggleButton value={false}>Active</ToggleButton>
-              <ToggleButton value={true}>Inactive</ToggleButton>
+              <ToggleButton value="active">Active</ToggleButton>
+              <ToggleButton value="inactive">Inactive</ToggleButton>
             </ToggleButtonGroup>
           </Box>
 

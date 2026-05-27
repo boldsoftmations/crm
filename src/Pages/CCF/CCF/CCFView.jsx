@@ -141,17 +141,6 @@ export const CCFView = () => {
     setOpenCapa(true);
   };
 
-  const handleupdateInactive = async () => {
-    try {
-      setOpen(true);
-      await CustomerServices.CCFUpdate(ViewData.id, { is_active: true });
-      getAllCCFData();
-      setOpen(false);
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
   return (
     <>
       <MessageAlert
