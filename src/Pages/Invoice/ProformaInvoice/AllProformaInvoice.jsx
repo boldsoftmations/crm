@@ -207,6 +207,7 @@ export const AllProformaInvoice = () => {
     balance_amount: row.balance_amount,
     payment_terms: row.payment_terms,
     transporter_name: row.transporter_name,
+    pincode: row.pincode,
   }));
 
   const Tableheaders = [
