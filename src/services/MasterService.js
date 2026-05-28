@@ -304,7 +304,7 @@ const getTransportMapping = (isActive, page, search) => {
   if (search) {
     params.append("search", search);
   }
-  params.append("is_active", isActive);
+  params.append("is_inactive", isActive);
   return CustomAxios.get(
     `/api/master/transporter-mapping/?${params.toString()}`,
   );
@@ -326,10 +326,21 @@ const getTransportContact = (tranporter_id) => {
     `/api/master/transporter-unit-city/?${params.toString()}`,
   );
 };
-const getAllTransportConstact = (page, is_inactive, search) => {
+const getAllTransportConstact = (
+  transporter__transporter_name,
+  page,
+  is_inactive,
+  search,
+) => {
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
+  }
+  if (transporter__transporter_name) {
+    params.append(
+      "transporter__transporter_name",
+      transporter__transporter_name,
+    );
   }
   params.append("is_inactive", is_inactive);
   if (search) {

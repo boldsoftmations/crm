@@ -54,7 +54,7 @@ const UpdateProformaInvoice = ({
       );
       console.log("idforedit data is:", idForEdit);
       console.log("data is :", res);
-      const data = res && res.data ? res.data : [];
+      const data = res && res.data ? res.data.results : [];
       setTransportList(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Transport list error:", error);

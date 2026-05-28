@@ -72,7 +72,7 @@ const TransPortMapping = () => {
       setLoading(true);
 
       const response = await MasterService.getTransportMapping(
-        isInactiveFilter,
+        isInactiveFilter === "active" ? false : true,
         currentPage,
         searchQuery,
       );

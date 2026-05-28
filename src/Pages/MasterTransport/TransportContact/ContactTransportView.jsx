@@ -81,7 +81,7 @@ const ContactTransportView = () => {
       setLoading(true);
 
       const response = await MasterService.getAllTransportConstact(
-        // transporterId,
+        (selectedTransporter && selectedTransporter.transporter_name) || null,
         currentPage,
         isInactiveFilter,
         searchQuery,
