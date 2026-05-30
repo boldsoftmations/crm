@@ -276,7 +276,7 @@ export const ViewProductDetails = ({
           </Popup>
           <Popup
             fullScreen={true}
-            title={"Create Customer Proforma Invoice"}
+            title={""}
             openPopup={openPopupInvoice}
             setOpenPopup={setOpenPopupInvoice}
           >
