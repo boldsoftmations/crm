@@ -296,7 +296,14 @@ const createTransportMaster = (data) => {
 const updateTransportMaster = (id, data) => {
   return CustomAxios.patch(`/api/master/transporter-master/${id}/`, data);
 };
-const getTransportMapping = (isActive, page, search) => {
+const getTransportMapping = (
+  isActive,
+  page,
+  search,
+  transporter__transporter_name,
+  unit__unit,
+  pincode__pincode,
+) => {
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
@@ -304,7 +311,21 @@ const getTransportMapping = (isActive, page, search) => {
   if (search) {
     params.append("search", search);
   }
-  params.append("is_inactive", isActive);
+  if (isActive !== null && isActive !== undefined) {
+    params.append("is_inactive", isActive);
+  }
+  if (transporter__transporter_name) {
+    params.append(
+      "transporter__transporter_name",
+      transporter__transporter_name,
+    );
+  }
+  if (unit__unit) {
+    params.append("unit__unit", unit__unit);
+  }
+  if (pincode__pincode) {
+    params.append("pincode__pincode", pincode__pincode);
+  }
   return CustomAxios.get(
     `/api/master/transporter-mapping/?${params.toString()}`,
   );
@@ -352,6 +373,15 @@ const getAllTransportConstact = (
 };
 const createTransportContact = (data) => {
   return CustomAxios.post("/api/master/transporter-contact/", data);
+};
+
+const updateTransportContact = (id, data) => {
+  return CustomAxios.patch(`/api/master/transporter-contact/${id}/`, data);
+};
+const getonUniversalType = () => {
+  return CustomAxios.get(
+    `/api/master/transporter-master/?page=1&search=universal+mode&is_inactive=false`,
+  );
 };
 
 const MasterService = {
@@ -407,5 +437,7 @@ const MasterService = {
   getTransportContact,
   createTransportContact,
   getAllTransportConstact,
+  updateTransportContact,
+  getonUniversalType,
 };
 export default MasterService;

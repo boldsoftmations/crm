@@ -187,7 +187,7 @@ export const MasterTransportView = () => {
                 variant="contained"
                 color="success"
                 onClick={() => setOpenCreatePopup(true)}
-                disabled={isInGroups("Stores")}
+                disabled={isInGroups("Operations & Supply Chain Manager")}
               >
                 Add
               </Button>

@@ -102,6 +102,8 @@ export const CreateCustomerProformaInvoice = (props) => {
   const [transporterName, setTransporterName] = useState(null);
   // universalType holds the raw value string e.g. "bus", "self_pickup"
   const [universalType, setUniversalType] = useState("");
+  const [transporterData, setTransporterData] = useState([]);
+  const [transporterType, setTransporterType] = useState(null);
 
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
@@ -169,6 +171,20 @@ export const CreateCustomerProformaInvoice = (props) => {
     return (
       String(minutes).padStart(2, "0") + ":" + String(secs).padStart(2, "0")
     );
+  };
+
+  const ifSelectuniversal = async (type) => {
+    try {
+      setOpen(true);
+      const res = await MasterService.getonUniversalType(type);
+      const data = res && res.data ? res.data.results : [];
+      setTransportList(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Universal type transport error:", error);
+      setTransportList([]);
+    } finally {
+      setOpen(false);
+    }
   };
 
   const constructPayload = () => {
@@ -450,6 +466,7 @@ export const CreateCustomerProformaInvoice = (props) => {
       transporter_name: transporterName ? transporterName.transporter : "",
       // FIX: universalType already holds raw value string e.g. "self_pickup"
       universal_dispatch_type: universalType ? universalType : "",
+      transporter_type: transporterType ? transporterType.transporter_type : "",
     };
 
     if (rowData.origin_type === "International") {
@@ -474,6 +491,21 @@ export const CreateCustomerProformaInvoice = (props) => {
       setOpen(false);
     }
   };
+
+  const getAllTypeofTransport = async () => {
+    try {
+      setOpen(true);
+      const response = await CustomerServices.getAllTransporterTypes();
+      setTransporterData(response.data);
+      console.log("transpoet data:", response.data);
+      setOpen(false);
+    } catch (error) {
+      setOpen(false);
+    }
+  };
+  useEffect(() => {
+    getAllTypeofTransport();
+  }, []);
 
   return (
     <div>
@@ -826,9 +858,17 @@ export const CreateCustomerProformaInvoice = (props) => {
               size="small"
               disablePortal
               id="combo-box-universal"
-              onChange={(event, value) =>
-                setUniversalType(value ? value.value : "")
-              }
+              onChange={(event, value) => {
+                const selected = value ? value.value : "";
+                setUniversalType(selected);
+                setTransporterName(null); // reset transporter selection
+                if (selected) {
+                  ifSelectuniversal(selected);
+                } else {
+                  // no universal type selected — reload surface transport list by pincode
+                  getTranportList();
+                }
+              }}
               options={Universal_type}
               getOptionLabel={(option) => option.label || ""}
               value={
@@ -837,6 +877,25 @@ export const CreateCustomerProformaInvoice = (props) => {
               }
               sx={{ minWidth: 300 }}
               label="Universal Type"
+              style={tfStyle}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomAutocomplete
+              name="transporter_type"
+              size="small"
+              disablePortal
+              id="combo-box-transporter-type"
+              onChange={(event, value) =>
+                setTransporterType(value ? value : null)
+              }
+              options={Array.isArray(transporterData) ? transporterData : []}
+              getOptionLabel={(option) =>
+                option.transporter_type ? option.transporter_type : ""
+              }
+              value={transporterType}
+              sx={{ minWidth: 300 }}
+              label="Transporter Type"
               style={tfStyle}
             />
           </Grid>

@@ -222,6 +222,7 @@ export const AllProformaInvoice = () => {
     "Status",
     "PI Amount",
     "Balance",
+    "PINCODE",
     "Payment Terms",
     "ACTION",
   ];
@@ -394,6 +395,9 @@ export const AllProformaInvoice = () => {
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {row.balance_amount}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.pincode}
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {row.payment_terms}

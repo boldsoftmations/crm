@@ -58,11 +58,11 @@ export const ListItems = ({ setOpen }) => {
 
   if (!userData || !userData.groups) {
     return <div>Loading...</div>;
-  } 
+  }
 
   const renderListItem = (to, icon, primaryText) => (
     <ListItem
-      button 
+      button
       component={RouterLink}
       to={to}
       style={{ width: 300 }}
@@ -350,6 +350,7 @@ export const ListItems = ({ setOpen }) => {
             text: "CCF Complaint Master",
           },
           { to: "/user/profile-tab", text: "Employees Master" },
+          { to: "/master/transport", text: "Transport Master" },
         ]),
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },
@@ -385,6 +386,7 @@ export const ListItems = ({ setOpen }) => {
       items: [
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
+          { to: "/master/transport", text: "Transport Master" },
         ]),
         renderListItem("/customer/srf", <StickyNote2Icon />, "SRF"),
         renderListItem("/invoice/orderbook-tab", <ReceiptIcon />, "Order Book"),
@@ -587,7 +589,7 @@ export const ListItems = ({ setOpen }) => {
         renderSubmenu("production", <FactoryIcon />, "Production", [
           { to: "/inventory/view-production", text: "Production" },
         ]),
-         renderSubmenu(
+        renderSubmenu(
           "customer_complaint",
           <ComplaintIcon />,
           "Customer Complaint",
@@ -626,6 +628,7 @@ export const ListItems = ({ setOpen }) => {
             to: "/master/beat",
             text: "Beat Master",
           },
+          { to: "/master/transport", text: "Transport Master" },
         ]),
         renderListItem(
           "/master/customer-visit",
@@ -677,6 +680,10 @@ export const ListItems = ({ setOpen }) => {
           {
             to: "/master/beat",
             text: "Beat Master",
+          },
+          {
+            to: "/master/transport",
+            text: "Transport Master",
           },
         ]),
         renderListItem(
@@ -871,6 +878,7 @@ export const ListItems = ({ setOpen }) => {
           { to: "/products/all-product", text: "Inventory Master" },
           { to: "/invoice/seller-account", text: "Company Master" },
           { to: "/user/profile-tab", text: "Employees Master" },
+          { to: "/master/transport", text: "Transport Master" },
         ]),
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },

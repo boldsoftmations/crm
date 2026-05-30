@@ -775,6 +775,11 @@ const getTransportList = (pincode) => {
 //   return CustomAxios.patch(`/api/customer/cpa/${id}/`, data);
 // };
 
+const getAllTransporterTypes = (page, searchValue, isInactive) => {
+  return CustomAxios.get(`/api/master/transporter-type`)
+
+
+}
 const CustomerServices = {
   getproductToDescription,
   getDiscription,
@@ -879,6 +884,7 @@ const CustomerServices = {
   getCategoryList,
   getComplaintNo,
   getTransportList,
+  getAllTransporterTypes,
 };
 
 export default CustomerServices;

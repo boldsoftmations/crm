@@ -29,9 +29,14 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
 import MasterService from "../../../services/MasterService";
 import ContactTransportCreate from "./ContactTransportCreate";
+import TransportContactUpdate from "./TransportContactUpdate";
+
 // import ContactTransportUpdate from "./ContactTransportUpdate";
 
 const ContactTransportView = () => {
+  const [openUpdatePopup, setOpenUpdatePopup] = useState(false); // ADD THIS
+  const [recordForEdit, setRecordForEdit] = useState(null); // ADD THIS
+
   const [transportContactData, setTransportContactData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -61,6 +66,13 @@ const ContactTransportView = () => {
     return groups.some((group) => userData.groups.includes(group));
   };
 
+  const openInPopup = (row) => {
+    const selectedData = transportContactData.find(
+      (data) => data.id === row.id,
+    );
+    setRecordForEdit(selectedData || null);
+    setOpenUpdatePopup(true);
+  };
   // Fetch transporter options
   const getTransporterOptions = async () => {
     try {
@@ -186,6 +198,7 @@ const ContactTransportView = () => {
     "OFFICE ADDRESS",
     "UPDATED DATE",
     "CREATION DATE",
+    "ACTIONS",
   ];
 
   return (
@@ -410,6 +423,9 @@ const ContactTransportView = () => {
                       <StyledTableCell align="center">
                         {row.creation_date}
                       </StyledTableCell>
+                      <StyledTableRow key={index} sx={{ cursor: "pointer" }}>
+                        <Button onClick={() => openInPopup(row)}>View</Button>
+                      </StyledTableRow>
                     </StyledTableRow>
                   ))}
               </TableBody>
@@ -438,20 +454,19 @@ const ContactTransportView = () => {
       </Popup>
 
       {/* Update Popup */}
-      {/* 
+
       <Popup
         maxWidth="xl"
         title="Update Contact Transport"
         openPopup={openUpdatePopup}
         setOpenPopup={setOpenUpdatePopup}
       >
-        <ContactTransportUpdate
+        <TransportContactUpdate
           recordForEdit={recordForEdit}
           setOpenPopup={setOpenUpdatePopup}
           getTransportContactData={getTransportContactData}
         />
-      </Popup> 
-      */}
+      </Popup>
     </>
   );
 };

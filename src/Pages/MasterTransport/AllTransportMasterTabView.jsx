@@ -23,7 +23,7 @@ export const AllTransportMasterTabView = () => {
         "Customer Relationship Manager",
         "Sales Deputy Manager",
         "Sales Assistant Deputy Manager",
-
+        "Operations & Supply Chain Manager",
         "Sales Manager without Leads",
         "Sales Manager with Lead",
       ],
@@ -40,6 +40,7 @@ export const AllTransportMasterTabView = () => {
         "Customer Relationship Manager",
         "Sales Deputy Manager",
         "Sales Assistant Deputy Manager",
+        "Operations & Supply Chain Manager",
 
         "Sales Manager without Leads",
         "Sales Manager with Lead",
@@ -60,6 +61,7 @@ export const AllTransportMasterTabView = () => {
         "Sales Deputy Manager",
         "Sales Assistant Deputy Manager",
         "Sales Executive",
+        "Operations & Supply Chain Manager",
         "Sales Manager without Leads",
         "Sales Manager with Lead",
       ],
