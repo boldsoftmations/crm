@@ -27,7 +27,7 @@ import CustomSnackbar from "../../../Components/CustomerSnackbar";
 import { CreateCreditNote } from "./CreateCreditNote";
 import { CreateMaterialReturn } from "./CreateMaterialReturn";
 import UpdateCAPAStatus from "./UpdateCAPAStatus";
-import UpdateCapa from "./UpdateCAPA";
+import UpdateCapa from "./UpdateCapa";
 
 export const CapaView = ({ defaultStatus = "", isClose = false }) => {
   const [open, setOpen] = useState(false);
@@ -53,24 +53,6 @@ export const CapaView = ({ defaultStatus = "", isClose = false }) => {
   const [capaStatus, setCapaStatus] = useState(defaultStatus);
   const [openRejectPopup, setOpenRejectPopup] = useState(false);
   const statusOptions = ["Reject", "Accept", "Pending", "Closed"];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   const getAllCAPAData = useCallback(async () => {
     try {
