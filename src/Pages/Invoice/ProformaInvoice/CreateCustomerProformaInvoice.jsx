@@ -179,12 +179,13 @@ export const CreateCustomerProformaInvoice = (props) => {
       const res = await MasterService.getonUniversalType();
       const data = res && res.data ? res.data.results : [];
       setTransportList(Array.isArray(data) ? data : []);
-      console.log("Data is",data)
+      console.log(res.data && res.data.results);
+      console.log("Data is", data);
     } catch (error) {
       console.error("Universal type transport error:", error);
       setTransportList([]);
     } finally {
-      setOpen(false); 
+      setOpen(false);
     }
   };
 
@@ -879,6 +880,10 @@ export const CreateCustomerProformaInvoice = (props) => {
               sx={{ minWidth: 300 }}
               label="Universal Type"
               style={tfStyle}
+              disabled={
+                transporterType &&
+                transporterType.transporter_type !== "Universal Mode"
+              }
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -912,7 +917,11 @@ export const CreateCustomerProformaInvoice = (props) => {
               disablePortal
               id="combo-box-transporter"
               onChange={(event, value) => setTransporterName(value)}
-              options={Array.isArray(transportList) ? transportList.map((option)=>option) : []}
+              options={
+                Array.isArray(transportList)
+                  ? transportList.map((option) => option)
+                  : []
+              }
               getOptionLabel={(option) =>
                 option.transporter_name ? option.transporter_name : ""
               }
