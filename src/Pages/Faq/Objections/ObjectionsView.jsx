@@ -101,6 +101,7 @@ export const ObjectionsView = () => {
           </Grid>
           {(userData.groups.includes("Sales Manager") ||
             userData.groups.includes("Sales Deputy Manager") ||
+            userData.groups.includes("Sales Executive") ||
             userData.groups.includes("Sales Assistant Deputy Manager") ||
             userData.groups.includes("Director")) && (
             <Grid item xs={12} sm={2}>
