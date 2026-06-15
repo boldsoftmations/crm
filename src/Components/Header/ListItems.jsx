@@ -916,6 +916,7 @@ export const ListItems = ({ setOpen }) => {
           "Customer Complaint",
           [{ to: "/customer/complaints/ccp-capa", text: "CCF-CAPA" }],
         ),
+        // renderListItem("/user/faq", <HelpOutlineIcon />, "Script"),
         renderListItem("/invoice/orderbook-tab", <ReceiptIcon />, "Order Book"),
         renderListItem("/dispatch/tab-view", <LocalShippingIcon />, "Dispatch"),
         renderListItem("/task/view-task", <AssignmentTurnedInIcon />, "Task"),
