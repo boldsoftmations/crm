@@ -27,7 +27,7 @@ import CustomSnackbar from "../../../Components/CustomerSnackbar";
 import { CreateCreditNote } from "./CreateCreditNote";
 import { CreateMaterialReturn } from "./CreateMaterialReturn";
 import UpdateCAPAStatus from "./UpdateCAPAStatus";
-import UpdateCapa from "./UpdateCapa";
+import UpdateCapa from "./UpdateCAPA";
 import Updatesettlement from "./Updatesettlement";
 
 export const CapaView = ({ defaultStatus = "", isClose = false }) => {

@@ -560,6 +560,13 @@ const getMisPackagingData = (page, searchValue, year, month) => {
   );
 };
 
+
+const getAuditReportData=()=>{
+ return CustomAxios.get(
+  `/api/audit/audit-logs/`
+ )
+}
+
 const InvoiceServices = {
   getAllSellerAccountData,
   getfilterSellerAccountData,
@@ -618,6 +625,7 @@ const InvoiceServices = {
   getInvoiceCsvData,
 
   getMisPackagingData,
+  getAuditReportData,
 };
 
 export default InvoiceServices;
