@@ -64,7 +64,7 @@ const STATUS_CFG = {
     icon: "⏳",
     label: "Pending Approval",
   },
-  "Approval By Account Manager": {
+  "Pending By Account Manager": {
     dot: C.primary,
     bg: C.primaryLight,
     color: C.primaryDark,
@@ -165,7 +165,7 @@ const FLOW_STEPS = [
   "Under Review",
   "Pending Capa Approval",
   "Approved",
-  "Approval By Account Manager",
+  "Pending By Account Manager",
   "Pending Note",
   "Closed",
 ];
@@ -602,7 +602,7 @@ export const transformRecordToCapaProps = (record) => {
           ? `CAPA created and submitted to factory manager for approval by ${item.created_by_name || item.created_by}.`
           : item.status === "Capa Revision Required"
           ? `Factory manager returned the CAPA for revision. Revised by ${item.created_by_name || item.created_by}.`
-          : item.status === "Approval By Account Manager"
+          : item.status === "Pending By Account Manager"
           ? `Factory manager approved the CAPA. Forwarded to Account Manager for final approval by ${item.created_by_name || item.created_by}.`
           : item.status === "Pending Note"
           ? `Accounts team notified to process CN/DN by ${item.created_by_name || item.created_by}.`
@@ -1504,7 +1504,7 @@ export const CapaStatusView = ({
               "Pending Capa Approval",
               "Capa Revision Required",
               "Approved",
-              "Approval By Account Manager",
+              "Pending By Account Manager",
               "Rejected",
               "Pending Note",
               "Closed",
