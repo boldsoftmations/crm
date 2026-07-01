@@ -585,8 +585,9 @@ function Row(props) {
                 Upload SI
               </Button>
             )}
-          {(userData.groups.includes("Accounts") ||
-            userData.groups.includes("Accounts Billing Department")) && (
+          {(userData.groups.includes("Director") ||
+            userData.groups.includes("Accounts") ||
+            userData.groups.includes("Accounts Executive")) && (
             <Button
               variant="text"
               color="error"
@@ -690,7 +691,7 @@ const Invoice_Type_Options = ["unit", "customer", "Scrap", "Supplier"];
 const DateOptions = [
   {
     value: "Today",
-  },
+  }, //
   {
     value: "Yesterday",
   },

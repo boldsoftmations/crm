@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import moment from "moment";
 import InvoiceServices from "../../../services/InvoiceService";
+// import { initializeUseSelector } from "react-redux/es/hooks/useSelector";
 
 // ── Modern color palette ─────────────────────────────────────────────────────
 const C = {
@@ -169,7 +170,6 @@ const FLOW_STEPS = [
   "Pending Note",
   "Closed",
 ];
-
 const initials = (name) =>
   (name || "?")
     .split(" ")
@@ -177,7 +177,6 @@ const initials = (name) =>
     .join("")
     .toUpperCase()
     .slice(0, 2);
-
 // ── Helper components ────────────────────────────────────────────────────────
 const Pill = ({ label, bg, color, border, small, icon }) => (
   <span
@@ -194,7 +193,6 @@ const Pill = ({ label, bg, color, border, small, icon }) => (
       color,
       border: `1.5px solid ${border}`,
       transition: "all 0.2s ease",
-      boxShadow: C.shadowSm,
       cursor: "default",
     }}
   >
@@ -599,18 +597,18 @@ export const transformRecordToCapaProps = (record) => {
         index === 0
           ? `Complaint logged: ${record.complaint || record.problem || "—"}. Complaint No: ${record.complain_no}`
           : item.status === "Pending Capa Approval"
-          ? `CAPA created and submitted to factory manager for approval by ${item.created_by_name || item.created_by}.`
-          : item.status === "Capa Revision Required"
-          ? `Factory manager returned the CAPA for revision. Revised by ${item.created_by_name || item.created_by}.`
-          : item.status === "Pending By Account Manager"
-          ? `Factory manager approved the CAPA. Forwarded to Account Manager for final approval by ${item.created_by_name || item.created_by}.`
-          : item.status === "Pending Note"
-          ? `Accounts team notified to process CN/DN by ${item.created_by_name || item.created_by}.`
-          : item.status === "Rejected"
-          ? `Account Manager rejected the CAPA. This CCF is now closed. Action by ${item.created_by_name || item.created_by}.`
-          : item.status === "Closed"
-          ? `Accounts completed CN/DN. This CCF is now closed by ${item.created_by_name || item.created_by}.`
-          : `Status updated to "${item.status}" by ${item.created_by_name || item.created_by}.`,
+            ? `CAPA created and submitted to factory manager for approval by ${item.created_by_name || item.created_by}.`
+            : item.status === "Capa Revision Required"
+              ? `Factory manager returned the CAPA for revision. Revised by ${item.created_by_name || item.created_by}.`
+              : item.status === "Pending By Account Manager"
+                ? `Factory manager approved the CAPA. Forwarded to Account Manager for final approval by ${item.created_by_name || item.created_by}.`
+                : item.status === "Pending Note"
+                  ? `Accounts team notified to process CN/DN by ${item.created_by_name || item.created_by}.`
+                  : item.status === "Rejected"
+                    ? `Account Manager rejected the CAPA. This CCF is now closed. Action by ${item.created_by_name || item.created_by}.`
+                    : item.status === "Closed"
+                      ? `Accounts completed CN/DN. This CCF is now closed by ${item.created_by_name || item.created_by}.`
+                      : `Status updated to "${item.status}" by ${item.created_by_name || item.created_by}.`,
       remark: item.remark || null,
       user: item.created_by_name || item.created_by || "Unknown",
       role: item.created_by_designation || "—",
@@ -934,10 +932,18 @@ export const CapaStatusView = ({
               >
                 <span style={{ fontSize: 18 }}>✕</span>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: C.errorDark }}>
+                  <div
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: C.errorDark,
+                    }}
+                  >
                     Rejected by Account Manager
                   </div>
-                  <div style={{ fontSize: 12, color: C.errorDark, opacity: 0.8 }}>
+                  <div
+                    style={{ fontSize: 12, color: C.errorDark, opacity: 0.8 }}
+                  >
                     This CCF has been rejected and the flow has stopped.
                   </div>
                 </div>
@@ -956,13 +962,28 @@ export const CapaStatusView = ({
                   marginBottom: 16,
                 }}
               >
-                <span style={{ fontSize: 18 }}>🔄</span>
+                <span
+                  style={{ fontSize: 18 }}
+                  role="img"
+                  aria-label="revision required"
+                >
+                  🔄
+                </span>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: C.warningDark }}>
+                  <div
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: C.warningDark,
+                    }}
+                  >
                     Revision Required
                   </div>
-                  <div style={{ fontSize: 12, color: C.warningDark, opacity: 0.8 }}>
-                    Factory manager returned the CAPA for revision. Awaiting resubmission.
+                  <div
+                    style={{ fontSize: 12, color: C.warningDark, opacity: 0.8 }}
+                  >
+                    Factory manager returned the CAPA for revision. Awaiting
+                    resubmission.
                   </div>
                 </div>
               </div>
@@ -1007,22 +1028,21 @@ export const CapaStatusView = ({
                             background: done
                               ? C.success
                               : active
-                              ? scfg.dot
-                              : C.bgPage,
-                            border: done || active
-                              ? "none"
-                              : "1px solid " + C.divider,
+                                ? scfg.dot
+                                : C.bgPage,
+                            border:
+                              done || active
+                                ? "none"
+                                : "1px solid " + C.divider,
                             color: done || active ? "#fff" : C.text3,
-                            boxShadow: active
-                              ? "0 0 0 4px " + scfg.bg
-                              : "none",
+                            boxShadow: active ? "0 0 0 4px " + scfg.bg : "none",
                           }}
                         >
                           {done
                             ? "\u2713"
                             : active && scfg.dot === C.success
-                            ? "\u2713"
-                            : scfg.icon}
+                              ? "\u2713"
+                              : scfg.icon}
                         </div>
                       </div>
                       <div
@@ -1032,11 +1052,7 @@ export const CapaStatusView = ({
                           textAlign: "center",
                           maxWidth: 72,
                           lineHeight: 1.3,
-                          color: done
-                            ? C.success
-                            : active
-                            ? scfg.dot
-                            : C.text3,
+                          color: done ? C.success : active ? scfg.dot : C.text3,
                           fontWeight: active || done ? 600 : 400,
                         }}
                       >
@@ -1200,12 +1216,16 @@ export const CapaStatusView = ({
                 seenCount[item.status] = (seenCount[item.status] || 0) + 1;
                 const occurrence = seenCount[item.status];
                 const isRetry = !isSynthetic && occurrence > 1;
-                const dotColor = isSynthetic ? C.success : isRetry ? C.warning : sc.dot;
+                const dotColor = isSynthetic
+                  ? C.success
+                  : isRetry
+                    ? C.warning
+                    : sc.dot;
                 const dotShadow = isSynthetic
                   ? "0 0 0 3px " + C.successLight
                   : isRetry
-                  ? "0 0 0 3px " + C.warningLight
-                  : "none";
+                    ? "0 0 0 3px " + C.warningLight
+                    : "none";
 
                 return (
                   <div key={item.id} style={{ display: "flex", gap: 16 }}>
@@ -1248,21 +1268,25 @@ export const CapaStatusView = ({
                         background: isSynthetic
                           ? C.successLight
                           : isRetry
-                          ? "#fffbeb"
-                          : C.bgPage,
-                        border: "1px solid " + (isSynthetic
-                          ? C.successBorder
-                          : isRetry
-                          ? C.warningBorder
-                          : C.divider),
+                            ? "#fffbeb"
+                            : C.bgPage,
+                        border:
+                          "1px solid " +
+                          (isSynthetic
+                            ? C.successBorder
+                            : isRetry
+                              ? C.warningBorder
+                              : C.divider),
                         borderRadius: 8,
                         padding: "14px 16px",
                         marginBottom: isLast ? 0 : 14,
-                        borderLeft: "3px solid " + (isSynthetic
-                          ? C.success
-                          : isRetry
-                          ? C.warning
-                          : sc.dot),
+                        borderLeft:
+                          "3px solid " +
+                          (isSynthetic
+                            ? C.success
+                            : isRetry
+                              ? C.warning
+                              : sc.dot),
                       }}
                     >
                       <div
@@ -1288,7 +1312,8 @@ export const CapaStatusView = ({
                               color: isSynthetic ? C.successDark : C.text1,
                             }}
                           >
-                            {isSynthetic ? "✓ " : ""}{item.title}
+                            {isSynthetic ? "✓ " : ""}
+                            {item.title}
                           </span>
                           {isSynthetic && (
                             <span
