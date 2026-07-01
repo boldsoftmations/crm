@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import moment from "moment";
 import InvoiceServices from "../../../services/InvoiceService";
-// import { initializeUseSelector } from "react-redux/es/hooks/useSelector";
 
 // ── Modern color palette ─────────────────────────────────────────────────────
 const C = {
@@ -170,6 +169,7 @@ const FLOW_STEPS = [
   "Pending Note",
   "Closed",
 ];
+
 const initials = (name) =>
   (name || "?")
     .split(" ")
@@ -177,6 +177,7 @@ const initials = (name) =>
     .join("")
     .toUpperCase()
     .slice(0, 2);
+
 // ── Helper components ────────────────────────────────────────────────────────
 const Pill = ({ label, bg, color, border, small, icon }) => (
   <span
@@ -193,6 +194,7 @@ const Pill = ({ label, bg, color, border, small, icon }) => (
       color,
       border: `1.5px solid ${border}`,
       transition: "all 0.2s ease",
+      boxShadow: C.shadowSm,
       cursor: "default",
     }}
   >
@@ -962,11 +964,7 @@ export const CapaStatusView = ({
                   marginBottom: 16,
                 }}
               >
-                <span
-                  style={{ fontSize: 18 }}
-                  role="img"
-                  aria-label="revision required"
-                >
+                <span style={{ fontSize: 18 }} role="img" aria-label="revision">
                   🔄
                 </span>
                 <div>
