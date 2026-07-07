@@ -264,8 +264,8 @@ export const MaterialTransferNoteView = () => {
 
   const isAcceptedView =
     userData.groups.includes("Director") ||
-    userData.groups.includes("Stores") ||
-    userData.groups.includes("Stores Delhi");
+   userData.groups.includes("QA")
+    
   return (
     <>
       <MessageAlert
