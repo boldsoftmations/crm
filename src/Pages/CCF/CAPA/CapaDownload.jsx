@@ -167,7 +167,7 @@ const CapaDownload = ({ recordForEdit }) => {
                 </Typography>
                 <Divider sx={{ marginY: 1 }} />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={12}>
                 <Typography variant="body1" fontWeight="bold">
                   Root Cause :
                 </Typography>
@@ -226,6 +226,7 @@ const CapaDownload = ({ recordForEdit }) => {
         <Button variant="contained" color="primary" onClick={downloadPDF}>
           Download PDF
         </Button>
+        b
       </Box>
     </Container>
   );
