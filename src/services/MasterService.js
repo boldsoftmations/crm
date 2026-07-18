@@ -384,6 +384,9 @@ const getonUniversalType = () => {
   );
 };
 
+const CreateMasterPincode = (data) => {
+  return CustomAxios.post(`/api/master/pincode-alias/`, data);
+};
 const MasterService = {
   getLeavapproval,
   updateApprovalStage,
@@ -439,5 +442,6 @@ const MasterService = {
   getAllTransportConstact,
   updateTransportContact,
   getonUniversalType,
+  CreateMasterPincode,
 };
 export default MasterService;

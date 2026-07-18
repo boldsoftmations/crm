@@ -8,7 +8,7 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableFooter,
+  // TableFooter,
   TableHead,
   TableRow,
   Typography,
@@ -102,18 +102,34 @@ function Row({ row }) {
                   {row.changes && Object.keys(row.changes).length > 0 ? (
                     Object.entries(row.changes).map(([field, val]) => (
                       <StyledTableRow key={field}>
-                        <StyledTableCell align="center">{field}</StyledTableCell>
-                        <StyledTableCell align="center" sx={{ color: "#c62828" }}>
-                          {val.old !== null && val.old !== undefined ? String(val.old) : "-"}
+                        <StyledTableCell align="center">
+                          {field}
                         </StyledTableCell>
-                        <StyledTableCell align="center" sx={{ color: "#2e7d32" }}>
-                          {val.new !== null && val.new !== undefined ? String(val.new) : "-"}
+                        <StyledTableCell
+                          align="center"
+                          sx={{ color: "#c62828" }}
+                        >
+                          {val.old !== null && val.old !== undefined
+                            ? String(val.old)
+                            : "-"}
+                        </StyledTableCell>
+                        <StyledTableCell
+                          align="center"
+                          sx={{ color: "#2e7d32" }}
+                        >
+                          {val.new !== null && val.new !== undefined
+                            ? String(val.new)
+                            : "-"}
                         </StyledTableCell>
                       </StyledTableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={3} align="center" sx={{ color: "#999" }}>
+                      <TableCell
+                        colSpan={3}
+                        align="center"
+                        sx={{ color: "#999" }}
+                      >
                         No changes recorded
                       </TableCell>
                     </TableRow>
@@ -153,7 +169,14 @@ const AuditRportView = (props) => {
       <CustomLoader open={open} />
       <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
         <Box sx={{ marginBottom: 2 }}>
-          <h3 style={{ fontSize: "24px", color: "rgb(34, 34, 34)", fontWeight: 800, textAlign: "center" }}>
+          <h3
+            style={{
+              fontSize: "24px",
+              color: "rgb(34, 34, 34)",
+              fontWeight: 800,
+              textAlign: "center",
+            }}
+          >
             Audit Report
           </h3>
         </Box>
@@ -165,7 +188,11 @@ const AuditRportView = (props) => {
             "&::-webkit-scrollbar-thumb": { backgroundColor: "#aaa9ac" },
           }}
         >
-          <Table sx={{ minWidth: 700 }} stickyHeader aria-label="audit report table">
+          <Table
+            sx={{ minWidth: 700 }}
+            stickyHeader
+            aria-label="audit report table"
+          >
             <TableHead>
               <StyledTableRow>
                 <StyledTableCell align="center"></StyledTableCell>
@@ -185,7 +212,11 @@ const AuditRportView = (props) => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={8} align="center" sx={{ color: "#999", py: 4 }}>
+                  <TableCell
+                    colSpan={8}
+                    align="center"
+                    sx={{ color: "#999", py: 4 }}
+                  >
                     No audit records found
                   </TableCell>
                 </TableRow>

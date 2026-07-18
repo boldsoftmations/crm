@@ -6,6 +6,7 @@ import { ViewState } from "./State/ViewState";
 import { ViewCity } from "./City/ViewCity";
 import { ViewPincode } from "./Pincode/ViewPincode";
 import ZoneListView from "./ZoneList/ZoneListView";
+import { MergePincodeView } from "./MergePinCode/MergePincodeView";
 
 export const AllTabView = () => {
   const userData = useSelector((state) => state.auth.profile);
@@ -39,6 +40,11 @@ export const AllTabView = () => {
       label: "Pin Code",
       roles: ["Director", "Accounts", "Accounts Executive"],
       component: <ViewPincode />,
+    },
+    {
+      label: "Merge Pin Code",
+      roles: ["Director", "Accounts", "Accounts Executive"],
+      component: <MergePincodeView />,
     },
   ];
 

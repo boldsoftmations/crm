@@ -226,7 +226,6 @@ const CapaDownload = ({ recordForEdit }) => {
         <Button variant="contained" color="primary" onClick={downloadPDF}>
           Download PDF
         </Button>
-        b
       </Box>
     </Container>
   );
