@@ -696,6 +696,7 @@ export const ListItems = ({ setOpen }) => {
     {
       condition: isInGroups("Business Development Executive"),
       items: [
+        renderListItem("/user/report", <AssessmentIcon />, "Report"),
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
