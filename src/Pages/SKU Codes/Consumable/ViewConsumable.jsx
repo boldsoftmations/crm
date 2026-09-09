@@ -258,7 +258,11 @@ export const ViewConsumable = () => {
               >
                 Add
               </Button>
-              <Button variant="contained" onClick={handleDownload}>
+              <Button
+                variant="contained"
+                onClick={handleDownload}
+                disabled={isInGroups("Accounts Billing Department")}
+              >
                 Download CSV
               </Button>
               {exportData.length > 0 && (

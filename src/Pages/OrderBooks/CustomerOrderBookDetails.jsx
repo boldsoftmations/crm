@@ -48,14 +48,33 @@ export const CustomerOrderBookDetails = () => {
   const assigned = userData.active_sales_user || [];
   const { handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
+  const [stateOptions, setStateOptions] = useState([]);
 
+  const getStateOptions = async () => {
+    try {
+      const response = await InvoiceServices.getAllSellerAccountData();
+
+      if (response && response.data && response.data.results) {
+        setStateOptions(response.data.results);
+      }
+    } catch (err) {
+      console.log("Error in fetching seller account data:", err);
+    }
+  };
+
+  useEffect(() => {
+    getStateOptions();
+  }, []);
   const openInPopup = (item) => {
     try {
       const matchedODBData = orderBookData.find(
         (ODBData) => ODBData.id === item.id,
       );
       setRecordForEdit(matchedODBData);
-      if (userData.groups.includes("Accounts")) {
+      if (
+        userData.groups.includes("Accounts") ||
+        userData.groups.includes("Accounts Billing Department")
+      ) {
         setOpenModal2(true);
       }
       if (
@@ -268,11 +287,18 @@ export const CustomerOrderBookDetails = () => {
                 <CustomAutocomplete
                   size="small"
                   fullWidth
-                  value={filterSellerUnit}
-                  onChange={(event, value) => setFilterSellerUnit(value)}
-                  options={StateOption.map((option) => option)}
-                  getOptionLabel={(option) => option}
-                  label="Filter By State"
+                  value={
+                    stateOptions.find(
+                      (option) => option.unit === filterSellerUnit,
+                    ) || null
+                  }
+                  onChange={(event, value) => {
+                    setFilterSellerUnit(value ? value.unit : "");
+                    setCurrentPage(1);
+                  }}
+                  options={stateOptions}
+                  getOptionLabel={(option) => option.unit || ""}
+                  label="Filter By Seller Account"
                 />
               </Grid>
               <Grid item xs={12} sm={3}>
@@ -331,7 +357,6 @@ export const CustomerOrderBookDetails = () => {
                 <Button variant="contained" onClick={handleDownload}>
                   Download CSV
                 </Button>
-
                 {exportData.length > 0 && (
                   <CSVLink
                     headers={

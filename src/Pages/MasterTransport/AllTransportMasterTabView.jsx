@@ -5,6 +5,7 @@ import { CustomTabs } from "../../Components/CustomTabs";
 import { MasterTransportView } from "./TransportMaster/MasterTransportView";
 import TransPortMapping from "./TransPortMapping/TransPortMapping";
 import ContactTransportView from "./TransportContact/ContactTransportView";
+import ViewTransportRef from "./TransportRef/ViewTransportRef";
 export const AllTransportMasterTabView = () => {
   const userData = useSelector((state) => state.auth.profile);
 
@@ -66,6 +67,11 @@ export const AllTransportMasterTabView = () => {
         "Sales Manager with Lead",
       ],
       component: <ContactTransportView />,
+    },
+    {
+      label: "Transport Refrence",
+      roles: ["Director"],
+      component: <ViewTransportRef />,
     },
   ];
 

@@ -16,6 +16,8 @@ import UploadCSV from "./UploadCSV";
 import CustomTextField from "../../Components/CustomTextField";
 import CustomSnackbar from "../../Components/CustomerSnackbar";
 import MasterService from "../../services/MasterService";
+import { useSelector } from "react-redux";
+import { isVisible } from "@testing-library/user-event/dist/utils";
 
 export const PriceList = () => {
   const [priceListData, setPriceListData] = useState([]);
@@ -72,7 +74,7 @@ export const PriceList = () => {
         "all",
         filterQuery,
         searchQuery,
-        zoneFilter
+        zoneFilter,
       );
       const data = response.data.map((row) => {
         return {
@@ -116,7 +118,7 @@ export const PriceList = () => {
         currentPage,
         filterQuery,
         searchQuery,
-        zoneFilter
+        zoneFilter,
       );
       setPriceListData(response.data.results);
       setTotalPages(Math.ceil(response.data.count / 25));
@@ -135,6 +137,9 @@ export const PriceList = () => {
     setSearchQuery(query);
     setCurrentPage(1); // Reset to first page with new search
   };
+  const userData = useSelector((state) => state.auth);
+  const isInGroups = (...groups) =>
+    groups.some((g) => userData.groups && userData.groups.includes(g));
 
   const handleFilter = (query) => {
     setFilterQuery(query);
@@ -154,6 +159,7 @@ export const PriceList = () => {
     setRecordForEdit(item);
     setOpenPopup(true);
   };
+  // const userDate=
 
   const Tabledata = priceListData.map((row) => ({
     id: row.id,
@@ -328,6 +334,7 @@ export const PriceList = () => {
                     size="small"
                     onClick={() => setOpenCSVFile(true)}
                     // style={{ marginRight: "10px" }}
+                    disabled={!isInGroups("Accounts Billing Department")}
                   >
                     Upload CSV File
                   </Button>
@@ -338,6 +345,7 @@ export const PriceList = () => {
                     size="small"
                     className="mx-3"
                     onClick={handleDownload}
+                    disabled={!isInGroups("Accounts Billing Department")}
                   >
                     DownLoad CSV
                   </Button>
@@ -375,6 +383,7 @@ export const PriceList = () => {
                     fontWeight: 800,
                     textAlign: "center",
                   }}
+                  disabled={!isInGroups("Accounts Billing Department")}
                 >
                   Price List
                 </h3>
@@ -401,6 +410,7 @@ export const PriceList = () => {
                     color="inherit"
                     size="small"
                     onClick={() => setOpenPopupUpdateValidity(true)}
+                    disabled={!isInGroups("Accounts Billing Department")}
                   >
                     Update Validity
                   </Button>
@@ -414,6 +424,7 @@ export const PriceList = () => {
             openInPopup={openInPopup}
             openInPopup3={null}
             openInPopup4={null}
+            Isviewable={isInGroups("Accounts Billing Department")}
           />
           <CustomPagination
             totalPages={totalPages}

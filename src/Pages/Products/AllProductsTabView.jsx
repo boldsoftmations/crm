@@ -24,9 +24,10 @@ export const AllProductsTabView = () => {
   const isAdmin = isInGroups(
     "Director",
     "Accounts",
-    "Accounts Billing Department",
-    "Accounts Executive"
+
+    "Accounts Executive",
   );
+  const isAccountBillingDepartment = isInGroups("Accounts Billing Department");
   const isStore = isInGroups("Stores");
 
   // Initial active tab based on user role
@@ -36,12 +37,12 @@ export const AllProductsTabView = () => {
   const tabs = [
     {
       label: "Raw Materials",
-      visible: isAdmin || isStore,
+      visible: isAdmin || isStore || isAccountBillingDepartment,
       index: 0,
     },
     {
       label: "Finish Goods",
-      visible: isAdmin || isStore,
+      visible: isAdmin || isStore || isAccountBillingDepartment,
       index: 1,
     },
     {
@@ -51,34 +52,38 @@ export const AllProductsTabView = () => {
     },
     {
       label: "Description",
-      visible: isAdmin,
+      visible: isAdmin || isAccountBillingDepartment,
       index: 3,
     },
-    { label: "Product Code", visible: isAdmin, index: 4 },
+    {
+      label: "Product Code",
+      visible: isAdmin || isAccountBillingDepartment,
+      index: 4,
+    },
     {
       label: "Brand",
-      visible: isAdmin,
+      visible: isAdmin || isAccountBillingDepartment,
       index: 5,
     },
     {
       label: "Color",
-      visible: isAdmin,
+      visible: isAdmin || isAccountBillingDepartment,
       index: 6,
     },
-    { label: "Unit", visible: isAdmin, index: 7 },
+    { label: "Unit", visible: isAdmin || isAccountBillingDepartment, index: 7 },
     {
       label: "Packing Unit",
-      visible: isAdmin,
+      visible: isAdmin || isAccountBillingDepartment,
       index: 8,
     },
     {
       label: "Basic Unit",
-      visible: isAdmin,
+      visible: isAdmin || isAccountBillingDepartment,
       index: 9,
     },
     {
       label: "Sample Product",
-      visible: isAdmin,
+      visible: isAdmin || isAccountBillingDepartment,
       index: 10,
     },
   ];

@@ -73,11 +73,7 @@ export const OrderBookUpdate = (props) => {
       />
       <CustomLoader open={open} />
 
-      <Box
-        component="form"
-        noValidate
-        onSubmit={(e) => updatesCustomerOrderBook(e)}
-      >
+      <Box component="form" onSubmit={(e) => updatesCustomerOrderBook(e)}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <CustomTextField
@@ -327,6 +323,7 @@ export const OrderBookPeningQuantityUpdate = (props) => {
           </Grid>
         </Grid>
         {(users.groups.includes("Accounts") ||
+          users.groups.includes("Accounts Billing Department") ||
           users.groups.includes("Director")) && (
           <Button
             fullWidth

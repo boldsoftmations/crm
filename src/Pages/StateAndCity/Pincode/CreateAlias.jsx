@@ -1,22 +1,6 @@
 import React from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
-import {
-  Box,
-  Grid,
-  Paper,
-  styled,
-  TableCell,
-  Button,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TableBody,
-  Table,
-  tableCellClasses,
-  TextField,
-  Switch,
-  Checkbox,
-} from "@mui/material";
+import { Box, Grid, Button, TextField, Checkbox } from "@mui/material";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import MasterService from "../../../services/MasterService";
 import CustomSnackbar from "../../../Components/CustomerSnackbar";

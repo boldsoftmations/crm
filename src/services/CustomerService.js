@@ -763,9 +763,12 @@ const getComplaintNo = (customer, seller_account) => {
   return CustomAxios.get(`/api/invoice/company-ccf-list/?${params.toString()}`);
 };
 
-const getTransportList = (pincode) => {
+const getTransportList = (pincode, country_id, unit_id, unit_code) => {
   const params = new URLSearchParams();
+  if (country_id) params.append("country_id", country_id);
   if (pincode) params.append("pincode", pincode);
+  if (unit_id) params.append("unit_id", unit_id);
+  if (unit_code) params.append("unit_code", unit_code);
   return CustomAxios.get(
     `/api/master/pincode-transporter/?${params.toString()}`,
   );
@@ -776,10 +779,8 @@ const getTransportList = (pincode) => {
 // };
 
 const getAllTransporterTypes = (page, searchValue, isInactive) => {
-  return CustomAxios.get(`/api/master/transporter-type`)
-
-
-}
+  return CustomAxios.get(`/api/master/transporter-type`);
+};
 const CustomerServices = {
   getproductToDescription,
   getDiscription,

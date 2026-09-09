@@ -37,7 +37,6 @@ const SearchComponent = ({ onSearch, onReset, width }) => {
       {" "}
       {/* Ensured Box takes 100% width */}
       <TextField
-      
         size="small"
         label="Search"
         variant="outlined"

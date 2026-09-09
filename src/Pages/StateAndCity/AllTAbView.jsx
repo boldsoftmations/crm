@@ -7,6 +7,8 @@ import { ViewCity } from "./City/ViewCity";
 import { ViewPincode } from "./Pincode/ViewPincode";
 import ZoneListView from "./ZoneList/ZoneListView";
 import { MergePincodeView } from "./MergePinCode/MergePincodeView";
+import ViewPincodeAuditLog from "./PincodeAuditLog/ViewPincodeAuditLog";
+import ViewRefrenceGeoPostal from "./RefrenceGeoPostal/ViewRefrenceGeoPostal";
 
 export const AllTabView = () => {
   const userData = useSelector((state) => state.auth.profile);
@@ -17,34 +19,69 @@ export const AllTabView = () => {
   const tabs = [
     {
       label: "Country",
-      roles: ["Director", "Accounts", "Accounts Executive"],
+      roles: [
+        "Director",
+        "Accounts",
+        "Accounts Executive",
+        "Accounts Billing Department",
+      ],
       component: <ViewCountry />,
     },
     {
       label: "Zone",
-      roles: ["Director", "Accounts", "Accounts Executive"],
+      roles: [
+        "Director",
+        "Accounts",
+        "Accounts Executive",
+        "Accounts Billing Department",
+      ],
       component: <ZoneListView />,
     },
     {
       label: "State",
-      roles: ["Director", "Accounts", "Accounts Executive"],
+      roles: [
+        "Director",
+        "Accounts",
+        "Accounts Executive",
+        "Accounts Billing Department",
+      ],
       component: <ViewState />,
     },
     {
       label: "City",
-      roles: ["Director", "Accounts", "Accounts Executive"],
+      roles: [
+        "Director",
+        "Accounts",
+        "Accounts Executive",
+        "Accounts Billing Department",
+      ],
       component: <ViewCity />,
     },
 
     {
       label: "Pin Code",
-      roles: ["Director", "Accounts", "Accounts Executive"],
+      roles: [
+        "Director",
+        "Accounts",
+        "Accounts Executive",
+        "Accounts Billing Department",
+      ],
       component: <ViewPincode />,
     },
     {
       label: "Merge Pin Code",
-      roles: ["Director", "Accounts", "Accounts Executive"],
+      roles: ["Director"],
       component: <MergePincodeView />,
+    },
+    {
+      label: "Geo Audit Log",
+      roles: ["Director"],
+      component: <ViewPincodeAuditLog />,
+    },
+    {
+      label: "Geo Postal Reference",
+      roles: ["Director"],
+      component: <ViewRefrenceGeoPostal />,
     },
   ];
 

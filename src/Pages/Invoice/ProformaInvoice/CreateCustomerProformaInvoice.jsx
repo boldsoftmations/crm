@@ -64,20 +64,24 @@ const values = {
   someDate: getNextFiveDates(),
 };
 
-// FIX: Universal_type defined as objects with value + label
-const Universal_type = [
-  { value: "Bus", label: "Bus" },
-  { value: "Train", label: "Train" },
-  { value: "Air", label: "Air" },
-  { value: "Self Pickup", label: "Self Pickup" },
-];
-
 export const CreateCustomerProformaInvoice = (props) => {
   const { recordForEdit, rowData, setOpenPopup } = props;
+  // console.log("data is: ", rowData);
 
   const [productOption, setProductOption] = useState([]);
   const [productDetails, setProductDetails] = useState(null);
-  const [transportList, setTransportList] = useState([]);
+
+  // FIX: transportList (array) replaced with transportDetails (single object).
+  // The pincode-mapping API now returns ONE object, not an array:
+  // { mapping_found, mapping_id, transporter_id, transporter,
+  // transporter_type, selected_transport_mode, verified_pincode }
+  const [transportDetails, setTransportDetails] = useState([]);
+  const [selectedTransport, setSelectedTransport] = useState(null);
+  const [selectedTransportType, setSelectedTransportType] = useState(null);
+
+  // Universal dispatch type is a MANUAL user selection (Bus/Train/Air/Self Pickup),
+  // separate from the auto-filled transporter/transporter_type mapping.
+
   const [openPopup2, setOpenPopup2] = useState(false);
   const [openPopup3, setOpenPopup3] = useState(false);
   const [open, setOpen] = useState(false);
@@ -98,12 +102,6 @@ export const CreateCustomerProformaInvoice = (props) => {
   const [customerLastPiData, setCustomerLastPiData] = useState(null);
   const [packageList, setPackageList] = useState([]);
   const [timeLeft, setTimeLeft] = useState(5 * 60);
-  // transporterName holds the full object from transportList { transporter, ... }
-  const [transporterName, setTransporterName] = useState(null);
-  // universalType holds the raw value string e.g. "bus", "self_pickup"
-  const [universalType, setUniversalType] = useState("");
-  const [transporterData, setTransporterData] = useState([]);
-  const [transporterType, setTransporterType] = useState(null);
 
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
@@ -136,22 +134,87 @@ export const CreateCustomerProformaInvoice = (props) => {
 
   const buyer_date = new Date().toISOString().slice(0, 10);
 
+  // FIX: getTranportList now:
+  //  1. Guards every input (pincode / seller unit match) before calling the API,
+  //     so it never crashes on `unitid.id` when no match is found.
+  //  2. Correctly includes selectedSellerData, sellerData, rowData in the
+  //     dependency array (old code only had [warehouseData] -> stale closure bug).
+  //  3. Stores the SINGLE object response into transportDetails instead of
+  //     force-casting it into an array.
+  //  4. Runs automatically whenever the user selects a Shipping Address
+  //     (warehouseData changes) — no manual autocomplete needed anymore.
   const getTranportList = useCallback(async () => {
+    const pincode =
+      warehouseData && warehouseData.pincode ? warehouseData.pincode : "";
+
+    const unitMatch = sellerData.find(
+      (item) =>
+        item && selectedSellerData && item.unit === selectedSellerData.unit,
+    );
+
+    if (!pincode || !selectedSellerData || !unitMatch) {
+      setTransportDetails([]);
+      setSelectedTransport(null);
+      setSelectedTransportType(null);
+
+      return;
+    }
+
     try {
-      const pincode =
-        warehouseData && warehouseData.pincode ? warehouseData.pincode : "";
-      const res = await CustomerServices.getTransportList(pincode);
-      const data = res && res.data ? res.data.results : [];
-      setTransportList(Array.isArray(data) ? data : []);
+      setOpen(true);
+
+      const res = await CustomerServices.getTransportList(
+        pincode,
+        rowData.country_id,
+        unitMatch.id,
+        selectedSellerData.unit,
+      );
+
+      const data =
+        res && res.data && Array.isArray(res.data.results)
+          ? res.data.results
+          : [];
+
+      if (data.length > 0) {
+        // Transporter mapping found
+        setTransportDetails(data);
+        setSelectedTransport(data[0]);
+        setSelectedTransportType(data[0]);
+      } else {
+        // No transporter mapping found
+        setTransportDetails([]);
+        setSelectedTransport(null);
+        setSelectedTransportType(null);
+      }
     } catch (error) {
       console.error("Transport list error:", error);
-      setTransportList([]);
+
+      setTransportDetails([]);
+      setSelectedTransport(null);
+      setSelectedTransportType(null);
+
+      // API failed / no mapping available
+    } finally {
+      setOpen(false);
     }
-  }, [warehouseData]);
+  }, [warehouseData, selectedSellerData, sellerData, rowData]);
 
   useEffect(() => {
     getTranportList();
   }, [getTranportList]);
+
+  const transportTypeOptions = transportDetails.filter(
+    (item, index, array) =>
+      item &&
+      item.transporter_type &&
+      array.findIndex(
+        (typeItem) =>
+          typeItem && typeItem.transporter_type === item.transporter_type,
+      ) === index,
+  );
+  // useEffect(() => {
+  //   getTranportList();
+  // }, [getTranportList]);
 
   // ─── Timer effect ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -171,22 +234,6 @@ export const CreateCustomerProformaInvoice = (props) => {
     return (
       String(minutes).padStart(2, "0") + ":" + String(secs).padStart(2, "0")
     );
-  };
-
-  const ifSelectuniversal = async () => {
-    try {
-      setOpen(true);
-      const res = await MasterService.getonUniversalType();
-      const data = res && res.data ? res.data.results : [];
-      setTransportList(Array.isArray(data) ? data : []);
-      console.log(res.data && res.data.results);
-      console.log("Data is", data);
-    } catch (error) {
-      console.error("Universal type transport error:", error);
-      setTransportList([]);
-    } finally {
-      setOpen(false);
-    }
   };
 
   const constructPayload = () => {
@@ -464,11 +511,45 @@ export const CreateCustomerProformaInvoice = (props) => {
       price_approval: priceApproval,
       products: constructPayload(),
       warehouse_person_name: warehouseData ? warehouseData.contact_name : null,
-      // FIX: single transporter_name key using the transporter field from the selected object
-      transporter_name: transporterName ? transporterName.transporter : "",
-      // FIX: universalType already holds raw value string e.g. "self_pickup"
-      universal_dispatch_type: universalType ? universalType : "",
-      transporter_type: transporterType ? transporterType.transporter_type : "",
+      transporter_type: selectedTransportType
+        ? selectedTransportType.transporter_type
+        : "",
+
+      // FIX: transporter / transporter_type now come straight from the
+      // pincode-mapping lookup (transportDetails), auto-filled on address select.
+      // If no mapping was found, transporter is explicitly null.
+      transporter_name: selectedTransport
+        ? selectedTransport.transporter_name
+        : "To Be Assigned",
+
+      transporter_type: selectedTransportType
+        ? selectedTransportType.transporter_type
+        : null,
+
+      selected_transport_mode:
+        selectedTransport && selectedTransport.selected_transport_mode
+          ? selectedTransport.selected_transport_mode
+          : null,
+
+      verified_pincode: selectedTransport
+        ? selectedTransport.verified_pincode
+        : null,
+
+      transporter_id: selectedTransport
+        ? selectedTransport.transporter_id
+        : null,
+      transporter_assignment_status:
+        selectedTransport &&
+        selectedTransport.transporter_name === "To Be Assigned"
+          ? "Unassigned"
+          : selectedTransport
+            ? "Assigned"
+            : "Unassigned",
+      // transporter_assignment_status:
+      // FIX: mapping_status sent as required -> "Assigned" / "Unassigned"
+
+      // FIX: universal_dispatch_type is now the value the user manually
+      // picks from the Bus / Train / Air / Self Pickup dropdown.
     };
 
     if (rowData.origin_type === "International") {
@@ -493,21 +574,6 @@ export const CreateCustomerProformaInvoice = (props) => {
       setOpen(false);
     }
   };
-
-  const getAllTypeofTransport = async () => {
-    try {
-      setOpen(true);
-      const response = await CustomerServices.getAllTransporterTypes();
-      setTransporterData(response.data);
-      console.log("transpoet data:", response.data);
-      setOpen(false);
-    } catch (error) {
-      setOpen(false);
-    }
-  };
-  useEffect(() => {
-    getAllTypeofTransport();
-  }, []);
 
   return (
     <div>
@@ -540,7 +606,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               style={tfStyle}
             />
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               name="payment_terms"
@@ -562,7 +627,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               style={tfStyle}
             />
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               name="delivery_terms"
@@ -584,7 +648,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               style={tfStyle}
             />
           </Grid>
-
           {rowData.origin_type === "International" && (
             <Grid item xs={12} sm={3}>
               <CustomAutocomplete
@@ -609,7 +672,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               />
             </Grid>
           )}
-
           {/* ─── Customer section ─────────────────────────────────────────── */}
           <Grid item xs={12}>
             <Root>
@@ -618,7 +680,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               </Divider>
             </Root>
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -629,7 +690,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               value={customerData && customerData.name ? customerData.name : ""}
             />
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <FormControl
               required
@@ -665,7 +725,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               <FormHelperText>First select Company Name</FormHelperText>
             </FormControl>
           </Grid>
-
           <Grid item xs={12} sm={2}>
             <CustomTextField
               fullWidth
@@ -684,7 +743,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
-
           <Grid item xs={12} sm={2}>
             <CustomTextField
               fullWidth
@@ -700,7 +758,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               }
             />
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -716,7 +773,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               }
             />
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -729,7 +785,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               value={customerData && customerData.city ? customerData.city : ""}
             />
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -744,7 +799,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               }
             />
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -760,7 +814,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               }
             />
           </Grid>
-
           {/* ─── Shipping address ─────────────────────────────────────────── */}
           <Grid item xs={12} sm={4}>
             <FormControl fullWidth size="small">
@@ -802,7 +855,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               <HelperText>first select Contact</HelperText>
             </FormControl>
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -817,7 +869,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               }
             />
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -832,7 +883,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               }
             />
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -851,87 +901,119 @@ export const CreateCustomerProformaInvoice = (props) => {
             />
           </Grid>
 
-          {/* FIX: Universal Type — options are objects, so getOptionLabel reads .label
-              onChange stores only the raw value string into universalType state
-              value finds the matching object by comparing universalType string to opt.value */}
-          <Grid item xs={12} sm={4}>
+          {/* FIX: Transport Name / Transport Type are now plain read-only
+              fields auto-filled from transportDetails as soon as the user
+              selects a Shipping Address. No autocomplete/select anymore.
+              If no mapping was found for the pincode, these stay blank
+              and mapping_status sent in payload is "Unassigned". */}
+          {/* <Grid item xs={12} sm={4}>
             <CustomAutocomplete
-              name="universal_dispatch_type"
               size="small"
-              disablePortal
-              id="combo-box-universal"
+              fullWidth
+              label="Transport Name"
+              options={transportDetails}
+              value={selectedTransport}
               onChange={(event, value) => {
-                const selected = value ? value.value : "";
-                setUniversalType(selected);
-                setTransporterName(null); // reset transporter selection
-                if (selected) {
-                  ifSelectuniversal(selected);
-                } else {
-                  // no universal type selected — reload surface transport list by pincode
-                  getTranportList();
-                }
+                setSelectedTransport(value);
               }}
-              options={Universal_type}
-              getOptionLabel={(option) => option.label || ""}
-              value={
-                Universal_type.find((opt) => opt.value === universalType) ||
-                null
-              }
-              sx={{ minWidth: 300 }}
-              label="Universal Type"
-              style={tfStyle}
-              disabled={
-                transporterType &&
-                transporterType.transporter_type !== "Universal Mode"
+              getOptionLabel={(option) =>
+                option && option.transporter ? option.transporter : ""
               }
             />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} sm={4}>
             <CustomAutocomplete
-              name="transporter_type"
               size="small"
-              disablePortal
-              id="combo-box-transporter-type"
-              onChange={(event, value) =>
-                setTransporterType(value ? value : null)
-              }
-              options={Array.isArray(transporterData) ? transporterData : []}
+              fullWidth
+              label="Transporter Name"
+              options={transportDetails}
+              value={selectedTransport}
+              onChange={(event, value) => {
+                setSelectedTransport(value);
+
+                if (value) {
+                  setSelectedTransportType(value);
+                } else {
+                  setSelectedTransportType(null);
+                }
+              }}
               getOptionLabel={(option) =>
-                option.transporter_type ? option.transporter_type : ""
+                option && option.transporter_name ? option.transporter_name : ""
               }
-              value={transporterType}
+              isOptionEqualToValue={(option, value) =>
+                option && value
+                  ? option.transporter_id === value.transporter_id
+                  : false
+              }
+              disabled={transportDetails.length === 0}
               sx={{ minWidth: 300 }}
-              label="Transporter Type"
               style={tfStyle}
             />
           </Grid>
 
-          {/* FIX: Transporter Name — was a stray broken element outside Grid.
-              Now correctly placed inside Grid, uses transportList as options,
-              stores the full object in transporterName state so .transporter
-              can be read in the payload */}
           <Grid item xs={12} sm={4}>
             <CustomAutocomplete
-              name="transporter_name"
               size="small"
-              disablePortal
-              id="combo-box-transporter"
-              onChange={(event, value) => setTransporterName(value)}
-              options={
-                Array.isArray(transportList)
-                  ? transportList.map((option) => option)
-                  : []
-              }
+              fullWidth
+              label="Transporter Type"
+              options={transportTypeOptions}
+              value={selectedTransportType}
+              onChange={(event, value) => {
+                setSelectedTransportType(value);
+              }}
               getOptionLabel={(option) =>
-                option.transporter_name ? option.transporter_name : ""
+                option && option.transporter_type ? option.transporter_type : ""
               }
-              value={transporterName}
+              isOptionEqualToValue={(option, value) =>
+                option && value
+                  ? option.transporter_type === value.transporter_type
+                  : false
+              }
+              disabled={transportTypeOptions.length === 0}
               sx={{ minWidth: 300 }}
-              disabled={!(warehouseData && warehouseData.pincode)}
-              label="Transporter Name"
               style={tfStyle}
             />
           </Grid>
+          {/* <Grid item xs={12} sm={4}>
+            <CustomAutocomplete
+              size="small"
+              fullWidth
+              name="transport_type"
+              size="small"
+              label="Transport Type"
+              variant="outlined"
+              options={transportDetails}
+              getOptionLabel={(option) =>
+                option && option.transporter_type ? option.transporter_type : ""
+              }
+              value={
+                selectedTransport && selectedTransport.transporter_type
+                  ? selectedTransport.transporter_type
+                  : ""
+              }
+            />
+          </Grid> */}
+
+          {/* <Grid item xs={12} sm={4}>
+            <FormControl fullWidth size="small">
+              <InputLabel id="universal-dispatch-type-label">
+                Universal Dispatch Type
+              </InputLabel>
+              <Select
+                labelId="universal-dispatch-type-label"
+                id="universal-dispatch-type-select"
+                label="Universal Dispatch Type"
+                value={universalDispatchType}
+                onChange={(e) => setUniversalDispatchType(e.target.value)}
+              >
+                {univerSalDispatchType.map((option, i) => (
+                  <MenuItem key={i} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid> */}
 
           {/* ─── Order info ───────────────────────────────────────────────── */}
           <Grid item xs={12} sm={4}>
@@ -962,7 +1044,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -980,7 +1061,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <CustomTextField
               fullWidth
@@ -999,7 +1079,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               onChange={handleInputChange}
             />
           </Grid>
-
           {/* ─── Products section ─────────────────────────────────────────── */}
           <Grid item xs={12}>
             <Root>
@@ -1008,7 +1087,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               </Divider>
             </Root>
           </Grid>
-
           <Grid item xs={12}>
             <FormControlLabel
               label="Price Approval"
@@ -1020,7 +1098,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               }
             />
           </Grid>
-
           {products.map((input, index) => {
             const detail =
               productDetails && productDetails[index]
@@ -1248,7 +1325,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               </React.Fragment>
             );
           })}
-
           <Grid item xs={12} sm={2} alignContent="right">
             <Button
               onClick={() => addFields()}

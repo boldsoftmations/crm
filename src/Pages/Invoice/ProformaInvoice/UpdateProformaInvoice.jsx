@@ -18,7 +18,7 @@ const UpdateProformaInvoice = ({
   const [transportList, setTransportList] = useState([]);
 
   console.log("Transporter name", idForEdit.transporter_name);
-  console.log(idForEdit);
+  console.log("Seller Account is:", idForEdit.seller_account);
 
   // ✅ Set initial value when edit data comes
   useEffect(() => {
@@ -51,8 +51,13 @@ const UpdateProformaInvoice = ({
     try {
       const res = await CustomerServices.getTransportList(
         idForEdit && idForEdit.pincode,
+        idForEdit && idForEdit.country_id,
+        idForEdit && idForEdit.seller_id,
+
+        idForEdit && idForEdit.seller_account,
       );
       console.log("idforedit data is:", idForEdit);
+      console.log("Seller Account is:", idForEdit.seller_account);
       console.log("data is :", res);
       const data = res && res.data ? res.data.results : [];
       setTransportList(Array.isArray(data) ? data : []);
@@ -89,23 +94,23 @@ const UpdateProformaInvoice = ({
             value={transporter || ""}
             getOptionLabel={(option) =>
               typeof option === "object" && option !== null
-                ? option.transporter || ""
+                ? option.transporter_name || ""
                 : option || ""
             }
             isOptionEqualToValue={(option, value) => {
               const optionVal =
                 typeof option === "object" && option !== null
-                  ? option.transporter || ""
+                  ? option.transporter_name || ""
                   : option || "";
               const selectedVal =
                 typeof value === "object" && value !== null
-                  ? value.transporter || ""
+                  ? value.transporter_name || ""
                   : value || "";
               return optionVal === selectedVal;
             }}
             onChange={(event, newValue) => {
               if (newValue && typeof newValue === "object") {
-                setTransporter(newValue.transporter || "");
+                setTransporter(newValue.transporter_name || "");
               } else {
                 setTransporter(newValue || "");
               }

@@ -32,6 +32,7 @@ import CustomAutocomplete from "../../Components/CustomAutocomplete";
 import UserProfileService from "../../services/UserProfileService";
 import { useSelector } from "react-redux";
 import CustomDateFilterPopup from "../../Components/CustomDateFilterPopup";
+import { formatDate } from "../../utility/dateUtils";
 
 export const SalesRegisterView = () => {
   const [open, setOpen] = useState(false);
@@ -62,8 +63,8 @@ export const SalesRegisterView = () => {
   const handleExport = async () => {
     try {
       setOpen(true);
-      const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
-      const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
+      const StartDate = formatDate(startDate);
+      const EndDate = formatDate(endDate);
       const response = await InvoiceServices.getAllSaleRegisterData(
         StartDate,
         EndDate,
@@ -111,8 +112,14 @@ export const SalesRegisterView = () => {
   const getSalesRegisterData = useCallback(async () => {
     try {
       setOpen(true);
-      const StartDate = startDate ? startDate.toISOString().split("T")[0] : "";
-      const EndDate = endDate ? endDate.toISOString().split("T")[0] : "";
+      const StartDate = formatDate(startDate);
+      const EndDate = formatDate(endDate);
+
+      console.log("startDate state:", startDate);
+      console.log("endDate state:", endDate);
+      console.log("Formatted StartDate:", StartDate);
+      console.log("Formatted EndDate:", EndDate);
+
       const response = await InvoiceServices.getAllSaleRegisterData(
         StartDate,
         EndDate,
@@ -121,13 +128,14 @@ export const SalesRegisterView = () => {
         unitFilter,
       );
       setsalesRegisterData(response.data.results);
+
       setTotalPages(Math.ceil(response.data.count / 25));
     } catch (error) {
       handleError(error);
     } finally {
       setOpen(false);
     }
-  }, [startDate, currentPage, searchQuery, unitFilter]); // Ensure dependencies are correctly listed
+  }, [endDate, startDate, currentPage, searchQuery, unitFilter]); // Ensure dependencies are correctly listed
 
   useEffect(() => {
     getSalesRegisterData();
@@ -143,6 +151,13 @@ export const SalesRegisterView = () => {
     setCurrentPage(1); // Reset to first page with no search query
   };
 
+  useEffect(() => {
+    console.log("endDate changed =>", endDate);
+  }, [endDate]);
+
+  useEffect(() => {
+    console.log("startDate changed =>", startDate);
+  }, [startDate]);
   const handlePageChange = (event, value) => setCurrentPage(value);
 
   const handleDownload = async () => {
@@ -240,9 +255,8 @@ export const SalesRegisterView = () => {
                 <Typography
                   variant="h6"
                   style={{
-                    fontSize: "14px",
                     color: "rgb(34, 34, 34)",
-                    fontWeight: 600,
+
                     fontWeight: 800,
                     alignItems: "center",
                     marginTop: "10px",
@@ -354,7 +368,11 @@ export const SalesRegisterView = () => {
         setStartDate={setStartDate}
         setEndDate={setEndDate}
         onSubmit={() => {
-          getSalesRegisterData();
+          setTimeout(() => {
+            console.log("After timeout:", startDate, endDate);
+            getSalesRegisterData();
+          }, 0);
+
           setCustomDataPopup(false);
         }}
       />

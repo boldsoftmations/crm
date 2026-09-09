@@ -168,7 +168,7 @@ const getOrderBookData = (
 
   if (filterBySellerUnit) {
     params.append(
-      "orderbook__proforma_invoice__seller_account__state",
+      "orderbook__proforma_invoice__seller_account__unit",
       filterBySellerUnit,
     );
   }
@@ -329,6 +329,11 @@ const getAllSaleRegisterData = (
   if (status) {
     params.append("status", status);
   }
+  console.log({
+    startDate,
+    endDate,
+    url: `api/invoice/list-sales-register/?${params.toString()}`,
+  });
   // Sending a GET request with query parameters
   return CustomAxios.get(
     `api/invoice/list-sales-register/?${params.toString()}`,
@@ -445,13 +450,20 @@ const getCustomersList = () => {
   return CustomAxios.get(`/api/customer/customer/`);
 };
 
-const getDebitCreditnotes = (page, searchValue) => {
+const getDebitCreditnotes = (page, searchValue, start_date, end_date) => {
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
   }
   if (searchValue) {
     params.append("search", searchValue);
+  }
+
+  if (start_date) {
+    params.append("start_date", start_date);
+  }
+  if (end_date) {
+    params.append("end_date", end_date);
   }
 
   return CustomAxios.get(
@@ -560,12 +572,9 @@ const getMisPackagingData = (page, searchValue, year, month) => {
   );
 };
 
-
-const getAuditReportData=()=>{
- return CustomAxios.get(
-  `/api/audit/audit-logs/`
- )
-}
+const getAuditReportData = () => {
+  return CustomAxios.get(`/api/audit/audit-logs/`);
+};
 
 const InvoiceServices = {
   getAllSellerAccountData,

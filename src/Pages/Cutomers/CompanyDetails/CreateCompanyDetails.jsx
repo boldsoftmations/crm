@@ -31,6 +31,7 @@ import CustomSnackbar from "../../../Components/CustomerSnackbar";
 
 export const CreateCompanyDetails = (props) => {
   const { getAllCompanyDetails, setOpenPopup } = props;
+  console.log("Data is: ", getAllCompanyDetails);
   const [openPopup2, setOpenPopup2] = useState(false);
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState([]);
@@ -98,12 +99,12 @@ export const CreateCompanyDetails = (props) => {
       }
 
       const PINCODE = inputValue.pincode;
-      const Country = inputValue.country;
-      const response = await MasterService.getCountryDataByPincode(
-        Country,
-        PINCODE,
-      );
-      if (response.data.length === 0) {
+      const Country =
+        inputValue.origin_type === "International" ? inputValue.country.id : 1; // Default to "IN" if country is not selected
+
+      console.log("params Data is: ", PINCODE, inputValue.country.id);
+      const response = await MasterService.ValidatePincode(Country, PINCODE);
+      if (!response.data) {
         setAlertMsg({
           message:
             "This Pin Code does not exist ! First Create the Pin code in the master country",
@@ -124,11 +125,11 @@ export const CreateCompanyDetails = (props) => {
         });
         setInputValue({
           ...inputValue,
-          state: response.data[0].state,
-          city: response.data[0].city_name,
-          country: response.data[0].country,
-          pin_code: response.data[0].id,
-          zone: response.data[0].zone,
+          state: response.data.state_name,
+          city: response.data.city_name,
+          // country: response.data.country_name,
+          pin_code: response.data.id,
+          zone: response.data.zone_name,
         });
       }
     } catch (error) {
@@ -200,7 +201,10 @@ export const CreateCompanyDetails = (props) => {
         name: inputValue.name,
         address: inputValue.address,
         pincode: inputValue.pincode,
-        country: inputValue.country,
+        country:
+          inputValue.origin_type === "Domestic"
+            ? "India"
+            : inputValue.country.name,
         state: inputValue.state,
         zone: inputValue.zone,
         city: inputValue.city,
@@ -331,24 +335,18 @@ export const CreateCompanyDetails = (props) => {
           {inputValue.origin_type === "International" ? (
             <Grid item xs={12} sm={3}>
               <CustomAutocomplete
-                sx={{ minWidth: 220 }}
                 size="small"
+                options={countryList || []}
+                value={inputValue.country || null}
+                getOptionLabel={(option) => option.name || ""}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
                 onChange={(event, value) => {
-                  handleSelectChange("country", value);
+                  setInputValue((prev) => ({
+                    ...prev,
+                    country: value,
+                  }));
                 }}
-                value={inputValue.country || ""}
-                options={
-                  countryList && countryList.map((option) => option.name)
-                }
                 label="Country"
-                randerInput={(params) => (
-                  <CustomTextField
-                    {...params}
-                    label="Country"
-                    variant="outlined"
-                    required
-                  />
-                )}
               />
             </Grid>
           ) : (

@@ -52,7 +52,8 @@ export const CreateLeadsProformaInvoice = (props) => {
   const [currencyOption, setCurrencyOption] = useState([]);
   const { handleSuccess, handleError, handleCloseSnackbar, alertInfo } =
     useNotificationHandling();
-
+  const [transportList, setTransportList] = useState([]);
+  const [selectedTransporter, setSelectedTransporter] = useState(null);
   const {
     handleAutocompleteChange,
     handleFormChange,
@@ -109,6 +110,43 @@ export const CreateLeadsProformaInvoice = (props) => {
     return () => clearInterval(timer); // Cleanup on component unmount
   }, [timeLeft, setOpenPopup]);
 
+  // const handleSellerAccountChange = async (e, value) => {
+  //   setSelectedSellerData(value);
+  //   try {
+  //     setOpen(true);
+  //     const response = await CustomerServices.getCustomerLastPi(
+  //       rowData && rowData.name,
+  //       value.unit,
+  //     );
+  //     setCustomerLastPiData(response.data || {});
+  //   } catch (err) {
+  //     console.error("error getting last pi", err);
+  //   } finally {
+  //     setOpen(false);
+  //   }
+  // };
+  const getTransportListData = async (
+    pincode,
+    country_id,
+    unit_id,
+    unit_code,
+  ) => {
+    setOpen(true);
+    try {
+      const response = await CustomerServices.getTransportList(
+        pincode,
+        country_id,
+        unit_id,
+        unit_code,
+      );
+      setTransportList(response && response.data ? response.data : []);
+    } catch (err) {
+      handleError(err);
+      console.error("Error fetching transport list", err);
+    } finally {
+      setOpen(false);
+    }
+  };
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -299,7 +337,24 @@ export const CreateLeadsProformaInvoice = (props) => {
               size="small"
               disablePortal
               id="combo-box-demo"
-              onChange={(event, value) => setSelectedSellerData(value)}
+              onChange={(event, value) => {
+                setSelectedSellerData(value);
+                setTransportList([]);
+                setSelectedTransporter(null);
+                setInputValue({
+                  ...inputValue,
+                  transporter_name: "",
+                  transporter_type: "",
+                });
+
+                if (value) {
+                  const pincode = value.pincode ? value.pincode : "";
+                  const unitId = value.id ? value.id : "";
+                  const unitCode = value.unit ? value.unit : "";
+                  const countryId = value.country_id ? value.country_id : "";
+                  getTransportListData(pincode, countryId, unitId, unitCode);
+                }
+              }}
               options={sellerData}
               getOptionLabel={(option) => option.unit}
               sx={{ minWidth: 300 }}
@@ -546,15 +601,41 @@ export const CreateLeadsProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              name="transporter_name"
-              size="small"
-              label="Transporter Name"
-              variant="outlined"
-              value={inputValue.transporter_name}
-              onChange={handleInputChange}
-            />
+            <Grid item xs={12} sm={4}>
+              <CustomAutocomplete
+                name="transporter_name"
+                size="small"
+                disablePortal
+                id="transporter-autocomplete"
+                value={selectedTransporter}
+                onChange={(event, value) => {
+                  setSelectedTransporter(value);
+                  setInputValue({
+                    ...inputValue,
+                    transporter_name:
+                      value && value.transporter ? value.transporter : "",
+                    transporter_type:
+                      value && value.transporter_type
+                        ? value.transporter_type
+                        : "",
+                  });
+                }}
+                options={transportList}
+                getOptionLabel={(option) =>
+                  option && option.transporter
+                    ? option.transporter_type
+                      ? `${option.transporter} (${option.transporter_type})`
+                      : option.transporter
+                    : ""
+                }
+                isOptionEqualToValue={(option, value) =>
+                  option && value && option.id === value.id ? true : false
+                }
+                sx={{ minWidth: 300 }}
+                label="Transporter Name"
+                style={tfStyle}
+              />
+            </Grid>
           </Grid>
           <Grid item xs={12}>
             <Root>

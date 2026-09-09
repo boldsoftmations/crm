@@ -73,13 +73,16 @@ const updateMasterCity = (id, data) => {
   return CustomAxios.patch(`/api/master/city/${id}/`, data);
 };
 
-const getMasterPincode = (page, searchvalue) => {
+const getMasterPincode = (page, searchvalue, is_active = true) => {
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
   }
   if (searchvalue) {
     params.append("search", searchvalue);
+  }
+  if (is_active !== null && is_active !== undefined) {
+    params.append("is_active", is_active);
   }
   return CustomAxios.get(`/api/master/pincode/?${params.toString()}`);
 };
@@ -387,6 +390,80 @@ const getonUniversalType = () => {
 const CreateMasterPincode = (data) => {
   return CustomAxios.post(`/api/master/pincode-alias/`, data);
 };
+const CreateMergePincode = (data) => {
+  return CustomAxios.post(`/api/master/pincode-merge/`, data);
+};
+const getMergePincodeList = (page, search, old_pincode__pincode) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (search) {
+    params.append("search", search);
+  }
+  if (old_pincode__pincode) {
+    params.append("old_pincode__pincode", old_pincode__pincode);
+  }
+
+  return CustomAxios.get(`/api/master/pincode-merge/?${params.toString()}`);
+};
+
+const getPincodeAuditlog = (page, search) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (search) {
+    params.append("search", search);
+  }
+  return CustomAxios.get(`/api/master/geo-audit-logs/?${params.toString()}`);
+};
+
+const getPincodeRefrenceData = (page, search) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (search) {
+    params.append("search", search);
+  }
+  return CustomAxios.get(
+    `/api/master/pincode-reference-logs/?${params.toString()}`,
+  );
+};
+
+const ValidatePincode = (country_id, postal_code) => {
+  const params = new URLSearchParams();
+  if (country_id) {
+    params.append("country_id", country_id);
+  }
+  if (postal_code) {
+    params.append("postal_code", postal_code);
+  }
+  return CustomAxios.get(
+    `/api/master/postal-code-lookup/?${params.toString()}`,
+  );
+};
+
+const getTransportRefData = (page, search) => {
+  const params = new URLSearchParams();
+  if (page) {
+    params.append("page", page);
+  }
+  if (search) {
+    params.append("search", search);
+  }
+  return CustomAxios.get(
+    `/api/master/transporter-mapping-request/?${params.toString()}`,
+  );
+};
+const UpdateMasterRefRequest = (id, data) => {
+  return CustomAxios.patch(
+    `/api/master/transporter-mapping-request/${id}/`,
+    data,
+  );
+};
+
 const MasterService = {
   getLeavapproval,
   updateApprovalStage,
@@ -406,6 +483,7 @@ const MasterService = {
   getMasterCities,
   updateMasterCity,
   getMasterPincode,
+  getMergePincodeList,
   createMasterPincode,
   updateMasterPincode,
   getCountryDataByPincode,
@@ -443,5 +521,11 @@ const MasterService = {
   updateTransportContact,
   getonUniversalType,
   CreateMasterPincode,
+  CreateMergePincode,
+  getPincodeAuditlog,
+  getPincodeRefrenceData,
+  ValidatePincode,
+  UpdateMasterRefRequest,
+  getTransportRefData,
 };
 export default MasterService;

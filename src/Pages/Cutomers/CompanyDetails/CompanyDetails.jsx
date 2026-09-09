@@ -366,6 +366,7 @@ export const CompanyDetails = () => {
                 </Button>
 
                 {(userData.groups.includes("Accounts") ||
+                  userData.groups.includes("Accounts Billing Department") ||
                   userData.groups.includes("Director")) && (
                   <Button
                     variant="contained"

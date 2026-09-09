@@ -27,6 +27,8 @@ import CustomSnackbar from "../../../Components/CustomerSnackbar";
 import MasterService from "../../../services/MasterService";
 import { UpdatePincode } from "./UpdatePincode";
 import { CreateAlias } from "./CreateAlias";
+import MergePincodeCreate from "./MergePincodeCreate";
+import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 
 export const ViewPincode = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -43,6 +45,8 @@ export const ViewPincode = () => {
     severity: "",
     open: false,
   });
+  const [openMergePopup, setOpenMergePopup] = useState(false);
+  const [status, setStatus] = useState("Active");
 
   const handleClose = () => {
     setAlertMsg({ open: false });
@@ -68,12 +72,17 @@ export const ViewPincode = () => {
     setRecordForEdit(data);
     setOpenAlisaPopup(true);
   };
+  const openMergePopupHandler = (data) => {
+    setRecordForEdit(data);
+    setOpenMergePopup(true);
+  };
   const getMasterPincode = async () => {
     try {
       setIsLoading(true);
       const response = await MasterService.getMasterPincode(
         currentPage,
         searchQuery,
+        status === "Active",
       );
       setPincode(response.data.results);
       setTotalPages(Math.ceil(response.data.count / 25));
@@ -89,7 +98,7 @@ export const ViewPincode = () => {
   };
   useEffect(() => {
     getMasterPincode();
-  }, [currentPage, searchQuery]);
+  }, [currentPage, searchQuery, status]);
 
   return (
     <>
@@ -124,15 +133,27 @@ export const ViewPincode = () => {
                   </h3>
                 </Box>
               </Grid>
-              <Grid item xs={12} sm={4} style={{ textAlign: "right" }}>
-                <Button
-                  variant="contained"
-                  color="info"
-                  size="small"
-                  onClick={() => setOpenPopup(true)}
-                >
-                  Add
-                </Button>
+              <Grid item xs={12} sm={4}>
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  <CustomAutocomplete
+                    label="Status"
+                    value={status}
+                    options={["Active", "Inactive"]}
+                    onChange={(event, newValue) => {
+                      setStatus(newValue || "Active");
+                      setCurrentPage(1);
+                    }}
+                    sx={{ width: "70%" }}
+                  />
+                  <Button
+                    variant="contained"
+                    color="info"
+                    size="small"
+                    onClick={() => setOpenPopup(true)}
+                  >
+                    Add
+                  </Button>
+                </Box>
               </Grid>
             </Grid>
           </Box>
@@ -175,6 +196,7 @@ export const ViewPincode = () => {
                       row={row}
                       openInPopup={openInPopup}
                       openAliasPopup={openAliasPopup}
+                      openMergePopupHandler={openMergePopupHandler}
                     />
                   ))}
               </TableBody>
@@ -206,6 +228,20 @@ export const ViewPincode = () => {
               setOpenAlisaPopup={setOpenAlisaPopup}
             />
           </Popup>
+
+          <Popup
+            title="Merge Pincode"
+            openPopup={openMergePopup}
+            setOpenPopup={setOpenMergePopup}
+          >
+            <MergePincodeCreate
+              recordForEdit={recordForEdit}
+              getMasterPincode={getMasterPincode}
+              setOpenMergePopup={setOpenMergePopup}
+              PincodeData={pincode}
+            />
+          </Popup>
+
           <Popup
             title="Update Pin Code"
             openPopup={openUpdatePopup}
@@ -223,22 +259,13 @@ export const ViewPincode = () => {
   );
 };
 
-const data = {
-  id: 2,
-  postal_code: "843303",
-  alias_name: "gaya bihar",
-  alias_name_normalized: "gayabihar",
-  alias_type: "Locality",
-  is_primary: true,
-  is_active: true,
-  created_at: "2026-07-10T12:55:00.770049+05:30",
-  updated_at: "2026-07-10T12:55:00.770049+05:30",
-  created_by: 1,
-  updated_by: 1,
-};
-
-function Row({ row, openInPopup, openAliasPopup }) {
+function Row({ row, openInPopup, openAliasPopup, openMergePopupHandler }) {
   const [open, setOpen] = useState(false);
+
+  const aliases =
+    row.pincode_aliases && row.pincode_aliases.length > 0
+      ? row.pincode_aliases
+      : [];
 
   return (
     <>
@@ -252,9 +279,13 @@ function Row({ row, openInPopup, openAliasPopup }) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </StyledTableCell>
-        <StyledTableCell align="center">{row.country}</StyledTableCell>
+        <StyledTableCell align="center">
+          {row.country_name ? row.country_name : row.country}
+        </StyledTableCell>
         <StyledTableCell align="center">{row.zone}</StyledTableCell>
-        <StyledTableCell align="center">{row.state}</StyledTableCell>
+        <StyledTableCell align="center">
+          {row.state_name ? row.state_name : row.state}
+        </StyledTableCell>
         <StyledTableCell align="center">{row.city_name}</StyledTableCell>
         <StyledTableCell align="center">{row.pincode}</StyledTableCell>
         <StyledTableCell align="center">
@@ -274,6 +305,14 @@ function Row({ row, openInPopup, openAliasPopup }) {
               onClick={() => openAliasPopup(row)}
             >
               Create Alias
+            </Button>
+            <Button
+              variant="contained"
+              size="small"
+              color="warning"
+              onClick={() => openMergePopupHandler(row)}
+            >
+              Merge Pincode
             </Button>
           </Box>
         </StyledTableCell>
@@ -298,37 +337,40 @@ function Row({ row, openInPopup, openAliasPopup }) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {/* {row.pincode_aliases && row.pincode_aliases.length > 0 ? (
-                    row.pincode_aliases.map((alias, i) => (
+                  {aliases.length > 0 ? (
+                    aliases.map((alias, i) => (
+                      <StyledTableRow key={alias.id ? alias.id : i}>
                         <StyledTableCell align="center">
                           {i + 1}
-                        </StyledTableCell> */}
-                  <StyledTableRow>
-                    <StyledTableCell align="center">{1}</StyledTableCell>
-                    <StyledTableCell align="center">
-                      {data.postal_code}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {data.alias_name}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {data.alias_type}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {data.is_primary ? "Yes" : "No"}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {data.is_active ? "Yes" : "No"}
-                    </StyledTableCell>
-                  </StyledTableRow>
-                  {/* ))
-                  // ) : (
-                  //   <TableRow>
-                  //     <TableCell colSpan={6} align="center">
-                  //       No aliases found
-                  //     </TableCell>
-                  //   </TableRow>
-                  // )} */}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {alias.postal_code}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {alias.alias_name}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {alias.alias_type}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {alias.is_primary ? "Yes" : "No"}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {alias.is_active ? "Yes" : "No"}
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={6}
+                        align="center"
+                        sx={{ color: "#999" }}
+                      >
+                        No aliases found
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </Box>
