@@ -911,6 +911,11 @@ export const ListItems = ({ setOpen }) => {
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
+          {
+            to: "/county-state-city/master-tab",
+            text: "Country Master",
+          },
+          { to: "/master/transport", text: "Transport Master" },
         ]),
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },

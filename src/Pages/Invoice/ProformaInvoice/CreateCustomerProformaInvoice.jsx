@@ -67,20 +67,30 @@ const values = {
 export const CreateCustomerProformaInvoice = (props) => {
   const { recordForEdit, rowData, setOpenPopup } = props;
   // console.log("data is: ", rowData);
+  console.log("recordForEdit is: ", rowData);
 
   const [productOption, setProductOption] = useState([]);
   const [productDetails, setProductDetails] = useState(null);
 
-  // FIX: transportList (array) replaced with transportDetails (single object).
-  // The pincode-mapping API now returns ONE object, not an array:
-  // { mapping_found, mapping_id, transporter_id, transporter,
-  // transporter_type, selected_transport_mode, verified_pincode }
+  // Transporter mapping list shown in the Autocomplete below. Confirmed via
+  // Network tab that the LIVE getTransportList endpoint currently returns a
+  // single flat object - { mapping_found, mapping_id, transporter_id,
+  // transporter_name, transporter_type, selected_transport_mode,
+  // verified_pincode } - not a list and not { count, results: [] }.
+  // getTranportList wraps that single object into a 1-item array so this
+  // component's existing options/Autocomplete logic keeps working. This is
+  // a stopgap: once Tuesday's contract freeze lands the real
+  // { count, results, assignment_status, display_name } shape, this needs
+  // another pass (see TODO in getTranportList below).
   const [transportDetails, setTransportDetails] = useState([]);
   const [selectedTransport, setSelectedTransport] = useState(null);
   const [selectedTransportType, setSelectedTransportType] = useState(null);
 
-  // Universal dispatch type is a MANUAL user selection (Bus/Train/Air/Self Pickup),
-  // separate from the auto-filled transporter/transporter_type mapping.
+  // NOTE: "Universal Dispatch Type" (Bus/Train/Air/Self Pickup manual picker)
+  // is NOT implemented in this component - there is no state for it and
+  // nothing is sent in the payload for it. If that field is actually needed,
+  // it still needs to be built (state + Select + payload field); it is not
+  // just "commented out and otherwise working."
 
   const [openPopup2, setOpenPopup2] = useState(false);
   const [openPopup3, setOpenPopup3] = useState(false);
@@ -134,15 +144,18 @@ export const CreateCustomerProformaInvoice = (props) => {
 
   const buyer_date = new Date().toISOString().slice(0, 10);
 
-  // FIX: getTranportList now:
+  // getTranportList:
   //  1. Guards every input (pincode / seller unit match) before calling the API,
-  //     so it never crashes on `unitid.id` when no match is found.
+  //     so it never crashes on `unitMatch.id` when no match is found.
   //  2. Correctly includes selectedSellerData, sellerData, rowData in the
   //     dependency array (old code only had [warehouseData] -> stale closure bug).
-  //  3. Stores the SINGLE object response into transportDetails instead of
-  //     force-casting it into an array.
+  //  3. Does NOT auto-pick the first mapping anymore. When multiple valid
+  //     transporters exist for a unit + pincode, the user must choose - see
+  //     the "Do not use .first() when multiple valid mappings can exist" rule.
+  //     selectedTransport only ever gets set by the user via the Autocomplete
+  //     onChange below.
   //  4. Runs automatically whenever the user selects a Shipping Address
-  //     (warehouseData changes) — no manual autocomplete needed anymore.
+  //     (warehouseData changes) or the seller/unit changes.
   const getTranportList = useCallback(async () => {
     const pincode =
       warehouseData && warehouseData.pincode ? warehouseData.pincode : "";
@@ -152,11 +165,14 @@ export const CreateCustomerProformaInvoice = (props) => {
         item && selectedSellerData && item.unit === selectedSellerData.unit,
     );
 
+    // Clear any previously selected transporter whenever the inputs that
+    // determine serviceability change, so a stale selection from a different
+    // pincode/unit combination can never be silently carried forward.
+    setSelectedTransport(null);
+    setSelectedTransportType(null);
+
     if (!pincode || !selectedSellerData || !unitMatch) {
       setTransportDetails([]);
-      setSelectedTransport(null);
-      setSelectedTransportType(null);
-
       return;
     }
 
@@ -170,30 +186,30 @@ export const CreateCustomerProformaInvoice = (props) => {
         selectedSellerData.unit,
       );
 
-      const data =
-        res && res.data && Array.isArray(res.data.results)
-          ? res.data.results
-          : [];
+      // FIX: the live endpoint returns a single flat object, e.g.
+      // { mapping_found, mapping_id, transporter_id, transporter_name,
+      //   transporter_type, selected_transport_mode, verified_pincode }
+      // NOT { count, results: [] }. Checking Array.isArray(res.data.results)
+      // was always false against this response, so transportDetails was
+      // always being cleared to [] even when mapping_found was true and a
+      // real transporter_id came back - confirmed against Network tab.
+      //
+      // TODO: this wraps the single object in an array purely so the
+      // existing Autocomplete/options plumbing below doesn't need to
+      // change shape. A single object can never represent "multiple valid
+      // mappings for this unit+pincode" - if that's a real scenario, the
+      // backend needs to actually return a list (per Tuesday's
+      // {count, results[]} contract) before this can surface more than
+      // one option. Revisit once that contract is confirmed.
+      const payload = res && res.data ? res.data : null;
+      const data = payload && payload.mapping_found ? [payload] : [];
 
-      if (data.length > 0) {
-        // Transporter mapping found
-        setTransportDetails(data);
-        setSelectedTransport(data[0]);
-        setSelectedTransportType(data[0]);
-      } else {
-        // No transporter mapping found
-        setTransportDetails([]);
-        setSelectedTransport(null);
-        setSelectedTransportType(null);
-      }
+      // Always populate the option list and let the Autocomplete below
+      // require an explicit user selection - never pre-select data[0].
+      setTransportDetails(data);
     } catch (error) {
       console.error("Transport list error:", error);
-
       setTransportDetails([]);
-      setSelectedTransport(null);
-      setSelectedTransportType(null);
-
-      // API failed / no mapping available
     } finally {
       setOpen(false);
     }
@@ -212,9 +228,6 @@ export const CreateCustomerProformaInvoice = (props) => {
           typeItem && typeItem.transporter_type === item.transporter_type,
       ) === index,
   );
-  // useEffect(() => {
-  //   getTranportList();
-  // }, [getTranportList]);
 
   // ─── Timer effect ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -511,45 +524,31 @@ export const CreateCustomerProformaInvoice = (props) => {
       price_approval: priceApproval,
       products: constructPayload(),
       warehouse_person_name: warehouseData ? warehouseData.contact_name : null,
-      transporter_type: selectedTransportType
-        ? selectedTransportType.transporter_type
-        : "",
 
-      // FIX: transporter / transporter_type now come straight from the
-      // pincode-mapping lookup (transportDetails), auto-filled on address select.
-      // If no mapping was found, transporter is explicitly null.
+      // Transporter fields come from the user's explicit selection in the
+      // Transporter Name / Transporter Type autocompletes (see getTranportList
+      // above - selectedTransport is never auto-assigned). If nothing was
+      // mapped or nothing was picked, this saves as "To Be Assigned" /
+      // "Unassigned" rather than guessing.
       transporter_name: selectedTransport
         ? selectedTransport.transporter_name
         : "To Be Assigned",
-
       transporter_type: selectedTransportType
         ? selectedTransportType.transporter_type
         : null,
-
       selected_transport_mode:
         selectedTransport && selectedTransport.selected_transport_mode
           ? selectedTransport.selected_transport_mode
           : null,
-
       verified_pincode: selectedTransport
         ? selectedTransport.verified_pincode
         : null,
-
       transporter_id: selectedTransport
         ? selectedTransport.transporter_id
         : null,
-      transporter_assignment_status:
-        selectedTransport &&
-        selectedTransport.transporter_name === "To Be Assigned"
-          ? "Unassigned"
-          : selectedTransport
-            ? "Assigned"
-            : "Unassigned",
-      // transporter_assignment_status:
-      // FIX: mapping_status sent as required -> "Assigned" / "Unassigned"
-
-      // FIX: universal_dispatch_type is now the value the user manually
-      // picks from the Bus / Train / Air / Self Pickup dropdown.
+      transporter_assignment_status: selectedTransport
+        ? "Assigned"
+        : "Unassigned",
     };
 
     if (rowData.origin_type === "International") {
@@ -901,26 +900,10 @@ export const CreateCustomerProformaInvoice = (props) => {
             />
           </Grid>
 
-          {/* FIX: Transport Name / Transport Type are now plain read-only
-              fields auto-filled from transportDetails as soon as the user
-              selects a Shipping Address. No autocomplete/select anymore.
-              If no mapping was found for the pincode, these stay blank
-              and mapping_status sent in payload is "Unassigned". */}
-          {/* <Grid item xs={12} sm={4}>
-            <CustomAutocomplete
-              size="small"
-              fullWidth
-              label="Transport Name"
-              options={transportDetails}
-              value={selectedTransport}
-              onChange={(event, value) => {
-                setSelectedTransport(value);
-              }}
-              getOptionLabel={(option) =>
-                option && option.transporter ? option.transporter : ""
-              }
-            />
-          </Grid> */}
+          {/* Transporter Name - populated from getTranportList, requires an
+              explicit user selection. Disabled (with no options) when no
+              mapping exists for this unit/pincode - "To Be Assigned" is then
+              sent in the payload rather than any auto-picked value. */}
           <Grid item xs={12} sm={4}>
             <CustomAutocomplete
               size="small"
@@ -930,12 +913,7 @@ export const CreateCustomerProformaInvoice = (props) => {
               value={selectedTransport}
               onChange={(event, value) => {
                 setSelectedTransport(value);
-
-                if (value) {
-                  setSelectedTransportType(value);
-                } else {
-                  setSelectedTransportType(null);
-                }
+                setSelectedTransportType(value || null);
               }}
               getOptionLabel={(option) =>
                 option && option.transporter_name ? option.transporter_name : ""
@@ -949,6 +927,14 @@ export const CreateCustomerProformaInvoice = (props) => {
               sx={{ minWidth: 300 }}
               style={tfStyle}
             />
+            {transportDetails.length === 0 && (
+              <Chip
+                label="To Be Assigned - no transporter mapped for this unit/pincode"
+                color="warning"
+                size="small"
+                sx={{ mt: 1 }}
+              />
+            )}
           </Grid>
 
           <Grid item xs={12} sm={4}>
@@ -974,46 +960,6 @@ export const CreateCustomerProformaInvoice = (props) => {
               style={tfStyle}
             />
           </Grid>
-          {/* <Grid item xs={12} sm={4}>
-            <CustomAutocomplete
-              size="small"
-              fullWidth
-              name="transport_type"
-              size="small"
-              label="Transport Type"
-              variant="outlined"
-              options={transportDetails}
-              getOptionLabel={(option) =>
-                option && option.transporter_type ? option.transporter_type : ""
-              }
-              value={
-                selectedTransport && selectedTransport.transporter_type
-                  ? selectedTransport.transporter_type
-                  : ""
-              }
-            />
-          </Grid> */}
-
-          {/* <Grid item xs={12} sm={4}>
-            <FormControl fullWidth size="small">
-              <InputLabel id="universal-dispatch-type-label">
-                Universal Dispatch Type
-              </InputLabel>
-              <Select
-                labelId="universal-dispatch-type-label"
-                id="universal-dispatch-type-select"
-                label="Universal Dispatch Type"
-                value={universalDispatchType}
-                onChange={(e) => setUniversalDispatchType(e.target.value)}
-              >
-                {univerSalDispatchType.map((option, i) => (
-                  <MenuItem key={i} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid> */}
 
           {/* ─── Order info ───────────────────────────────────────────────── */}
           <Grid item xs={12} sm={4}>

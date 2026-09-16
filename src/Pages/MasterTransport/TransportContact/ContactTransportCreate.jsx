@@ -53,7 +53,7 @@ function ContactTransportCreate({ getTransportContactData, setOpenPopup }) {
   // ==============================
   const getTransporterOptions = async () => {
     try {
-      const response = await MasterService.getAllTransportMaster();
+      const response = await MasterService.getAllTransportMaster("all");
 
       if (response && response.data && response.data.results) {
         setTransporterOptions(response.data.results);

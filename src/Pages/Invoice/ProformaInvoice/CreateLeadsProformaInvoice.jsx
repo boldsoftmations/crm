@@ -348,7 +348,15 @@ export const CreateLeadsProformaInvoice = (props) => {
                 });
 
                 if (value) {
-                  const pincode = value.pincode ? value.pincode : "";
+                  // FIX (#4): destination for serviceability must be where the
+                  // goods are being SENT (the lead's shipping pincode), not the
+                  // dispatch unit's own pincode. Using value.pincode here was
+                  // checking "unit services itself" instead of "unit services
+                  // the customer's destination".
+                  const pincode =
+                    leads && leads.shipping_pincode
+                      ? leads.shipping_pincode
+                      : "";
                   const unitId = value.id ? value.id : "";
                   const unitCode = value.unit ? value.unit : "";
                   const countryId = value.country_id ? value.country_id : "";

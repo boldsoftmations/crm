@@ -8,11 +8,12 @@ import {
   Grid,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InvoiceServices from "../../../services/InvoiceService";
 import LeadServices from "../../../services/LeadService";
+import CustomerServices from "../../../services/CustomerService";
 import ProductService from "../../../services/ProductService";
 import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
@@ -29,6 +30,9 @@ export const UpdateLeadsProformaInvoice = (props) => {
   const [deliveryTermData, setDeliveryTermData] = useState([]);
   const [selectedSellerData, setSelectedSellerData] = useState("");
   const [leads, setLeads] = useState([]);
+  const [transportDetails, setTransportDetails] = useState([]);
+  const [selectedTransport, setSelectedTransport] = useState(null);
+  const [selectedTransportType, setSelectedTransportType] = useState(null);
   const [checked, setChecked] = useState(leadPIdataByID.buyer_order_no === "");
   const [productEdit, setProductEdit] = useState(false);
   const [products, setProducts] = useState([
@@ -149,6 +153,85 @@ export const UpdateLeadsProformaInvoice = (props) => {
     }
   };
 
+  // FIX (#1): Transporter resolved from unit + destination (shipping) pincode
+  // mapping instead of free text. Uses leads.shipping_pincode as destination,
+  // NOT the seller/unit pincode (see #4 fix note in CreateLeadsProformaInvoice.jsx
+  // - the destination must be where the goods are going, not where the unit is).
+  const getTranportList = useCallback(async () => {
+    const pincode =
+      (leads && leads.shipping_pincode) || leadPIdataByID.pincode || "";
+
+    const unitMatch = sellerData.find(
+      (item) =>
+        item &&
+        item.unit ===
+          (selectedSellerData && selectedSellerData.unit
+            ? selectedSellerData.unit
+            : leadPIdataByID.seller_account),
+    );
+
+    const countryId = (unitMatch && unitMatch.country_id) || "";
+
+    if (!pincode || !unitMatch) {
+      setTransportDetails([]);
+      setSelectedTransport(null);
+      setSelectedTransportType(null);
+      return;
+    }
+
+    try {
+      setOpen(true);
+
+      const res = await CustomerServices.getTransportList(
+        pincode,
+        countryId,
+        unitMatch.id,
+        unitMatch.unit,
+      );
+
+      const data =
+        res && res.data && Array.isArray(res.data.results)
+          ? res.data.results
+          : [];
+
+      if (data.length > 0) {
+        const existingMatch = data.find(
+          (item) =>
+            item && item.transporter_name === leadPIdataByID.transporter_name,
+        );
+
+        setTransportDetails(data);
+        setSelectedTransport(existingMatch || null);
+        setSelectedTransportType(existingMatch || null);
+      } else {
+        setTransportDetails([]);
+        setSelectedTransport(null);
+        setSelectedTransportType(null);
+      }
+    } catch (error) {
+      console.error("Transport list error:", error);
+      setTransportDetails([]);
+      setSelectedTransport(null);
+      setSelectedTransportType(null);
+    } finally {
+      setOpen(false);
+    }
+  }, [leads, selectedSellerData, sellerData, leadPIdataByID]);
+
+  useEffect(() => {
+    getTranportList();
+  }, [getTranportList]);
+
+  const transportTypeOptions = transportDetails.filter(
+    (item, index, array) =>
+      item &&
+      item.transporter_type &&
+      array.findIndex(
+        (typeItem) =>
+          typeItem && typeItem.transporter_type === item.transporter_type,
+      ) === index,
+  );
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setInputValue({ ...inputValue, [name]: value });
@@ -228,8 +311,18 @@ export const UpdateLeadsProformaInvoice = (props) => {
         city: leads.shipping_city,
         place_of_supply:
           inputValue.place_of_supply || leadPIdataByID.place_of_supply,
-        transporter_name:
-          inputValue.transporter_name || leadPIdataByID.transporter_name,
+        transporter_name: selectedTransport
+          ? selectedTransport.transporter_name
+          : "To Be Assigned",
+        transporter_type: selectedTransportType
+          ? selectedTransportType.transporter_type
+          : null,
+        transporter_id: selectedTransport
+          ? selectedTransport.transporter_id
+          : null,
+        transporter_assignment_status: selectedTransport
+          ? "Assigned"
+          : "Unassigned",
         buyer_order_no: checked
           ? "Verbal"
           : inputValue.buyer_order_no !== undefined
@@ -540,19 +633,61 @@ export const UpdateLeadsProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              name="transporter_name"
+            {/* FIX (#1): was a free-text CustomTextField that let anyone type
+                over the assigned transporter. Now bound to the unit + pincode
+                mapping fetched by getTranportList. */}
+            <CustomAutocomplete
               size="small"
+              fullWidth
               label="Transporter Name"
-              variant="outlined"
-              value={
-                inputValue.transporter_name || leadPIdataByID.transporter_name
-              }
-              InputLabelProps={{
-                shrink: true,
+              options={transportDetails}
+              value={selectedTransport}
+              onChange={(event, value) => {
+                setSelectedTransport(value);
+                setSelectedTransportType(value || null);
               }}
-              onChange={handleInputChange}
+              getOptionLabel={(option) =>
+                option && option.transporter_name ? option.transporter_name : ""
+              }
+              isOptionEqualToValue={(option, value) =>
+                option && value
+                  ? option.transporter_id === value.transporter_id
+                  : false
+              }
+              disabled={transportDetails.length === 0}
+              sx={{ minWidth: 300 }}
+              style={tfStyle}
+            />
+            {transportDetails.length === 0 && (
+              <Chip
+                label="To Be Assigned - no transporter mapped for this unit/pincode"
+                color="warning"
+                size="small"
+                sx={{ mt: 1 }}
+              />
+            )}
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomAutocomplete
+              size="small"
+              fullWidth
+              label="Transporter Type"
+              options={transportTypeOptions}
+              value={selectedTransportType}
+              onChange={(event, value) => {
+                setSelectedTransportType(value);
+              }}
+              getOptionLabel={(option) =>
+                option && option.transporter_type ? option.transporter_type : ""
+              }
+              isOptionEqualToValue={(option, value) =>
+                option && value
+                  ? option.transporter_type === value.transporter_type
+                  : false
+              }
+              disabled={transportTypeOptions.length === 0}
+              sx={{ minWidth: 300 }}
+              style={tfStyle}
             />
           </Grid>
           <Grid item xs={12}>

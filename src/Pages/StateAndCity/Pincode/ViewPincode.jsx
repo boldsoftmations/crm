@@ -29,6 +29,7 @@ import { UpdatePincode } from "./UpdatePincode";
 import { CreateAlias } from "./CreateAlias";
 import MergePincodeCreate from "./MergePincodeCreate";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useSelector } from "react-redux";
 
 export const ViewPincode = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -48,6 +49,7 @@ export const ViewPincode = () => {
   const [openMergePopup, setOpenMergePopup] = useState(false);
   const [status, setStatus] = useState("Active");
 
+  const userData = useSelector((state) => state.auth.profile);
   const handleClose = () => {
     setAlertMsg({ open: false });
   };
@@ -145,14 +147,16 @@ export const ViewPincode = () => {
                     }}
                     sx={{ width: "70%" }}
                   />
-                  <Button
-                    variant="contained"
-                    color="info"
-                    size="small"
-                    onClick={() => setOpenPopup(true)}
-                  >
-                    Add
-                  </Button>
+                  {userData.groups.includes("Director") && (
+                    <Button
+                      variant="contained"
+                      color="info"
+                      size="small"
+                      onClick={() => setOpenPopup(true)}
+                    >
+                      Add
+                    </Button>
+                  )}
                 </Box>
               </Grid>
             </Grid>
@@ -197,6 +201,7 @@ export const ViewPincode = () => {
                       openInPopup={openInPopup}
                       openAliasPopup={openAliasPopup}
                       openMergePopupHandler={openMergePopupHandler}
+                      userData={userData}
                     />
                   ))}
               </TableBody>
@@ -259,7 +264,13 @@ export const ViewPincode = () => {
   );
 };
 
-function Row({ row, openInPopup, openAliasPopup, openMergePopupHandler }) {
+function Row({
+  row,
+  openInPopup,
+  openAliasPopup,
+  openMergePopupHandler,
+  userData,
+}) {
   const [open, setOpen] = useState(false);
 
   const aliases =
@@ -290,30 +301,36 @@ function Row({ row, openInPopup, openAliasPopup, openMergePopupHandler }) {
         <StyledTableCell align="center">{row.pincode}</StyledTableCell>
         <StyledTableCell align="center">
           <Box display="flex" justifyContent="center" gap={1}>
-            <Button
-              variant="contained"
-              color="success"
-              size="small"
-              onClick={() => openInPopup(row)}
-            >
-              Edit
-            </Button>
-            <Button
-              variant="contained"
-              size="small"
-              color="info"
-              onClick={() => openAliasPopup(row)}
-            >
-              Create Alias
-            </Button>
-            <Button
-              variant="contained"
-              size="small"
-              color="warning"
-              onClick={() => openMergePopupHandler(row)}
-            >
-              Merge Pincode
-            </Button>
+            {userData.groups.includes("Director") && (
+              <Button
+                variant="contained"
+                color="success"
+                size="small"
+                onClick={() => openInPopup(row)}
+              >
+                Edit
+              </Button>
+            )}
+            {userData.groups.includes("Director") && (
+              <Button
+                variant="contained"
+                size="small"
+                color="info"
+                onClick={() => openAliasPopup(row)}
+              >
+                Create Alias
+              </Button>
+            )}
+            {userData.groups.includes("Director") && (
+              <Button
+                variant="contained"
+                size="small"
+                color="warning"
+                onClick={() => openMergePopupHandler(row)}
+              >
+                Merge Pincode
+              </Button>
+            )}
           </Box>
         </StyledTableCell>
       </StyledTableRow>

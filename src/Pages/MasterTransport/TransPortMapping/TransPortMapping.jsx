@@ -41,7 +41,7 @@ const TransPortMapping = () => {
   // Filter options
   const [transporterOptions, setTransporterOptions] = useState([]);
   const [unitOptions, setUnitOptions] = useState([]);
-  const [pincodeOptions, setPincodeOptions] = useState([]);
+  // const [pincodeOptions, setPincodeOptions] = useState([]);
 
   const [openCreatePopup, setOpenCreatePopup] = useState(false);
   const [openUpdatePopup, setOpenUpdatePopup] = useState(false);
@@ -82,7 +82,7 @@ const TransPortMapping = () => {
       const transportRes = await MasterService.getAllTransportMaster();
       console.log("trans is ", transportRes);
 
-      const pincodeRes = await MasterService.getMasterPincode("all", "");
+      // const pincodeRes = await MasterService.getMasterPincode("all", "");
       const unitRes = await InvoiceServices.getAllSellerAccountData();
 
       if (transportRes && transportRes.data && transportRes.data.results) {
@@ -91,10 +91,10 @@ const TransPortMapping = () => {
       if (unitRes && unitRes.data && unitRes.data.results) {
         setUnitOptions(unitRes.data.results);
       }
-      if (pincodeRes && pincodeRes.data && pincodeRes.data) {
-        console.log("pincode is:", pincodeRes);
-        setPincodeOptions(pincodeRes.data);
-      }
+      // if (pincodeRes && pincodeRes.data && pincodeRes.data) {
+      //   console.log("pincode is:", pincodeRes);
+      //   setPincodeOptions(pincodeRes.data);
+      // }
     } catch (error) {
       handleError(error);
     }
@@ -254,14 +254,16 @@ const TransPortMapping = () => {
                 minWidth: "300px",
               }}
             >
-              <Button
-                variant="contained"
-                color="success"
-                onClick={() => setOpenCreatePopup(true)}
-                disabled={isInGroups("Stores")}
-              >
-                Add
-              </Button>
+              {userData.groups.includes("Director") && (
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={() => setOpenCreatePopup(true)}
+                  disabled={isInGroups("Stores")}
+                >
+                  Add
+                </Button>
+              )}
             </Box>
           </Box>
 
@@ -312,7 +314,7 @@ const TransPortMapping = () => {
             </Box>
 
             {/* Pincode Filter */}
-            <Box sx={{ minWidth: "180px", flexGrow: 1, maxWidth: "220px" }}>
+            {/* <Box sx={{ minWidth: "180px", flexGrow: 1, maxWidth: "220px" }}>
               <CustomAutocomplete
                 fullWidth
                 size="small"
@@ -327,7 +329,7 @@ const TransPortMapping = () => {
                 }}
                 label="Filter by Pincode"
               />
-            </Box>
+            </Box> */}
 
             {/* Clear Filters + Active/Inactive Toggle */}
             <Box

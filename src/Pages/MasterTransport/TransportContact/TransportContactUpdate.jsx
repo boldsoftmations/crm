@@ -13,6 +13,7 @@ import { useNotificationHandling } from "../../../Components/useNotificationHand
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
+import { useSelector } from "react-redux";
 
 const DESIGNATION_ROLE_CHOICES = [
   "Booking",
@@ -41,6 +42,7 @@ const TransportContactUpdate = ({
     is_primary: false,
     is_inactive: false,
   });
+  const userData = useSelector((state) => state.auth.profile);
 
   const [loading, setLoading] = useState(false);
   const [transporterOptions, setTransporterOptions] = useState([]);
@@ -438,14 +440,16 @@ const TransportContactUpdate = ({
         <Box
           sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 3 }}
         >
-          <Button
-            type="submit"
-            variant="contained"
-            color="success"
-            disabled={loading}
-          >
-            Update
-          </Button>
+          {userData.groups.includes("Director") && (
+            <Button
+              type="submit"
+              variant="contained"
+              color="success"
+              disabled={loading}
+            >
+              Update
+            </Button>
+          )}
         </Box>
       </Box>
     </>

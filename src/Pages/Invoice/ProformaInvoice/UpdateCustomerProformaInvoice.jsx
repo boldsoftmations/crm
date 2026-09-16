@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Box,
   Button,
@@ -39,6 +39,9 @@ export const UpdateCustomerProformaInvoice = (props) => {
   const [productEdit, setProductEdit] = useState(false);
   const [warehouseOptions, setWarehouseOptions] = useState([]);
   const [warehouseData, setWarehouseData] = useState([]);
+  const [transportDetails, setTransportDetails] = useState([]);
+  const [selectedTransport, setSelectedTransport] = useState(null);
+  const [selectedTransportType, setSelectedTransportType] = useState(null);
   const [contactOptions, setContactOptions] = useState([]);
   const [contactData, setContactData] = useState([]);
   const [products, setProducts] = useState([
@@ -162,6 +165,100 @@ export const UpdateCustomerProformaInvoice = (props) => {
     }
   };
 
+  // FIX (#1): Transporter is now resolved from the unit + destination pincode
+  // mapping instead of being a free-text field. Re-fetches and clears the
+  // stale selection whenever unit, warehouse (shipping pincode), or customer
+  // changes, matching CreateCustomerProformaInvoice.jsx.
+  const getTranportList = useCallback(async () => {
+    const pincode =
+      (warehouseData && warehouseData.pincode) ||
+      customerPIdataByID.pincode ||
+      "";
+
+    const countryId =
+      (customerData && customerData.country_id) ||
+      customerPIdataByID.country_id ||
+      "";
+
+    const unitMatch = sellerData.find(
+      (item) =>
+        item &&
+        item.unit ===
+          (selectedSellerData && selectedSellerData.unit
+            ? selectedSellerData.unit
+            : customerPIdataByID.seller_account),
+    );
+
+    if (!pincode || !unitMatch) {
+      setTransportDetails([]);
+      setSelectedTransport(null);
+      setSelectedTransportType(null);
+      return;
+    }
+
+    try {
+      setOpen(true);
+
+      const res = await CustomerServices.getTransportList(
+        pincode,
+        countryId,
+        unitMatch.id,
+        unitMatch.unit,
+      );
+
+      const data =
+        res && res.data && Array.isArray(res.data.results)
+          ? res.data.results
+          : [];
+
+      if (data.length > 0) {
+        // Keep the previously saved transporter selected if it still shows up
+        // for this unit + pincode. If it does not, treat it as stale and force
+        // the user to re-pick rather than silently keeping an invalid mapping.
+        const existingMatch = data.find(
+          (item) =>
+            item &&
+            item.transporter_name === customerPIdataByID.transporter_name,
+        );
+
+        setTransportDetails(data);
+        setSelectedTransport(existingMatch || null);
+        setSelectedTransportType(existingMatch || null);
+      } else {
+        setTransportDetails([]);
+        setSelectedTransport(null);
+        setSelectedTransportType(null);
+      }
+    } catch (error) {
+      console.error("Transport list error:", error);
+      setTransportDetails([]);
+      setSelectedTransport(null);
+      setSelectedTransportType(null);
+    } finally {
+      setOpen(false);
+    }
+  }, [
+    warehouseData,
+    selectedSellerData,
+    sellerData,
+    customerData,
+    customerPIdataByID,
+  ]);
+
+  useEffect(() => {
+    getTranportList();
+  }, [getTranportList]);
+
+  const transportTypeOptions = transportDetails.filter(
+    (item, index, array) =>
+      item &&
+      item.transporter_type &&
+      array.findIndex(
+        (typeItem) =>
+          typeItem && typeItem.transporter_type === item.transporter_type,
+      ) === index,
+  );
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setInputValue({ ...inputValue, [name]: value });
@@ -242,8 +339,18 @@ export const UpdateCustomerProformaInvoice = (props) => {
         city: warehouseData.city,
         place_of_supply:
           inputValue.place_of_supply || customerPIdataByID.place_of_supply,
-        transporter_name:
-          inputValue.transporter_name || customerPIdataByID.transporter_name,
+        transporter_name: selectedTransport
+          ? selectedTransport.transporter_name
+          : "To Be Assigned",
+        transporter_type: selectedTransportType
+          ? selectedTransportType.transporter_type
+          : null,
+        transporter_id: selectedTransport
+          ? selectedTransport.transporter_id
+          : null,
+        transporter_assignment_status: selectedTransport
+          ? "Assigned"
+          : "Unassigned",
         buyer_order_no: checked
           ? "Verbal"
           : inputValue.buyer_order_no !== undefined
@@ -617,25 +724,61 @@ export const UpdateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <CustomTextField
-              fullWidth
-              name="transporter_name"
+            {/* FIX (#1): was a free-text CustomTextField that let anyone type
+                over the assigned transporter. Now bound to the unit + pincode
+                mapping fetched by getTranportList, same as the Create screen. */}
+            <CustomAutocomplete
               size="small"
+              fullWidth
               label="Transporter Name"
-              variant="outlined"
-              value={
-                inputValue.transporter_name ||
-                customerPIdataByID.transporter_name
-              }
-              // value={
-              //   customerPIdataByID.transporter_name
-              //     ? customerPIdataByID.transporter_name
-              //     : inputValue.transporter_name
-              // }
-              InputLabelProps={{
-                shrink: true,
+              options={transportDetails}
+              value={selectedTransport}
+              onChange={(event, value) => {
+                setSelectedTransport(value);
+                setSelectedTransportType(value || null);
               }}
-              onChange={handleInputChange}
+              getOptionLabel={(option) =>
+                option && option.transporter_name ? option.transporter_name : ""
+              }
+              isOptionEqualToValue={(option, value) =>
+                option && value
+                  ? option.transporter_id === value.transporter_id
+                  : false
+              }
+              disabled={transportDetails.length === 0}
+              sx={{ minWidth: 300 }}
+              style={tfStyle}
+            />
+            {transportDetails.length === 0 && (
+              <Chip
+                label="To Be Assigned - no transporter mapped for this unit/pincode"
+                color="warning"
+                size="small"
+                sx={{ mt: 1 }}
+              />
+            )}
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <CustomAutocomplete
+              size="small"
+              fullWidth
+              label="Transporter Type"
+              options={transportTypeOptions}
+              value={selectedTransportType}
+              onChange={(event, value) => {
+                setSelectedTransportType(value);
+              }}
+              getOptionLabel={(option) =>
+                option && option.transporter_type ? option.transporter_type : ""
+              }
+              isOptionEqualToValue={(option, value) =>
+                option && value
+                  ? option.transporter_type === value.transporter_type
+                  : false
+              }
+              disabled={transportTypeOptions.length === 0}
+              sx={{ minWidth: 300 }}
+              style={tfStyle}
             />
           </Grid>
           <Grid item xs={12}>
@@ -775,7 +918,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >
-          Submit
+          Submits
         </Button>
       </Box>
     </>

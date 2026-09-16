@@ -498,7 +498,6 @@ export const NewLeads = () => {
                       >
                         Activity
                       </Button>
-                      ,
                       <Button
                         onClick={() => openInPopup3(row)}
                         disabled={userData.groups.includes("Digital Marketing")}

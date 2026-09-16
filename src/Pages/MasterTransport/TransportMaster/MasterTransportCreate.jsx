@@ -5,6 +5,7 @@ import MasterService from "../../../services/MasterService";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import { CustomLoader } from "../../../Components/CustomLoader";
+import { useSelector } from "react-redux";
 
 const TRANSPORTER_TYPE_CHOICES = [
   "Universal Mode",
@@ -30,6 +31,7 @@ function MasterTransportCreate({ getTransportData, setOpenPopup }) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  const userData = useSelector((state) => state.auth.profile);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -110,17 +112,21 @@ function MasterTransportCreate({ getTransportData, setOpenPopup }) {
             mt: 3,
           }}
         >
-          <Button variant="outlined" color="error" onClick={handleReset}>
-            Reset
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            color="success"
-            disabled={loading}
-          >
-            Submit
-          </Button>
+          {userData.groups.includes("Director") && (
+            <Button variant="outlined" color="error" onClick={handleReset}>
+              Reset
+            </Button>
+          )}
+          {userData.groups.includes("Director") && (
+            <Button
+              type="submit"
+              variant="contained"
+              color="success"
+              disabled={loading}
+            >
+              Submit
+            </Button>
+          )}
         </Box>
       </Box>
     </>

@@ -69,7 +69,7 @@ export const AllTransportMasterTabView = () => {
       component: <ContactTransportView />,
     },
     {
-      label: "Transport Refrence",
+      label: "Transport Mapping Request",
       roles: ["Director"],
       component: <ViewTransportRef />,
     },
