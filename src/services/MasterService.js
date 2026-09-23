@@ -299,6 +299,49 @@ const createTransportMaster = (data) => {
 const updateTransportMaster = (id, data) => {
   return CustomAxios.patch(`/api/master/transporter-master/${id}/`, data);
 };
+
+// =====================================================================
+// Transporter Branch APIs (V3 handover - Branches & IDs tab, Section 6)
+// =====================================================================
+const getAllTransportBranch = (transporter_id) => {
+  const params = new URLSearchParams();
+  if (transporter_id) {
+    params.append("transporter_id", transporter_id);
+  }
+  return CustomAxios.get(
+    `/api/master/transporter-branch/?${params.toString()}`,
+  );
+};
+
+const createTransportBranch = (data) => {
+  return CustomAxios.post("/api/master/transporter-branch/", data);
+};
+
+const updateTransportBranch = (id, data) => {
+  return CustomAxios.patch(`/api/master/transporter-branch/${id}/`, data);
+};
+
+// =====================================================================
+// Transporter Identifier APIs (GSTIN / TRANSIN / Common Enrolment Number)
+// =====================================================================
+const getAllTransportIdentifier = (transporter_id) => {
+  const params = new URLSearchParams();
+  if (transporter_id) {
+    params.append("transporter_id", transporter_id);
+  }
+  return CustomAxios.get(
+    `/api/master/transporter-identifier/?${params.toString()}`,
+  );
+};
+
+const createTransportIdentifier = (data) => {
+  return CustomAxios.post("/api/master/transporter-identifier/", data);
+};
+
+const updateTransportIdentifier = (id, data) => {
+  return CustomAxios.patch(`/api/master/transporter-identifier/${id}/`, data);
+};
+
 const getTransportMapping = (
   isActive,
   page,
@@ -445,13 +488,42 @@ const ValidatePincode = (country_id, postal_code) => {
   );
 };
 
-const getTransportRefData = (page, search) => {
+const getTransporterAuditLog = ({
+  entityType,
+  entityId,
+  action,
+  pageAll = true,
+} = {}) => {
+  const params = new URLSearchParams();
+
+  if (entityType) {
+    params.append("entity_type", entityType);
+  }
+  if (entityId) {
+    params.append("entity_id", entityId);
+  }
+  if (action) {
+    params.append("action", action);
+  }
+  if (pageAll) {
+    params.append("page", "all");
+  }
+
+  return CustomAxios.get(
+    `/api/master/transporter-audit-log/?${params.toString()}`,
+  );
+};
+
+const getTransportRefData = (page, search, status) => {
   const params = new URLSearchParams();
   if (page) {
     params.append("page", page);
   }
   if (search) {
     params.append("search", search);
+  }
+  if (status) {
+    params.append("status", status);
   }
   return CustomAxios.get(
     `/api/master/transporter-mapping-request/?${params.toString()}`,
@@ -460,6 +532,13 @@ const getTransportRefData = (page, search) => {
 const UpdateMasterRefRequest = (id, data) => {
   return CustomAxios.patch(
     `/api/master/transporter-mapping-request/${id}/`,
+    data,
+  );
+};
+
+const resolveTransportRequest = (requestId, data) => {
+  return CustomAxios.post(
+    `/api/master/resolve-transport-request/${requestId}/`,
     data,
   );
 };
@@ -513,6 +592,12 @@ const MasterService = {
   createTransportMaster,
   updateTransportMaster,
   getAllTransportMaster,
+  getAllTransportBranch,
+  createTransportBranch,
+  updateTransportBranch,
+  getAllTransportIdentifier,
+  createTransportIdentifier,
+  updateTransportIdentifier,
   createTransportMapping,
   updateTransportMapping,
   getTransportContact,
@@ -526,6 +611,8 @@ const MasterService = {
   getPincodeRefrenceData,
   ValidatePincode,
   UpdateMasterRefRequest,
+  getTransporterAuditLog,
   getTransportRefData,
+  resolveTransportRequest,
 };
 export default MasterService;

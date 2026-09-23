@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, FormControlLabel, Grid, Switch } from "@mui/material";
+import { Box, Button, FormControlLabel, Grid, Switch, TextField } from "@mui/material";
 
 import InvoiceServices from "../../../services/InvoiceService";
 import MasterService from "../../../services/MasterService";
@@ -19,8 +19,13 @@ const TransportMappingCreate = ({
   getMappingData,
   setOpenPopup,
   recordForEdit,
+  lockedTransporter,
 }) => {
-  const [formData, setFormData] = useState(initialFormState);
+  const [formData, setFormData] = useState(
+    lockedTransporter
+      ? { ...initialFormState, transporter: lockedTransporter.transporter_name }
+      : initialFormState,
+  );
   const [loading, setLoading] = useState(false);
 
   // Separate states for each dropdown — avoids overwrite bug
@@ -153,13 +158,16 @@ const TransportMappingCreate = ({
       }
     } catch (error) {
       setIsValidPincode(false);
-
+      console.log(error);
       setFormData((prev) => ({
         ...prev,
         pincode: "",
       }));
 
-      handleError(error);
+      handleError(
+        (error.response && error.response.data.message) ||
+          "Error validating pincode.",
+      );
     } finally {
       setLoading(false);
     }
@@ -195,7 +203,8 @@ const TransportMappingCreate = ({
         getMappingData();
       }, 1000);
     } catch (error) {
-      handleError(error);
+      console.log(error);
+      handleError(error.response && error.response.data.non_field_errors[0]);
     } finally {
       setLoading(false);
     }
@@ -216,25 +225,6 @@ const TransportMappingCreate = ({
 
       <Box component="form" onSubmit={handleSubmit} sx={{ p: 1 }}>
         <Grid container spacing={2}>
-          {/* Unit */}
-          <Grid item xs={12} sm={6}>
-            <CustomAutocomplete
-              fullWidth
-              size="small"
-              options={unitOptions}
-              value={formData.unit || null}
-              getOptionLabel={(option) => (option.unit ? option.unit : option)}
-              onChange={(e, value) =>
-                handleAutocompleteChange(
-                  "unit",
-                  value ? value.unit || value : "",
-                )
-              }
-              label="Unit"
-              required
-            />
-          </Grid>
-
           <Grid item xs={12} sm={6}>
             <Box display="flex" gap={1}>
               <CustomAutocomplete
@@ -257,6 +247,24 @@ const TransportMappingCreate = ({
                 Validate
               </Button> */}
             </Box>
+          </Grid>
+          {/* Unit */}
+          <Grid item xs={12} sm={6}>
+            <CustomAutocomplete
+              fullWidth
+              size="small"
+              options={unitOptions}
+              value={formData.unit || null}
+              getOptionLabel={(option) => (option.unit ? option.unit : option)}
+              onChange={(e, value) =>
+                handleAutocompleteChange(
+                  "unit",
+                  value ? value.unit || value : "",
+                )
+              }
+              label="Unit"
+              required
+            />
           </Grid>
 
           <Grid item xs={12} sm={6}>
@@ -294,25 +302,38 @@ const TransportMappingCreate = ({
             </Box>
           </Grid>
 
-          {/* Transporter */}
+          {/* Transporter - hidden when opened from inside a workspace
+              (lockedTransporter given, always Surface type here since
+              TransPortMapping.jsx already blocks non-Surface before this
+              form can even open). */}
           <Grid item xs={12} sm={6}>
-            <CustomAutocomplete
-              fullWidth
-              size="small"
-              options={transporterOptions}
-              value={formData.transporter || null}
-              getOptionLabel={(option) =>
-                option.transporter_name ? option.transporter_name : option
-              }
-              onChange={(e, value) =>
-                handleAutocompleteChange(
-                  "transporter",
-                  value ? value.transporter_name || value : "",
-                )
-              }
-              label="Transporter"
-              required
-            />
+            {lockedTransporter ? (
+              <TextField
+                fullWidth
+                disabled
+                label="Transporter"
+                value={lockedTransporter.transporter_name}
+                size="small"
+              />
+            ) : (
+              <CustomAutocomplete
+                fullWidth
+                size="small"
+                options={transporterOptions}
+                value={formData.transporter || null}
+                getOptionLabel={(option) =>
+                  option.transporter_name ? option.transporter_name : option
+                }
+                onChange={(e, value) =>
+                  handleAutocompleteChange(
+                    "transporter",
+                    value ? value.transporter_name || value : "",
+                  )
+                }
+                label="Transporter"
+                required
+              />
+            )}
           </Grid>
 
           {/* Is System Default */}

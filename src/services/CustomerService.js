@@ -763,21 +763,53 @@ const getComplaintNo = (customer, seller_account) => {
   return CustomAxios.get(`/api/invoice/company-ccf-list/?${params.toString()}`);
 };
 
-const getTransportList = (
-  pincode,
-  country_id,
-  unit_id,
-  unit_code,
-  company_id,
-) => {
+const getTransportList = (pincode, country_id, unit_id, unit_code) => {
   const params = new URLSearchParams();
   if (country_id) params.append("country_id", country_id);
   if (pincode) params.append("pincode", pincode);
   if (unit_id) params.append("unit_id", unit_id);
   if (unit_code) params.append("unit_code", unit_code);
-  if (company_id) params.append("company_id", company_id);
   return CustomAxios.get(
     `/api/master/pincode-transporter/?${params.toString()}`,
+  );
+};
+
+// CONFIRMED against Nandani's real API list: this IS the correct, only
+// lookup endpoint (/api/master/pincode-transporter/, no "mode" param -
+// it's inherently Surface-only, response always has options[] of
+// transporter_type: "Surface Transport"). My earlier getTransportOptions
+// guess (a different fake endpoint /api/master/transport-options/ with a
+// "mode" param) was wrong and has been removed - getTransportList above
+// was already correct all along, this just wraps it in the
+// object-argument shape TransportSelector.jsx uses.
+const getPincodeTransporter = ({ countryId, pincode, unitId, unitCode }) => {
+  return getTransportList(pincode, countryId, unitId, unitCode);
+};
+
+const getTransporterCapabilities = ({
+  transportMode,
+  serviceabilityStrategy,
+  isActive,
+}) => {
+  const params = new URLSearchParams();
+
+  if (transportMode) {
+    params.append("transport_mode", transportMode);
+  }
+
+  if (serviceabilityStrategy) {
+    params.append("serviceability_strategy", serviceabilityStrategy);
+  }
+
+  if (isActive !== null && isActive !== undefined) {
+    params.append("is_active", isActive);
+  }
+
+  // Backend supports page=all and returns the complete capability list.
+  params.append("page", "all");
+
+  return CustomAxios.get(
+    `/api/master/transporter-capability/?${params.toString()}`,
   );
 };
 
@@ -892,6 +924,8 @@ const CustomerServices = {
   getCategoryList,
   getComplaintNo,
   getTransportList,
+  getPincodeTransporter,
+  getTransporterCapabilities,
   getAllTransporterTypes,
 };
 

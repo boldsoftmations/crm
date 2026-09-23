@@ -31,6 +31,8 @@ import ProductService from "../../../services/ProductService";
 import InventoryServices from "../../../services/InventoryService";
 import { DecimalValidation } from "../../../utility/DecimalValidation";
 import MasterService from "../../../services/MasterService";
+import TransportSelector from "../../../Components/TransportSelector";
+import { buildTransportPayload } from "../../../utility/Buildtransportpayload";
 
 // ─── Styled components defined at top ────────────────────────────────────────
 const Root = styled("div")(({ theme }) => ({
@@ -72,25 +74,11 @@ export const CreateCustomerProformaInvoice = (props) => {
   const [productOption, setProductOption] = useState([]);
   const [productDetails, setProductDetails] = useState(null);
 
-  // Transporter mapping list shown in the Autocomplete below. Confirmed via
-  // Network tab that the LIVE getTransportList endpoint currently returns a
-  // single flat object - { mapping_found, mapping_id, transporter_id,
-  // transporter_name, transporter_type, selected_transport_mode,
-  // verified_pincode } - not a list and not { count, results: [] }.
-  // getTranportList wraps that single object into a 1-item array so this
-  // component's existing options/Autocomplete logic keeps working. This is
-  // a stopgap: once Tuesday's contract freeze lands the real
-  // { count, results, assignment_status, display_name } shape, this needs
-  // another pass (see TODO in getTranportList below).
-  const [transportDetails, setTransportDetails] = useState([]);
-  const [selectedTransport, setSelectedTransport] = useState(null);
-  const [selectedTransportType, setSelectedTransportType] = useState(null);
-
-  // NOTE: "Universal Dispatch Type" (Bus/Train/Air/Self Pickup manual picker)
-  // is NOT implemented in this component - there is no state for it and
-  // nothing is sent in the payload for it. If that field is actually needed,
-  // it still needs to be built (state + Select + payload field); it is not
-  // just "commented out and otherwise working."
+  // One controlled transport selection drives PI transporter fields.
+  // Surface uses Unit + Warehouse Pincode mapping. Courier/Local use the
+  // Transporter Capability API. Bus/Train/Air/Self Pickup do not require a
+  // transporter selection.
+  const [transportSelection, setTransportSelection] = useState(null);
 
   const [openPopup2, setOpenPopup2] = useState(false);
   const [openPopup3, setOpenPopup3] = useState(false);
@@ -144,90 +132,11 @@ export const CreateCustomerProformaInvoice = (props) => {
 
   const buyer_date = new Date().toISOString().slice(0, 10);
 
-  // getTranportList:
-  //  1. Guards every input (pincode / seller unit match) before calling the API,
-  //     so it never crashes on `unitMatch.id` when no match is found.
-  //  2. Correctly includes selectedSellerData, sellerData, rowData in the
-  //     dependency array (old code only had [warehouseData] -> stale closure bug).
-  //  3. Does NOT auto-pick the first mapping anymore. When multiple valid
-  //     transporters exist for a unit + pincode, the user must choose - see
-  //     the "Do not use .first() when multiple valid mappings can exist" rule.
-  //     selectedTransport only ever gets set by the user via the Autocomplete
-  //     onChange below.
-  //  4. Runs automatically whenever the user selects a Shipping Address
-  //     (warehouseData changes) or the seller/unit changes.
-  const getTranportList = useCallback(async () => {
-    const pincode =
-      warehouseData && warehouseData.pincode ? warehouseData.pincode : "";
-
-    const unitMatch = sellerData.find(
-      (item) =>
-        item && selectedSellerData && item.unit === selectedSellerData.unit,
-    );
-
-    // Clear any previously selected transporter whenever the inputs that
-    // determine serviceability change, so a stale selection from a different
-    // pincode/unit combination can never be silently carried forward.
-    setSelectedTransport(null);
-    setSelectedTransportType(null);
-
-    if (!pincode || !selectedSellerData || !unitMatch) {
-      setTransportDetails([]);
-      return;
-    }
-
-    try {
-      setOpen(true);
-
-      const res = await CustomerServices.getTransportList(
-        pincode,
-        rowData.country_id,
-        unitMatch.id,
-        selectedSellerData.unit,
-      );
-
-      // FIX: the live endpoint returns a single flat object, e.g.
-      // { mapping_found, mapping_id, transporter_id, transporter_name,
-      //   transporter_type, selected_transport_mode, verified_pincode }
-      // NOT { count, results: [] }. Checking Array.isArray(res.data.results)
-      // was always false against this response, so transportDetails was
-      // always being cleared to [] even when mapping_found was true and a
-      // real transporter_id came back - confirmed against Network tab.
-      //
-      // TODO: this wraps the single object in an array purely so the
-      // existing Autocomplete/options plumbing below doesn't need to
-      // change shape. A single object can never represent "multiple valid
-      // mappings for this unit+pincode" - if that's a real scenario, the
-      // backend needs to actually return a list (per Tuesday's
-      // {count, results[]} contract) before this can surface more than
-      // one option. Revisit once that contract is confirmed.
-      const payload = res && res.data ? res.data : null;
-      const data = payload && payload.mapping_found ? [payload] : [];
-
-      // Always populate the option list and let the Autocomplete below
-      // require an explicit user selection - never pre-select data[0].
-      setTransportDetails(data);
-    } catch (error) {
-      console.error("Transport list error:", error);
-      setTransportDetails([]);
-    } finally {
-      setOpen(false);
-    }
-  }, [warehouseData, selectedSellerData, sellerData, rowData]);
-
-  useEffect(() => {
-    getTranportList();
-  }, [getTranportList]);
-
-  const transportTypeOptions = transportDetails.filter(
-    (item, index, array) =>
-      item &&
-      item.transporter_type &&
-      array.findIndex(
-        (typeItem) =>
-          typeItem && typeItem.transporter_type === item.transporter_type,
-      ) === index,
-  );
+  // getTranportList, its useEffect, and transportTypeOptions have all been
+  // removed - TransportSelector (imported above) now owns the entire
+  // fetch-on-address/unit-change lifecycle internally. See
+  // src/Components/TransportSelector.jsx for that logic; this component
+  // just renders it and reads transportSelection.
 
   // ─── Timer effect ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -240,6 +149,21 @@ export const CreateCustomerProformaInvoice = (props) => {
     }, 1000);
     return () => clearInterval(timer);
   }, [timeLeft, setOpenPopup]);
+
+  // Never keep a transporter selected for an old dispatch unit or shipping
+  // address. We only clear here; the selector fetches again according to the
+  // newly selected transport method.
+  useEffect(() => {
+    setTransportSelection(null);
+  }, [
+    selectedSellerData && selectedSellerData.id,
+    selectedSellerData && selectedSellerData.unit,
+    warehouseData && warehouseData.id,
+    warehouseData && warehouseData.pincode,
+    warehouseData && warehouseData.pin_code,
+    warehouseData && warehouseData.pincode_id,
+    warehouseData && warehouseData.country_id,
+  ]);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -414,6 +338,37 @@ export const CreateCustomerProformaInvoice = (props) => {
       return;
     }
 
+    if (!transportSelection || !transportSelection.mode) {
+      handleError("Please select a Transport Method.");
+      return;
+    }
+
+    if (
+      (transportSelection.mode === "COURIER" ||
+        transportSelection.mode === "LOCAL_AGGREGATOR") &&
+      (!transportSelection.transporterId || !transportSelection.transporterName)
+    ) {
+      handleError(
+        "Please select a transporter for the selected Transport Method.",
+      );
+      return;
+    }
+
+    if (transportSelection.mode === "SURFACE") {
+      const isMappedSurface =
+        transportSelection.transporterId && transportSelection.mappingId;
+      const isToBeAssigned =
+        transportSelection.transporterName === "To Be Assigned" &&
+        transportSelection.assignmentStatus === "Unassigned";
+
+      if (!isMappedSurface && !isToBeAssigned) {
+        handleError(
+          "Please wait for Surface transporter lookup, then select a mapped transporter or continue as To Be Assigned.",
+        );
+        return;
+      }
+    }
+
     const numTypes = products.map((item) => item.type_of_unit);
     const quantities = products.map((item) => item.quantity);
     const decimalCounts = products.map((item) =>
@@ -525,30 +480,11 @@ export const CreateCustomerProformaInvoice = (props) => {
       products: constructPayload(),
       warehouse_person_name: warehouseData ? warehouseData.contact_name : null,
 
-      // Transporter fields come from the user's explicit selection in the
-      // Transporter Name / Transporter Type autocompletes (see getTranportList
-      // above - selectedTransport is never auto-assigned). If nothing was
-      // mapped or nothing was picked, this saves as "To Be Assigned" /
-      // "Unassigned" rather than guessing.
-      transporter_name: selectedTransport
-        ? selectedTransport.transporter_name
-        : "To Be Assigned",
-      transporter_type: selectedTransportType
-        ? selectedTransportType.transporter_type
-        : null,
-      selected_transport_mode:
-        selectedTransport && selectedTransport.selected_transport_mode
-          ? selectedTransport.selected_transport_mode
-          : null,
-      verified_pincode: selectedTransport
-        ? selectedTransport.verified_pincode
-        : null,
-      transporter_id: selectedTransport
-        ? selectedTransport.transporter_id
-        : null,
-      transporter_assignment_status: selectedTransport
-        ? "Assigned"
-        : "Unassigned",
+      // Transport fields follow the final backend contract.
+      // Surface no-map submits To Be Assigned + Unassigned and backend
+      // creates the mapping request. Courier/Local save transporter_id.
+      // Bus/Train/Air/Self Pickup send mode only with no transporter.
+      ...buildTransportPayload(transportSelection),
     };
 
     if (rowData.origin_type === "International") {
@@ -900,64 +836,21 @@ export const CreateCustomerProformaInvoice = (props) => {
             />
           </Grid>
 
-          {/* Transporter Name - populated from getTranportList, requires an
-              explicit user selection. Disabled (with no options) when no
-              mapping exists for this unit/pincode - "To Be Assigned" is then
-              sent in the payload rather than any auto-picked value. */}
+          {/* Method first. Surface uses Unit + Warehouse Pincode mapping;
+              Courier/Local use transporter capabilities; direct methods do
+              not require a transporter name. */}
           <Grid item xs={12} sm={4}>
-            <CustomAutocomplete
-              size="small"
-              fullWidth
-              label="Transporter Name"
-              options={transportDetails}
-              value={selectedTransport}
-              onChange={(event, value) => {
-                setSelectedTransport(value);
-                setSelectedTransportType(value || null);
-              }}
-              getOptionLabel={(option) =>
-                option && option.transporter_name ? option.transporter_name : ""
+            <TransportSelector
+              countryId={
+                warehouseData && warehouseData.country_id
+                  ? warehouseData.country_id
+                  : rowData.country_id
               }
-              isOptionEqualToValue={(option, value) =>
-                option && value
-                  ? option.transporter_id === value.transporter_id
-                  : false
-              }
-              disabled={transportDetails.length === 0}
-              sx={{ minWidth: 300 }}
-              style={tfStyle}
-            />
-            {transportDetails.length === 0 && (
-              <Chip
-                label="To Be Assigned - no transporter mapped for this unit/pincode"
-                color="warning"
-                size="small"
-                sx={{ mt: 1 }}
-              />
-            )}
-          </Grid>
-
-          <Grid item xs={12} sm={4}>
-            <CustomAutocomplete
-              size="small"
-              fullWidth
-              label="Transporter Type"
-              options={transportTypeOptions}
-              value={selectedTransportType}
-              onChange={(event, value) => {
-                setSelectedTransportType(value);
-              }}
-              getOptionLabel={(option) =>
-                option && option.transporter_type ? option.transporter_type : ""
-              }
-              isOptionEqualToValue={(option, value) =>
-                option && value
-                  ? option.transporter_type === value.transporter_type
-                  : false
-              }
-              disabled={transportTypeOptions.length === 0}
-              sx={{ minWidth: 300 }}
-              style={tfStyle}
+              pincode={warehouseData ? warehouseData.pincode : ""}
+              unitId={selectedSellerData ? selectedSellerData.id : ""}
+              unitCode={selectedSellerData ? selectedSellerData.unit : ""}
+              value={transportSelection}
+              onChange={setTransportSelection}
             />
           </Grid>
 

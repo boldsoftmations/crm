@@ -20,6 +20,7 @@ const TransportMappingUpdate = ({
   recordForEdit,
   getMappingData,
   setOpenPopup,
+  lockedTransporter,
 }) => {
   const [formData, setFormData] = useState({
     unit: recordForEdit.unit || "",
@@ -299,7 +300,9 @@ const TransportMappingUpdate = ({
             </Box>
           </Grid>
 
-          {/* Transporter */}
+          {/* Transporter - disabled when opened from inside a workspace
+              (lockedTransporter given), same reasoning as
+              TransportContactUpdate.jsx. */}
           <Grid item xs={12} sm={6}>
             <CustomAutocomplete
               fullWidth
@@ -317,6 +320,7 @@ const TransportMappingUpdate = ({
               }
               label="Transporter"
               required
+              disabled={Boolean(lockedTransporter)}
             />
           </Grid>
 

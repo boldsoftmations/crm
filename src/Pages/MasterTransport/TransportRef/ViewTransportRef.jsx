@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { useSelector } from "react-redux";
 import {
   Box,
   Paper,
@@ -12,6 +13,8 @@ import {
   Chip,
   TextField,
   Button,
+  MenuItem,
+  Stack,
   styled,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
@@ -19,6 +22,7 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import MasterService from "../../../services/MasterService";
 import { Popup } from "../../../Components/Popup";
 import UpdateTransportRef from "./UpdateTransportRef";
+import ResolveTransportRequest from "./ResolveTransportRequest";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -27,11 +31,12 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     color: theme.palette.common.white,
     fontWeight: "bold",
     textTransform: "uppercase",
-    padding: 5,
+    padding: 7,
+    whiteSpace: "nowrap",
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 13,
-    padding: 5,
+    padding: 7,
   },
 }));
 
@@ -44,25 +49,38 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+const STATUS_OPTIONS = [
+  "",
+  "Open",
+  "In Progress",
+  "Closed",
+  "Rejected",
+  "PI Dropped",
+];
+
 const statusColor = (status) => {
   if (status === "Open") return { background: "#fff8e1", color: "#f57f17" };
   if (status === "Closed") return { background: "#e6f4ea", color: "#2e7d32" };
   if (status === "Rejected") return { background: "#fdecea", color: "#c62828" };
-  if (status === "In Progress")
+  if (status === "In Progress") {
     return { background: "#e3f2fd", color: "#1565c0" };
+  }
+  if (status === "PI Dropped") {
+    return { background: "#f3e5f5", color: "#6a1b9a" };
+  }
   return { background: "#f0f0f0", color: "#333" };
 };
 
-// backend "2026-07-28 17:31:19" ya ISO "2026-07-28T17:31:19.249097+05:30"
-// dono format aa sakte hain, dono ko readable bana dega
 const formatDateTime = (value) => {
   if (!value) {
     return "-";
   }
+
   const dateObj = new Date(value.includes ? value.replace(" ", "T") : value);
   if (isNaN(dateObj.getTime())) {
     return value;
   }
+
   return dateObj.toLocaleString("en-IN", {
     day: "2-digit",
     month: "short",
@@ -74,6 +92,8 @@ const formatDateTime = (value) => {
 };
 
 const ViewTransportRef = () => {
+  const userData = useSelector((state) => state.auth.profile);
+
   const [transportRefData, setTransportRefData] = useState([]);
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
@@ -82,25 +102,71 @@ const ViewTransportRef = () => {
   const [hasPrevious, setHasPrevious] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
   const [openEditPopup, setOpenEditPopup] = useState(false);
   const [recordData, setRecordData] = useState(null);
+
+  const [openResolvePopup, setOpenResolvePopup] = useState(false);
+  const [resolveRecord, setResolveRecord] = useState(null);
+
+  const userGroups =
+    userData && userData.groups && Array.isArray(userData.groups)
+      ? userData.groups
+      : [];
+
+  // Matches backend write access + the operational roles called out in the
+  // Geo/Transporter handover. Sales can view the queue but cannot resolve it.
+  const manageRequestRoles = [
+    "Director",
+    "Admin",
+    "Dispatch",
+    "Factory-Mumbai-Dispatch",
+    "Factory-Delhi-Dispatch",
+    "Operations & Supply Chain Manager",
+    "Customer Service",
+    "Customer Relationship Manager",
+  ];
+
+  const canManageRequest = manageRequestRoles.some((role) =>
+    userGroups.includes(role),
+  );
 
   const getTransportRefData = useCallback(async () => {
     try {
       setOpen(true);
-      const response = await MasterService.getTransportRefData(page, search);
-      setTransportRefData(
-        response.data && response.data.results ? response.data.results : [],
+      const response = await MasterService.getTransportRefData(
+        page,
+        search,
+        statusFilter,
       );
-      setCount(response.data && response.data.count ? response.data.count : 0);
-      setHasNext(response.data && response.data.next ? true : false);
-      setHasPrevious(response.data && response.data.previous ? true : false);
-    } catch (e) {
-      console.log(e);
+
+      setTransportRefData(
+        response && response.data && response.data.results
+          ? response.data.results
+          : [],
+      );
+      setCount(
+        response && response.data && response.data.count
+          ? response.data.count
+          : 0,
+      );
+      setHasNext(
+        response && response.data && response.data.next ? true : false,
+      );
+      setHasPrevious(
+        response && response.data && response.data.previous ? true : false,
+      );
+    } catch (error) {
+      console.log(error);
+      setTransportRefData([]);
+      setCount(0);
+      setHasNext(false);
+      setHasPrevious(false);
     } finally {
       setOpen(false);
     }
-  }, [page, search]);
+  }, [page, search, statusFilter]);
 
   useEffect(() => {
     getTransportRefData();
@@ -111,103 +177,163 @@ const ViewTransportRef = () => {
     setSearch(searchInput);
   };
 
-  const handleEidtClick = (row) => {
-    setOpenEditPopup(true);
-    setRecordData(row);
+  const handleClearFilters = () => {
+    setSearchInput("");
+    setSearch("");
+    setStatusFilter("");
+    setPage(1);
   };
+
+  const handleEditClick = (row) => {
+    setRecordData(row);
+    setOpenEditPopup(true);
+  };
+
+  const handleResolveClick = (row) => {
+    setResolveRecord(row);
+    setOpenResolvePopup(true);
+  };
+
+  const isOpenForResolution = (row) =>
+    row && (row.status === "Open" || row.status === "In Progress");
 
   return (
     <>
       <CustomLoader open={open} />
+
       <Paper sx={{ p: 2, m: 4, display: "flex", flexDirection: "column" }}>
-        <Box sx={{ marginBottom: 2 }}>
-          <h3
-            style={{
-              fontSize: "24px",
-              color: "rgb(34, 34, 34)",
-              fontWeight: 800,
-              textAlign: "center",
-            }}
+        <Box sx={{ mb: 2 }}>
+          <Typography
+            variant="h5"
+            sx={{ fontWeight: 800, textAlign: "center", color: "#222" }}
           >
-            Transporter Mapping Request
-          </h3>
+            Transport Assignment Requests
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{ textAlign: "center", color: "#777", mt: 0.5 }}
+          >
+            Surface mapping requests created automatically when a Customer PI is saved as To Be Assigned.
+          </Typography>
         </Box>
 
-        <Box sx={{ display: "flex", gap: 1, marginBottom: 2 }}>
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={1}
+          sx={{ mb: 2 }}
+        >
           <TextField
             size="small"
-            placeholder="Search..."
+            placeholder="Search pincode / unit / PI / status"
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
+            onChange={(event) => setSearchInput(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
                 handleSearchClick();
               }
             }}
+            sx={{ minWidth: 300 }}
           />
+
+          <TextField
+            select
+            size="small"
+            label="Status"
+            value={statusFilter}
+            onChange={(event) => {
+              setStatusFilter(event.target.value);
+              setPage(1);
+            }}
+            sx={{ minWidth: 170 }}
+          >
+            {STATUS_OPTIONS.map((option) => (
+              <MenuItem key={option || "all"} value={option}>
+                {option || "All Statuses"}
+              </MenuItem>
+            ))}
+          </TextField>
+
           <Button variant="contained" onClick={handleSearchClick}>
             Search
           </Button>
-        </Box>
+
+          <Button variant="outlined" onClick={handleClearFilters}>
+            Clear
+          </Button>
+
+          <Button variant="outlined" onClick={getTransportRefData}>
+            Refresh
+          </Button>
+        </Stack>
 
         <TableContainer
           sx={{
-            maxHeight: 440,
-            "&::-webkit-scrollbar": { width: 15 },
+            maxHeight: 500,
+            "&::-webkit-scrollbar": { width: 12, height: 12 },
             "&::-webkit-scrollbar-track": { backgroundColor: "#f2f2f2" },
             "&::-webkit-scrollbar-thumb": { backgroundColor: "#aaa9ac" },
           }}
         >
           <Table
-            sx={{ minWidth: 1200 }}
+            sx={{ minWidth: 1450 }}
             stickyHeader
-            aria-label="transporter mapping request table"
+            aria-label="transport assignment request table"
           >
             <TableHead>
               <StyledTableRow>
-                <StyledTableCell align="center">ID</StyledTableCell>
+                <StyledTableCell align="center">Request</StyledTableCell>
                 <StyledTableCell align="center">Created At</StyledTableCell>
-                <StyledTableCell align="center">Requested By</StyledTableCell>
-                <StyledTableCell align="center">Company</StyledTableCell>
                 <StyledTableCell align="center">Unit</StyledTableCell>
-                <StyledTableCell align="center">PI Number</StyledTableCell>
-                <StyledTableCell align="center">Pincode (Text)</StyledTableCell>
-                <StyledTableCell align="center">
-                  Canonical Pincode
-                </StyledTableCell>
+                <StyledTableCell align="center">Postal Code / Pincode</StyledTableCell>
+                <StyledTableCell align="center">Customer</StyledTableCell>
+                <StyledTableCell align="center">PI</StyledTableCell>
+                <StyledTableCell align="center">Requested By</StyledTableCell>
                 <StyledTableCell align="center">Status</StyledTableCell>
+                <StyledTableCell align="center">Assigned To</StyledTableCell>
                 <StyledTableCell align="center">Remarks</StyledTableCell>
-                <StyledTableCell align="center">Closed At</StyledTableCell>
                 <StyledTableCell align="center">Action</StyledTableCell>
               </StyledTableRow>
             </TableHead>
+
             <TableBody>
               {transportRefData && transportRefData.length > 0 ? (
                 transportRefData.map((row) => (
                   <StyledTableRow key={row.id}>
-                    <StyledTableCell align="center">{row.id}</StyledTableCell>
+                    <StyledTableCell align="center">#{row.id}</StyledTableCell>
                     <StyledTableCell align="center">
                       {formatDateTime(row.created_at)}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.requested_by}
+                      {row.unit ? row.unit : "-"}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.company}
+                      <Box>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                          {row.canonical_pincode
+                            ? row.canonical_pincode
+                            : row.pincode_text
+                              ? row.pincode_text
+                              : "-"}
+                        </Typography>
+                        {row.canonical_pincode && row.pincode_text && row.canonical_pincode !== row.pincode_text ? (
+                          <Typography variant="caption" sx={{ color: "#777" }}>
+                            Raw: {row.pincode_text}
+                          </Typography>
+                        ) : null}
+                      </Box>
                     </StyledTableCell>
-                    <StyledTableCell align="center">{row.unit}</StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.pi_number}
+                      {row.company ? row.company : "-"}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.pincode_text}
+                      {row.pi_number ? row.pi_number : "-"}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.canonical_pincode}
+                      {row.requested_by ? row.requested_by : "-"}
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       <Chip
-                        label={row.status}
+                        label={row.status ? row.status : "-"}
                         size="small"
                         sx={{
                           ...statusColor(row.status),
@@ -218,27 +344,47 @@ const ViewTransportRef = () => {
                       />
                     </StyledTableCell>
                     <StyledTableCell align="center">
+                      {row.assigned_to ? row.assigned_to : "-"}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
                       {row.remarks ? row.remarks : "-"}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {row.closed_at ? formatDateTime(row.closed_at) : "-"}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      <Button
-                        variant="contained"
-                        size="small"
-                        color="success"
-                        onClick={() => handleEidtClick(row)}
-                      >
-                        Edit
-                      </Button>
+                      {canManageRequest && isOpenForResolution(row) ? (
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          justifyContent="center"
+                        >
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={() => handleEditClick(row)}
+                          >
+                            Update
+                          </Button>
+                          <Button
+                            variant="contained"
+                            size="small"
+                            color="success"
+                            disabled={!row.canonical_pincode}
+                            onClick={() => handleResolveClick(row)}
+                          >
+                            Resolve
+                          </Button>
+                        </Stack>
+                      ) : (
+                        <Typography variant="caption" sx={{ color: "#888" }}>
+                          {canManageRequest ? "Read only" : "View only"}
+                        </Typography>
+                      )}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={12}
+                    colSpan={11}
                     align="center"
                     sx={{ color: "#999", py: 4 }}
                   >
@@ -250,49 +396,67 @@ const ViewTransportRef = () => {
           </Table>
         </TableContainer>
 
-        <Popup
-          title={"Update Transport Master Request"}
-          openPopup={openEditPopup}
-          setOpenPopup={setOpenEditPopup}
-        >
-          <UpdateTransportRef
-            dataForEdit={recordData}
-            setOpenEditPopup={setOpenEditPopup}
-            getTransportRefData={getTransportRefData}
-          />
-        </Popup>
-
         <Box
           sx={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginTop: 2,
+            mt: 2,
           }}
         >
           <Typography variant="body2" sx={{ color: "#666" }}>
             Total records: {count}
           </Typography>
-          <Box sx={{ display: "flex", gap: 1 }}>
+          <Stack direction="row" spacing={1}>
             <Button
               size="small"
               variant="outlined"
-              disabled={hasPrevious ? false : true}
-              onClick={() => setPage((p) => p - 1)}
+              disabled={!hasPrevious}
+              onClick={() => setPage((previousPage) => previousPage - 1)}
             >
               Previous
             </Button>
+            <Typography
+              variant="body2"
+              sx={{ px: 1, display: "flex", alignItems: "center" }}
+            >
+              Page {page}
+            </Typography>
             <Button
               size="small"
               variant="outlined"
-              disabled={hasNext ? false : true}
-              onClick={() => setPage((p) => p + 1)}
+              disabled={!hasNext}
+              onClick={() => setPage((previousPage) => previousPage + 1)}
             >
               Next
             </Button>
-          </Box>
+          </Stack>
         </Box>
       </Paper>
+
+      <Popup
+        title="Update Transport Assignment Request"
+        openPopup={openEditPopup}
+        setOpenPopup={setOpenEditPopup}
+      >
+        <UpdateTransportRef
+          dataForEdit={recordData}
+          setOpenEditPopup={setOpenEditPopup}
+          getTransportRefData={getTransportRefData}
+        />
+      </Popup>
+
+      <Popup
+        title="Resolve Transport Assignment Request"
+        openPopup={openResolvePopup}
+        setOpenPopup={setOpenResolvePopup}
+      >
+        <ResolveTransportRequest
+          dataForResolve={resolveRecord}
+          setOpenResolvePopup={setOpenResolvePopup}
+          getTransportRefData={getTransportRefData}
+        />
+      </Popup>
     </>
   );
 };

@@ -16,11 +16,9 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import { useSelector } from "react-redux";
 
 const TRANSPORTER_TYPE_CHOICES = [
-  "Universal Mode",
   "Surface Transport",
   "Courier",
   "Local-Adhoc",
-  "Transporter",
 ];
 
 function MasterTransportUpdate({
