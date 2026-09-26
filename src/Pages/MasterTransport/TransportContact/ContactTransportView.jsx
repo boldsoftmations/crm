@@ -185,6 +185,7 @@ const ContactTransportView = ({ lockedTransporter }) => {
       transporter: value.transporter,
       unit: value.unit,
       city: value.city,
+      branch_name: value.branch_name,
       contact_person: value.contact_person,
       designation_role: value.designation_role,
       mobile_number: value.mobile_number,
@@ -202,6 +203,7 @@ const ContactTransportView = ({ lockedTransporter }) => {
     "TRANSPORTER",
     "UNIT",
     "CITY",
+    "BRANCH",
     "CONTACT PERSON",
     "DESIGNATION ROLE",
     "MOBILE NUMBER",
@@ -411,6 +413,9 @@ const ContactTransportView = ({ lockedTransporter }) => {
 
                       <StyledTableCell align="center">
                         {row.city}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {row.branch_name}
                       </StyledTableCell>
 
                       <StyledTableCell align="center">

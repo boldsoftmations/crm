@@ -19,6 +19,10 @@ export function buildTransportPayload(selection) {
       selected_transport_mode: DIRECT_MODE_MAP[mode],
       transporter: null,
       transporter_mapping: null,
+      // Current backend create view still reads transporter_name. Keeping the
+      // key blank is compatible with the confirmed direct-mode rule: no
+      // transporter is selected for Bus/Train/Air/Self Pickup.
+      transporter_name: "",
     };
   }
 
@@ -69,4 +73,38 @@ export function buildTransportPayload(selection) {
   return {
     selected_transport_mode: mode,
   };
+}
+
+// Lead PI has a slightly stricter request contract than the legacy Customer
+// PI flow. Keep buildTransportPayload unchanged so existing Customer PI
+// behavior is not affected, and sanitize only Lead PI payloads here.
+export function buildLeadTransportPayload(selection) {
+  const mode = selection && selection.mode ? selection.mode : "";
+  const payload = buildTransportPayload(selection);
+
+  if (!mode) {
+    return payload;
+  }
+
+  if (DIRECT_MODE_MAP[mode]) {
+    return {
+      selected_transport_mode: DIRECT_MODE_MAP[mode],
+    };
+  }
+
+  if (mode === "COURIER" || mode === "LOCAL_AGGREGATOR") {
+    return {
+      selected_transport_mode: mode,
+      transporter:
+        selection && selection.transporterId ? selection.transporterId : null,
+      transporter_name:
+        selection && selection.transporterName
+          ? selection.transporterName
+          : null,
+      transporter_assignment_status:
+        selection && selection.transporterId ? "Assigned" : undefined,
+    };
+  }
+
+  return payload;
 }

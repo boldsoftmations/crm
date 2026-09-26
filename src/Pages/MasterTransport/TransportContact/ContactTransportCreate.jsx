@@ -196,7 +196,7 @@ function ContactTransportCreate({
       setFormData((prev) => ({
         ...prev,
         transporter: value.transporter_name,
-        transporter_id: value.transporter_id, // FIX: keep transporter_id when auto-filling
+        transporter_id: value.id,
         unit: units.length === 1 ? units[0].unit : "",
         city: cities.length === 1 ? cities[0].city : "",
       }));
@@ -378,8 +378,7 @@ function ContactTransportCreate({
                   size="small"
                   options={unitOptions}
                   value={
-                    unitOptions.find((opt) => opt.unit === formData.unit) ||
-                    null
+                    unitOptions.find((opt) => opt.unit === formData.unit) || null
                   }
                   getOptionLabel={(option) => (option.unit ? option.unit : "")}
                   onChange={(e, value) =>

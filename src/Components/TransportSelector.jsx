@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Autocomplete,
@@ -56,6 +56,7 @@ export default function TransportSelector({
   const [surfaceVerifiedPincodeId, setSurfaceVerifiedPincodeId] = useState(
     value && value.verifiedPincodeId ? value.verifiedPincodeId : null,
   );
+  const surfaceContextRef = useRef(null);
 
   useEffect(() => {
     const nextMode = value && value.mode ? value.mode : "";
@@ -79,8 +80,10 @@ export default function TransportSelector({
       setOptions([]);
       setError("");
       setWarning("");
+      setLoading(false);
 
       if (!mode) {
+        surfaceContextRef.current = null;
         return;
       }
 
@@ -147,7 +150,33 @@ export default function TransportSelector({
       }
 
       if (mode === "SURFACE") {
+        const contextKey = [
+          countryId || "",
+          pincode || "",
+          unitId || "",
+          unitCode || "",
+        ].join("|");
+        const previousContext = surfaceContextRef.current;
+        const contextChanged =
+          previousContext !== null && previousContext !== contextKey;
+        surfaceContextRef.current = contextKey;
+
+        // Clear a Surface transporter immediately when Unit / destination
+        // context changes. This prevents a submit from reusing a mapping
+        // that belonged to the previous shipping address or dispatch unit.
+        if (contextChanged && onChange) {
+          onChange({
+            mode: "SURFACE",
+            transporterId: null,
+            transporterName: null,
+            mappingId: null,
+            verifiedPincodeId: null,
+            assignmentStatus: null,
+          });
+        }
+
         if (!countryId || !pincode || !unitId || !unitCode) {
+          setSurfaceVerifiedPincodeId(null);
           setWarning(
             "Select Shipping Address and Seller Unit before loading Surface transporters.",
           );
@@ -193,16 +222,45 @@ export default function TransportSelector({
               });
             }
           } else if (onChange) {
-            // Keep verified pincode from lookup but force the user to choose
-            // one of the returned mappings. Never auto-select the first row.
-            onChange({
-              mode: "SURFACE",
-              transporterId: null,
-              transporterName: null,
-              mappingId: null,
-              verifiedPincodeId: verifiedPincodeId,
-              assignmentStatus: null,
-            });
+            const existingOption =
+              value && value.transporterId
+                ? surfaceOptions.find((option) => {
+                    if (!option) {
+                      return false;
+                    }
+
+                    if (value.mappingId && option.mapping_id) {
+                      return option.mapping_id === value.mappingId;
+                    }
+
+                    return option.transporter_id === value.transporterId;
+                  })
+                : null;
+
+            if (existingOption && !contextChanged) {
+              // Update screens may already contain a valid saved mapping.
+              // Preserve it only when it still belongs to the same Unit +
+              // Pincode lookup result.
+              onChange({
+                mode: "SURFACE",
+                transporterId: existingOption.transporter_id || null,
+                transporterName: existingOption.transporter_name || null,
+                mappingId: existingOption.mapping_id || null,
+                verifiedPincodeId: verifiedPincodeId,
+                assignmentStatus: "Assigned",
+              });
+            } else {
+              // Never auto-select the first mapping. The user must choose if
+              // the previous selection is absent or the context changed.
+              onChange({
+                mode: "SURFACE",
+                transporterId: null,
+                transporterName: null,
+                mappingId: null,
+                verifiedPincodeId: verifiedPincodeId,
+                assignmentStatus: null,
+              });
+            }
           }
         } catch (lookupError) {
           if (!active) {
@@ -338,6 +396,12 @@ export default function TransportSelector({
         }) || null
       : null;
 
+  const isSurfaceToBeAssigned =
+    mode === "SURFACE" &&
+    value &&
+    value.transporterName === "To Be Assigned" &&
+    value.assignmentStatus === "Unassigned";
+
   return (
     <>
       <Autocomplete
@@ -352,11 +416,33 @@ export default function TransportSelector({
         }
         onChange={handleModeChange}
         renderInput={(params) => (
-          <TextField {...params} label="Transport Method" required />
+          <TextField {...params} label="Transporter Method" required />
         )}
       />
 
-      {mode === "SURFACE" && (
+      {!mode && (
+        <TextField
+          fullWidth
+          disabled
+          sx={{ mt: 1 }}
+          label="Transporter Name"
+          value=""
+          helperText="Select Transporter Method first"
+        />
+      )}
+
+      {mode === "SURFACE" && isSurfaceToBeAssigned && !loading && (
+        <TextField
+          fullWidth
+          disabled
+          sx={{ mt: 1 }}
+          label="Transporter Name"
+          value="To Be Assigned"
+          helperText="No mapped Surface transporter is available for the selected Unit + Pincode"
+        />
+      )}
+
+      {mode === "SURFACE" && !isSurfaceToBeAssigned && (
         <Autocomplete
           sx={{ mt: 1 }}
           disabled={disabled || loading || options.length === 0}
@@ -389,7 +475,7 @@ export default function TransportSelector({
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Transporter"
+              label="Transporter Name"
               required={options.length > 0}
               InputProps={{
                 ...params.InputProps,
@@ -437,11 +523,7 @@ export default function TransportSelector({
           renderInput={(params) => (
             <TextField
               {...params}
-              label={
-                mode === "COURIER"
-                  ? "Courier Transporter"
-                  : "Local / Aggregator Transporter"
-              }
+              label="Transporter Name"
               required
               InputProps={{
                 ...params.InputProps,
@@ -454,6 +536,17 @@ export default function TransportSelector({
               }}
             />
           )}
+        />
+      )}
+
+      {isDirectMode(mode) && (
+        <TextField
+          fullWidth
+          disabled
+          sx={{ mt: 1 }}
+          label="Transporter Name"
+          value="Not Required"
+          helperText="Transporter Name is not required for this transport method"
         />
       )}
 

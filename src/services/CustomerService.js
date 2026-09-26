@@ -763,12 +763,34 @@ const getComplaintNo = (customer, seller_account) => {
   return CustomAxios.get(`/api/invoice/company-ccf-list/?${params.toString()}`);
 };
 
-const getTransportList = (pincode, country_id, unit_id, unit_code) => {
+const getTransportList = (paramsOrPincode, country_id, unit_id, unit_code) => {
   const params = new URLSearchParams();
-  if (country_id) params.append("country_id", country_id);
+
+  // Preferred shape for the corrected flow is one object argument.
+  // Keep positional arguments working for older screens so this service
+  // change does not break unrelated legacy callers.
+  const isObjectArgument =
+    paramsOrPincode &&
+    typeof paramsOrPincode === "object" &&
+    !Array.isArray(paramsOrPincode);
+
+  const pincode = isObjectArgument
+    ? paramsOrPincode.pincode
+    : paramsOrPincode;
+  const countryId = isObjectArgument
+    ? paramsOrPincode.countryId || paramsOrPincode.country_id
+    : country_id;
+  const unitId = isObjectArgument
+    ? paramsOrPincode.unitId || paramsOrPincode.unit_id
+    : unit_id;
+  const unitCode = isObjectArgument
+    ? paramsOrPincode.unitCode || paramsOrPincode.unit_code
+    : unit_code;
+  if (unitId) params.append("unit_id", unitId);
+  if (unitCode) params.append("unit_code", unitCode);
+  if (countryId) params.append("country_id", countryId);
   if (pincode) params.append("pincode", pincode);
-  if (unit_id) params.append("unit_id", unit_id);
-  if (unit_code) params.append("unit_code", unit_code);
+
   return CustomAxios.get(
     `/api/master/pincode-transporter/?${params.toString()}`,
   );
@@ -783,7 +805,12 @@ const getTransportList = (pincode, country_id, unit_id, unit_code) => {
 // was already correct all along, this just wraps it in the
 // object-argument shape TransportSelector.jsx uses.
 const getPincodeTransporter = ({ countryId, pincode, unitId, unitCode }) => {
-  return getTransportList(pincode, countryId, unitId, unitCode);
+  return getTransportList({
+    countryId: countryId,
+    pincode: pincode,
+    unitId: unitId,
+    unitCode: unitCode,
+  });
 };
 
 const getTransporterCapabilities = ({

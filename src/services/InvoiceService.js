@@ -130,8 +130,8 @@ const getLeadsProformaInvoiceDataByID = (id) => {
   return CustomAxios.get(`/api/invoice/list-lead-pi/${id}`);
 };
 
-const updateLeadsProformaInvoiceData = (id, data) => {
-  return CustomAxios.patch(`/api/invoice/list-lead-pi/${id}`, data);
+const updateLeadsProformaInvoiceData = (pi_number, data) => {
+  return CustomAxios.patch(`/api/invoice/list-lead-pi/${pi_number}`, data);
 };
 
 const createCustomerProformaInvoiceData = (data) => {

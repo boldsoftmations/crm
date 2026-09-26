@@ -5,6 +5,7 @@ import { CustomTabs } from "../../Components/CustomTabs";
 import { TransportersHome } from "./TransportersHome";
 import ViewTransportRef from "./TransportRef/ViewTransportRef";
 import TransporterAuditLog from "./AuditLog/TransporterAuditLog";
+import TransporterFinder from "./TransporterFinder";
 
 // UI-ONLY restructuring per V3 handover (Section 3 - Target navigation).
 // No business logic, API calls, role-permission RULES, or field names have
@@ -87,6 +88,11 @@ export const AllTransportMasterTabView = () => {
       label: "Transporters",
       roles: transporterWorkspaceRoles,
       component: <TransportersHome />,
+    },
+    {
+      label: "Transporter Finder",
+      roles: transporterWorkspaceRoles,
+      component: <TransporterFinder />,
     },
     {
       label: "Transport Assignment Requests",

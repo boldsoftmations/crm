@@ -242,14 +242,9 @@ export const TransporterWorkspace = ({ transporterId }) => {
   const auditLogRoles = ["Director"];
 
   // ---------------------------------------------------------------------
-  // GAP FIX (1/3): transporterId now comes from a real "Open" click in
-  // TransporterList.jsx (via TransportersHome.jsx), not a typed-in text
-  // box. There is still no getTransportMasterById API - only the
-  // paginated list endpoint exists - so this still finds the record by
-  // searching pages client-side. That part is an acceptable stopgap now
-  // (the id is always a real, valid id since it came from clicking an
-  // actual row, unlike before when it could be any typed number), but a
-  // real by-id endpoint would still be more efficient than this loop.
+  // Selected transporter is loaded directly from the backend detail route.
+  // TransporterMaster is a ModelViewSet, so /transporter-master/{id}/ is
+  // available and there is no need to scan paginated active/inactive lists.
   // ---------------------------------------------------------------------
   const [transporter, setTransporter] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -259,34 +254,11 @@ export const TransporterWorkspace = ({ transporterId }) => {
       setTransporter(null);
       return;
     }
+
     try {
       setLoading(true);
-      let match = null;
-      const inactiveFlagsToTry = [false, true];
-      const maxPagesToTry = 5;
-
-      outer: for (const inactiveFlag of inactiveFlagsToTry) {
-        for (let page = 1; page <= maxPagesToTry; page += 1) {
-          try {
-            const response = await MasterService.getAllTransportMaster(
-              page,
-              inactiveFlag,
-              "",
-            );
-            const results =
-              response && response.data && response.data.results
-                ? response.data.results
-                : [];
-            match = results.find((item) => String(item.id) === String(id));
-            if (match) break outer;
-            if (results.length === 0) break; // no more pages for this flag
-          } catch (pageError) {
-            break;
-          }
-        }
-      }
-
-      setTransporter(match || null);
+      const response = await MasterService.getTransportMasterById(id);
+      setTransporter(response && response.data ? response.data : null);
     } catch (error) {
       console.error("Error loading transporter record:", error);
       setTransporter(null);
@@ -461,9 +433,8 @@ export const TransporterWorkspace = ({ transporterId }) => {
       ) : (
         !loading && (
           <Paper sx={{ p: 3, m: 2, textAlign: "center", color: "#999" }}>
-            Could not load this transporter's record (checked the first 5 pages
-            of both active and inactive lists). It may have been deactivated or
-            removed since you opened it - go back and try again.
+            Could not load this transporter's record. It may have been
+            deactivated or removed since you opened it - go back and try again.
           </Paper>
         )
       )}

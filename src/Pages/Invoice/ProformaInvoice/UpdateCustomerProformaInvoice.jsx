@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -22,6 +22,56 @@ import CustomTextField from "../../../Components/CustomTextField";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
+import TransportSelector from "../../../Components/TransportSelector";
+import { buildTransportPayload } from "../../../utility/Buildtransportpayload";
+
+const normalizeTransportMode = (mode) => {
+  if (mode === "Train") return "TRAIN";
+  if (mode === "Bus") return "BUS";
+  if (mode === "Air") return "AIR";
+  if (mode === "Self Pickup") return "SELF_PICKUP";
+  return mode || "";
+};
+
+const getRelationId = (value) => {
+  if (value && typeof value === "object" && value.id) {
+    return value.id;
+  }
+  return value || null;
+};
+
+const getInitialTransportSelection = (piData) => {
+  if (!piData) {
+    return null;
+  }
+
+  const mappingId = getRelationId(piData.transporter_mapping);
+  const transporterId = getRelationId(piData.transporter);
+  const verifiedPincodeId = getRelationId(piData.verified_pincode);
+  let mode = normalizeTransportMode(piData.selected_transport_mode);
+
+  // Older Surface PIs may not have selected_transport_mode populated yet.
+  // Mapping / verified pincode / To Be Assigned are safe Surface indicators.
+  if (
+    !mode &&
+    (mappingId || verifiedPincodeId || piData.transporter_name === "To Be Assigned")
+  ) {
+    mode = "SURFACE";
+  }
+
+  if (!mode) {
+    return null;
+  }
+
+  return {
+    mode: mode,
+    transporterId: transporterId,
+    transporterName: piData.transporter_name || null,
+    mappingId: mappingId,
+    verifiedPincodeId: verifiedPincodeId,
+    assignmentStatus: piData.transporter_assignment_status || null,
+  };
+};
 
 export const UpdateCustomerProformaInvoice = (props) => {
   const { idForEdit, getProformaInvoiceData, setOpenPopup } = props;
@@ -39,9 +89,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
   const [productEdit, setProductEdit] = useState(false);
   const [warehouseOptions, setWarehouseOptions] = useState([]);
   const [warehouseData, setWarehouseData] = useState([]);
-  const [transportDetails, setTransportDetails] = useState([]);
-  const [selectedTransport, setSelectedTransport] = useState(null);
-  const [selectedTransportType, setSelectedTransportType] = useState(null);
+  const [transportSelection, setTransportSelection] = useState(null);
   const [contactOptions, setContactOptions] = useState([]);
   const [contactData, setContactData] = useState([]);
   const [products, setProducts] = useState([
@@ -115,6 +163,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
         idForEdit.pi_number,
       );
       setCustomerPIdataByID(response.data);
+      setTransportSelection(getInitialTransportSelection(response.data));
       setPaymentTermData(response.data.payment_terms);
       setDeliveryTermData(response.data.delivery_terms);
 
@@ -165,99 +214,31 @@ export const UpdateCustomerProformaInvoice = (props) => {
     }
   };
 
-  // FIX (#1): Transporter is now resolved from the unit + destination pincode
-  // mapping instead of being a free-text field. Re-fetches and clears the
-  // stale selection whenever unit, warehouse (shipping pincode), or customer
-  // changes, matching CreateCustomerProformaInvoice.jsx.
-  const getTranportList = useCallback(async () => {
-    const pincode =
-      (warehouseData && warehouseData.pincode) ||
-      customerPIdataByID.pincode ||
-      "";
-
-    const countryId =
-      (customerData && customerData.country_id) ||
-      customerPIdataByID.country_id ||
-      "";
-
-    const unitMatch = sellerData.find(
-      (item) =>
-        item &&
-        item.unit ===
-          (selectedSellerData && selectedSellerData.unit
-            ? selectedSellerData.unit
-            : customerPIdataByID.seller_account),
-    );
-
-    if (!pincode || !unitMatch) {
-      setTransportDetails([]);
-      setSelectedTransport(null);
-      setSelectedTransportType(null);
-      return;
-    }
-
-    try {
-      setOpen(true);
-
-      const res = await CustomerServices.getTransportList(
-        pincode,
-        countryId,
-        unitMatch.id,
-        unitMatch.unit,
-      );
-
-      const data =
-        res && res.data && Array.isArray(res.data.results)
-          ? res.data.results
-          : [];
-
-      if (data.length > 0) {
-        // Keep the previously saved transporter selected if it still shows up
-        // for this unit + pincode. If it does not, treat it as stale and force
-        // the user to re-pick rather than silently keeping an invalid mapping.
-        const existingMatch = data.find(
+  const effectiveSeller =
+    selectedSellerData && selectedSellerData.id
+      ? selectedSellerData
+      : sellerData.find(
           (item) =>
             item &&
-            item.transporter_name === customerPIdataByID.transporter_name,
-        );
+            item.unit ===
+              (customerPIdataByID && customerPIdataByID.seller_account
+                ? customerPIdataByID.seller_account
+                : ""),
+        ) || null;
 
-        setTransportDetails(data);
-        setSelectedTransport(existingMatch || null);
-        setSelectedTransportType(existingMatch || null);
-      } else {
-        setTransportDetails([]);
-        setSelectedTransport(null);
-        setSelectedTransportType(null);
-      }
-    } catch (error) {
-      console.error("Transport list error:", error);
-      setTransportDetails([]);
-      setSelectedTransport(null);
-      setSelectedTransportType(null);
-    } finally {
-      setOpen(false);
-    }
-  }, [
-    warehouseData,
-    selectedSellerData,
-    sellerData,
-    customerData,
-    customerPIdataByID,
-  ]);
+  const effectiveShippingPincode =
+    warehouseData && warehouseData.pincode
+      ? warehouseData.pincode
+      : customerPIdataByID && customerPIdataByID.pincode
+        ? customerPIdataByID.pincode
+        : "";
 
-  useEffect(() => {
-    getTranportList();
-  }, [getTranportList]);
-
-  const transportTypeOptions = transportDetails.filter(
-    (item, index, array) =>
-      item &&
-      item.transporter_type &&
-      array.findIndex(
-        (typeItem) =>
-          typeItem && typeItem.transporter_type === item.transporter_type,
-      ) === index,
-  );
+  const effectiveCountryId =
+    warehouseData && warehouseData.country_id
+      ? warehouseData.country_id
+      : customerData && customerData.country_id
+        ? customerData.country_id
+        : "";
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -265,8 +246,40 @@ export const UpdateCustomerProformaInvoice = (props) => {
   };
 
   const updateLeadProformaInvoiceDetails = async (e) => {
+    e.preventDefault();
+
+    if (!transportSelection || !transportSelection.mode) {
+      handleError("Please select a Transport Method.");
+      return;
+    }
+
+    if (
+      (transportSelection.mode === "COURIER" ||
+        transportSelection.mode === "LOCAL_AGGREGATOR") &&
+      (!transportSelection.transporterId || !transportSelection.transporterName)
+    ) {
+      handleError(
+        "Please select a transporter for the selected Transport Method.",
+      );
+      return;
+    }
+
+    if (transportSelection.mode === "SURFACE") {
+      const isMappedSurface =
+        transportSelection.transporterId && transportSelection.mappingId;
+      const isToBeAssigned =
+        transportSelection.transporterName === "To Be Assigned" &&
+        transportSelection.assignmentStatus === "Unassigned";
+
+      if (!isMappedSurface && !isToBeAssigned) {
+        handleError(
+          "Please wait for Surface transporter lookup, then select a mapped transporter or continue as To Be Assigned.",
+        );
+        return;
+      }
+    }
+
     try {
-      e.preventDefault();
       setOpen(true);
 
       const productList = productEdit === true ? products : [];
@@ -339,18 +352,7 @@ export const UpdateCustomerProformaInvoice = (props) => {
         city: warehouseData.city,
         place_of_supply:
           inputValue.place_of_supply || customerPIdataByID.place_of_supply,
-        transporter_name: selectedTransport
-          ? selectedTransport.transporter_name
-          : "To Be Assigned",
-        transporter_type: selectedTransportType
-          ? selectedTransportType.transporter_type
-          : null,
-        transporter_id: selectedTransport
-          ? selectedTransport.transporter_id
-          : null,
-        transporter_assignment_status: selectedTransport
-          ? "Assigned"
-          : "Unassigned",
+        ...buildTransportPayload(transportSelection),
         buyer_order_no: checked
           ? "Verbal"
           : inputValue.buyer_order_no !== undefined
@@ -724,61 +726,13 @@ export const UpdateCustomerProformaInvoice = (props) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            {/* FIX (#1): was a free-text CustomTextField that let anyone type
-                over the assigned transporter. Now bound to the unit + pincode
-                mapping fetched by getTranportList, same as the Create screen. */}
-            <CustomAutocomplete
-              size="small"
-              fullWidth
-              label="Transporter Name"
-              options={transportDetails}
-              value={selectedTransport}
-              onChange={(event, value) => {
-                setSelectedTransport(value);
-                setSelectedTransportType(value || null);
-              }}
-              getOptionLabel={(option) =>
-                option && option.transporter_name ? option.transporter_name : ""
-              }
-              isOptionEqualToValue={(option, value) =>
-                option && value
-                  ? option.transporter_id === value.transporter_id
-                  : false
-              }
-              disabled={transportDetails.length === 0}
-              sx={{ minWidth: 300 }}
-              style={tfStyle}
-            />
-            {transportDetails.length === 0 && (
-              <Chip
-                label="To Be Assigned - no transporter mapped for this unit/pincode"
-                color="warning"
-                size="small"
-                sx={{ mt: 1 }}
-              />
-            )}
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomAutocomplete
-              size="small"
-              fullWidth
-              label="Transporter Type"
-              options={transportTypeOptions}
-              value={selectedTransportType}
-              onChange={(event, value) => {
-                setSelectedTransportType(value);
-              }}
-              getOptionLabel={(option) =>
-                option && option.transporter_type ? option.transporter_type : ""
-              }
-              isOptionEqualToValue={(option, value) =>
-                option && value
-                  ? option.transporter_type === value.transporter_type
-                  : false
-              }
-              disabled={transportTypeOptions.length === 0}
-              sx={{ minWidth: 300 }}
-              style={tfStyle}
+            <TransportSelector
+              countryId={effectiveCountryId}
+              pincode={effectiveShippingPincode}
+              unitId={effectiveSeller ? effectiveSeller.id : ""}
+              unitCode={effectiveSeller ? effectiveSeller.unit : ""}
+              value={transportSelection}
+              onChange={setTransportSelection}
             />
           </Grid>
           <Grid item xs={12}>

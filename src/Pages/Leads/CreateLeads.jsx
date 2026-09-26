@@ -102,7 +102,7 @@ export const CreateLeads = memo((props) => {
       const Country = leads.origin_type === "International" ? leads.country : 1;
       const PINCODE = leads.pincode;
       const response = await MasterService.ValidatePincode(Country, PINCODE);
-      if (response.data.length === 0) {
+      if (!response || !response.data || !response.data.id) {
         setAlertMsg({
           message:
             "This Pin Code does not exist ! First Create the Pin code in the master country",
@@ -228,7 +228,13 @@ export const CreateLeads = memo((props) => {
           origin_type: leads.origin_type || null,
           city: leads.city,
           state: leads.state,
-          country: leads.country.name,
+          country:
+            leads.origin_type === "Domestic"
+              ? "India"
+              : countryList.find((item) => item && item.id === leads.country)
+                ? countryList.find((item) => item && item.id === leads.country)
+                    .name
+                : "",
           pincode: leads.pincode || null,
           shipping_address:
             checked === true ? leads.address : leads.shipping_address,
@@ -272,6 +278,7 @@ export const CreateLeads = memo((props) => {
           getleads(currentPage, filterQuery, filterSelectedQuery, searchQuery);
         }, 300);
       } catch (error) {
+        console.error("Create lead error:", error);
         handleError(error);
       } finally {
         setOpen(false);

@@ -292,6 +292,10 @@ const getAllTransportMaster = (page, is_inactive, search) => {
     `/api/master/transporter-master/?${params.toString()}`,
   );
 };
+const getTransportMasterById = (id) => {
+  return CustomAxios.get(`/api/master/transporter-master/${id}/`);
+};
+
 const createTransportMaster = (data) => {
   return CustomAxios.post("/api/master/transporter-master/", data);
 };
@@ -592,6 +596,7 @@ const MasterService = {
   createTransportMaster,
   updateTransportMaster,
   getAllTransportMaster,
+  getTransportMasterById,
   getAllTransportBranch,
   createTransportBranch,
   updateTransportBranch,
