@@ -30,7 +30,7 @@ import TransportIdentifierUpdate from "./TransportIdentifierUpdate";
 // whose branches array includes that branch's id - it does not assume a
 // 1:1 branch->identifier relationship.
 
-const TransporterBranchesIdsTab = ({ transporter }) => {
+const TransporterBranchesIdsTab = ({ transporter, onDataChanged }) => {
   const [branches, setBranches] = useState([]);
   const [identifiers, setIdentifiers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -95,6 +95,26 @@ const TransporterBranchesIdsTab = ({ transporter }) => {
     loadAll();
   }, [transporter, getBranchData, getIdentifierData]);
 
+  const refreshBranchData = useCallback(
+    async (transporterId) => {
+      await getBranchData(transporterId);
+      if (onDataChanged) {
+        onDataChanged();
+      }
+    },
+    [getBranchData, onDataChanged],
+  );
+
+  const refreshIdentifierData = useCallback(
+    async (transporterId) => {
+      await getIdentifierData(transporterId);
+      if (onDataChanged) {
+        onDataChanged();
+      }
+    },
+    [getIdentifierData, onDataChanged],
+  );
+
   const identifiersForBranch = (branchId) =>
     identifiers.filter(
       (identifier) =>
@@ -135,12 +155,12 @@ const TransporterBranchesIdsTab = ({ transporter }) => {
           onClick={() => setOpenIdentifierCreate(true)}
           disabled={branches.length === 0}
         >
-          + Add Identifier
+          + Add Statutory Details
         </Button>
       </Stack>
       {branches.length === 0 && (
         <Typography variant="caption" sx={{ color: "#999" }}>
-          Add at least one branch before adding an identifier.
+          Add at least one branch before adding statutory details.
         </Typography>
       )}
 
@@ -183,7 +203,7 @@ const TransporterBranchesIdsTab = ({ transporter }) => {
 
                 <Box sx={{ mt: 1.5 }}>
                   <Typography variant="caption" sx={{ fontWeight: "bold" }}>
-                    IDs applicable to this branch:
+                    Statutory details applicable to this branch:
                   </Typography>
                   {identifiersForBranch(branch.id).length === 0 ? (
                     <Typography
@@ -233,7 +253,7 @@ const TransporterBranchesIdsTab = ({ transporter }) => {
         <TransportBranchCreate
           transporterId={transporter.id}
           transporterName={transporter.transporter_name}
-          getBranchData={getBranchData}
+          getBranchData={refreshBranchData}
           setOpenPopup={setOpenBranchCreate}
         />
       </Popup>
@@ -248,7 +268,7 @@ const TransporterBranchesIdsTab = ({ transporter }) => {
         <TransportBranchUpdate
           recordForEdit={recordForEdit}
           transporterId={transporter.id}
-          getBranchData={getBranchData}
+          getBranchData={refreshBranchData}
           setOpenPopup={setOpenBranchUpdate}
         />
       </Popup>
@@ -256,7 +276,7 @@ const TransporterBranchesIdsTab = ({ transporter }) => {
       {/* Add Identifier */}
       <Popup
         maxWidth="sm"
-        title="Add Identifier"
+        title="Add Statutory Details"
         openPopup={openIdentifierCreate}
         setOpenPopup={setOpenIdentifierCreate}
       >
@@ -264,7 +284,7 @@ const TransporterBranchesIdsTab = ({ transporter }) => {
           transporterId={transporter.id}
           transporterName={transporter.transporter_name}
           branchOptions={branches}
-          getIdentifierData={getIdentifierData}
+          getIdentifierData={refreshIdentifierData}
           setOpenPopup={setOpenIdentifierCreate}
         />
       </Popup>
@@ -272,7 +292,7 @@ const TransporterBranchesIdsTab = ({ transporter }) => {
       {/* Update Identifier */}
       <Popup
         maxWidth="sm"
-        title="Update Identifier"
+        title="Update Statutory Details"
         openPopup={openIdentifierUpdate}
         setOpenPopup={setOpenIdentifierUpdate}
       >
@@ -280,7 +300,7 @@ const TransporterBranchesIdsTab = ({ transporter }) => {
           recordForEdit={recordForEdit}
           transporterId={transporter.id}
           branchOptions={branches}
-          getIdentifierData={getIdentifierData}
+          getIdentifierData={refreshIdentifierData}
           setOpenPopup={setOpenIdentifierUpdate}
         />
       </Popup>

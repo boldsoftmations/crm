@@ -1,5 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import InvoiceServices from "../../services/InvoiceService";
+import {
+  getTransportMethodLabel,
+  getTransporterDisplayName,
+} from "../../utility/transportDisplay";
 import { styled } from "@mui/material/styles";
 import {
   Box,
@@ -77,7 +81,13 @@ export const SalesRegisterView = () => {
           date: moment(item.date).format("DD-MM-YYYY"),
           sales_invoice: item.sales_invoice,
           customer: item.customer,
-          transporter: item.transporter,
+          selected_transport_mode: getTransportMethodLabel(
+            item.selected_transport_mode,
+          ),
+          transporter: getTransporterDisplayName(
+            item.selected_transport_mode,
+            item.transporter,
+          ),
           type_of_customer: item.type_of_customer,
           dispatch_location: item.dispatch_location,
           lr_copy: item.lr_copy,
@@ -315,7 +325,10 @@ export const SalesRegisterView = () => {
                   <StyledTableCell align="center">User</StyledTableCell>
                   <StyledTableCell align="center">PI No</StyledTableCell>
                   <StyledTableCell align="center">
-                    transport Name
+                    Transport Method
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    Transporter
                   </StyledTableCell>
 
                   <StyledTableCell align="center">
@@ -423,7 +436,15 @@ function Row(props) {
             ? row.pi_list.join(", ")
             : "NA"}
         </TableCell>
-        <TableCell align="center">{row.transporter}</TableCell>
+        <TableCell align="center">
+          {getTransportMethodLabel(row.selected_transport_mode)}
+        </TableCell>
+        <TableCell align="center">
+          {getTransporterDisplayName(
+            row.selected_transport_mode,
+            row.transporter,
+          )}
+        </TableCell>
         <TableCell align="center">{row.sales_invoice}</TableCell>
         <TableCell align="center">{row.customer}</TableCell>
         {isInGroups("Operations & Supply Chain Manager", "Director") && (
@@ -532,7 +553,8 @@ const headers = [
   { label: "Seller Unit", key: "seller_unit" },
   { label: "Sales Invoice", key: "sales_invoice" },
   { label: "Customer", key: "customer" },
-  { label: "Transporter Name", key: "transporter" },
+  { label: "Transport Method", key: "selected_transport_mode" },
+  { label: "Transporter", key: "transporter" },
   { label: "Type of Customer", key: "type_of_customer" },
   { label: "Dispatch Location", key: "dispatch_location" },
   { label: "LR Copy", key: "lr_copy" },

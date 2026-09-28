@@ -175,7 +175,7 @@ function TransportIdentifierUpdate({
       </Grid>
 
       <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 1 }}>
-        Update Identifier
+        Update Statutory Details
       </Button>
     </Box>
   );

@@ -17,6 +17,10 @@ import InvoiceServices from "../../../services/InvoiceService";
 import { CustomLoader } from "./../../../Components/CustomLoader";
 import CustomTextField from "../../../Components/CustomTextField";
 import { DecimalValidation } from "../../../utility/DecimalValidation";
+import {
+  getTransportMethodLabel,
+  isDirectTransportMode,
+} from "../../../utility/transportDisplay";
 const Root = styled("div")(({ theme }) => ({
   width: "100%",
   ...theme.typography.body2,
@@ -80,6 +84,13 @@ export const SalesInvoiceCreate = (props) => {
   };
 
   const currentDate = new Date().toISOString().split("T")[0];
+
+  const selectedTransportMode =
+    customerorderBookData && customerorderBookData.selected_transport_mode
+      ? customerorderBookData.selected_transport_mode
+      : "";
+  const directTransportMode = isDirectTransportMode(selectedTransportMode);
+
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -265,8 +276,9 @@ export const SalesInvoiceCreate = (props) => {
             : customerorderBookData
               ? customerorderBookData.place_of_supply
               : "",
-        transporter_name:
-          inputValue.transporter_name !== undefined
+        transporter_name: directTransportMode
+          ? null
+          : inputValue.transporter_name !== undefined
             ? inputValue.transporter_name
             : customerorderBookData
               ? customerorderBookData.transporter_name
@@ -509,20 +521,35 @@ export const SalesInvoiceCreate = (props) => {
           <Grid item xs={12} sm={3}>
             <CustomTextField
               fullWidth
-              required
+              disabled
+              name="selected_transport_mode"
+              size="small"
+              label="Transport Method"
+              variant="outlined"
+              value={getTransportMethodLabel(selectedTransportMode)}
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <CustomTextField
+              fullWidth
+              required={!directTransportMode}
+              disabled={directTransportMode}
               name="transporter_name"
               size="small"
               label="Transporter Name"
               variant="outlined"
               value={
-                inputValue.transporter_name !== undefined
-                  ? inputValue.transporter_name
-                  : customerorderBookData
-                    ? customerorderBookData.transporter_name
-                    : ""
+                directTransportMode
+                  ? "Not Required"
+                  : inputValue.transporter_name !== undefined
+                    ? inputValue.transporter_name
+                    : customerorderBookData
+                      ? customerorderBookData.transporter_name || ""
+                      : ""
               }
-              error={inputValue.transporter_name === ""}
-              // helperText={inputValue.transporter_name !== "" && "this field is required"}
+              error={
+                !directTransportMode && inputValue.transporter_name === ""
+              }
               onChange={handleInputChange}
             />
           </Grid>
