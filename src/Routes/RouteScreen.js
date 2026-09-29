@@ -52,6 +52,7 @@ import { AllPriceListTabView } from "../Pages/PriceList/AllPriceListTabView";
 import { PurchaseAllTabView } from "../Pages/Purchase/PurchaseAllTabView";
 import { ViewPackagingMaster } from "../Pages/MasterPackaging/ViewPackagingMaster";
 import { AllTransportMasterTabView } from "../Pages/MasterTransport/AllTransportMasterTabView";
+import TransporterFinder from "../Pages/MasterTransport/TransporterFinder";
 // import PurchaseReturnAllTabView from "../Pages/ReturnOrders/PurchaseReturn/PurchaseReturnAllTabView";
 
 const PrivateRoute = ({ children, redirectTo = "/" }) => {
@@ -406,6 +407,15 @@ export const RouteScreen = () => {
             element={
               <PrivateRoute>
                 <ViewMasterActivitiesList />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/Trasnport-Finder"
+            element={
+              <PrivateRoute>
+                <TransporterFinder />
               </PrivateRoute>
             }
           />

@@ -115,12 +115,46 @@ const TransporterBranchesIdsTab = ({ transporter, onDataChanged }) => {
     [getIdentifierData, onDataChanged],
   );
 
+  const getIdentifierBranchId = (branch) => {
+    if (branch && typeof branch === "object") {
+      return branch.id;
+    }
+    return branch;
+  };
+
   const identifiersForBranch = (branchId) =>
-    identifiers.filter(
-      (identifier) =>
-        Array.isArray(identifier.branches) &&
-        identifier.branches.includes(branchId),
+    identifiers.filter((identifier) => {
+      if (!identifier || !Array.isArray(identifier.branches)) {
+        return false;
+      }
+
+      return identifier.branches.some(
+        (linkedBranch) =>
+          String(getIdentifierBranchId(linkedBranch)) === String(branchId),
+      );
+    });
+
+  const getIdentifierTypeLabel = (value) => {
+    if (value === "COMMON_ENROLMENT") {
+      return "Common Enrolment Number";
+    }
+    return value || "";
+  };
+
+  const getLinkedBranches = (identifier) => {
+    if (!identifier || !Array.isArray(identifier.branches)) {
+      return [];
+    }
+
+    const linkedIds = identifier.branches
+      .map((branch) => getIdentifierBranchId(branch))
+      .filter((id) => id !== null && id !== undefined && id !== "")
+      .map((id) => String(id));
+
+    return branches.filter(
+      (branch) => branch && linkedIds.includes(String(branch.id)),
     );
+  };
 
   const openBranchEdit = (branch) => {
     setRecordForEdit(branch);
@@ -162,6 +196,134 @@ const TransporterBranchesIdsTab = ({ transporter, onDataChanged }) => {
         <Typography variant="caption" sx={{ color: "#999" }}>
           Add at least one branch before adding statutory details.
         </Typography>
+      )}
+
+      {branches.length > 0 && (
+        <Paper
+          variant="outlined"
+          sx={{
+            p: 2,
+            mb: 2,
+            borderRadius: 2,
+            backgroundColor: "#fafbff",
+          }}
+        >
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            justifyContent="space-between"
+            alignItems={{ xs: "flex-start", sm: "center" }}
+            spacing={1}
+            sx={{ mb: identifiers.length > 0 ? 1.5 : 0 }}
+          >
+            <Box>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                Statutory Details
+              </Typography>
+              <Typography variant="caption" sx={{ color: "#666" }}>
+                Select an existing GSTIN / TRANSIN to add or remove linked branches.
+              </Typography>
+            </Box>
+            <Chip
+              size="small"
+              label={String(identifiers.length) + " record(s)"}
+              variant="outlined"
+            />
+          </Stack>
+
+          {identifiers.length === 0 ? (
+            <Typography variant="body2" sx={{ color: "#999" }}>
+              No statutory details added yet.
+            </Typography>
+          ) : (
+            identifiers.map((identifier) => {
+              const linkedBranches = getLinkedBranches(identifier);
+
+              return (
+                <Box
+                  key={identifier.id}
+                  sx={{
+                    p: 1.5,
+                    mb: 1,
+                    border: "1px solid #e6e9f2",
+                    borderRadius: 2,
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <Stack
+                    direction={{ xs: "column", md: "row" }}
+                    justifyContent="space-between"
+                    alignItems={{ xs: "flex-start", md: "center" }}
+                    spacing={1.5}
+                  >
+                    <Box sx={{ minWidth: 0 }}>
+                      <Stack
+                        direction="row"
+                        spacing={1}
+                        alignItems="center"
+                        flexWrap="wrap"
+                      >
+                        <Chip
+                          size="small"
+                          label={getIdentifierTypeLabel(
+                            identifier.identifier_type,
+                          )}
+                        />
+                        <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                          {identifier.identifier_value}
+                        </Typography>
+                        {identifier.is_primary ? (
+                          <Chip size="small" color="primary" label="Primary" />
+                        ) : null}
+                        {!identifier.is_active ? (
+                          <Chip size="small" label="Inactive" />
+                        ) : null}
+                      </Stack>
+
+                      <Stack
+                        direction="row"
+                        spacing={0.75}
+                        alignItems="center"
+                        flexWrap="wrap"
+                        sx={{ mt: 1 }}
+                      >
+                        <Typography
+                          variant="caption"
+                          sx={{ color: "#666", mr: 0.5 }}
+                        >
+                          Linked Branches:
+                        </Typography>
+                        {linkedBranches.length === 0 ? (
+                          <Typography variant="caption" sx={{ color: "#999" }}>
+                            None
+                          </Typography>
+                        ) : (
+                          linkedBranches.map((branch) => (
+                            <Chip
+                              key={branch.id}
+                              size="small"
+                              variant="outlined"
+                              label={branch.branch_name || "Branch #" + branch.id}
+                            />
+                          ))
+                        )}
+                      </Stack>
+                    </Box>
+
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      startIcon={<EditIcon />}
+                      onClick={() => openIdentifierEdit(identifier)}
+                      sx={{ whiteSpace: "nowrap" }}
+                    >
+                      Update / Manage Branches
+                    </Button>
+                  </Stack>
+                </Box>
+              );
+            })
+          )}
+        </Paper>
       )}
 
       {branches.length === 0 ? (
@@ -222,17 +384,20 @@ const TransporterBranchesIdsTab = ({ transporter, onDataChanged }) => {
                         sx={{ ml: 1 }}
                       >
                         <Typography variant="body2">
-                          - {identifier.identifier_type}{" "}
+                          - {getIdentifierTypeLabel(identifier.identifier_type)}{" "}
                           {identifier.identifier_value}
                           {identifier.is_primary ? " (Primary)" : ""}
                           {!identifier.is_active ? " (Inactive)" : ""}
                         </Typography>
-                        <IconButton
+                        <Button
                           size="small"
+                          variant="text"
+                          startIcon={<EditIcon sx={{ fontSize: 14 }} />}
                           onClick={() => openIdentifierEdit(identifier)}
+                          sx={{ minWidth: "auto", textTransform: "none" }}
                         >
-                          <EditIcon sx={{ fontSize: 14 }} />
-                        </IconButton>
+                          Manage Branches
+                        </Button>
                       </Stack>
                     ))
                   )}
@@ -297,6 +462,11 @@ const TransporterBranchesIdsTab = ({ transporter, onDataChanged }) => {
         setOpenPopup={setOpenIdentifierUpdate}
       >
         <TransportIdentifierUpdate
+          key={
+            recordForEdit && recordForEdit.id
+              ? "statutory-" + String(recordForEdit.id)
+              : "statutory-empty"
+          }
           recordForEdit={recordForEdit}
           transporterId={transporter.id}
           branchOptions={branches}

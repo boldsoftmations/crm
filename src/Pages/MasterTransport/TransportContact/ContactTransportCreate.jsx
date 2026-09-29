@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Box,
   Button,
   FormControlLabel,
@@ -56,6 +57,7 @@ function ContactTransportCreate({
   // transporter type, not just Surface, since every transporter can have
   // branches/offices regardless of capability.
   const [branchOptions, setBranchOptions] = useState([]);
+  const [serviceabilityStatus, setServiceabilityStatus] = useState("idle");
 
   const { handleError, handleCloseSnackbar, alertInfo, handleSuccess } =
     useNotificationHandling();
@@ -114,6 +116,7 @@ function ContactTransportCreate({
     setUnitOptions([]);
     setCityOptions([]);
     setBranchOptions([]);
+    setServiceabilityStatus("idle");
 
     if (!value || !value.id) {
       console.log("Invalid transporter selection");
@@ -145,11 +148,13 @@ function ContactTransportCreate({
     // would always return an empty list anyway - skip the wasted call and
     // leave Unit/City hidden entirely (see the render section below).
     if (value.transporter_type !== "Surface Transport") {
+      setServiceabilityStatus("not-applicable");
       return;
     }
 
     try {
       setLoading(true);
+      setServiceabilityStatus("loading");
 
       const response = await MasterService.getTransportContact(value.id);
       console.log(value.id, response);
@@ -189,6 +194,9 @@ function ContactTransportCreate({
 
       setUnitOptions(units);
       setCityOptions(cities);
+      setServiceabilityStatus(
+        units.length > 0 || cities.length > 0 ? "available" : "none",
+      );
 
       // ==============================
       // Auto Fill Single Option
@@ -201,7 +209,13 @@ function ContactTransportCreate({
         city: cities.length === 1 ? cities[0].city : "",
       }));
     } catch (error) {
-      handleError(error);
+      // Serviceability mapping is optional for a transporter contact.
+      // If there is no Unit/Pincode mapping (or the helper lookup fails),
+      // keep Unit/City empty and still allow the contact to be created.
+      console.error("Serviceability lookup unavailable for contact:", error);
+      setUnitOptions([]);
+      setCityOptions([]);
+      setServiceabilityStatus("none");
     } finally {
       setLoading(false);
     }
@@ -258,8 +272,8 @@ function ContactTransportCreate({
         // Identifier which had exact payload shapes specified. Confirm
         // the real field name with backend before relying on this.
         branch: formData.branch_id,
-        unit: isSurface ? formData.unit : null,
-        city: isSurface ? formData.city : null,
+        unit: isSurface && formData.unit ? formData.unit : null,
+        city: isSurface && formData.city ? formData.city : null,
         contact_person: formData.contact_person,
         designation_role: formData.designation_role,
         mobile_number: formData.mobile_number,
@@ -293,6 +307,8 @@ function ContactTransportCreate({
 
     setUnitOptions([]);
     setCityOptions([]);
+    setBranchOptions([]);
+    setServiceabilityStatus("idle");
   };
 
   return (
@@ -366,50 +382,65 @@ function ContactTransportCreate({
             />
           </Grid>
 
-          {/* Unit + City - only meaningful for Surface transporters (see
-              note in handleTransporterChange above). Hidden entirely for
-              Courier / Local-Adhoc rather than shown disabled/empty, since
-              an empty required dropdown would just confuse the user. */}
-          {formData.transporter_type === "Surface Transport" && (
-            <>
-              <Grid item xs={12} sm={6}>
-                <CustomAutocomplete
-                  fullWidth
-                  size="small"
-                  options={unitOptions}
-                  value={
-                    unitOptions.find((opt) => opt.unit === formData.unit) || null
-                  }
-                  getOptionLabel={(option) => (option.unit ? option.unit : "")}
-                  onChange={(e, value) =>
-                    handleAutocompleteChange("unit", value ? value.unit : "")
-                  }
-                  label="Unit"
-                  required
-                  disabled={!formData.transporter}
-                />
+          {/* Surface contact does NOT depend on serviceability mapping.
+              When mappings exist, Unit/City are optional helper fields. When
+              no Unit/Pincode mapping exists, the user can still save the
+              transporter contact normally. */}
+          {formData.transporter_type === "Surface Transport" &&
+            serviceabilityStatus === "none" && (
+              <Grid item xs={12}>
+                <Alert severity="info">
+                  No Unit / Pincode serviceability mapping is available for
+                  this Surface transporter. You can still add the contact;
+                  Unit and City are optional contact details.
+                </Alert>
               </Grid>
+            )}
 
-              <Grid item xs={12} sm={6}>
-                <CustomAutocomplete
-                  fullWidth
-                  size="small"
-                  options={cityOptions}
-                  value={
-                    cityOptions.find((opt) => opt.city === formData.city) ||
-                    null
-                  }
-                  getOptionLabel={(option) => (option.city ? option.city : "")}
-                  onChange={(e, value) =>
-                    handleAutocompleteChange("city", value ? value.city : "")
-                  }
-                  label="City"
-                  required
-                  disabled={!formData.transporter}
-                />
-              </Grid>
-            </>
-          )}
+          {formData.transporter_type === "Surface Transport" &&
+            serviceabilityStatus === "available" && (
+              <>
+                <Grid item xs={12} sm={6}>
+                  <CustomAutocomplete
+                    fullWidth
+                    size="small"
+                    options={unitOptions}
+                    value={
+                      unitOptions.find((opt) => opt.unit === formData.unit) ||
+                      null
+                    }
+                    getOptionLabel={(option) =>
+                      option.unit ? option.unit : ""
+                    }
+                    onChange={(e, value) =>
+                      handleAutocompleteChange("unit", value ? value.unit : "")
+                    }
+                    label="Unit (optional)"
+                    disabled={!formData.transporter}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <CustomAutocomplete
+                    fullWidth
+                    size="small"
+                    options={cityOptions}
+                    value={
+                      cityOptions.find((opt) => opt.city === formData.city) ||
+                      null
+                    }
+                    getOptionLabel={(option) =>
+                      option.city ? option.city : ""
+                    }
+                    onChange={(e, value) =>
+                      handleAutocompleteChange("city", value ? value.city : "")
+                    }
+                    label="City (optional)"
+                    disabled={!formData.transporter}
+                  />
+                </Grid>
+              </>
+            )}
 
           {/* Contact Person */}
           <Grid item xs={12} sm={6}>

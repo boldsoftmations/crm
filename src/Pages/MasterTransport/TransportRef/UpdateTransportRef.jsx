@@ -227,7 +227,7 @@ const UpdateTransportRef = ({
           {!currentStatusIsClosed ? (
             <Grid item xs={12}>
               <Alert severity="warning">
-                Do not set a request to Closed here. Use Resolve Request after selecting the Surface transporter and priority.
+                Do not set a request to Closed here. Use Resolve Request after selecting the Surface transporter.
               </Alert>
             </Grid>
           ) : null}

@@ -6,13 +6,10 @@ import {
   Button,
   CircularProgress,
   Grid,
-  MenuItem,
   TextField,
 } from "@mui/material";
 import MasterService from "../../../services/MasterService";
 import CustomSnackbar from "../../../Components/CustomerSnackbar";
-
-const PRIORITY_OPTIONS = ["High", "Medium", "Low"];
 
 const ResolveTransportRequest = ({
   dataForResolve,
@@ -21,7 +18,6 @@ const ResolveTransportRequest = ({
 }) => {
   const [surfaceTransporters, setSurfaceTransporters] = useState([]);
   const [selectedTransporter, setSelectedTransporter] = useState(null);
-  const [priority, setPriority] = useState("Low");
   const [loadingTransporters, setLoadingTransporters] = useState(false);
   const [isResolving, setIsResolving] = useState(false);
   const [alertmsg, setAlertMsg] = useState({
@@ -79,7 +75,6 @@ const ResolveTransportRequest = ({
     if (dataForResolve && dataForResolve.id) {
       loadSurfaceTransporters();
       setSelectedTransporter(null);
-      setPriority("Low");
     }
   }, [dataForResolve]);
 
@@ -117,7 +112,6 @@ const ResolveTransportRequest = ({
 
       await MasterService.resolveTransportRequest(dataForResolve.id, {
         transporter_id: selectedTransporter.id,
-        priority: priority,
       });
 
       setAlertMsg({
@@ -282,22 +276,6 @@ const ResolveTransportRequest = ({
             </Grid>
           ) : null}
 
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              select
-              size="small"
-              label="Priority"
-              value={priority}
-              onChange={(event) => setPriority(event.target.value)}
-            >
-              {PRIORITY_OPTIONS.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
 
           <Grid item xs={12}>
             <Alert severity="info">

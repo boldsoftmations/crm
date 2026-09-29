@@ -79,8 +79,6 @@ const TransPortMapping = ({ lockedTransporter }) => {
     "TRANSPORTER",
     "PINCODE",
     "UNIT",
-    "PRIORITY",
-    "IS SYSTEM DEFAULT",
     "CREATED BY",
     "UPDATED BY",
     "CREATION DATE",
@@ -204,8 +202,6 @@ const TransPortMapping = ({ lockedTransporter }) => {
     transporter: value.transporter,
     pincode: value.pincode,
     unit: value.unit,
-    priority: value.priority,
-    is_system_default: value.is_system_default ? "Yes" : "No",
     created_by: value.created_by,
     updated_by: value.updated_by,
     creation_date: value.creation_date,
@@ -221,10 +217,7 @@ const TransPortMapping = ({ lockedTransporter }) => {
   // don't even render the list/filters/Add button - there is nothing
   // valid to map for them (doc: "Never create Train, Bus, Air, Self
   // Pickup or Phase-1 Courier rows for every PIN.").
-  if (
-    lockedTransporter &&
-    lockedTransporter.transporter_type !== "Surface Transport"
-  ) {
+  if (lockedTransporter && lockedTransporter.transporter_type !== "Surface Transport") {
     return (
       <Paper sx={{ p: 4, m: 4, textAlign: "center" }}>
         <MessageAlert
@@ -395,7 +388,7 @@ const TransPortMapping = ({ lockedTransporter }) => {
                 marginLeft: "auto",
               }}
             >
-              {/* {hasActiveFilters && (
+              {hasActiveFilters && (
                 <Button
                   size="small"
                   variant="outlined"
@@ -404,7 +397,7 @@ const TransPortMapping = ({ lockedTransporter }) => {
                 >
                   Clear Filters
                 </Button>
-              )} */}
+              )}
 
               <ToggleButtonGroup
                 value={isInactiveFilter}

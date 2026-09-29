@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, FormControlLabel, Grid, Switch, TextField } from "@mui/material";
+import { Box, Button, Grid, TextField } from "@mui/material";
 
 import InvoiceServices from "../../../services/InvoiceService";
 import MasterService from "../../../services/MasterService";
@@ -12,7 +12,6 @@ const initialFormState = {
   unit: "",
   pincode: "",
   transporter: "",
-  is_system_default: false,
 };
 
 const TransportMappingCreate = ({
@@ -92,9 +91,6 @@ const TransportMappingCreate = ({
     setFormData((prev) => ({ ...prev, [name]: value || "" }));
   };
 
-  const handleToggle = (e) => {
-    setFormData((prev) => ({ ...prev, is_system_default: e.target.checked }));
-  };
 
   const getAllCountryList = async () => {
     try {
@@ -336,29 +332,6 @@ const TransportMappingCreate = ({
             )}
           </Grid>
 
-          {/* Is System Default */}
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={formData.is_system_default}
-                  onChange={handleToggle}
-                  name="is_system_default"
-                  color="primary"
-                />
-              }
-              label={
-                formData.is_system_default
-                  ? "System Default: Yes"
-                  : "System Default: No"
-              }
-            />
-          </Grid>
         </Grid>
 
         {/* Action Buttons */}

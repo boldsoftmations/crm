@@ -21,7 +21,14 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 // rule (one GSTIN per state, and a transporter can have several branches
 // in the same state) and resolves the earlier open question about whether
 // GSTIN belongs to one branch or is shared - it's a many-to-many.
-const IDENTIFIER_TYPE_CHOICES = ["GSTIN", "TRANSIN", "Common Enrolment Number"];
+const IDENTIFIER_TYPE_CHOICES = ["GSTIN", "TRANSIN", "COMMON_ENROLMENT"];
+
+const getIdentifierTypeLabel = (value) => {
+  if (value === "COMMON_ENROLMENT") {
+    return "Common Enrolment Number";
+  }
+  return value || "";
+};
 
 // Doc rule: "GSTIN - ID entry is 15 alphanumeric characters; show inline
 // validation result." No length rule is given for TRANSIN or Common
@@ -100,7 +107,7 @@ function TransportIdentifierCreate({
         "Identifier created successfully!";
       handleSuccess(successMessage);
       if (getIdentifierData) {
-        getIdentifierData(transporterId);
+        await getIdentifierData(transporterId);
       }
       setTimeout(() => {
         setOpenPopup(false);
@@ -134,7 +141,7 @@ function TransportIdentifierCreate({
             size="small"
             options={IDENTIFIER_TYPE_CHOICES}
             value={formData.identifier_type || null}
-            getOptionLabel={(option) => option || ""}
+            getOptionLabel={(option) => getIdentifierTypeLabel(option)}
             onChange={(e, value) => {
               setFormData((prev) => ({
                 ...prev,

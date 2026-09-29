@@ -26,7 +26,6 @@ const TransportMappingUpdate = ({
     unit: recordForEdit.unit || "",
     pincode: recordForEdit.pincode || "",
     transporter: recordForEdit.transporter_name || "",
-    is_system_default: false,
     is_inactive: false,
   });
   const userData = useSelector((state) => state.auth.profile);
@@ -103,8 +102,6 @@ const TransportMappingUpdate = ({
         unit: recordForEdit.unit || "",
         pincode: recordForEdit.pincode || "",
         transporter: recordForEdit.transporter || "",
-        is_system_default:
-          recordForEdit.is_system_default === true ? true : false,
         is_inactive: recordForEdit.is_inactive === true ? true : false,
       });
       setPincodeInput(recordForEdit.pincode || "");
@@ -324,29 +321,6 @@ const TransportMappingUpdate = ({
             />
           </Grid>
 
-          {/* Is System Default */}
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={formData.is_system_default}
-                  onChange={handleToggle}
-                  name="is_system_default"
-                  color="primary"
-                />
-              }
-              label={
-                formData.is_system_default
-                  ? "System Default: Yes"
-                  : "System Default: No"
-              }
-            />
-          </Grid>
 
           {/* Is Inactive */}
           <Grid

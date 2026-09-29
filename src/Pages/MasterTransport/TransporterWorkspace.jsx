@@ -377,7 +377,7 @@ const TransporterOverviewTab = ({ transporter, headerStats, statsLoading }) => {
           backgroundColor: "action.hover",
         }}
       >
-        <Stack direction="row" spacing={1} alignItems="flex-start">
+        {/* <Stack direction="row" spacing={1} alignItems="flex-start">
           <InfoOutlinedIcon fontSize="small" color="action" />
           <Typography variant="caption" sx={{ color: "text.secondary" }}>
             Overview shows only data available from Transporter Master,
@@ -385,7 +385,7 @@ const TransporterOverviewTab = ({ transporter, headerStats, statsLoading }) => {
             and general notes are not shown because those fields are not
             available in the current transporter backend model.
           </Typography>
-        </Stack>
+        </Stack> */}
       </Paper>
     </Box>
   );
@@ -504,7 +504,7 @@ const TransporterHeader = ({ transporter, headerStats, statsLoading }) => {
             loading={false}
           />
         </Grid>
-        <Grid item xs={12} sm={4}>
+        {/* <Grid item xs={12} sm={4}>
           <MetricCard
             icon={<BadgeOutlinedIcon fontSize="small" />}
             label="Statutory Details"
@@ -512,7 +512,7 @@ const TransporterHeader = ({ transporter, headerStats, statsLoading }) => {
             helper="GSTIN / TRANSIN / enrolment details"
             loading={false}
           />
-        </Grid>
+        </Grid> */}
       </Grid>
     </Paper>
   );
