@@ -21,6 +21,7 @@ import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import MasterService from "../../../services/MasterService";
 import TransportMappingUpdate from "./TransportMappingUpdate";
 import TransportMappingCreate from "./TransportMappingCreate";
+import { canEditTransporterMappings } from "../../../utility/masterAccess";
 import InvoiceServices from "../../../services/InvoiceService";
 
 const TransPortMapping = ({ lockedTransporter }) => {
@@ -67,12 +68,7 @@ const TransPortMapping = ({ lockedTransporter }) => {
 
   const userData = useSelector((state) => state.auth.profile);
 
-  const isInGroups = (...groups) => {
-    if (!userData || !userData.groups || !Array.isArray(userData.groups)) {
-      return false;
-    }
-    return groups.some((group) => userData.groups.includes(group));
-  };
+  const canEditMappings = canEditTransporterMappings(userData);
 
   const tableHeader = [
     "ID",
@@ -217,7 +213,10 @@ const TransPortMapping = ({ lockedTransporter }) => {
   // don't even render the list/filters/Add button - there is nothing
   // valid to map for them (doc: "Never create Train, Bus, Air, Self
   // Pickup or Phase-1 Courier rows for every PIN.").
-  if (lockedTransporter && lockedTransporter.transporter_type !== "Surface Transport") {
+  if (
+    lockedTransporter &&
+    lockedTransporter.transporter_type !== "Surface Transport"
+  ) {
     return (
       <Paper sx={{ p: 4, m: 4, textAlign: "center" }}>
         <MessageAlert
@@ -294,12 +293,11 @@ const TransPortMapping = ({ lockedTransporter }) => {
                 minWidth: "300px",
               }}
             >
-              {userData.groups.includes("Director") && (
+              {canEditMappings && (
                 <Button
                   variant="contained"
                   color="success"
                   onClick={() => setOpenCreatePopup(true)}
-                  disabled={isInGroups("Stores")}
                 >
                   Add
                 </Button>
@@ -388,7 +386,7 @@ const TransPortMapping = ({ lockedTransporter }) => {
                 marginLeft: "auto",
               }}
             >
-              {hasActiveFilters && (
+              {/* {hasActiveFilters && (
                 <Button
                   size="small"
                   variant="outlined"
@@ -397,7 +395,7 @@ const TransPortMapping = ({ lockedTransporter }) => {
                 >
                   Clear Filters
                 </Button>
-              )}
+              )} */}
 
               <ToggleButtonGroup
                 value={isInactiveFilter}
@@ -416,6 +414,7 @@ const TransPortMapping = ({ lockedTransporter }) => {
             headers={tableHeader}
             data={tableData}
             openInPopup={openInPopup}
+            Isviewable={canEditMappings}
           />
 
           <CustomPagination

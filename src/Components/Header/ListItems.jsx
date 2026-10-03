@@ -31,12 +31,23 @@ import {
 } from "@mui/icons-material";
 import StickyNote2Icon from "@mui/icons-material/StickyNote2";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
+import {
+  canUseTransporterFinder,
+  canViewPinMaster,
+  canViewTransporterMaster,
+} from "../../utility/masterAccess";
 export const ListItems = ({ setOpen }) => {
   const { profile: userData } = useSelector((state) => state.auth);
 
+  const userGroups =
+    userData && Array.isArray(userData.groups) ? userData.groups : [];
+
   // Function to check if the user is in a specific group
-  const isInGroups = (...groups) =>
-    groups.some((g) => userData.groups.includes(g));
+  const isInGroups = (...groups) => groups.some((g) => userGroups.includes(g));
+
+  const canViewPinMasterAccess = canViewPinMaster(userData);
+  const canViewTransportMasterAccess = canViewTransporterMaster(userData);
+  const canUseTransportFinderAccess = canUseTransporterFinder(userData);
 
   const location = useLocation();
 
@@ -83,7 +94,7 @@ export const ListItems = ({ setOpen }) => {
       </ListItem>
       <Collapse in={submenuOpen[menuKey]} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          {items.map(({ to, text }, index) => (
+          {items.filter(Boolean).map(({ to, text }, index) => (
             <ListItem
               button
               component={RouterLink}
@@ -128,10 +139,12 @@ export const ListItems = ({ setOpen }) => {
           // {
           //   to: "/",
           // },
-          {
-            to: "/county-state-city/master-tab",
-            text: "Country Master",
-          },
+          canViewPinMasterAccess
+            ? {
+                to: "/county-state-city/master-tab",
+                text: "Country Master",
+              }
+            : null,
           {
             to: "/master/activity-list",
             text: "Master Activity",
@@ -140,7 +153,9 @@ export const ListItems = ({ setOpen }) => {
             to: "/master/beat",
             text: "Beat Master",
           },
-          { to: "/master/transport", text: "Transport Master" },
+          canViewTransportMasterAccess
+            ? { to: "/master/transport", text: "Transport Master" }
+            : null,
 
           { to: "lead/list-references", text: "Lead Master" },
         ]),
@@ -149,6 +164,11 @@ export const ListItems = ({ setOpen }) => {
           { to: "/inventory/view-vendor", text: "Vendor" },
           { to: "/inventory/view-purchase", text: "Purchase" },
         ]),
+        // renderListItem(
+        //   "/Transport-Finder",
+        //   <StickyNote2Icon />,
+        //   "Transport Finder",
+        // ),
         renderSubmenu("inventory", <InventoryIcon />, "Inventory", [
           { to: "/inventory/view-inventory", text: "Inventory" },
           { to: "/inventory/physical", text: "Physical Inventory" },
@@ -170,11 +190,13 @@ export const ListItems = ({ setOpen }) => {
           { to: "/market-analysis/competitor", text: "Market Analysis" },
         ]),
         renderListItem("/customer/srf", <StickyNote2Icon />, "SRF"),
-        renderListItem(
-          "/Trasnport-Finder",
-          <StickyNote2Icon />,
-          "Trasnport Finder",
-        ),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
         renderListItem("/invoice/orderbook-tab", <ReceiptIcon />, "Order Book"),
 
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
@@ -302,12 +324,22 @@ export const ListItems = ({ setOpen }) => {
           },
           { to: "/user/profile-tab", text: "Employees Master" },
         ]),
+        renderSubmenu("production", <FactoryIcon />, "Production", [
+          { to: "/inventory/view-production", text: "Production" },
+        ]),
+        renderListItem("/invoice/orderbook-tab", <ReceiptIcon />, "Order Book"),
+        renderSubmenu("inventory", <FactoryIcon />, "Inventory", [
+          { to: "/inventory/stock-alert", text: "Stock Summary" },
+        ]),
         renderSubmenu(
           "customer_complaint",
           <ComplaintIcon />,
           "Customer Complaint",
           [{ to: "/customer/complaints/ccp-capa", text: "CCF-CAPA" }],
         ),
+        renderSubmenu("ReturnOrder", <DescriptionIcon />, "ReturnOrder", [
+          { to: "/inventory/sales-return", text: "Sales Return" },
+        ]),
       ],
     },
 
@@ -337,7 +369,17 @@ export const ListItems = ({ setOpen }) => {
       items: [
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
+          canViewTransportMasterAccess
+            ? { to: "/master/transport", text: "Transport Master" }
+            : null,
         ]),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
         renderListItem("/dispatch/tab-view", <LocalShippingIcon />, "Dispatch"),
         renderListItem("/customer/srf", <StickyNote2Icon />, "SRF"),
         renderListItem("/invoice/orderbook-tab", <ReceiptIcon />, "Order Book"),
@@ -355,8 +397,23 @@ export const ListItems = ({ setOpen }) => {
             text: "CCF Complaint Master",
           },
           { to: "/user/profile-tab", text: "Employees Master" },
-          { to: "/master/transport", text: "Transport Master" },
+          canViewPinMasterAccess
+            ? {
+                to: "/county-state-city/master-tab",
+                text: "Country Master",
+              }
+            : null,
+          canViewTransportMasterAccess
+            ? { to: "/master/transport", text: "Transport Master" }
+            : null,
         ]),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },
         ]),
@@ -391,8 +448,17 @@ export const ListItems = ({ setOpen }) => {
       items: [
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
-          { to: "/master/transport", text: "Transport Master" },
+          canViewTransportMasterAccess
+            ? { to: "/master/transport", text: "Transport Master" }
+            : null,
         ]),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
         renderListItem("/customer/srf", <StickyNote2Icon />, "SRF"),
         renderListItem("/invoice/orderbook-tab", <ReceiptIcon />, "Order Book"),
         renderSubmenu("inventory", <InventoryIcon />, "Inventory", [
@@ -474,11 +540,23 @@ export const ListItems = ({ setOpen }) => {
             to: "/customer/complaints/ccp-capa/master",
             text: "CCF Complaint Master",
           },
-          {
-            to: "/county-state-city/master-tab",
-            text: "Country Master",
-          },
+          canViewPinMasterAccess
+            ? {
+                to: "/county-state-city/master-tab",
+                text: "Country Master",
+              }
+            : null,
+          canViewTransportMasterAccess
+            ? { to: "/master/transport", text: "Transport Master" }
+            : null,
         ]),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },
           { to: "/invoice/sales-invoice", text: "Sales Invoice" },
@@ -525,12 +603,24 @@ export const ListItems = ({ setOpen }) => {
       items: [
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/products/all-product", text: "Inventory Master" },
-          {
-            to: "/county-state-city/master-tab",
-            text: "Country Master",
-          },
+          canViewPinMasterAccess
+            ? {
+                to: "/county-state-city/master-tab",
+                text: "Country Master",
+              }
+            : null,
           { to: "/user/profile-tab", text: "Employees Master" },
+          canViewTransportMasterAccess
+            ? { to: "/master/transport", text: "Transport Master" }
+            : null,
         ]),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
         renderSubmenu("accounts", <AttachMoneyIcon />, "Accounts", [
           { to: "/products/view-price-list", text: "Price List" },
         ]),
@@ -560,7 +650,23 @@ export const ListItems = ({ setOpen }) => {
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
+          canViewPinMasterAccess
+            ? {
+                to: "/county-state-city/master-tab",
+                text: "Country Master",
+              }
+            : null,
+          canViewTransportMasterAccess
+            ? { to: "/master/transport", text: "Transport Master" }
+            : null,
         ]),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
 
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },
@@ -601,15 +707,17 @@ export const ListItems = ({ setOpen }) => {
     },
     // Sales Manager
     {
-      condition: userData.groups.includes("Sales Manager"),
+      condition: isInGroups("Sales Manager"),
       items: [
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
-          {
-            to: "/county-state-city/master-tab",
-            text: "Country Master",
-          },
+          canViewPinMasterAccess
+            ? {
+                to: "/county-state-city/master-tab",
+                text: "Country Master",
+              }
+            : null,
           { to: "lead/list-references", text: "Lead summary Master" },
 
           {
@@ -620,8 +728,17 @@ export const ListItems = ({ setOpen }) => {
             to: "/master/beat",
             text: "Beat Master",
           },
-          { to: "/master/transport", text: "Transport Master" },
+          canViewTransportMasterAccess
+            ? { to: "/master/transport", text: "Transport Master" }
+            : null,
         ]),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
         renderListItem(
           "/master/customer-visit",
           <DirectionsRunIcon />,
@@ -654,15 +771,17 @@ export const ListItems = ({ setOpen }) => {
 
     // Sales Manager(Retailer)
     {
-      condition: userData.groups.includes("Sales Manager(Retailer)"),
+      condition: isInGroups("Sales Manager(Retailer)"),
       items: [
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
-          {
-            to: "/county-state-city/master-tab",
-            text: "Country Master",
-          },
+          canViewPinMasterAccess
+            ? {
+                to: "/county-state-city/master-tab",
+                text: "Country Master",
+              }
+            : null,
           { to: "lead/list-references", text: "Lead summary Master" },
 
           {
@@ -673,11 +792,20 @@ export const ListItems = ({ setOpen }) => {
             to: "/master/beat",
             text: "Beat Master",
           },
-          {
-            to: "/master/transport",
-            text: "Transport Master",
-          },
+          canViewTransportMasterAccess
+            ? {
+                to: "/master/transport",
+                text: "Transport Master",
+              }
+            : null,
         ]),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
         renderListItem(
           "/master/customer-visit",
           <DirectionsRunIcon />,
@@ -717,6 +845,13 @@ export const ListItems = ({ setOpen }) => {
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
         ]),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },
         ]),
@@ -750,6 +885,13 @@ export const ListItems = ({ setOpen }) => {
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
         ]),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
 
         renderSubmenu("sales", <TrendingUpIcon />, "Sales", [
           { to: "/leads/all-lead", text: "Leads" },
@@ -765,7 +907,23 @@ export const ListItems = ({ setOpen }) => {
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
+          canViewPinMasterAccess
+            ? {
+                to: "/county-state-city/master-tab",
+                text: "Country Master",
+              }
+            : null,
+          canViewTransportMasterAccess
+            ? { to: "/master/transport", text: "Transport Master" }
+            : null,
         ]),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
 
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },
@@ -804,7 +962,23 @@ export const ListItems = ({ setOpen }) => {
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
+          canViewPinMasterAccess
+            ? {
+                to: "/county-state-city/master-tab",
+                text: "Country Master",
+              }
+            : null,
+          canViewTransportMasterAccess
+            ? { to: "/master/transport", text: "Transport Master" }
+            : null,
         ]),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },
         ]),
@@ -838,6 +1012,13 @@ export const ListItems = ({ setOpen }) => {
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
         ]),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
         renderSubmenu("sales", <TrendingUpIcon />, "Sales", [
           { to: "/leads/all-lead", text: "Leads" },
           { to: "/customers/all-customer", text: "Customer" },
@@ -860,6 +1041,13 @@ export const ListItems = ({ setOpen }) => {
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
         ]),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
       ],
     },
     //Sales Manager withouth Leads
@@ -872,8 +1060,17 @@ export const ListItems = ({ setOpen }) => {
           { to: "/products/all-product", text: "Inventory Master" },
           { to: "/invoice/seller-account", text: "Company Master" },
           { to: "/user/profile-tab", text: "Employees Master" },
-          { to: "/master/transport", text: "Transport Master" },
+          canViewTransportMasterAccess
+            ? { to: "/master/transport", text: "Transport Master" }
+            : null,
         ]),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },
           { to: "/invoice/sales-invoice", text: "Sales Invoice" },
@@ -917,12 +1114,18 @@ export const ListItems = ({ setOpen }) => {
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
         renderSubmenu("master", <BusinessIcon />, "Master", [
           { to: "/user/profile-tab", text: "Employees Master" },
-          {
-            to: "/county-state-city/master-tab",
-            text: "Country Master",
-          },
-          { to: "/master/transport", text: "Transport Master" },
+          canViewPinMasterAccess
+            ? {
+                to: "/county-state-city/master-tab",
+                text: "Country Master",
+              }
+            : null,
         ]),
+        renderListItem(
+          "/Transport-Finder",
+          <StickyNote2Icon />,
+          "Transport Finder",
+        ),
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },
         ]),
@@ -939,6 +1142,13 @@ export const ListItems = ({ setOpen }) => {
           "Customer Complaint",
           [{ to: "/customer/complaints/ccp-capa", text: "CCF-CAPA" }],
         ),
+        canUseTransportFinderAccess
+          ? renderListItem(
+              "/Transport-Finder",
+              <StickyNote2Icon />,
+              "Transport Finder",
+            )
+          : null,
         // renderListItem("/user/faq", <HelpOutlineIcon />, "Script"),
         renderListItem("/invoice/orderbook-tab", <ReceiptIcon />, "Order Book"),
         renderListItem("/dispatch/tab-view", <LocalShippingIcon />, "Dispatch"),

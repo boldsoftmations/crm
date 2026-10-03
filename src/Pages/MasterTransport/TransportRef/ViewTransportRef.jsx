@@ -23,6 +23,7 @@ import MasterService from "../../../services/MasterService";
 import { Popup } from "../../../Components/Popup";
 import UpdateTransportRef from "./UpdateTransportRef";
 import ResolveTransportRequest from "./ResolveTransportRequest";
+import { canManageTransportAssignmentRequests } from "../../../utility/masterAccess";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -110,27 +111,14 @@ const ViewTransportRef = () => {
   const [openResolvePopup, setOpenResolvePopup] = useState(false);
   const [resolveRecord, setResolveRecord] = useState(null);
 
+  const canManageRequest = canManageTransportAssignmentRequests(userData);
+
   const userGroups =
     userData && userData.groups && Array.isArray(userData.groups)
       ? userData.groups
       : [];
 
-  // Matches backend write access + the operational roles called out in the
-  // Geo/Transporter handover. Sales can view the queue but cannot resolve it.
-  const manageRequestRoles = [
-    "Director",
-    "Admin",
-    "Dispatch",
-    "Factory-Mumbai-Dispatch",
-    "Factory-Delhi-Dispatch",
-    "Operations & Supply Chain Manager",
-    "Customer Service",
-    "Customer Relationship Manager",
-  ];
-
-  const canManageRequest = manageRequestRoles.some((role) =>
-    userGroups.includes(role),
-  );
+  const isInGroups = (...groups) => groups.some((g) => userGroups.includes(g));
 
   const getTransportRefData = useCallback(async () => {
     try {
@@ -213,7 +201,8 @@ const ViewTransportRef = () => {
             variant="body2"
             sx={{ textAlign: "center", color: "#777", mt: 0.5 }}
           >
-            Surface mapping requests created automatically when a Customer PI is saved as To Be Assigned.
+            Surface mapping requests created automatically when a Customer PI is
+            saved as To Be Assigned.
           </Typography>
         </Box>
 
@@ -284,7 +273,9 @@ const ViewTransportRef = () => {
                 <StyledTableCell align="center">Request</StyledTableCell>
                 <StyledTableCell align="center">Created At</StyledTableCell>
                 <StyledTableCell align="center">Unit</StyledTableCell>
-                <StyledTableCell align="center">Postal Code / Pincode</StyledTableCell>
+                <StyledTableCell align="center">
+                  Postal Code / Pincode
+                </StyledTableCell>
                 <StyledTableCell align="center">Customer</StyledTableCell>
                 <StyledTableCell align="center">PI</StyledTableCell>
                 <StyledTableCell align="center">Requested By</StyledTableCell>
@@ -315,7 +306,9 @@ const ViewTransportRef = () => {
                               ? row.pincode_text
                               : "-"}
                         </Typography>
-                        {row.canonical_pincode && row.pincode_text && row.canonical_pincode !== row.pincode_text ? (
+                        {row.canonical_pincode &&
+                        row.pincode_text &&
+                        row.canonical_pincode !== row.pincode_text ? (
                           <Typography variant="caption" sx={{ color: "#777" }}>
                             Raw: {row.pincode_text}
                           </Typography>
@@ -350,7 +343,9 @@ const ViewTransportRef = () => {
                       {row.remarks ? row.remarks : "-"}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {canManageRequest && isOpenForResolution(row) ? (
+                      {canManageRequest ||
+                      (isInGroups("Customer Service") &&
+                        isOpenForResolution(row)) ? (
                         <Stack
                           direction="row"
                           spacing={1}

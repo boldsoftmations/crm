@@ -1,0 +1,22 @@
+Backend Error UI Fix
+
+Changed:
+1. src/Components/useNotificationHandling .jsx
+2. src/Components/MessageAlert.jsx
+
+Now supports:
+- {message: "..."}
+- {detail: "..."}
+- {error: "..."}
+- {errors: {...}}
+- DRF direct field errors: {field: ["..."]}
+- arrays/nested validation errors
+- DRF ErrorDetail(...) string responses
+- network/server fallback messages
+
+Example:
+Backend:
+{"mobile_number":["This contact number is already mapped with another transporter contact."]}
+
+UI:
+Mobile Number: This contact number is already mapped with another transporter contact.
