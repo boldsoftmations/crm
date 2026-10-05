@@ -173,14 +173,19 @@ const ViewTransportRef = () => {
   };
 
   const handleEditClick = (row) => {
+    if (isResolvedRequest(row)) return;
     setRecordData(row);
     setOpenEditPopup(true);
   };
 
   const handleResolveClick = (row) => {
+    if (isResolvedRequest(row)) return;
     setResolveRecord(row);
     setOpenResolvePopup(true);
   };
+
+  const isResolvedRequest = (row) =>
+    row && ["closed", "resolved"].includes(String(row.status || "").trim().toLowerCase());
 
   const isOpenForResolution = (row) =>
     row && (row.status === "Open" || row.status === "In Progress");
@@ -343,9 +348,10 @@ const ViewTransportRef = () => {
                       {row.remarks ? row.remarks : "-"}
                     </StyledTableCell>
                     <StyledTableCell align="center">
-                      {canManageRequest ||
-                      (isInGroups("Customer Service") &&
-                        isOpenForResolution(row)) ? (
+                      {!isResolvedRequest(row) &&
+                      (canManageRequest ||
+                        (isInGroups("Customer Service") &&
+                          isOpenForResolution(row))) ? (
                         <Stack
                           direction="row"
                           spacing={1}

@@ -299,7 +299,7 @@ const TransPortMapping = ({ lockedTransporter }) => {
                   color="success"
                   onClick={() => setOpenCreatePopup(true)}
                 >
-                  Add
+                  {lockedTransporter ? "Add Serviceability" : "Add"}
                 </Button>
               )}
             </Box>

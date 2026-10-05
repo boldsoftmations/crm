@@ -391,6 +391,12 @@ export const ListItems = ({ setOpen }) => {
       condition: isInGroups("Customer Service"),
       items: [
         renderListItem("/user/analytics", <DashboardIcon />, "Analytics"),
+
+        renderListItem(
+          "/Transport-Finder",
+          <StickyNote2Icon />,
+          "Transport Finder",
+        ),
         renderSubmenu("master", <BusinessIcon />, "Master", [
           {
             to: "/customer/complaints/ccp-capa/master",
@@ -407,13 +413,7 @@ export const ListItems = ({ setOpen }) => {
             ? { to: "/master/transport", text: "Transport Master" }
             : null,
         ]),
-        canUseTransportFinderAccess
-          ? renderListItem(
-              "/Transport-Finder",
-              <StickyNote2Icon />,
-              "Transport Finder",
-            )
-          : null,
+
         renderSubmenu("invoice", <InsertDriveFileIcon />, "Invoice", [
           { to: "/invoice/performa-invoice-tab", text: "Performa Invoice" },
         ]),
