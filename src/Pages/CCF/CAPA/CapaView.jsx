@@ -28,8 +28,8 @@ import { CreateCreditNote } from "./CreateCreditNote";
 import { CreateMaterialReturn } from "./CreateMaterialReturn";
 // import UpdateCAPAStatus from "./UpdateCAPAStatus";
 import UpdateCAPAStatus from "./UpdateCAPAStatus";
-import UpdateCapa from "./UpdateCapa";
 import Updatesettlement from "./Updatesettlement";
+import UpdateCapa from "./UpdateCapa";
 
 export const CapaView = ({ defaultStatus = "", isClose = false }) => {
   const [open, setOpen] = useState(false);
