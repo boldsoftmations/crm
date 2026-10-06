@@ -14,13 +14,12 @@ const CustomAutocomplete = ({
   getOptionLabel,
   label,
   sx,
-  renderInput, // Existing custom renderInput
-  multiple, // Added for multi-select functionality
-  limitTags, // Added to limit the number of tags shown
-  freeSolo, // Added for allowing arbitrary values not present in the options
+  renderInput,
+  multiple,
+  limitTags,
+  freeSolo,
   renderTags,
-  disabled, // Added for custom tag rendering
-  // Include any additional props that might be necessary
+  disabled,
 }) => (
   <Autocomplete
     size={size || "small"}
