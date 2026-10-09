@@ -8,7 +8,7 @@ import { CustomLoader } from "../../../Components/CustomLoader";
 import { useSelector } from "react-redux";
 import {
   canCreateTransporter,
-  canEditTransporterCapability,
+  canSetTransporterTypeOnCreate,
 } from "../../../utility/masterAccess";
 
 const TRANSPORTER_TYPE_CHOICES = [
@@ -35,7 +35,7 @@ function MasterTransportCreate({ getTransportData, setOpenPopup }) {
   };
   const userData = useSelector((state) => state.auth.profile);
   const canCreate = canCreateTransporter(userData);
-  const canEditType = canEditTransporterCapability(userData);
+  const canSetType = canSetTransporterTypeOnCreate(userData);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,7 +47,7 @@ function MasterTransportCreate({ getTransportData, setOpenPopup }) {
     try {
       setLoading(true);
 
-      const payload = canEditType
+      const payload = canSetType
         ? formData
         : { transporter_name: formData.transporter_name };
 
@@ -94,8 +94,7 @@ function MasterTransportCreate({ getTransportData, setOpenPopup }) {
             />
           </Grid>
 
-          {/* Type / Capability is managed by Operations/Dispatch Manager or Admin. */}
-          {canEditType && (
+          {canSetType && (
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
