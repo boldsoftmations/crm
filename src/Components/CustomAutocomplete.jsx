@@ -20,6 +20,9 @@ const CustomAutocomplete = ({
   freeSolo,
   renderTags,
   disabled,
+  required,
+  error,
+  helperText,
 }) => (
   <Autocomplete
     size={size || "small"}
@@ -31,7 +34,16 @@ const CustomAutocomplete = ({
     groupBy={groupBy}
     getOptionLabel={getOptionLabel || ((option) => option)} // Ensuring there's a default getOptionLabel
     renderInput={
-      renderInput || ((params) => <CustomTextField {...params} label={label} />)
+      renderInput ||
+      ((params) => (
+        <CustomTextField
+          {...params}
+          label={label}
+          required={required}
+          error={error}
+          helperText={helperText}
+        />
+      ))
     }
     sx={sx}
     multiple={multiple}
