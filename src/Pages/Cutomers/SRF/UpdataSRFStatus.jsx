@@ -18,6 +18,10 @@ const UpdateSRFStatus = ({ setOpenPopup, getCustomerSRF, recordData }) => {
   );
   const [fileData, setFileData] = useState(null);
   const [lr_no, setLr_no] = useState(recordData.lr_no ? recordData.lr_no : "");
+  const [grn, setGrn] = useState(recordData.grn ? recordData.grn : "");
+  const [transport, setTransport] = useState(
+    recordData.transport ? recordData.transport : ""
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
   const [alertMsg, setAlertMsg] = useState({
@@ -26,6 +30,13 @@ const UpdateSRFStatus = ({ setOpenPopup, getCustomerSRF, recordData }) => {
     open: false,
   });
   const userData = useSelector((state) => state.auth.profile);
+  const isQaOrDirector =
+    (userData.groups && userData.groups.includes("QA")) ||
+    (userData.groups && userData.groups.includes("Director"));
+  const canAddCustomerFeedback =
+    (userData.groups.includes("Customer Service") ||
+      userData.groups.includes("Director")) &&
+    recordData.status === "Dispatched";
   const handleCloseSnackbar = () =>
     setAlertMsg((prev) => ({ ...prev, open: false }));
 
@@ -62,6 +73,8 @@ const UpdateSRFStatus = ({ setOpenPopup, getCustomerSRF, recordData }) => {
       if (!recordData.feedback && customerFeedback)
         formData.append("feedback", customerFeedback);
       if (remark !== undefined) formData.append("remark", remark || "");
+      if (grn) formData.append("grn", grn);
+      if (transport) formData.append("transport", transport);
 
       const res = await CustomerServices.updateCustomerSRfStatus(
         recordData.id,
@@ -188,18 +201,6 @@ const UpdateSRFStatus = ({ setOpenPopup, getCustomerSRF, recordData }) => {
           </Grid>
         )}
 
-        {!recordData.lr_image && status === "Dispatched" && (
-          <Grid item xs={12}>
-            <TextField
-              size="small"
-              fullWidth
-              value={remark || ""}
-              onChange={(e) => setRemark(e.target.value)}
-              label="Remark"
-            />
-          </Grid>
-        )}
-
         <Grid item xs={12}>
           <TextField
             size="small"
@@ -209,6 +210,39 @@ const UpdateSRFStatus = ({ setOpenPopup, getCustomerSRF, recordData }) => {
             onChange={(e) => setLr_no(e.target.value)}
           />
         </Grid>
+        {isQaOrDirector && (
+          <>
+            <Grid item xs={12}>
+              <TextField
+                size="small"
+                fullWidth
+                label="GRN"
+                value={grn || ""}
+                onChange={(e) => setGrn(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                size="small"
+                fullWidth
+                label="Transport"
+                value={transport || ""}
+                onChange={(e) => setTransport(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                multiline
+                rows={3}
+                size="small"
+                fullWidth
+                label="Remark"
+                value={remark || ""}
+                onChange={(e) => setRemark(e.target.value)}
+              />
+            </Grid>
+          </>
+        )}
         {(userData.groups.includes("Customer Service") ||
           userData.groups.includes("Director")) &&
           recordData.status === "Dispatched" && (
@@ -231,7 +265,18 @@ const UpdateSRFStatus = ({ setOpenPopup, getCustomerSRF, recordData }) => {
             type="submit"
             fullWidth
             disabled={
-              recordData.feedback && recordData.status && recordData.lr_image
+              isQaOrDirector
+                ? Boolean(
+                    recordData.grn &&
+                      recordData.transport &&
+                      recordData.remark &&
+                      (!canAddCustomerFeedback || recordData.feedback),
+                  )
+                : Boolean(
+                    recordData.feedback &&
+                      recordData.status &&
+                      recordData.lr_image,
+                  )
             }
           >
             Update Status
