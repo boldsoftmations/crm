@@ -898,7 +898,7 @@ export const UpdateLeads = memo((props) => {
             />
             <Button
               size="small"
-              onClick={validatePinCode}
+              onClick={() => validatePinCode()}
               variant="contained"
               sx={{ marginLeft: "1rem" }}
               disabled={UserData.groups.includes("Digital Marketing")}
