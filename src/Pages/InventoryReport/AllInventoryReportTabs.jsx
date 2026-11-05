@@ -20,18 +20,12 @@ export const AllInventoryReportTabs = () => {
         "Operations & Supply Chain Manager",
         "Stores",
         "Production",
-        "QA",
       ],
       component: <StocklimitView />,
     },
     {
       label: "Stock Report",
-      roles: [
-        "Director",
-        "Accounts",
-        "Operations & Supply Chain Manager",
-        "QA",
-      ],
+      roles: ["Director", "Accounts", "Operations & Supply Chain Manager"],
       component: <StockRportView />,
     },
   ];
