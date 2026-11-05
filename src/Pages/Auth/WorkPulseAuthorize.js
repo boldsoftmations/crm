@@ -33,13 +33,21 @@ function parameters(search) {
 function callbackURL(value, params, issuer) {
   const url = new URL(value);
   const expected = new URL(params.redirect_uri);
+  const isLoopback =
+    (url.hostname === "127.0.0.1" || url.hostname === "localhost") &&
+    (expected.hostname === "127.0.0.1" || expected.hostname === "localhost") &&
+    url.port === expected.port &&
+    url.protocol === "http:";
+
+  const cleanPath = (p) => p.replace(/\/$/, "");
+
   if (
-    url.protocol !== "http:" ||
-    url.hostname !== "127.0.0.1" ||
-    url.origin !== expected.origin ||
-    url.pathname !== "/crm/callback" ||
+    !isLoopback ||
+    cleanPath(url.pathname) !== cleanPath(expected.pathname) ||
     url.searchParams.get("state") !== params.state ||
-    url.searchParams.get("iss") !== issuer ||
+    (issuer &&
+      url.searchParams.get("iss") &&
+      url.searchParams.get("iss") !== issuer) ||
     !url.searchParams.get("code")
   )
     throw new Error(
@@ -47,6 +55,25 @@ function callbackURL(value, params, issuer) {
     );
   return url.href;
 }
+
+function formatErrorMessage(err, defaultMsg) {
+  if (!err) return defaultMsg;
+  const data = err.response && err.response.data;
+  if (typeof data === "string") return data;
+  if (Array.isArray(data) && data.length > 0) {
+    return typeof data[0] === "string" ? data[0] : JSON.stringify(data[0]);
+  }
+  if (data && typeof data === "object") {
+    if (data.detail) return data.detail;
+    if (data.error) return data.error;
+    if (data.message) return data.message;
+    if (data.non_field_errors && Array.isArray(data.non_field_errors)) {
+      return data.non_field_errors[0];
+    }
+  }
+  return err.message || defaultMsg;
+}
+
 export default function WorkPulseAuthorize() {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -74,14 +101,9 @@ export default function WorkPulseAuthorize() {
         removeUser(); // Prevent the existing Axios interceptor attaching an expired JWT to password login.
         dispatch(logoutUser());
         setNeedsLogin(true);
-      } else
-        setError(
-          (err.response &&
-            err.response.data &&
-            (err.response.data.detail || err.response.data.error)) ||
-            err.message ||
-            "CRM authorization failed.",
-        );
+      } else {
+        setError(formatErrorMessage(err, "CRM authorization failed."));
+      }
     } finally {
       if (inFlight.current === run) inFlight.current = false;
       if (mounted.current && run === generation.current) setBusy(false);
@@ -115,8 +137,10 @@ export default function WorkPulseAuthorize() {
       .catch((err) => {
         if (!mounted.current || run !== generation.current) return;
         setError(
-          (err.response && err.response.data && err.response.data.detail) ||
+          formatErrorMessage(
+            err,
             "This WorkPulse login request could not be validated.",
+          ),
         );
         setBusy(false);
       });
@@ -129,26 +153,70 @@ export default function WorkPulseAuthorize() {
     authorize(parameters(location.search), options, generation.current);
   }
   return (
-    <section style={{ maxWidth: 520, margin: "60px auto", padding: 24 }}>
-      <h2>Login to BOLD WorkPulse</h2>
+    <section
+      style={{
+        maxWidth: 520,
+        margin: "60px auto",
+        padding: 24,
+        color: "#1e293b",
+      }}
+    >
+      <h2 style={{ color: "#0f172a", marginBottom: 16 }}>
+        Login to BOLD WorkPulse
+      </h2>
       {options && (
-        <p>
+        <p style={{ color: "#334155" }}>
           Continue from {options.company_name || "your CRM"} to{" "}
-          {options.client_name}.
+          <strong>{options.client_name}</strong>.
         </p>
       )}
-      {busy && <p role="status">Verifying your CRM login…</p>}
-      {error && <p role="alert">{String(error)}</p>}
+      {busy && (
+        <p role="status" style={{ color: "#2563eb" }}>
+          Verifying your CRM login…
+        </p>
+      )}
+      {error && (
+        <div
+          role="alert"
+          style={{
+            backgroundColor: "#fee2e2",
+            border: "1px solid #f87171",
+            color: "#991b1b",
+            padding: "12px 16px",
+            borderRadius: 6,
+            marginBottom: 16,
+            fontWeight: 500,
+          }}
+        >
+          {String(error)}
+        </div>
+      )}
       {needsLogin && options && (
         <>
-          <p>Sign in to CRM to continue to the desktop agent.</p>
+          <p style={{ color: "#334155" }}>
+            Sign in to CRM to continue to the desktop agent.
+          </p>
           <Login onSuccess={continueLogin} />
         </>
       )}
       {!busy && error && options && !needsLogin && (
-        <button onClick={continueLogin}>Try again</button>
+        <button
+          onClick={continueLogin}
+          style={{
+            padding: "8px 16px",
+            backgroundColor: "#2563eb",
+            color: "#fff",
+            border: "none",
+            borderRadius: 4,
+            cursor: "pointer",
+          }}
+        >
+          Try again
+        </button>
       )}
-      <p>You can close this tab and cancel login in the desktop agent.</p>
+      <p style={{ marginTop: 24, fontSize: 13, color: "#64748b" }}>
+        You can close this tab and cancel login in the desktop agent.
+      </p>
     </section>
   );
 }
