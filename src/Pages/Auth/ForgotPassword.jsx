@@ -3,8 +3,6 @@ import "../CommonStyle.css";
 import {
   Avatar,
   Container,
-  ThemeProvider,
-  createTheme,
   Box,
   Grid,
   Button,
@@ -19,7 +17,6 @@ import UserProfileService from "../../services/UserProfileService";
 
 export const ForgotPassword = () => {
   const [email, setEmail] = useState("");
-  const theme = createTheme();
   const [open, setOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -46,7 +43,7 @@ export const ForgotPassword = () => {
   };
 
   return (
-    <ThemeProvider className="main" theme={theme}>
+    <div className="main">
       <CustomLoader open={open} />
       <Popup
         openPopup={modalOpen}
@@ -111,6 +108,6 @@ export const ForgotPassword = () => {
           </Box>
         </Box>
       </Container>
-    </ThemeProvider>
+    </div>
   );
 };

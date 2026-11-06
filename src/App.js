@@ -1,8 +1,13 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { ThemeProvider, createTheme } from "@mui/material";
 import { Header } from "./Components/Header/Header";
 import { RouteScreen } from "./Routes/RouteScreen";
 import { BrowserRouter } from "react-router-dom";
+
+const theme = createTheme({
+  typography: { fontFamily: '"Inter", sans-serif' },
+});
 
 /** Basename from Vite BASE_URL: /crm on GitHub Pages, / on Cloudflare (base=/). */
 function routerBasename() {
@@ -21,12 +26,14 @@ function routerBasename() {
 
 function App() {
   return (
-    <BrowserRouter basename={routerBasename()}>
-      <Header />
-      <main id="app">
-        <RouteScreen />
-      </main>
-    </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <BrowserRouter basename={routerBasename()}>
+        <Header />
+        <main id="app">
+          <RouteScreen />
+        </main>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

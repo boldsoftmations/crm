@@ -9,8 +9,6 @@ import {
 import "../CommonStyle.css";
 
 import {
-  ThemeProvider,
-  createTheme,
   Box,
   Grid,
   OutlinedInput,
@@ -35,7 +33,6 @@ const avatarStyle = { backgroundColor: "#1bbd7e" };
 
 export const Login = ({ onSuccess } = {}) => {
   const [open, setOpen] = useState(false);
-  const theme = createTheme();
   let navigate = useNavigate();
   const dispatch = useDispatch();
   const userRef = useRef();
@@ -133,7 +130,7 @@ export const Login = ({ onSuccess } = {}) => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <CustomLoader open={open} />
       <Grid>
         {/* <Paper style={paperStyle}> */}
@@ -218,6 +215,6 @@ export const Login = ({ onSuccess } = {}) => {
         </Box>
         {/* </Paper> */}
       </Grid>
-    </ThemeProvider>
+    </>
   );
 };
