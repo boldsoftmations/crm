@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MessageAlert } from "../../Components/MessageAlert";
 import { CustomLoader } from "../../Components/CustomLoader";
-import { TreeView, TreeItem } from "@mui/lab";
+import { TreeView, TreeItem } from "@mui/x-tree-view";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {

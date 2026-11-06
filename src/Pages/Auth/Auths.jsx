@@ -7,15 +7,15 @@ export const Auths = () => {
   return (
     <Components.ParentContainer>
       <Components.Container>
-        <Components.SignInContainer signinIn={signIn}>
+        <Components.SignInContainer $signinIn={signIn}>
           <Components.Form>
             <Login />
           </Components.Form>
         </Components.SignInContainer>
 
-        <Components.OverlayContainer signinIn={signIn}>
-          <Components.Overlay signinIn={signIn}>
-            <Components.RightOverlayPanel signinIn={signIn}>
+        <Components.OverlayContainer $signinIn={signIn}>
+          <Components.Overlay $signinIn={signIn}>
+            <Components.RightOverlayPanel $signinIn={signIn}>
               <Components.Title>Hello, Team!</Components.Title>
               <Components.Paragraph>
                 To keep connected with us please login with your personal info

@@ -4,9 +4,9 @@ import { Header } from "./Components/Header/Header";
 import { RouteScreen } from "./Routes/RouteScreen";
 import { BrowserRouter } from "react-router-dom";
 
-/** Basename from CRA PUBLIC_URL: /crm on GitHub Pages, / on Cloudflare (PUBLIC_URL=/). */
+/** Basename from Vite BASE_URL: /crm on GitHub Pages, / on Cloudflare (base=/). */
 function routerBasename() {
-  const raw = process.env.PUBLIC_URL || "/";
+  const raw = import.meta.env.BASE_URL || "/";
   let path = raw;
   try {
     if (/^https?:\/\//i.test(raw)) {
