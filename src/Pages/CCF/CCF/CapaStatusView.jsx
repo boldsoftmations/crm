@@ -855,7 +855,7 @@ export const CapaStatusView = ({
         width: "100%",
         minHeight: "100vh",
         background: C.bgPage,
-        fontFamily: "'Segoe UI', Roboto, 'Helvetica Neue', sans-serif",
+        fontFamily: '"Inter", sans-serif',
         boxSizing: "border-box",
       }}
     >
