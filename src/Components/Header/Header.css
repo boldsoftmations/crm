@@ -1,7 +1,6 @@
 .title {
   text-transform: uppercase;
   font-size: 20px;
-  font-family: 'Josefin Sans, sans-serif';
   cursor: pointer;
   margin: 10px;
 }
@@ -52,7 +51,6 @@
 }
 
 .logo {
-  font-family: "Work Sans; sans-serif";
   font-weight: 600;
   color: "#FFFEFE";
   text-align: "left";

@@ -326,7 +326,7 @@ const ManagementReport = () => {
         padding: "24px",
         background: "#f5f6fa",
         minHeight: "100vh",
-        fontFamily: "'Segoe UI', Roboto, sans-serif",
+        fontFamily: '"Inter", sans-serif',
       }}
     >
       {/* ── Header ── */}
