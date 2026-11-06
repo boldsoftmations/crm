@@ -74,7 +74,7 @@ export const SalesInvoice = (props) => {
 
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
+    contentRef: componentRef,
     documentTitle: `Sales Invoice Number ${salesInvoiceData.order_book}`,
   });
 

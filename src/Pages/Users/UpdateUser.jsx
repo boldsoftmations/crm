@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { MessageAlert } from "../../Components/MessageAlert";
 import { CustomLoader } from "../../Components/CustomLoader";
-import { TreeView, TreeItem } from "@mui/x-tree-view";
+import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
+import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {
@@ -458,10 +459,12 @@ const UpdateUser = ({
               "Customer Relationship Executive"
             ) && (
               <Grid item xs={12}>
-                <TreeView
+                <SimpleTreeView
                   aria-label="checkbox tree"
-                  defaultCollapseIcon={<ExpandMoreIcon />}
-                  defaultExpandIcon={<ChevronRightIcon />}
+                  slots={{
+                    collapseIcon: ExpandMoreIcon,
+                    expandIcon: ChevronRightIcon,
+                  }}
                   sx={{
                     flexGrow: 1,
                     overflowY: "auto",
@@ -478,7 +481,7 @@ const UpdateUser = ({
                         return (
                           <TreeItem
                             key={stateId}
-                            nodeId={stateId}
+                            itemId={stateId}
                             label={
                               <FormControlLabel
                                 control={
@@ -527,7 +530,7 @@ const UpdateUser = ({
                                 return (
                                   <TreeItem
                                     key={cityId}
-                                    nodeId={cityId}
+                                    itemId={cityId}
                                     label={
                                       <FormControlLabel
                                         control={
@@ -554,7 +557,7 @@ const UpdateUser = ({
                         );
                       }
                     )}
-                </TreeView>
+                </SimpleTreeView>
               </Grid>
             )}
 

@@ -35,7 +35,7 @@ export const ProformaInvoiceView = (props) => {
     useNotificationHandling();
   const [groupedData, setGroupedData] = useState([]);
   const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
+    contentRef: componentRef,
     documentTitle: `PI Number ${invoiceData.pi_number}`,
   });
 
