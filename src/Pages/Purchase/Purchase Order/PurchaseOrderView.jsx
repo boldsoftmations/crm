@@ -25,9 +25,6 @@ import { PurchaseOrderUpdate } from "./PurchaseOrderUpdate";
 import InvoiceServices from "../../../services/InvoiceService";
 import { useDispatch, useSelector } from "react-redux";
 import { getSellerAccountData } from "../../../Redux/Action/Action";
-import { PurchaseOrderPDF } from "./PurchaseOrderPDF";
-import jsPDF from "jspdf";
-import { pdf } from "@react-pdf/renderer";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import SearchComponent from "../../../Components/SearchComponent ";
@@ -55,6 +52,10 @@ export const PurchaseOrderView = () => {
   const handleDownload = async (data) => {
     try {
       setOpen(true);
+
+      const { default: jsPDF } = await import("jspdf");
+      const { pdf } = await import("@react-pdf/renderer");
+      const { PurchaseOrderPDF } = await import("./PurchaseOrderPDF");
 
       // create a new jsPDF instance
       const pdfDoc = new jsPDF();

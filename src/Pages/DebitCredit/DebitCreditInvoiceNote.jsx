@@ -7,9 +7,6 @@ import MSME from "../../Images/MSME.jpeg";
 import { CustomLoader } from "../../Components/CustomLoader";
 import InvoiceServices from "../../services/InvoiceService";
 import DownloadIcon from "@mui/icons-material/Download";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
-
 export const DebitCreditInvoiceNote = (props) => {
   const { invoiceNoteData } = props;
   const [invoices, setInvoices] = useState([]);
@@ -33,9 +30,19 @@ export const DebitCreditInvoiceNote = (props) => {
   }, [invoiceNoteData.id]);
 
   const componentRef = useRef();
-  const downloadPDF = () => {
+  const downloadPDF = async () => {
     const input = componentRef.current; // Reference to the component you want to print
     setOpen(true);
+    let jsPDF;
+    let html2canvas;
+    try {
+      ({ default: jsPDF } = await import("jspdf"));
+      ({ default: html2canvas } = await import("html2canvas"));
+    } catch (err) {
+      console.error("Error generating PDF", err);
+      setOpen(false);
+      return;
+    }
     html2canvas(input, {
       scale: 5, // Adjust the scale for higher resolution, lower it to reduce file size
       useCORS: true, // Ensures that external resources like images are loaded in the canvas

@@ -28,8 +28,6 @@ import UpdateSRFStatus from "./UpdataSRFStatus";
 import { useSelector } from "react-redux";
 import CustomAutocomplete from "../../../Components/CustomAutocomplete";
 import CustomTextField from "../../../Components/CustomTextField";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import FileSaver from "file-saver";
 import { CSVLink } from "react-csv";
 import CustomDateFilterPopup from "../../../Components/CustomDateFilterPopup";
@@ -393,7 +391,9 @@ function Row({ row, getCustomerSRF, handleError, handleSuccess }) {
   };
 
   //download odf
-  const generatePDF = (data) => {
+  const generatePDF = async (data) => {
+    const { default: jsPDF } = await import("jspdf");
+    const { default: autoTable } = await import("jspdf-autotable");
     const doc = new jsPDF();
 
     // Title
