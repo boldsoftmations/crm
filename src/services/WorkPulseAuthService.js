@@ -3,7 +3,7 @@ import { getLocalAccessToken } from "./TokenService";
 
 // Independent of the global interceptor: an expired CRM login must keep the
 // pending authorization URL and render the login form here, not navigate away.
-const base = String(process.env.REACT_APP_DEPLOY_BACKEND_URL || "").replace(
+const base = String(import.meta.env.REACT_APP_DEPLOY_BACKEND_URL || "").replace(
   /\/$/,
   "",
 );
