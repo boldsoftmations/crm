@@ -47,7 +47,7 @@ export const PurchaseInvoice = (props) => {
   const AMOUNT_IN_WORDS = arr.join(" ");
 
   const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
+    contentRef: componentRef,
     documentTitle: `PI Number ${purchaseInvoiceDataByID.invoice_no} ${purchaseInvoiceDataByID}`,
   });
 
