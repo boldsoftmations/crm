@@ -20,9 +20,6 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import jsPDF from "jspdf";
-import { DailySalesReviewPDF } from "./DailySalesReviewPDF";
-import { pdf } from "@react-pdf/renderer";
 
 // Utility function to capitalize the first letter of each word
 const capitalizeWords = (str) =>
@@ -169,6 +166,10 @@ export const DailySaleReviewUpdate = ({ recordForEdit }) => {
   const totalCount = entries.reduce((acc, [, count]) => acc + count, 0);
   const generatePDF = async () => {
     try {
+      const { default: jsPDF } = await import("jspdf");
+      const { pdf } = await import("@react-pdf/renderer");
+      const { DailySalesReviewPDF } = await import("./DailySalesReviewPDF");
+
       // create a new jsPDF instance
       const pdfDoc = new jsPDF();
 

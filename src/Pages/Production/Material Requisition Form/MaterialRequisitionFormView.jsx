@@ -18,7 +18,6 @@ import {
   Switch,
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
-import jsPDF from "jspdf";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { CustomLoader } from "../../../Components/CustomLoader";
@@ -28,15 +27,6 @@ import { MaterialRequisitionFormCreate } from "./MaterialRequisitionFormCreate";
 import { MaterialRequisitionFormUpdate } from "./MaterialRequisitionFormUpdate";
 import { useSelector } from "react-redux";
 import logo from "../../../Images/LOGOS3.png";
-import {
-  pdf,
-  Image,
-  Document,
-  Page,
-  View,
-  Text,
-  StyleSheet,
-} from "@react-pdf/renderer";
 import moment from "moment";
 import { CSVLink } from "react-csv";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
@@ -266,6 +256,16 @@ export const MaterialRequisitionFormView = () => {
       const Total_qty =
         data.products_data.reduce((acc, item) => acc + item.quantity, 0) || 0;
       setOpen(true);
+
+      const { default: jsPDF } = await import("jspdf");
+      const renderer = await import("@react-pdf/renderer");
+      Image = renderer.Image;
+      Document = renderer.Document;
+      Page = renderer.Page;
+      View = renderer.View;
+      Text = renderer.Text;
+      style = createPdfStyle(renderer.StyleSheet);
+      const { pdf } = renderer;
 
       // create a new jsPDF instance
       const pdfDoc = new jsPDF();
@@ -569,10 +569,14 @@ export const MaterialRequisitionFormView = () => {
         {materialRequisitionDataByID !== null && (
           <>
             <div>
-              <div style={style.container}>
+              <div style={{ border: "1pt solid #ccc" }}>
                 <div style={styles.row}>
                   <div id="invoice">
-                    <Image style={style.logo} src={logo} />
+                    <img
+                      style={{ height: "auto", width: "100pt" }}
+                      src={logo}
+                      alt=""
+                    />
                   </div>
                   <div style={{ ...styles.cell, textAlign: "left" }}>
                     <strong>Date</strong>
@@ -762,7 +766,15 @@ const filterDays = [
   { label: "Custom Date", value: "custom_date" },
 ];
 
-const style = StyleSheet.create({
+let Image;
+let Document;
+let Page;
+let View;
+let Text;
+let style;
+
+const createPdfStyle = (StyleSheet) =>
+  StyleSheet.create({
   container: {
     border: "1pt solid #ccc",
   },

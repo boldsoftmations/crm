@@ -16,8 +16,6 @@ import {
   Table,
 } from "@mui/material";
 
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
 // import logo from "../../Images/glutape logo.jpg";
 import logo from "../../../Images/glutape logo.jpg";
 import ISO from "../../../Images/ISOLogo.ico";
@@ -29,9 +27,19 @@ const ComplainPdf = ({ pdfData }) => {
   const [open, setOpen] = useState(false);
   const componentRef = useRef();
 
-  const downloadPDF = () => {
+  const downloadPDF = async () => {
     const input = componentRef.current;
     setOpen(true); // Reference to the component you want to print
+    let jsPDF;
+    let html2canvas;
+    try {
+      ({ jsPDF } = await import("jspdf"));
+      ({ default: html2canvas } = await import("html2canvas"));
+    } catch (err) {
+      console.error("Error generating PDF", err);
+      setOpen(false);
+      return;
+    }
     html2canvas(input, {
       scale: 5, // Adjust the scale for higher resolution, lower it to reduce file size
       useCORS: true, // Ensures that external resources like images are loaded in the canvas

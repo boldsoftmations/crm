@@ -9,8 +9,6 @@ import {
   CardContent,
   Divider,
 } from "@mui/material";
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
 import logo from "../../../../src/Images/glutape logo.jpg";
 import ISO from "../../../../src/Images/ISO.jpg";
 import MSME from "../../../../src/Images/MSME.jpeg";
@@ -20,9 +18,19 @@ const CapaDownload = ({ recordForEdit }) => {
   const [open, setOpen] = useState(false);
   const componentRef = useRef();
 
-  const downloadPDF = () => {
+  const downloadPDF = async () => {
     const input = componentRef.current;
     setOpen(true);
+    let jsPDF;
+    let html2canvas;
+    try {
+      ({ jsPDF } = await import("jspdf"));
+      ({ default: html2canvas } = await import("html2canvas"));
+    } catch (err) {
+      console.error("Error generating PDF", err);
+      setOpen(false);
+      return;
+    }
     html2canvas(input, {
       scale: 5,
       useCORS: true,
