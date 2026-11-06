@@ -1,64 +1,254 @@
 import WorkPulseAuthorize from "../Pages/Auth/WorkPulseAuthorize";
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { ChangePassword } from "./../Pages/Auth/ChangePassword";
 import { ForgotPassword } from "./../Pages/Auth/ForgotPassword";
-import { SellerAccount } from "./../Pages/Invoice/Seller Account/SellerAccount";
 import { Auths } from "../Pages/Auth/Auths";
-import { Profile } from "./../Pages/Profile/Profile";
-import { VendorView } from "../Pages/Vendor/VendorInventoryDetail/VendorView";
-import { ProductForecastViewAll } from "../Pages/ProductForecast/ProductForecastViewAll";
-import { TaskView } from "../Pages/Task/TaskView";
-import { Followup } from "../Pages/FollowUp/Followup";
-import { ActivePI } from "../Pages/Invoice/ProformaInvoice/ActivePI";
-import { ApprovePi } from "../Pages/Invoice/ProformaInvoice/ApprovePi";
-import { CompetitorView } from "../Pages/MarketAnalysis/CompetitorView";
-import { PriceApprovalPI } from "../Pages/Invoice/ProformaInvoice/PriceApprovalPI";
-import { FaqAllTab } from "../Pages/Faq/FaqAllTab/FaqAllTab";
-import { DailySaleReviewView } from "../Pages/DailySaleReview/DailySaleReviewView";
-import { HrModelTabs } from "../Pages/HrModel/HrModelTabs";
-import { CurrencyView } from "../Pages/Currency/CurrencyView";
-import { PhysicalInventoryView } from "../Pages/Physcical Inventory/PhysicalInventoryView";
-import { AllLeadsTabView } from "../Pages/Leads/AllLeadsTabView";
-import { AllProductsTabView } from "../Pages/Products/AllProductsTabView";
-import { AllCustomerTabView } from "../Pages/Cutomers/CompanyDetails/AllCustomerTabView";
-import { AllPerformaInvoiceTabView } from "../Pages/Invoice/ProformaInvoice/AllPerformaInvoiceTabView";
-import { PurchaseReturnAllTabView } from "../Pages/ReturnOrders/PurchaseReturn/PurchaseReturnAllTabView";
-import { ProductionAllTabView } from "../Pages/Production/ProductionAllTabView";
-import { InventoryAllTabView } from "../Pages/Inventory/InventoryAllTabView";
-import { HrMasterTabView } from "../Pages/HrModel/HrMasterTabView";
-import { AllWhatsappTabs } from "../Pages/WhatsappGroup/AllWhatsappTabs";
-import { AllOrderBookTabView } from "../Pages/OrderBooks/AllOrderBookTabView";
-import { Report } from "../Pages/Report/Report";
-import { AnalyticsAllTabView } from "../Pages/Analytics/AnalyticsAllTabView";
-import { AllDispatchTabView } from "../Pages/Dispatch/AllDispatchTabView";
-import { AllProfileTabView } from "../Pages/Users/AllProfileTabView";
-import { SalesReturnAllTabView } from "../Pages/ReturnOrders/SalesReturn/SalesReturnAllTabView";
-import { DebitCreditAllTabView } from "../Pages/DebitCredit/DebitCreditAllTabView";
-import { AllCCFtab } from "../Pages/CCF/AllCCFtab";
-// import { AllComplaintListView } from "../Pages/CCF/AllComplaintListView";
-import { AllComplaintListView } from "../Pages/CCF/CCF_CAPA_Master/AllComplaintListView";
-import { SalesInvoiceAllTab } from "../Pages/Invoice/SalesInvoice/SalesInvoiceAllTab";
-import { AllTabView } from "../Pages/StateAndCity/AllTAbView";
-import { ViewMasterActivitiesList } from "../Pages/MasterActivityList/ViewMasterActivitiesList";
-import { FieldSalesAllTabView } from "../Pages/FieldSales/FieldSalesAllTab";
-import { AllSRFTab } from "../Pages/Cutomers/SRF/AllSRFTab";
-import { ViewMasterBeat } from "../Pages/FieldSales/BeatMaster/ViewMasterBeat";
-import LeadSummary from "../Pages/MasterLeadSummary/LeadSummary";
-import FactoryMaster from "../Pages/MasterFactory/FactoryMaster";
 import Maintaince from "../Pages/Maintanace/Maintaince";
-import { AllInventoryReportTabs } from "../Pages/InventoryReport/AllInventoryReportTabs";
-import { AllPriceListTabView } from "../Pages/PriceList/AllPriceListTabView";
-import { PurchaseAllTabView } from "../Pages/Purchase/PurchaseAllTabView";
-import { ViewPackagingMaster } from "../Pages/MasterPackaging/ViewPackagingMaster";
-import { AllTransportMasterTabView } from "../Pages/MasterTransport/AllTransportMasterTabView";
-import TransporterFinder from "../Pages/MasterTransport/TransporterFinder";
+import { CustomLoader } from "../Components/CustomLoader";
 import {
   canUseTransporterFinder,
   canViewPinMaster,
   canViewTransporterMaster,
 } from "../utility/masterAccess";
+
+const ChangePassword = lazy(() =>
+  import("./../Pages/Auth/ChangePassword").then((m) => ({
+    default: m.ChangePassword,
+  }))
+);
+const SellerAccount = lazy(() =>
+  import("./../Pages/Invoice/Seller Account/SellerAccount").then((m) => ({
+    default: m.SellerAccount,
+  }))
+);
+const Profile = lazy(() =>
+  import("./../Pages/Profile/Profile").then((m) => ({
+    default: m.Profile,
+  }))
+);
+const VendorView = lazy(() =>
+  import("../Pages/Vendor/VendorInventoryDetail/VendorView").then((m) => ({
+    default: m.VendorView,
+  }))
+);
+const ProductForecastViewAll = lazy(() =>
+  import("../Pages/ProductForecast/ProductForecastViewAll").then((m) => ({
+    default: m.ProductForecastViewAll,
+  }))
+);
+const TaskView = lazy(() =>
+  import("../Pages/Task/TaskView").then((m) => ({
+    default: m.TaskView,
+  }))
+);
+const Followup = lazy(() =>
+  import("../Pages/FollowUp/Followup").then((m) => ({
+    default: m.Followup,
+  }))
+);
+const ActivePI = lazy(() =>
+  import("../Pages/Invoice/ProformaInvoice/ActivePI").then((m) => ({
+    default: m.ActivePI,
+  }))
+);
+const ApprovePi = lazy(() =>
+  import("../Pages/Invoice/ProformaInvoice/ApprovePi").then((m) => ({
+    default: m.ApprovePi,
+  }))
+);
+const CompetitorView = lazy(() =>
+  import("../Pages/MarketAnalysis/CompetitorView").then((m) => ({
+    default: m.CompetitorView,
+  }))
+);
+const PriceApprovalPI = lazy(() =>
+  import("../Pages/Invoice/ProformaInvoice/PriceApprovalPI").then((m) => ({
+    default: m.PriceApprovalPI,
+  }))
+);
+const FaqAllTab = lazy(() =>
+  import("../Pages/Faq/FaqAllTab/FaqAllTab").then((m) => ({
+    default: m.FaqAllTab,
+  }))
+);
+const DailySaleReviewView = lazy(() =>
+  import("../Pages/DailySaleReview/DailySaleReviewView").then((m) => ({
+    default: m.DailySaleReviewView,
+  }))
+);
+const HrModelTabs = lazy(() =>
+  import("../Pages/HrModel/HrModelTabs").then((m) => ({
+    default: m.HrModelTabs,
+  }))
+);
+const CurrencyView = lazy(() =>
+  import("../Pages/Currency/CurrencyView").then((m) => ({
+    default: m.CurrencyView,
+  }))
+);
+const PhysicalInventoryView = lazy(() =>
+  import("../Pages/Physcical Inventory/PhysicalInventoryView").then((m) => ({
+    default: m.PhysicalInventoryView,
+  }))
+);
+const AllLeadsTabView = lazy(() =>
+  import("../Pages/Leads/AllLeadsTabView").then((m) => ({
+    default: m.AllLeadsTabView,
+  }))
+);
+const AllProductsTabView = lazy(() =>
+  import("../Pages/Products/AllProductsTabView").then((m) => ({
+    default: m.AllProductsTabView,
+  }))
+);
+const AllCustomerTabView = lazy(() =>
+  import("../Pages/Cutomers/CompanyDetails/AllCustomerTabView").then((m) => ({
+    default: m.AllCustomerTabView,
+  }))
+);
+const AllPerformaInvoiceTabView = lazy(() =>
+  import("../Pages/Invoice/ProformaInvoice/AllPerformaInvoiceTabView").then(
+    (m) => ({
+      default: m.AllPerformaInvoiceTabView,
+    })
+  )
+);
+const PurchaseReturnAllTabView = lazy(() =>
+  import("../Pages/ReturnOrders/PurchaseReturn/PurchaseReturnAllTabView").then(
+    (m) => ({
+      default: m.PurchaseReturnAllTabView,
+    })
+  )
+);
+const ProductionAllTabView = lazy(() =>
+  import("../Pages/Production/ProductionAllTabView").then((m) => ({
+    default: m.ProductionAllTabView,
+  }))
+);
+const InventoryAllTabView = lazy(() =>
+  import("../Pages/Inventory/InventoryAllTabView").then((m) => ({
+    default: m.InventoryAllTabView,
+  }))
+);
+const HrMasterTabView = lazy(() =>
+  import("../Pages/HrModel/HrMasterTabView").then((m) => ({
+    default: m.HrMasterTabView,
+  }))
+);
+const AllWhatsappTabs = lazy(() =>
+  import("../Pages/WhatsappGroup/AllWhatsappTabs").then((m) => ({
+    default: m.AllWhatsappTabs,
+  }))
+);
+const AllOrderBookTabView = lazy(() =>
+  import("../Pages/OrderBooks/AllOrderBookTabView").then((m) => ({
+    default: m.AllOrderBookTabView,
+  }))
+);
+const Report = lazy(() =>
+  import("../Pages/Report/Report").then((m) => ({
+    default: m.Report,
+  }))
+);
+const AnalyticsAllTabView = lazy(() =>
+  import("../Pages/Analytics/AnalyticsAllTabView").then((m) => ({
+    default: m.AnalyticsAllTabView,
+  }))
+);
+const AllDispatchTabView = lazy(() =>
+  import("../Pages/Dispatch/AllDispatchTabView").then((m) => ({
+    default: m.AllDispatchTabView,
+  }))
+);
+const AllProfileTabView = lazy(() =>
+  import("../Pages/Users/AllProfileTabView").then((m) => ({
+    default: m.AllProfileTabView,
+  }))
+);
+const SalesReturnAllTabView = lazy(() =>
+  import("../Pages/ReturnOrders/SalesReturn/SalesReturnAllTabView").then(
+    (m) => ({
+      default: m.SalesReturnAllTabView,
+    })
+  )
+);
+const DebitCreditAllTabView = lazy(() =>
+  import("../Pages/DebitCredit/DebitCreditAllTabView").then((m) => ({
+    default: m.DebitCreditAllTabView,
+  }))
+);
+const AllCCFtab = lazy(() =>
+  import("../Pages/CCF/AllCCFtab").then((m) => ({
+    default: m.AllCCFtab,
+  }))
+);
+// import { AllComplaintListView } from "../Pages/CCF/AllComplaintListView";
+const AllComplaintListView = lazy(() =>
+  import("../Pages/CCF/CCF_CAPA_Master/AllComplaintListView").then((m) => ({
+    default: m.AllComplaintListView,
+  }))
+);
+const SalesInvoiceAllTab = lazy(() =>
+  import("../Pages/Invoice/SalesInvoice/SalesInvoiceAllTab").then((m) => ({
+    default: m.SalesInvoiceAllTab,
+  }))
+);
+const AllTabView = lazy(() =>
+  import("../Pages/StateAndCity/AllTAbView").then((m) => ({
+    default: m.AllTabView,
+  }))
+);
+const ViewMasterActivitiesList = lazy(() =>
+  import("../Pages/MasterActivityList/ViewMasterActivitiesList").then((m) => ({
+    default: m.ViewMasterActivitiesList,
+  }))
+);
+const FieldSalesAllTabView = lazy(() =>
+  import("../Pages/FieldSales/FieldSalesAllTab").then((m) => ({
+    default: m.FieldSalesAllTabView,
+  }))
+);
+const AllSRFTab = lazy(() =>
+  import("../Pages/Cutomers/SRF/AllSRFTab").then((m) => ({
+    default: m.AllSRFTab,
+  }))
+);
+const ViewMasterBeat = lazy(() =>
+  import("../Pages/FieldSales/BeatMaster/ViewMasterBeat").then((m) => ({
+    default: m.ViewMasterBeat,
+  }))
+);
+const LeadSummary = lazy(() => import("../Pages/MasterLeadSummary/LeadSummary"));
+const FactoryMaster = lazy(() => import("../Pages/MasterFactory/FactoryMaster"));
+const AllInventoryReportTabs = lazy(() =>
+  import("../Pages/InventoryReport/AllInventoryReportTabs").then((m) => ({
+    default: m.AllInventoryReportTabs,
+  }))
+);
+const AllPriceListTabView = lazy(() =>
+  import("../Pages/PriceList/AllPriceListTabView").then((m) => ({
+    default: m.AllPriceListTabView,
+  }))
+);
+const PurchaseAllTabView = lazy(() =>
+  import("../Pages/Purchase/PurchaseAllTabView").then((m) => ({
+    default: m.PurchaseAllTabView,
+  }))
+);
+const ViewPackagingMaster = lazy(() =>
+  import("../Pages/MasterPackaging/ViewPackagingMaster").then((m) => ({
+    default: m.ViewPackagingMaster,
+  }))
+);
+const AllTransportMasterTabView = lazy(() =>
+  import("../Pages/MasterTransport/AllTransportMasterTabView").then((m) => ({
+    default: m.AllTransportMasterTabView,
+  }))
+);
+const TransporterFinder = lazy(() =>
+  import("../Pages/MasterTransport/TransporterFinder")
+);
 // import PurchaseReturnAllTabView from "../Pages/ReturnOrders/PurchaseReturn/PurchaseReturnAllTabView";
 
 const PrivateRoute = ({ children, redirectTo = "/" }) => {
@@ -74,6 +264,7 @@ export const RouteScreen = () => {
   const profileReady = profile && Array.isArray(profile.groups);
 
   return (
+    <Suspense fallback={<CustomLoader open />}>
     <Routes>
       <Route path="/workpulse/authorize" element={<WorkPulseAuthorize />} />
       {token ? (
@@ -501,5 +692,6 @@ export const RouteScreen = () => {
         }
       />
     </Routes>
+    </Suspense>
   );
 };

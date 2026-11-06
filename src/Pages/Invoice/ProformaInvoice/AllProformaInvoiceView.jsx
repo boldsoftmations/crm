@@ -2,8 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import DownloadIcon from "@mui/icons-material/Download";
 import PrintIcon from "@mui/icons-material/Print";
-import jsPDF from "jspdf";
-import { pdf } from "@react-pdf/renderer";
 import InvoiceServices from "../../../services/InvoiceService";
 import { PaymentConfirmationPi } from "./PaymentConfirmationPi";
 import { Popup } from "../../../Components/Popup";
@@ -12,7 +10,6 @@ import logo from "../../../Images/glutape logo.jpg";
 import ISO from "../../../Images/ISOLogo.ico";
 import AllLogo from "../../../Images/allLogo.jpg";
 import MSME from "../../../Images/MSME.jpeg";
-import { MyDocument } from "./MyDocument";
 import { useReactToPrint } from "react-to-print";
 import { Button } from "@mui/material";
 import { MessageAlert } from "../../../Components/MessageAlert";
@@ -39,6 +36,10 @@ export const AllProformaInvoiceView = (props) => {
   const handleDownload = async (data) => {
     try {
       setOpen(true);
+
+      const { default: jsPDF } = await import("jspdf");
+      const { pdf } = await import("@react-pdf/renderer");
+      const { MyDocument } = await import("./MyDocument");
 
       // create a new jsPDF instance
       const pdfDoc = new jsPDF();

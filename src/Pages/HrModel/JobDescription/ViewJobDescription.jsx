@@ -21,8 +21,6 @@ import SearchComponent from "../../../Components/SearchComponent ";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import UpdateJobDescription from "./UpdateJobDescription";
 import { useSelector } from "react-redux";
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
 export const ViewJobDescription = () => {
   const [jobDescription, setJobDescription] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -72,7 +70,9 @@ export const ViewJobDescription = () => {
   //download jd pdf
 
   // Convert data list into numbered format
-  const downloadPDF = (job) => {
+  const downloadPDF = async (job) => {
+    const { jsPDF } = await import("jspdf");
+    const { default: autoTable } = await import("jspdf-autotable");
     const doc = new jsPDF();
 
     // **Title Section**

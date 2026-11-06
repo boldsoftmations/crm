@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import jsPDF from "jspdf";
 import {
   Box,
   Grid,
@@ -16,7 +15,6 @@ import {
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 import { CSVLink } from "react-csv";
-import { pdf } from "@react-pdf/renderer";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import { Popup } from "../../../Components/Popup";
 import InventoryServices from "../../../services/InventoryService";
@@ -24,7 +22,6 @@ import { useSelector } from "react-redux";
 import { MaterialTransferNoteCreate } from "./MaterialTransferNoteCreate";
 import InvoiceServices from "../../../services/InvoiceService";
 import { CustomPagination } from "../../../Components/CustomPagination";
-import { MaterialTransferNotePDF } from "./MaterialTransferNotePDF";
 import { MaterialTransferAccept } from "./MaterialTransferAccept";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
@@ -116,6 +113,12 @@ export const MaterialTransferNoteView = () => {
   const handlePrint = async (data) => {
     try {
       setOpen(true);
+
+      const { default: jsPDF } = await import("jspdf");
+      const { pdf } = await import("@react-pdf/renderer");
+      const { MaterialTransferNotePDF } = await import(
+        "./MaterialTransferNotePDF"
+      );
 
       // create a new jsPDF instance
       const pdfDoc = new jsPDF();

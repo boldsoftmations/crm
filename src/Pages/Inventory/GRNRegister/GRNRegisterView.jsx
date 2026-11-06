@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { CustomLoader } from "../../../Components/CustomLoader";
 import InventoryServices from "../../../services/InventoryService";
 import { CustomPagination } from "../../../Components/CustomPagination";
-import jsPDF from "jspdf";
-import { pdf } from "@react-pdf/renderer";
 import { CSVLink } from "react-csv";
 import {
   Box,
@@ -21,7 +19,6 @@ import {
 } from "@mui/material";
 import { tableCellClasses } from "@mui/material/TableCell";
 // import CustomTextField from "../../../Components/CustomTextField";
-import { GRNPDFDownload } from "./GRNPDFDownload";
 import { useNotificationHandling } from "../../../Components/useNotificationHandling ";
 import { MessageAlert } from "../../../Components/MessageAlert";
 import SearchComponent from "../../../Components/SearchComponent ";
@@ -139,6 +136,10 @@ export const GRNRegisterView = () => {
   const handlePrint = async (data) => {
     try {
       setOpen(true);
+
+      const { default: jsPDF } = await import("jspdf");
+      const { pdf } = await import("@react-pdf/renderer");
+      const { GRNPDFDownload } = await import("./GRNPDFDownload");
 
       // create a new jsPDF instance
       const pdfDoc = new jsPDF();
